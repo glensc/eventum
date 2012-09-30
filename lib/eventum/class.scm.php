@@ -36,14 +36,44 @@
 
 class SCM
 {
+    // properties for SCM backend
+    public $name;
+    public $checkout_url;
+    public $diff_url;
+    public $log_url;
+
+    public function __construct($name) {
+        $setup = Setup::load();
+
+        if (isset($setup['scm'])) {
+            if (!isset($setup['scm'][$name])) {
+                throw new Exception("SCM '$name' not defined");
+            }
+
+            $scm = $setup['scm'][$name];
+        } else {
+            // legacy setup
+            $scm = array(
+                'name' => 'scm',
+                'checkout_url' => $scm['checkout_url'],
+                'diff_url' => $scm['diff_url'],
+                'log_url' => $scm['scm_log_url'],
+            );
+        }
+
+        $this->name = $scm['name'];
+        $this->checkout_url = $scm['checkout_url'];
+        $this->diff_url  = $scm['diff_url'];
+        $this->log_url = $scm['log_url'];
+    }
+
     /**
      * Method used to remove all checkins associated with a list of issues.
      *
-     * @access  public
      * @param   array $ids The list of issues
      * @return  boolean
      */
-    function removeByIssues($ids)
+    public static function removeByIssues($ids)
     {
         $items = implode(", ", Misc::escapeInteger($ids));
         $stmt = "DELETE FROM
@@ -63,11 +93,10 @@ class SCM
     /**
      * Method used to remove a specific list of checkins
      *
-     * @access  public
      * @param   int[] $isc_id list to remove
      * @return  integer 1 if the update worked, -1 otherwise
      */
-    function remove($items)
+    public static function remove($items)
     {
         $items = implode(", ", Misc::escapeInteger($items));
         $stmt = "SELECT
@@ -100,11 +129,10 @@ class SCM
      * Method used to parse an user provided URL and substitute a known set of
      * placeholders for the appropriate information.
      *
-     * @access  public
      * @param   string $url The user provided URL
      * @return  string The parsed URL
      */
-    function parseURL($url, $info)
+    public static function parseURL($url, $info)
     {
         $url = str_replace('{MODULE}', $info["isc_module"], $url);
         $url = str_replace('{FILE}', $info["isc_filename"], $url);
@@ -127,11 +155,10 @@ class SCM
     /**
      * Method used to get the full list of checkins associated with an issue.
      *
-     * @access  public
      * @param   integer $issue_id The issue ID
      * @return  array The list of checkins
      */
-    function getCheckinList($issue_id)
+    public static function getCheckinList($issue_id)
     {
         $setup = Setup::load();
         $stmt = "SELECT
@@ -170,7 +197,6 @@ class SCM
     /**
      * Method used to associate a new checkin with an existing issue
      *
-     * @access  public
      * @param   integer $issue_id The ID of the issue.
      * @param   string $module The SCM module commit was made.
      * @param   array $file File info with their version numbers changes made on.
@@ -178,7 +204,7 @@ class SCM
      * @param   string $commit_msg Message associated with the SCM commit.
      * @return  integer 1 if the update worked, -1 otherwise
      */
-    function logCheckin($issue_id, $module, $file, $username, $commit_msg)
+    public static function logCheckin($issue_id, $module, $file, $username, $commit_msg)
     {
         $stmt = "INSERT INTO
                     " . APP_DEFAULT_DB . "." . APP_TABLE_PREFIX . "issue_checkin

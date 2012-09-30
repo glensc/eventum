@@ -36,11 +36,12 @@ if (empty($_GET['issue'])) {
 
 require_once dirname(__FILE__) . '/../init.php';
 
-foreach ($_GET['issue'] as $issue_id) {
-    $module = $_GET['module'];
-    $username = $_GET['username'];
-    $commit_msg = $_GET['commit_msg'];
+$module = $_GET['module'];
+$username = $_GET['username'];
+$commit_msg = $_GET['commit_msg'];
+$scm_name = $_GET['scm_name'];
 
+foreach ($_GET['issue'] as $issue_id) {
     $files = array();
     $nfiles = count($_GET['files']);
     for ($y = 0; $y < $nfiles; $y++) {
