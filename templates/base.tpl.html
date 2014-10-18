@@ -16,12 +16,17 @@
   {if $core.use_components|default:0}
     {* use composer component installer *}
     <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}components/jquery-ui/themes/base/all.css">
-    <script type="text/javascript" src="{$core.rel_url}components/jquery/jquery.js"></script>
-    <script type="text/javascript" src="{$core.rel_url}components/jquery-blockui/jquery.blockUI.js"></script>
-    <script type="text/javascript" src="{$core.rel_url}components/form/jquery.form.js"></script>
-    <script type="text/javascript" src="{$core.rel_url}components/jquery-cookie/jquery.cookie.js"></script>
-    <script type="text/javascript" src="{$core.rel_url}components/jquery-ui/ui/core.js"></script>
-    <script type="text/javascript" src="{$core.rel_url}components/jquery-ui/ui/datepicker.js"></script>
+    {if $core.use_components == 'built'}
+      {* use single built file *}
+      <script type="text/javascript" src="{$core.rel_url}components/require-built.js"></script>
+    {else}
+      <script type="text/javascript" src="{$core.rel_url}components/jquery/jquery.js"></script>
+      <script type="text/javascript" src="{$core.rel_url}components/jquery-blockui/jquery.blockUI.js"></script>
+      <script type="text/javascript" src="{$core.rel_url}components/form/jquery.form.js"></script>
+      <script type="text/javascript" src="{$core.rel_url}components/jquery-cookie/jquery.cookie.js"></script>
+      <script type="text/javascript" src="{$core.rel_url}components/jquery-ui/ui/core.js"></script>
+      <script type="text/javascript" src="{$core.rel_url}components/jquery-ui/ui/datepicker.js"></script>
+  {/if}
   {else}
     <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}js/jquery/ui.datepicker.css">
     <script type="text/javascript" src="{$core.rel_url}js/jquery/jquery.js"></script>

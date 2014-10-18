@@ -44,7 +44,7 @@ if (file_exists($autoload = dirname(__FILE__) . '/autoload.php')) {
     define('APP_JPGRAPH_PATH', APP_PATH . '/lib/jpgraph');
 
     // indicate whether we use components installed by composer
-    define('APP_USE_COMPONENTS', true);
+    define('APP_USE_COMPONENTS', 'built');
     return;
 }
 
