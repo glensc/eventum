@@ -5,7 +5,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 - 2008 MySQL AB                                   |
 // | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2013 Eventum Team.                              |
+// | Copyright (c) 2011 - 2014 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -38,6 +38,7 @@ $usr_id = Auth::getUserID();
 $prj_id = Auth::getCurrentProject();
 $role_id = Auth::getCurrentRole();
 $issue_id = @$_POST["issue_id"] ? $_POST["issue_id"] : @$_GET["id"];
+$spam = isset($_REQUEST['spam']) ? (bool)$_REQUEST['spam'] : false;
 $tpl->assign("extra_title", "Close Issue #$issue_id");
 $tpl->assign("user_prefs", Prefs::get($usr_id));
 
@@ -90,6 +91,7 @@ $tpl->assign(array(
     "notify_list"       => Notification::getLastNotifiedAddresses($issue_id),
     "custom_fields"     => Custom_Field::getListByIssue($prj_id, $issue_id, $usr_id, 'close_form'),
     "issue_id"          => $issue_id,
+    "spam"              => $spam,
 ));
 
 if (CRM::hasCustomerIntegration($prj_id) && isset($details['contract'])) {

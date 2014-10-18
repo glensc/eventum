@@ -249,11 +249,12 @@ issue_view.ready = function(page_id)
 
     $('.remove_quarantine').click(issue_view.removeQuarantine);
     $('.clear_duplicate').click(issue_view.clearDuplicateStatus);
-    $('.reply_issue').click(issue_view.replyIssue);
+    $('.reply_issue').click(issue_epview.replyIssue);
     $('.edit_incident_redemption').click(issue_view.editIncidentRedemption);
 
     $('.mark_duplicate').click(function() { window.location.href='duplicate.php?id=' + issue_view.get_issue_id(); });
     $('.close_issue').click(function() { window.location.href='close.php?id=' + issue_view.get_issue_id(); });
+    $('.kill_spam').click(function() { window.location.href='close.php?id=' + issue_view.get_issue_id() + '&spam=1'; });
     $('.display_fixed_width').click(function() { Eventum.displayFixedWidth($('#issue_description')); });
 
 

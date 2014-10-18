@@ -238,6 +238,7 @@
 
     <div class="right">
         {if not $issue.sta_is_closed}
+        <input type="button" value="{t}Kill Spam{/t}" class="kill_spam" title="{t}Clear notification list and close issue without sending issue close notification{/t}">
         {if $issue.duplicates == ''}
         {if $issue.iss_duplicated_iss_id}
         <input type="button" value="{t}Clear Duplicate Status{/t}" class="clear_duplicate">

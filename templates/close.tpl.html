@@ -54,11 +54,11 @@
           </th>
           <td>
             <label>
-                <input type="radio" name="send_notification" checked value="1">
+                <input type="radio" name="send_notification" {if !$spam}checked{/if} value="1">
                 {t}Yes{/t}
             </label>
             <label>
-                <input type="radio" name="send_notification" value="0">
+                <input type="radio" name="send_notification" {if $spam}checked{/if} value="0">
                 {t}No{/t}
             </label>
           </td>
