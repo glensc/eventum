@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | Eventum - Issue Tracking System                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2012 - 2013 Eventum Team.                              |
+// | Copyright (c) 2012 - 2014 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -35,16 +35,23 @@ Auth::checkAuthentication(APP_COOKIE);
 $role_id = Auth::getCurrentRole();
 if ($role_id < User::getRoleID('administrator')) {
     Misc::setMessage(ev_gettext("Sorry, you are not allowed to access this page."), Misc::MSG_ERROR);
-    $tpl->displayTemplate();exit;
+    $tpl->displayTemplate();
+    exit;
 }
 
+$setup = Setup::load();
+
 if (@$_POST["cat"] == "update") {
-    $setup = Setup::load();
 
     $setup["scm_integration"] = $_POST["scm_integration"];
-    $setup["checkout_url"] = isset($_POST["checkout_url"]) ? $_POST["checkout_url"] : null;
-    $setup["diff_url"] = isset($_POST["diff_url"]) ? $_POST["diff_url"] : null;
-    $setup["scm_log_url"] = isset($_POST["scm_log_url"]) ? $_POST["scm_log_url"] : null;;
+
+    if (!empty($_GET['id'])) {
+        $scm = array();
+        $scm["name"] = isset($_POST["scm_name"]) ? $_POST["scm_name"] : null;
+        $scm["checkout_url"] = isset($_POST["checkout_url"]) ? $_POST["checkout_url"] : null;
+        $scm["diff_url"] = isset($_POST["diff_url"]) ? $_POST["diff_url"] : null;
+        $scm["scm_log_url"] = isset($_POST["scm_log_url"]) ? $_POST["scm_log_url"] : null;;
+    }
 
     $res = Setup::save($setup);
     $tpl->assign("result", $res);
@@ -52,15 +59,23 @@ if (@$_POST["cat"] == "update") {
     Misc::mapMessages($res, array(
             1   =>  array(ev_gettext('Thank you, the setup information was saved successfully.'), Misc::MSG_INFO),
             -1  =>  array(ev_gettext(
-                "ERROR: The system doesn't have the appropriate permissions to create the configuration file in the setup directory (%1$s). ".
+                "ERROR: The system doesn't have the appropriate permissions to create the configuration file in the setup directory (%1\$s). ".
                 "Please contact your local system administrator and ask for write privileges on the provided path.", APP_CONFIG_PATH),
                 Misc::MSG_NOTE_BOX),
             -2  =>  array(ev_gettext(
-                "ERROR: The system doesn't have the appropriate permissions to update the configuration file in the setup directory (%1$s). ".
+                "ERROR: The system doesn't have the appropriate permissions to update the configuration file in the setup directory (%1\$s). ".
                 "Please contact your local system administrator and ask for write privileges on the provided filename.", APP_SETUP_FILE),
                 Misc::MSG_NOTE_BOX),
     ));
+} else {
+    if (!empty($_GET['id'])) {
+        $scm_name = $_GET['id'];
+        if (isset($setup['scm'][$scm_name])) {
+            $tpl->assign('scm', $setup['scm'][$scm_name]);
+        }
+    }
 }
+
 $options = Setup::load(true);
 $tpl->assign("setup", $options);
 

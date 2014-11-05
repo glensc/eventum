@@ -10,7 +10,15 @@ function validateForm()
         alert('{/literal}{t escape=js}Please choose whether the SCM integration feature should be enabled or not.{/t}{literal}');
         return false;
     }
-    if (Eventum.getField('scm_integration').first().is(':checked')) {
+
+    var scm_enabled = Eventum.getField('scm_integration').first().is(':checked');
+    var scm_id = {/literal}{$smarty.get.id|default:''|json_encode}{literal};
+    if (scm_enabled && scm_id) {
+        if (Validation.isFieldWhitespace('scm_name')) {
+          Validation.selectField('scm_name');
+          alert('{/literal}{t escape=js}Please enter name for SCM.{/t}{literal}');
+          return false;
+        }
         if (Validation.isFieldWhitespace('checkout_url')) {
             Validation.selectField('checkout_url');
             alert('{/literal}{t escape=js}Please enter the checkout page URL for your SCM integration tool.{/t}{literal}');
@@ -21,8 +29,8 @@ function validateForm()
             alert('{/literal}{t escape=js}Please enter the diff page URL for your SCM integration tool.{/t}{literal}');
             return false;
         }
-        if (Validation.isFieldWhitespace('scm_log_url')) {
-            Validation.selectField('scm_log_url');
+        if (Validation.isFieldWhitespace('log_url')) {
+            Validation.selectField('log_url');
             alert('{/literal}{t escape=js}Please enter the log page URL for your SCM integration tool.{/t}{literal}');
             return false;
         }
@@ -31,7 +39,7 @@ function validateForm()
 }
 function disableSCMFields(bool)
 {
-    var field, bgcolor;
+    var bgcolor;
     if (bool) {
         bgcolor = '#CCCCCC';
     } else {
@@ -40,7 +48,7 @@ function disableSCMFields(bool)
 
     Eventum.getField('checkout_url').attr('disabled', bool).css('backgroundColor', bgcolor);
     Eventum.getField('diff_url').attr('disabled', bool).css('backgroundColor', bgcolor);
-    Eventum.getField('scm_log_url').attr('disabled', bool).css('backgroundColor', bgcolor);
+    Eventum.getField('log_url').attr('disabled', bool).css('backgroundColor', bgcolor);
 }
 function setDisabledFields()
 {
@@ -59,6 +67,7 @@ $().ready(function() {
 //-->
 </script>
 {/literal}
+
 <form id="general_setup_form" method="post" action="{$smarty.server.PHP_SELF}">
 <input type="hidden" name="cat" value="update">
   <table class="bordered">
@@ -80,41 +89,65 @@ $().ready(function() {
                 <input type="radio" name="scm_integration" value="enabled" {if $setup.scm_integration|default:'' == 'enabled'}checked{/if}>
                 {t}Enabled{/t}</label>&nbsp;&nbsp;
               <label>
-                <input type="radio" name="scm_integration" value="disabled" {if not $setup.scm_integration|default:'' == 'enabled'}checked{/if}>
+                <input type="radio" name="scm_integration" value="disabled" {if $setup.scm_integration|default:'' != 'enabled'}checked{/if}>
                 {t}Disabled{/t}
               </label>
-            </td>
-          </tr>
-          <tr>
-            <td width="100" align="right">
-              {t}Checkout Page{/t}:&nbsp;
-            </td>
-            <td width="80%">
-              <input type="text" name="checkout_url" size="50" value="{$setup.checkout_url|escape:"html"|default:''}">
-              {include file="error_icon.tpl.html" field="checkout_url"}
-            </td>
-          </tr>
-          <tr>
-            <td width="100" align="right">
-              {t}Diff Page{/t}:&nbsp;
-            </td>
-            <td width="80%">
-              <input type="text" name="diff_url" size="50" value="{$setup.diff_url|escape:"html"|default:''}">
-              {include file="error_icon.tpl.html" field="diff_url"}
-            </td>
-          </tr>
-          <tr>
-            <td width="100" align="right">
-              {t}Log Page{/t}:&nbsp;
-            </td>
-            <td width="80%">
-              <input type="text" name="scm_log_url" size="50" value="{$setup.scm_log_url|escape:"html"|default:''}">
-              {include file="error_icon.tpl.html" field="scm_log_url"}
             </td>
           </tr>
         </table>
       </td>
     </tr>
+
+
+    {block "edit_scm"}
+      <tr>
+        <th width="120">
+          {t}Subject Based Routing{/t}
+        </th>
+        <td>
+         {block "scm_items"}
+           <table>
+             <tr>
+               <td width="100" align="right">
+                 {t}SCM Name{/t}:&nbsp;
+               </td>
+               <td width="80%">
+                 <input type="text" name="scm_name" size="50" value="{$scm.name|escape:"html"|default:''}">
+                 {include file="error_icon.tpl.html" field="checkout_url"}
+               </td>
+             </tr>
+             <tr>
+               <td width="100" align="right">
+                 {t}Checkout Page{/t}:&nbsp;
+               </td>
+               <td width="80%">
+                 <input type="text" name="checkout_url" size="50" value="{$scm.checkout_url|escape:"html"|default:''}">
+                 {include file="error_icon.tpl.html" field="checkout_url"}
+               </td>
+             </tr>
+             <tr>
+               <td width="100" align="right">
+                 {t}Diff Page{/t}:&nbsp;
+               </td>
+               <td width="80%">
+                 <input type="text" name="diff_url" size="50" value="{$scm.diff_url|escape:"html"|default:''}">
+                 {include file="error_icon.tpl.html" field="diff_url"}
+               </td>
+             </tr>
+             <tr>
+               <td width="100" align="right">
+                 {t}Log Page{/t}:&nbsp;
+               </td>
+               <td width="80%">
+                 <input type="text" name="log_url" size="50" value="{$scm.log_url|escape:"html"|default:''}">
+                 {include file="error_icon.tpl.html" field="log_url"}
+               </td>
+             </tr>
+           </table>
+         {/block}
+         </td>
+      </tr>
+    {/block}
 
     <tr class="buttons">
       <td colspan="2" align="center">
@@ -124,4 +157,45 @@ $().ready(function() {
     </tr>
   </table>
 </form>
+
+
+  {block "list_repositories"}
+  <table class="bordered grid">
+    <tr class="title">
+      <th colspan="5">
+        {t}SCM Repositories{/t}
+      </th>
+    </tr>
+    <tr>
+      <th width="4" nowrap><input type="button" value="{t}All{/t}" class="select_all"></th>
+      <th>{t}Name{/t}</th>
+      <th>{t}Checkout URL{/t}</th>
+    </tr>
+
+    {foreach from=$setup.scm item=scm}
+      <tr class="{cycle values='odd,even'}">
+        <td width="4" align="center" nowrap><input type="checkbox" name="items[]" value="{$scm.name}"></td>
+        <td>&nbsp;<a href="{$smarty.server.PHP_SELF}?cat=edit&id={$scm.name}" title="{t}update this entry{/t}">{$scm.name|escape:"html"}</a></td>
+        <td>&nbsp;{$scm.checkout_url}</td>
+      </tr>
+    {foreachelse}
+      <tr class="no_results">
+        <td colspan="8">
+          {t}No SCM repositories defined.{/t}
+        </td>
+      </tr>
+    {/foreach}
+
+
+    <tr class="buttons">
+      <td width="4" align="center">
+        <input type="button" value="{t}All{/t}" class="select_all">
+      </td>
+      <td colspan="4" align="center">
+        <input type="submit" value="{t}Delete{/t}">
+      </td>
+    </tr>
+  </table>
+  {/block}
+
 {/block}
