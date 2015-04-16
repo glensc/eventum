@@ -13,6 +13,7 @@
 
 use Eventum\Db\Adapter\AdapterInterface;
 use Eventum\Db\DatabaseException;
+use Michelf\MarkdownExtra;
 
 /**
  * Class to handle parsing content for links.
@@ -284,6 +285,18 @@ class Link_Filter
     public static function activateLinks($text)
     {
         return self::processText(Auth::getCurrentProject(), $text);
+    }
+
+    public static function textFormat($text, $issue_id)
+    {
+        if (Setup::get()['markdown'] === 'enable') {
+            $text = MarkdownExtra::defaultTransform($text);
+        }
+
+        $text = self::activateLinks($text);
+        $text = self::activateAttachmentLinks($text, $issue_id);
+
+        return $text;
     }
 
     /**
