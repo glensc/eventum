@@ -40,7 +40,7 @@
  */
 class LDAP_Auth_Backend implements Auth_Backend_Interface
 {
-    /** @var Net_LDAP2 $conn The admin LDAP connection */
+    /** @var \Zend\Ldap\Ldap $conn The admin LDAP connection */
     protected $conn;
 
     /** @var string */
@@ -70,9 +70,9 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         $options = array(
             'host' => $setup['host'],
             'port' => $setup['port'],
-            'binddn' => $setup['binddn'],
-            'bindpw' => $setup['bindpw'],
-            'basedn' => $this->basedn,
+            'username' => $setup['binddn'],
+            'password' => $setup['bindpw'],
+            'baseDn' => $this->basedn,
         );
 
         $this->conn = $this->connect($options);
@@ -82,13 +82,15 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
      * Create LDAP connection.
      *
      * @param array $options
-     * @return Net_LDAP2
+     * @return \Zend\Ldap\Ldap
      */
     private function connect($options)
     {
-        $conn = Net_LDAP2::connect($options);
-        if (Misc::isError($conn)) {
-            throw new AuthException($conn->getMessage(), $conn->getCode());
+        try {
+            $conn = new \Zend\Ldap\Ldap($options);
+            $conn->bind();
+        } catch (\Zend\Ldap\Exception\LdapException $e) {
+            throw new AuthException($e->getMessage(), $e->getCode());
         }
 
         return $conn;
@@ -97,23 +99,22 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
     /**
      * Get all users from LDAP server
      *
-     * @return Net_LDAP2_Search|Net_LDAP2_Error Net_LDAP2_Search object or Net_LDAP2_Error object
+     * @param int $scope
+     * @return \Zend\Ldap\Collection
+     * @throws AuthException
      */
-    public function getUserListing()
+    public function getUserListing($scope = Zend\Ldap\Ldap::SEARCH_SCOPE_SUB)
     {
-        $filter = Net_LDAP2_Filter::create('uid', 'equals', '*', false);
-        if (!empty($this->user_filter_string)) {
-            $user_filter = Net_LDAP2_Filter::parse($this->user_filter_string);
-            $filter = Net_LDAP2_Filter::combine('and', array($filter, $user_filter));
+        $filter = Zend\Ldap\Filter::any('uid');
+        if ($this->user_filter_string) {
+//            $filter = Zend\Ldap\Filter::andFilter($filter, $this->user_filter_string);
         }
 
-        $search = $this->conn->search($this->config['basedn'], $filter);
-
-        if (Misc::isError($search)) {
-            throw new AuthException($search->getMessage(), $search->getCode());
+        try {
+            return $this->conn->search($filter, $this->basedn, $scope);
+        } catch (\Zend\Ldap\Exception\LdapException $e) {
+            throw new AuthException($e->getMessage(), $e->getCode());
         }
-
-        return $search;
     }
 
     private function validatePassword($uid, $password)
@@ -121,15 +122,10 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         $errors = array();
 
         foreach (explode('|', $this->getUserDNstring($uid)) as $userDNstring) {
-            // Connecting using the configuration
             try {
-                $res = $this->conn->bind($userDNstring, $password);
-                if (Misc::isError($res)) {
-                    throw new AuthException($res->getMessage(), $res->getCode());
-                }
-
-                return $res;
-            } catch (AuthException $e) {
+                $this->conn->bind($userDNstring, $password);
+                return true;
+            } catch (\Zend\Ldap\Exception\LdapException $e) {
                 $errors[] = $e;
             }
         }
