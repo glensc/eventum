@@ -4,9 +4,7 @@
 // +----------------------------------------------------------------------+
 // | Eventum - Issue Tracking System                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2003 - 2008 MySQL AB                                   |
-// | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2015 Eventum Team.                              |
+// | Copyright (c) 2015 Eventum Team.                                     |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -28,28 +26,61 @@
 // | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../../init.php';
+class MailStorage
+{
+    /** @var \Zend\Mail\Storage\AbstractStorage */
+    private $storage;
 
-$tpl = new Template_Helper();
-$tpl->setTemplate('get_emails.tpl.html');
+    public function __construct($params)
+    {
+        $params = $this->convertParams($params);
 
-Auth::checkAuthentication(APP_COOKIE, null, true);
+        $class = $params['storage_class'];
+        $this->storage = new $class($params);
+    }
 
-$account = array(
-    'ema_hostname' => $_POST['hostname'],
-    'ema_port' => $_POST['port'],
-    'ema_type' => $_POST['type'],
-    'ema_folder' => $_POST['folder'],
-    'ema_username' => $_POST['username'],
-    'ema_password' => $_POST['password'],
-);
-try {
-    $mbox = new MailStorage($account);
-    $tpl->assign('error', 'no_error');
+    /**
+     * Convert parameters from Eventum to Zend syntax.
+     *
+     * Eventum params:
+     *  'ema_hostname'
+     *  'ema_port'
+     *  'ema_type'
+     *  'ema_folder'
+     *  'ema_username'
+     *  'ema_password'
+     */
+    private function convertParams($params)
+    {
+        // Simple options
+        $res = array(
+            'host' => $params['ema_hostname'],
+            'user' => $params['ema_username'],
+            'password' => $params['ema_password'],
+        );
 
-} catch (Exception $e) {
-    error_log(get_class($e));
-    $tpl->assign('error', 'could_not_connect');
+        /**
+         * Parse type:
+         * - imap
+         * - imap/ssl
+         * - imap/ssl/novalidate-cert
+         * - imap/notls
+         * - imap/tls
+         * - imap/tls/novalidate-cert
+         * - pop3
+         * - pop3/ssl
+         * - pop3/ssl/novalidate-cert
+         * - pop3/notls
+         * - pop3/tls
+         * - pop3/tls/novalidate-cert
+         */
+        $type = explode('/', $params['ema_type']);
+
+        $res['storage_class'] = '\\Zend\\Mail\\Storage\\' . ucfirst($type[0]);
+        $res['ssl'] = in_array($type[1], array('ssl', 'tls')) ? $type[1] : false;
+
+        // NOTE: novalidate and notls are not supported
+
+        return $res;
+    }
 }
-
-$tpl->displayTemplate();
