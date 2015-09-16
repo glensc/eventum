@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 - 2008 MySQL AB                                   |
 // | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2014 Eventum Team.                              |
+// | Copyright (c) 2011 - 2015 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -22,7 +22,7 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
@@ -788,19 +788,28 @@ class Mail_Helper
     }
 
     /**
-     * Method used to get the appropriate Message-ID header for a
-     * given issue.
+     * Method used to generate Message-ID header for mail.
+     * To be used if message does not include "Message-Id" header.
      *
+     * @param string $headers
+     * @param string $body
      * @return  string The Message-ID header
      */
-    public static function generateMessageID()
+    public static function generateMessageID($headers = null, $body = null)
     {
-        list($usec, $sec) = explode(' ', microtime());
-        $time = ((float) $usec + (float) $sec);
-        $first = base_convert($time, 10, 36);
-        mt_srand(hexdec(substr(md5(microtime()), -8)) & 0x7fffffff);
-        $rand = mt_rand();
-        $second = base_convert($rand, 10, 36);
+        if ($headers) {
+            // calculate hash to make fake message ID
+            $first = base_convert(md5($headers), 10, 36);
+            $second = base_convert(md5($body), 10, 36);
+        } else {
+            // generate totally random one
+            list($usec, $sec) = explode(' ', microtime());
+            $time = ((float) $usec + (float) $sec);
+            $first = base_convert($time, 10, 36);
+            mt_srand(hexdec(substr(md5(microtime()), -8)) & 0x7fffffff);
+            $rand = mt_rand();
+            $second = base_convert($rand, 10, 36);
+        }
 
         return '<eventum.' . $first . '.' . $second . '@' . APP_HOSTNAME . '>';
     }
@@ -987,8 +996,9 @@ class Mail_Helper
      * Returns the Message-ID from an email. If no message ID is found (Outlook 2003 doesn't
      * generate them in some cases) a "fake" message-id will be calculated.
      *
-     * @param   string $headers The message headers
-     * @param   string $body The message body
+     * @param string $headers The message headers
+     * @param string $body The message body
+     * @return string
      */
     public static function getMessageID($headers, $body)
     {
@@ -1000,15 +1010,12 @@ class Mail_Helper
         // (presented as Array by PEAR Mail_mimeDecode class)
         if ($has_message_id && is_string($structure->headers['message-id'])) {
             return $structure->headers['message-id'];
+
         } elseif ($has_message_id && is_array($structure->headers['message-id'])) {
             return current($structure->headers['message-id']);
         }
 
-        // no match, calculate hash to make fake message ID
-        $first = base_convert(md5($headers), 10, 36);
-        $second = base_convert(md5($body), 10, 36);
-
-        return '<eventum.md5.' . $first . '.' . $second . '@' . APP_HOSTNAME . '>';
+        return self::generateMessageID($headers, $body);
     }
 
     public static function splitAddresses($addresses)
