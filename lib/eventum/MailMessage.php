@@ -26,7 +26,7 @@
 // | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 
-use Zend\Mail\Storage\Message;
+use Zend\Mail\Message;
 use Zend\Mail\Headers;
 use Zend\Mail\Header\AbstractAddressList;
 use Zend\Mail\Header\HeaderInterface;
@@ -39,30 +39,10 @@ use Zend\Mail\Header\To;
 use Zend\Mail\Header\GenericHeader;
 use Zend\Mail\Header\MessageId;
 use Zend\Mime;
+use Zend\Stdlib\ErrorHandler;
 
 class MailMessage extends Message
 {
-    /**
-     * Public constructor
-     *
-     * Generates MessageId header in case it is missing:
-     *
-     * @param array $params
-     */
-    public function __construct(array $params)
-    {
-        parent::__construct($params);
-
-        // set messageId if that is missing
-        // FIXME: do not set this for "child" messages (attachments)
-        if (!$this->headers->has('Message-Id')) {
-            $headers = rtrim($this->headers->toString(), Headers::EOL);
-            $messageId = Mail_Helper::generateMessageID($headers, $this->getContent());
-            $header = new MessageId();
-            $this->headers->addHeader($header->setId(trim($messageId, "<>")));
-        }
-    }
-
     /**
      * Create Mail object from raw email message.
      *
@@ -71,7 +51,8 @@ class MailMessage extends Message
      */
     public static function createFromString($raw)
     {
-        $message = new self(array('raw' => $raw));
+        $message = static::fromString($raw);
+
         return $message;
     }
 
@@ -83,9 +64,13 @@ class MailMessage extends Message
      */
     public static function createFromFile($filename)
     {
-        $message = new self(array('file' => $filename));
-
-        return $message;
+        ErrorHandler::start();
+        $raw = file_get_contents($filename);
+        $error = ErrorHandler::stop();
+        if ($raw === false) {
+            throw new RuntimeException('could not open file', 0, $error);
+        }
+        return static::createFromString($raw);
     }
 
     /**
@@ -127,13 +112,38 @@ class MailMessage extends Message
     }
 
     /**
+     * Compose headers
+     *
+     * @param Headers $headers
+     * @return $this
+     */
+    public function setHeaders(Headers $headers)
+    {
+        // same as parent method. except forcing of setHeaders to ALL HEADERS. WTF DUDES?!
+        $this->headers = $headers;
+
+        // trigger MessageId generation
+        $this->getMessageId();
+
+        return $this;
+    }
+
+    /**
      * Return Message-Id Value
      *
      * @return string
      */
     public function getMessageId()
     {
-        return $this->getHeader('Message-Id')->getFieldValue();
+        // set messageId if that is missing
+        if (!$this->headers->has('Message-Id')) {
+            $headers = rtrim($this->headers->toString(), Headers::EOL);
+            $messageId = Mail_Helper::generateMessageID($headers, $this->getBodyText());
+            $header = new MessageId();
+            $this->headers->addHeader($header->setId(trim($messageId, "<>")));
+        }
+
+        return $this->headers->get('Message-Id')->getFieldValue();
     }
 
     /**
@@ -143,7 +153,7 @@ class MailMessage extends Message
      */
     public function getRawContent()
     {
-        return $this->headers->toString() . Headers::EOL . $this->getContent();
+        return $this->headers->toString() . Headers::EOL . $this->getBodyText();
     }
 
     /**
@@ -153,7 +163,11 @@ class MailMessage extends Message
      */
     public function hasAttachments()
     {
-        return $this->isMultipart() && $this->countParts() > 0;
+        if (!$this->body instanceof Mime\Message) {
+            return false;
+        }
+
+        return $this->body->isMultipart();
     }
 
     /**
@@ -163,48 +177,32 @@ class MailMessage extends Message
      */
     public function getAttachments()
     {
+        if (!$this->hasAttachments()) {
+            throw new InvalidArgumentException("Message has no attachments");
+        }
+
         $attachments = array();
 
-        /** @var MailMessage $attachment */
-        foreach ($this as $attachment) {
-            $headers = $attachment->headers;
+        /** @var Mime\Part $attachment */
+        foreach ($this->body->getParts() as $attachment) {
+            // the 'type' is raw field, not split to parts. sigh, parse ourselves.
+            $mime_type = Mime\Decode::splitHeaderField($attachment->type, null, null);
 
-            $ct = $headers->get('Content-Type');
             // attempt to extract filename
+            // 1. try filename property
             // 1. try Content-Type: name parameter
             // 2. try Content-Disposition: filename parameter
             // 3. as last resort use Untitled with extension from mime-type subpart
-            /** @var ContentType $ct */
-            $filename = $ct->getParameter('name')
-                ?: $attachment->getHeaderField('Content-Disposition', 'filename')
-                    ?: ev_gettext('Untitled.%s', end(explode('/', $ct->getType())));
-
-            // get body.
-            // have to decode ourselves or use something like Mime\Message::createFromMessage
-            $body = $attachment->getContent();
-            /** @var ContentTransferEncoding $cte */
-            $cte = $headers->get('Content-Transfer-Encoding');
-            switch ($cte->getTransferEncoding()) {
-                case 'quoted-printable':
-                    $body = quoted_printable_decode($body);
-                    break;
-                case 'base64':
-                    $body = base64_decode($body);
-                    break;
-                case '7bit':
-                case '8bit':
-                case 'binary':
-                    // these need no transformation
-                    break;
-                default:
-                    throw new LogicException("Unsupported Content-Transfer-Encoding: '{$cte->getTransferEncoding()}'");
-            }
+            $filename = $attachment->filename
+                ?: Mime\Decode::splitHeaderField($attachment->type, 'name')
+                    ?: Mime\Decode::splitHeaderField($attachment->disposition, 'filename')
+                        ?: ev_gettext('Untitled.%s', end(explode('/', $mime_type)));
 
             $attachments[] = array(
                 'filename' => $filename,
-                'cid' => $headers->get('Content-Id')->getFieldValue(),
-                'filetype' => $ct->getType(),
-                'blob' => $body,
+                'cid' => "<{$attachment->id}>",
+                'filetype' => $mime_type,
+                'blob' => $attachment->getRawContent(),
             );
         }
 
@@ -281,22 +279,10 @@ class MailMessage extends Message
             return null;
         }
 
-        // take long path to get multiple headers to single item
-        // and multiple addresses from addresslist to single one.
-
-        $header = $this->getHeader('From');
-
-        if (!$header instanceof HeaderInterface) {
-            $header = iterator_to_array($header);
-            // take first header
-            $header = current($header);
-        }
-
-        $addressList = $header->getAddressList();
-        $addressList = iterator_to_array($addressList);
-
-        $value = current($addressList);
-        return $value;
+        // return first item from the AddressList
+        $header = $this->getFrom();
+        $header = iterator_to_array($header);
+        return current($header);
     }
 
     /**
@@ -307,6 +293,57 @@ class MailMessage extends Message
     public function getSubject()
     {
         return $this->headers->get('Subject');
+    }
+
+    /**
+     * Check if the message is a multipart message
+     *
+     * @return bool if part is multipart
+     */
+    public function isMultipart()
+    {
+        $header = $this->headers->get('Content-Type');
+        if (!$header) {
+            return false;
+        }
+        $contentType = $header->getFieldValue();
+        return stripos($contentType, 'multipart/') === 0;
+    }
+
+    /**
+     * Set the message body
+     *
+     * @param  null|string|\Zend\Mime\Message|object $body
+     * @throws InvalidArgumentException
+     * @return Message
+     */
+    public function setBody($body)
+    {
+        /**
+         * Convert to Mime\Message first
+         * @see Zend\Mail\Storage\Part::_cacheContent
+         */
+        if ($body !== null && is_string($body)) {
+            if ($this->isMultipart()) {
+                /** @var ContentType $contentTypeHeader */
+                $contentTypeHeader = $this->headers->get('Content-Type');
+                $contentTypeValue = $contentTypeHeader->getType();
+                $boundary = Mime\Decode::splitHeaderField($contentTypeHeader->getFieldValue(), 'boundary');
+                if (!$boundary) {
+                    throw new RuntimeException('no boundary found in content type to split message');
+                }
+
+                $body = Mime\Message::createFromMessage($body, $boundary);
+                $body->setMime(new Mime\Mime($boundary));
+            }
+        }
+
+        parent::setBody($body);
+
+        // restore $contentType which parent forced to 'multipart/mixed'. WTF.
+        if (isset($contentTypeHeader) && isset($contentTypeValue)) {
+            $contentTypeHeader->setType($contentTypeValue);
+        }
     }
 
     /**
@@ -351,7 +388,7 @@ class MailMessage extends Message
      *
      * @param array|Traversable $headerlist
      */
-    public function setHeaders(array $headerlist)
+    public function setHeaders_(array $headerlist)
     {
         // NOTE: could use addHeaders() but that blows if value is not mime encoded. wtf
         //$this->headers->addHeaders($headerlist);

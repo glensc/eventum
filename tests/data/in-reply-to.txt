@@ -25,15 +25,18 @@ In-Reply-To: <CAG5u9y_0RRMmCf_o28KmfmyCn5UN9PVM1=avWp4wWqbHGgojsA@4.example.org>
 Content-Type: multipart/alternative;
  boundary="------------020406080008030306040208"
 
-This is a multi-part message in MIME format.
+This is a message in Mime Format.  If you see this, your mail reader does not support this format.
+
 --------------020406080008030306040208
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain;
+ charset="UTF-8";
+ format="flowed"
 Content-Transfer-Encoding: 8bit
 
 meh
-
 --------------020406080008030306040208
-Content-Type: text/html; charset=UTF-8
+Content-Type: text/html;
+ charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 
 <html>
@@ -43,5 +46,5 @@ Content-Transfer-Encoding: 8bit
   <body text="#000000" bgcolor="#FFFFFF">
   </body>
 </html>
-
 --------------020406080008030306040208--
+

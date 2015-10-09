@@ -6,6 +6,7 @@ class MailMessageTest extends PHPUnit_Framework_TestCase
     public function testMissingMessageId()
     {
         $raw = "X-foo: 1\r\n\r\nnada";
+
         $message = MailMessage::createFromString($raw);
         $message_id = $message->getMessageId();
         $exp = "<eventum.68gm8417ga.clqtuo3skl4w0gc@eventum.example.org>";
@@ -15,6 +16,12 @@ class MailMessageTest extends PHPUnit_Framework_TestCase
     public function testDuplicateMessageId()
     {
 
+    }
+
+    public function testGetSender()
+    {
+        $message = MailMessage::createFromFile(__DIR__ . '/data/bug684922.txt');
+        $this->assertEquals('abcd@origin.com', $message->getSender());
     }
 
     public function testIsBounceMessage()
@@ -27,17 +34,9 @@ class MailMessageTest extends PHPUnit_Framework_TestCase
     {
         $raw = "Message-ID: <33@JON>X-foo: 1\r\n\r\nada";
         $message = MailMessage::createFromString($raw);
-        $has_attachments = $message->countParts();
-        $multipart = $message->isMultipart();
-        $this->assertFalse($multipart);
-        $this->assertEquals(0, $has_attachments);
         $this->assertFalse($message->hasAttachments());
 
         $message = MailMessage::createFromFile(__DIR__ . '/data/bug684922.txt');
-        $multipart = $message->isMultipart();
-        $this->assertTrue($multipart);
-        $has_attachments = $message->countParts();
-        $this->assertEquals(2, $has_attachments);
         $this->assertTrue($message->hasAttachments());
     }
 
@@ -112,7 +111,7 @@ class MailMessageTest extends PHPUnit_Framework_TestCase
 
         $raw = preg_split("/\r?\n/", $raw);
         $content = preg_split("/\r?\n/", $content);
-        $this->assertSame($raw, $content);
+        $this->assertSame(join("\n", $raw), join("\n", $content));
     }
 
     public function testRemoveHeader()
