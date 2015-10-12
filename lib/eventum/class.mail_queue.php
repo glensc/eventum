@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 - 2008 MySQL AB                                   |
 // | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2014 Eventum Team.                              |
+// | Copyright (c) 2011 - 2015 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -22,7 +22,7 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
@@ -35,18 +35,18 @@ class Mail_Queue
      * Adds an email to the outgoing mail queue.
      *
      * @param   string $recipient The recipient of this email
-     * @param   array $headers The list of headers that should be sent with this email
-     * @param   string $body The body of the message
+     * @param   MailMessage $mail The Mail object
      * @param   integer $save_email_copy Whether to send a copy of this email to a configurable address or not (eventum_sent@)
      * @param   integer $issue_id The ID of the issue. If false, email will not be associated with issue.
      * @param   string $type The type of message this is.
      * @param   integer $sender_usr_id The id of the user sending this email.
      * @param   integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      * @return  true, or a PEAR_Error object
+     * @status PORTED
      */
-    public static function add($recipient, $headers, $body, $save_email_copy = 0, $issue_id = false, $type = '', $sender_usr_id = false, $type_id = false)
+    public static function add($recipient, $mail, $save_email_copy = 0, $issue_id = null, $type = '', $sender_usr_id = null, $type_id = null)
     {
-        Workflow::modifyMailQueue(Auth::getCurrentProject(false), $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
+        Workflow::modifyMailQueue(Auth::getCurrentProject(false), $recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id);
 
         // avoid sending emails out to users with inactive status
         $recipient_email = Mail_Helper::getEmailAddress($recipient);
@@ -64,10 +64,12 @@ class Mail_Queue
 
         $reminder_addresses = Reminder::_getReminderAlertAddresses();
 
+        $headers = array();
+
         // add specialized headers
         if ((!empty($issue_id)) && ((!empty($to_usr_id)) && (User::getRoleByUser($to_usr_id, Issue::getProjectID($issue_id)) != User::getRoleID('Customer'))) ||
                 (@in_array(Mail_Helper::getEmailAddress($recipient), $reminder_addresses))) {
-            $headers += Mail_Helper::getSpecializedHeaders($issue_id, $type, $headers, $sender_usr_id);
+            $headers += Mail_Helper::getSpecializedHeaders($issue_id, $type, $sender_usr_id);
         }
 
         // try to prevent triggering absence auto responders
@@ -78,34 +80,39 @@ class Mail_Queue
             $issue_id = 'null';
         }
         // if the Date: header is missing, add it.
-        if (empty($headers['Date'])) {
-            $headers['Date'] = Mime_Helper::encode(date('D, j M Y H:i:s O'));
+        // FIXME: do in class? or add setDate() method?
+        if (!$mail->getHeaders()->has('Date')) {
+            $headers['Date'] = date('D, j M Y H:i:s O');
         }
+        /*
         if (!empty($headers['To'])) {
             $headers['To'] = Mail_Helper::fixAddressQuoting($headers['To']);
         }
-        // encode headers and add special mime headers
-        $headers = Mime_Helper::encodeHeaders($headers);
+        */
+        $mail->setHeaders($headers);
 
+        // encode headers and add special mime headers
+//        $headers = Mime_Helper::encodeHeaders($headers);
+/*
         $res = Mail_Helper::prepareHeaders($headers);
         if (Misc::isError($res)) {
             Error_Handler::logError(array($res->getMessage(), $res->getDebugInfo()), __FILE__, __LINE__);
 
             return $res;
-        }
+        }*/
 
         // convert array of headers into text headers
-        list(, $text_headers) = $res;
+//        list(, $text_headers) = $res;
 
         $params = array(
             'maq_save_copy' => $save_email_copy,
             'maq_queued_date' => Date_Helper::getCurrentDateGMT(),
             'maq_sender_ip_address' => !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '',
             'maq_recipient' => $recipient,
-            'maq_headers' => $text_headers,
-            'maq_body' => $body,
+            'maq_headers' => $mail->getHeaders()->toString(),
+            'maq_body' => $mail->getContent(),
             'maq_iss_id' => $issue_id,
-            'maq_subject' => $headers['Subject'],
+            'maq_subject' => $mail->getSubject()->getFieldValue(),
             'maq_type' => $type,
         );
 
@@ -120,7 +127,7 @@ class Mail_Queue
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DbException $e) {
-            return $res;
+            return false;
         }
 
         return true;

@@ -112,27 +112,6 @@ class Mail_Helper
     }
 
     /**
-     * Checks whether the given headers are from a vacation
-     * auto-responder message or not.
-     *
-     * @param   array $headers The list of headers
-     * @return  boolean
-     */
-    public static function isVacationAutoResponder($headers)
-    {
-        // loop through the headers and make sure they are all lowercase.
-        foreach ($headers as $key => $value) {
-            $headers[strtolower($key)] = $value;
-        }
-
-        if ((@$headers['x-vacationmessage'] == 'Yes') || ((isset($headers['auto-submitted'])) && (!empty($headers['auto-submitted'])))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Method used to parse a string and return all email addresses contained
      * within it.
      *
@@ -454,47 +433,50 @@ class Mail_Helper
     }
 
     /**
-     * Method used to add a customized warning message to the body
-     * of outgoing emails.
+     * Method used to add a customized warning message to the body of outgoing emails.
      *
      * @param   integer $issue_id The issue ID
      * @param   string $to The recipient of the message
-     * @param   string $body The body of the message
-     * @param   array $headers The headers of the message
-     * @return  string The body of the message with the warning message, if appropriate
+     * @param   MailMessage $mail The Mail object
      */
-    public static function addWarningMessage($issue_id, $to, $body, $headers)
+    public static function addWarningMessage($issue_id, $to, $mail)
     {
         $setup = Setup::load();
-        if ((@$setup['email_routing']['status'] == 'enabled') &&
-                ($setup['email_routing']['warning']['status'] == 'enabled')) {
-            // check if the recipient can send emails to the customer
-            $recipient_email = self::getEmailAddress($to);
-            $recipient_usr_id = User::getUserIDByEmail($recipient_email);
-            // don't add the warning message if the recipient is an unknown email address
-            if (empty($recipient_usr_id)) {
-                return $body;
-            } else {
-                // don't add anything if the recipient is a known customer contact
-                $recipient_role_id = User::getRoleByUser($recipient_usr_id, Issue::getProjectID($issue_id));
-                if ($recipient_role_id == User::getRoleID('Customer')) {
-                    return $body;
-                } else {
-                    if (!Support::isAllowedToEmail($issue_id, $recipient_email)) {
-                        $warning = self::getWarningMessage('blocked');
-                    } else {
-                        $warning = self::getWarningMessage('allowed');
-                    }
-                    if (@$headers['Content-Transfer-Encoding'] == 'base64') {
-                        return base64_encode($warning . "\n\n" . trim(base64_decode($body)));
-                    } else {
-                        return $warning . "\n\n" . $body;
-                    }
-                }
-            }
-        } else {
-            return $body;
+        $enabled = @$setup['email_routing']['status'] == 'enabled' && $setup['email_routing']['warning']['status'] == 'enabled';
+        if (!$enabled) {
+            return;
         }
+
+        // check if the recipient can send emails to the customer
+        $recipient_email = self::getEmailAddress($to);
+        $recipient_usr_id = User::getUserIDByEmail($recipient_email);
+        // don't add the warning message if the recipient is an unknown email address
+        if (empty($recipient_usr_id)) {
+            return;
+        }
+
+        // don't add anything if the recipient is a known customer contact
+        $recipient_role_id = User::getRoleByUser($recipient_usr_id, Issue::getProjectID($issue_id));
+        if ($recipient_role_id == User::getRoleID('Customer')) {
+            return;
+        }
+
+        if (!Support::isAllowedToEmail($issue_id, $recipient_email)) {
+            $warning = self::getWarningMessage('blocked');
+        } else {
+            $warning = self::getWarningMessage('allowed');
+        }
+
+        $body = $warning . "\n\n" . $mail->getContent();
+        $mail->setContent($body);
+        /*
+
+        if (@$headers['Content-Transfer-Encoding'] == 'base64') {
+            return base64_encode($warning . "\n\n" . trim(base64_decode($body)));
+        } else {
+            return $warning . "\n\n" . $body;
+        }
+        */
     }
 
     /**
@@ -505,26 +487,11 @@ class Mail_Helper
      *
      * @param   array $headers An array of headers for this email
      * @return  array The headers of the email, without the stripped ones
+     * @deprecated
      */
-    public static function stripHeaders($headers)
+    public static function stripHeaders(Mailmessage $headers)
     {
-        $ignore_headers = array(
-            'to',
-            'cc',
-            'bcc',
-            'return-path',
-            'received',
-            'Disposition-Notification-To',
-        );
-        $ignore_pattern = '/^resent.*/';
-        foreach ($headers as $name => $value) {
-            $lower_name = strtolower($name);
-            if ((in_array($lower_name, $ignore_headers)) || (preg_match($ignore_pattern, $lower_name))) {
-                unset($headers[$name]);
-            }
-        }
-
-        return $headers;
+        throw new LogicException('port to mailmessage');
     }
 
     /**
@@ -702,11 +669,10 @@ class Mail_Helper
      *
      * @param   integer $issue_id The issue ID
      * @param   string $type The type of message this is
-     * @param   string $headers The existing headers of this message.
      * @param   integer $sender_usr_id The id of the user sending this email.
      * @return  array An array of specialized headers
      */
-    public static function getSpecializedHeaders($issue_id, $type, $headers, $sender_usr_id)
+    public static function getSpecializedHeaders($issue_id, $type, $sender_usr_id)
     {
         $new_headers = array();
         if (!empty($issue_id)) {
@@ -864,18 +830,19 @@ class Mail_Helper
     /**
      * Checks to make sure In-Reply-To and References headers are correct.
      *
+     * @param MailMessage $mail
+     * @param int $issue_id
+     * @param string $type
      */
-    public static function rewriteThreadingHeaders($issue_id, $full_email, $headers, $type = 'email')
+    public static function rewriteThreadingHeaders(MailMessage $mail, $issue_id, $type = 'email')
     {
-        list($text_headers, $body) = Mime_Helper::splitHeaderBody($full_email);
-
-        $msg_id = self::getMessageID($text_headers, $body);
+        $msg_id = $mail->getMessageId();
 
         // check if the In-Reply-To header exists and if so, does it relate to a message stored in Eventum
         // if it does not, set new In-Reply-To header
-        $reference_msg_id = self::getReferenceMessageID($text_headers);
+        $reference_msg_id = $mail->getReferenceMessageId();
         $reference_issue_id = false;
-        if (!empty($reference_msg_id)) {
+        if ($reference_msg_id) {
             // check if referenced msg id is associated with this issue
             if ($type == 'note') {
                 $reference_issue_id = Note::getIssueByMessageID($reference_msg_id);
@@ -884,17 +851,19 @@ class Mail_Helper
             }
         }
 
-        if ((empty($reference_msg_id)) || ($reference_issue_id != $issue_id)) {
+        if (!$reference_msg_id || $reference_issue_id != $issue_id) {
             $reference_msg_id = Issue::getRootMessageID($issue_id);
         }
         $references = self::getReferences($issue_id, $reference_msg_id, $type);
 
         // now the fun part, re-writing the email headers
-        if (empty($headers['message-id'])) {
-            // add Message-ID since it doesn't exist (curses on Outlook 2003)
-            $text_headers .= "\r\nMessage-ID: $msg_id";
-            $headers['message-id'] = $msg_id;
-        }
+        // NOTE: not adding message-id, it is always present
+
+        /*
+         not clear what the fuck this is supposed to do!
+
+        add In-Reply-To: header with value of $reference_msg_id?
+
 
         if (preg_match('/^In-Reply-To: (.*)/mi', $text_headers) > 0) {
             // replace existing header
@@ -903,7 +872,15 @@ class Mail_Helper
             // add new header after message ID
             $text_headers = preg_replace('/^Message-ID: (.*)$/mi', "Message-ID: $1\r\nIn-Reply-To: $reference_msg_id", $text_headers, 1);
         }
+        */
         $headers['in-reply-to'] = $reference_msg_id;
+
+        /*
+         *          not clear what the fuck this is supposed to do!
+
+        add to References header $references?
+
+
         if (preg_match('/^References: (.*)/mi', $text_headers) > 0) {
             // replace existing header
             $text_headers = preg_replace('/^References: (.*)/mi', 'References: ' . self::fold(implode(' ', $references)), $text_headers, 1);
@@ -911,9 +888,11 @@ class Mail_Helper
             // add new header after In-Reply-To
             $text_headers = preg_replace('/^In-Reply-To: (.*)$/mi', "In-Reply-To: $1\r\nReferences: " . self::fold(implode(' ', $references)), $text_headers, 1);
         }
+        */
         $headers['references'] = self::fold(implode(' ', $references));
 
-        return array($text_headers . "\r\n\r\n" . $body, $headers);
+        $headers = $mail->getHeaders();
+//        $headers->setH
     }
 
     /**

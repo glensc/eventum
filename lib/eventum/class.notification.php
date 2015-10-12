@@ -243,19 +243,11 @@ class Notification
     }
 
     /**
-     * Method used to check whether the current sender of the email is the
-     * mailer daemon responsible for dealing with bounces.
-     *
-     * @param   string $email The email address to check against
-     * @return  boolean
+     * @deprecated
      */
-    public static function isBounceMessage($email)
+    public static function isBounceMessage(array $email)
     {
-        if (strtolower(substr($email, 0, 14)) == 'mailer-daemon@') {
-            return true;
-        } else {
-            return false;
-        }
+        throw new LogicException('MailMessage');
     }
 
     /**
@@ -283,20 +275,22 @@ class Notification
      *
      * @param   integer $user_id The user ID of the person performing this action
      * @param   integer $issue_id The issue ID
-     * @param   array $message An array containing the email
+     * @param   MailMessage $mail The Mail object
      * @param   boolean $internal_only Whether the email should only be redirected to internal users or not
      * @param   boolean $assignee_only Whether the email should only be sent to the assignee
      * @param   boolean $type The type of email this is
      * @param   integer $sup_id the ID of this email
      * @return  void
      */
-    public static function notifyNewEmail($usr_id, $issue_id, $message, $internal_only = false, $assignee_only = false, $type = '', $sup_id = false)
+    public static function notifyNewEmail($usr_id, $issue_id, $mail, $internal_only = false, $assignee_only = false, $type = '', $sup_id = false)
     {
         $prj_id = Issue::getProjectID($issue_id);
 
-        $full_message = $message['full_email'];
-        $sender = $message['from'];
-        $sender_email = strtolower(Mail_Helper::getEmailAddress($sender));
+//        $full_message = $mail['full_email'];
+//        $sender = $mail['from'];
+//        $sender_email = strtolower(Mail_Helper::getEmailAddress($sender));
+        $sender = $mail->getFromHeader()->toString();
+        $sender_email = $mail->getSender();
 
         // get ID of whoever is sending this.
         $sender_usr_id = User::getUserIDByEmail($sender_email, true);
@@ -308,7 +302,7 @@ class Notification
         $subscribed_emails = self::getSubscribedEmails($issue_id, 'emails');
         $subscribed_emails = array_map('strtolower', $subscribed_emails);
         if ((!self::isIssueRoutingSender($issue_id, $sender)) &&
-                (!self::isBounceMessage($sender_email)) &&
+                (!$mail->isBounceMessage()) &&
                 (!in_array($sender_email, $subscribed_emails)) &&
                 (Workflow::shouldAutoAddToNotificationList($prj_id))) {
             $actions = array('emails');
@@ -366,25 +360,11 @@ class Notification
         //  - keep everything else in the message, except 'From:', 'Sender:', 'To:', 'Cc:'
         // make 'Joe Blow <joe@example.com>' become 'Joe Blow [CSC] <eventum_59@example.com>'
         $from = self::getFixedFromHeader($issue_id, $sender, 'issue');
+        $mail->setFrom($from);
+        $mail->stripHeaders();
 
-        list($_headers, $body) = Mime_Helper::splitBodyHeader($full_message);
-        $header_names = Mime_Helper::getHeaderNames($_headers);
-
-        $current_headers = Mail_Helper::stripHeaders($message['headers']);
-        $headers = array();
-        // build the headers array required by the smtp library
-        foreach ($current_headers as $header_name => $value) {
-            if ($header_name == 'from') {
-                $headers['From'] = $from;
-            } else {
-                if (is_array($value)) {
-                    $value = implode('; ', $value);
-                }
-                $headers[$header_names[$header_name]] = $value;
-            }
-        }
-
-        $headers['Subject'] = Mail_Helper::formatSubject($issue_id, $headers['Subject']);
+        $subject = $mail->getSubject();
+        $subject->setSubject(Mail_Helper::formatSubject($issue_id, $subject->getFieldValue()));
 
         if (empty($type)) {
             if (($sender_usr_id != false) && (User::getRoleByUser($sender_usr_id, Issue::getProjectID($issue_id)) == User::getRoleID('Customer'))) {
@@ -395,11 +375,13 @@ class Notification
         }
 
         foreach ($emails as $to) {
-            // add the warning message about replies being blocked or not
-            $fixed_body = Mail_Helper::addWarningMessage($issue_id, $to, $body, $headers);
-            $headers['To'] = Mime_Helper::encodeAddress($to);
+            $clone = clone $mail;
+            $clone->setTo($to);
 
-            Mail_Queue::add($to, $headers, $fixed_body, 1, $issue_id, $type, $sender_usr_id, $sup_id);
+            // add the warning message about replies being blocked or not
+            Mail_Helper::addWarningMessage($issue_id, $to, $clone);
+
+            Mail_Queue::add($to, $clone, 1, $issue_id, $type, $sender_usr_id, $sup_id);
         }
     }
 

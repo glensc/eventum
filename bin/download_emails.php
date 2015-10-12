@@ -26,6 +26,7 @@
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
+// | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 
 // Set to almost 2Gigs, as 2048M overflows:
@@ -239,17 +240,19 @@ if ($mbox == false) {
 
 // if we only want new emails
 if ($account['ema_get_only_new']) {
-    $new_emails = Support::getNewEmails($mbox);
+    $emails = Support::getNewEmails($mbox);
 
-    foreach ($new_emails as $new_email) {
-        Support::getEmailInfo($mbox, $account, $new_email);
+    foreach ($emails as $i) {
+        $mail = MailMessage::createFromImap($mbox, $i);
+        Support::getEmailInfo($mail, $account);
     }
 } else {
-    $total_emails = Support::getTotalEmails($mbox);
+    $emails = Support::getTotalEmails($mbox);
 
-    if ($total_emails > 0) {
-        for ($i = 1; $i <= $total_emails; $i++) {
-            Support::getEmailInfo($mbox, $account, $i);
+    if ($emails > 0) {
+        for ($i = 1; $i <= $emails; $i++) {
+            $mail = MailMessage::createFromImap($mbox, $i);
+            Support::getEmailInfo($mail, $account);
         }
     }
 }

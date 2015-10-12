@@ -439,13 +439,10 @@ class Abstract_Workflow_Backend
      *
      * @param   integer $prj_id The project ID
      * @param   array $info An array containing the information on the email account.
-     * @param   resource $mbox The imap connection resource
-     * @param   integer $num The sequential email number
-     * @param   string $message The complete email message
-     * @param   object $email An object containing the decoded email
+     * @param   MailMessage $mail The Mail Message object
      * @return  mixed null by default, -1 if the rest of the email script should not be processed.
      */
-    public function preEmailDownload($prj_id, $info, $mbox, $num, &$message, &$email)
+    public function preEmailDownload($prj_id, $info, $mail)
     {
         return null;
     }

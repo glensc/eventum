@@ -33,7 +33,8 @@ ini_set('memory_limit', '1024M');
 require_once dirname(__FILE__) . '/../init.php';
 
 $full_message = stream_get_contents(STDIN);
-$return = Routing::route_emails($full_message);
+$mail = MailMessage::createFromString($full_message);
+$return = Routing::route_emails($mail);
 if (is_array($return)) {
     echo $return[1];
     exit($return[0]);

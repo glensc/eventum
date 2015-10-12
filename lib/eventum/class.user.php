@@ -418,13 +418,17 @@ class User
     /**
      * Method used to lookup the user ID of a given email address.
      *
-     * @param   string $email The email address associated with the user account
+     * @param   string|MailMessage $email The email address or MailMessage object
      * @param   boolean $check_aliases If user aliases should be checked as well.
      * @return  integer The user ID
      */
     public static function getUserIDByEmail($email, $check_aliases = false)
     {
         static $returns;
+
+        if ($email instanceof MailMessage) {
+            $email = $email->getSender();
+        }
 
         if (!is_string($email)) {
             if (Misc::isError($email)) {

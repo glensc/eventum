@@ -595,22 +595,20 @@ class Workflow
      * rest of the email code will not be executed.
      *
      * @param   integer $prj_id The project ID
-     * @param   array $info An array containing the information on the email account.
-     * @param   resource $mbox The imap connection resource
-     * @param   integer $num The sequential email number
-     * @param   string $message The complete email message
-     * @param   object $email An object containing the decoded email
-     * @param   object $structure An object containing the decoded email
+     * @param   array $account An array containing the information on the email account.
+     * @param   MailMessage $mail The Mail Message object
      * @return  mixed null by default, -1 if the rest of the email script should not be processed.
      */
-    public static function preEmailDownload($prj_id, $info, $mbox, $num, &$message, &$email, &$structure)
+    public static function preEmailDownload($prj_id, $account, $mail)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return null;
         }
         $backend = self::_getBackend($prj_id);
 
-        return $backend->preEmailDownload($prj_id, $info, $mbox, $num, $message, $email, $structure);
+        // NOTE: these no longer exist, just pass as null them
+        $num = $message = $email = $structure = null;
+        return $backend->preEmailDownload($prj_id, $account, $mail, $num, $message, $email, $structure);
     }
 
     /**
@@ -679,21 +677,20 @@ class Workflow
      *
      * @param   integer $prj_id
      * @param   string $recipient
-     * @param   array $headers
-     * @param   string $body
+     * @param   MailMessage $mail The Mail object
      * @param   integer $issue_id
      * @param   string $type The type of message this is.
      * @param   integer $sender_usr_id The id of the user sending this email.
      * @param   integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      */
-    public static function modifyMailQueue($prj_id, &$recipient, &$headers, &$body, $issue_id, $type, $sender_usr_id, $type_id)
+    public static function modifyMailQueue($prj_id, &$recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
-            return true;
+            return;
         }
         $backend = self::_getBackend($prj_id);
 
-        return $backend->modifyMailQueue($prj_id, $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
+        $backend->modifyMailQueue($prj_id, $recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id);
     }
 
     /**
