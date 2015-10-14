@@ -3,6 +3,7 @@
 {block "manage_content"}
     <form id="private_key_form" method="post">
       <input type="hidden" name="cat" value="update">
+      <input type="hidden" name="csrf_token" value="{$csrf_token|escape:html}">
       <table class="bordered">
         <tr class="title">
           <th colspan="2">

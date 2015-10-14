@@ -40,16 +40,25 @@ if ($role_id < User::ROLE_ADMINISTRATOR) {
     exit;
 }
 
-$cat = isset($_POST['cat']) ? (string)$_POST['cat'] : null;
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = sha1(Misc::generateRandom());
+}
 
+$csrf_token = isset($_SESSION['csrf_token']) ? (string)$_SESSION['csrf_token'] : null;
+$cat = isset($_POST['cat']) ? (string)$_POST['cat'] : null;
 if ($cat == 'update') {
-    // regenerate key
-    try {
-        Auth::generatePrivateKey();
-        Misc::setMessage(ev_gettext('Thank you, the private key was regenerated.'));
-    } catch (Exception $e) {
-        Misc::setMessage(ev_gettext('Private key regeneration error. Check server error logs.'), Misc::MSG_ERROR);
+    $post_csrf_token = isset($_POST['csrf_token']) ? (string)$_POST['csrf_token'] : null;
+    if (!$post_csrf_token || $post_csrf_token != $csrf_token) {
+        Misc::setMessage(ev_gettext('CSRF token mismatch.'), Misc::MSG_ERROR);
+    } else {
+        try {
+//        Auth::generatePrivateKey();
+            Misc::setMessage(ev_gettext('Thank you, the private key was regenerated.'));
+        } catch (Exception $e) {
+            Misc::setMessage(ev_gettext('Private key regeneration error. Check server error logs.'), Misc::MSG_ERROR);
+        }
     }
 }
 
+$tpl->assign('csrf_token', $csrf_token);
 $tpl->displayTemplate();
