@@ -176,9 +176,8 @@ class Routing
         }
 
         // Remove excess Re's
-        $subject = $mail->getSubject();
         // Note: the method will still keep one 'Re'
-        $subject->setSubject(Mail_Helper::removeExcessRe($subject->getFieldValue()));
+        $mail->setSubject(Mail_Helper::removeExcessRe($mail->getSubject()));
 
         // TODO: remove all params that use $mail in some form and pass just $mail object
         // as for example content and headers could be rewritten later!
@@ -188,9 +187,9 @@ class Routing
             'message_id'     => $mail->getMessageId(),
             'date'           => Date_Helper::getCurrentDateGMT(),
             'from'           => $sender_email->toString(), // FIXME: needs address or header?
-            'to'             => $headers->get('To')->toString(),
-            'cc'             => $headers->get('Co')->toString(),
-            'subject'        => $subject->getFieldValue(),
+            'to'             => $mail->getTo(),
+            'cc'             => $mail->getCc(),
+            'subject'        => $mail->getSubject(),
 //            'body'           => $mail->getContent(), // FIXME: needed
 //            'full_email'     => $mail->getRawContent(), // FIXME: needed?
             'has_attachment' => $has_attachments,

@@ -112,7 +112,7 @@ class Mail_Queue
             'maq_headers' => $mail->getHeaders()->toString(),
             'maq_body' => $mail->getContent(),
             'maq_iss_id' => $issue_id,
-            'maq_subject' => $mail->getSubject()->getFieldValue(),
+            'maq_subject' => $mail->getSubject(),
             'maq_type' => $type,
         );
 

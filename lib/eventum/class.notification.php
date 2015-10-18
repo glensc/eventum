@@ -363,8 +363,7 @@ class Notification
         $mail->setFrom($from);
         $mail->stripHeaders();
 
-        $subject = $mail->getSubject();
-        $subject->setSubject(Mail_Helper::formatSubject($issue_id, $subject->getFieldValue()));
+        $mail->setSubject(Mail_Helper::formatSubject($issue_id, $mail->getSubject()));
 
         if (empty($type)) {
             if (($sender_usr_id != false) && (User::getRoleByUser($sender_usr_id, Issue::getProjectID($issue_id)) == User::getRoleID('Customer'))) {

@@ -1991,7 +1991,7 @@ class Issue
     {
 
         $sender = $mail->getSender();
-        $summary = $mail->getSubject()->getFieldValue();
+        $summary = $mail->getSubject();
         $description = $mail->getContent();
         $date = $mail->getMailDate();
         $msg_id = $mail->getMessageId();

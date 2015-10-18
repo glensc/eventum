@@ -597,14 +597,14 @@ class Support
         /** @var Zend\Mail\Address $sender_email */
         $sender_email = $mail->getFromHeader();
 
-        $subject = $mail->getSubject()->getFieldValue();
+        $subject = $mail->getSubject();
         $t = array(
             'ema_id'         => $info['ema_id'],
             'message_id'     => $message_id,
             'date'           => Date_Helper::convertDateGMT($mail->getMailDate()),
             'from'           => $sender_email,
-            'to'             => $headers->get('To')->toString(),
-            'cc'             => $headers->get('Cc')->toString(),
+            'to'             => $mail->getTo(),
+            'cc'             => $mail->getCc(),
             'subject'        => $subject,
 //            'body'           => @$message_body,
 //            'full_email'     => @$message,
@@ -833,7 +833,7 @@ class Support
                 // Look for issue ID in the subject line
 
                 // look for [#XXXX] in the subject line
-                if (preg_match("/\[#(\d+)\]( Note| BLOCKED)*/", $mail->getSubject()->getFieldValue(), $matches)) {
+                if (preg_match("/\[#(\d+)\]( Note| BLOCKED)*/", $mail->getSubject(), $matches)) {
                     $should_create_issue = false;
                     $issue_id = $matches[1];
                     if (!Issue::exists($issue_id, false)) {
@@ -2638,7 +2638,7 @@ class Support
             );
 
             $body = Mail_Helper::getCannedBlockedMsgExplanation() . $mail->getContent();
-            $res = Note::insertNote(Auth::getUserID(), $issue_id, $mail->getSubject()->getFieldValue(), $body, $options);
+            $res = Note::insertNote(Auth::getUserID(), $issue_id, $mail->getSubject(), $body, $options);
 
             // associate the email attachments as internal-only files on this issue
             if ($res != -1) {
