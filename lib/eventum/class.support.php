@@ -597,14 +597,15 @@ class Support
         /** @var Zend\Mail\Address $sender_email */
         $sender_email = $mail->getFromHeader();
 
+        $subject = $mail->getSubject()->getFieldValue();
         $t = array(
             'ema_id'         => $info['ema_id'],
             'message_id'     => $message_id,
             'date'           => Date_Helper::convertDateGMT($mail->getMailDate()),
             'from'           => $sender_email,
-            'to'             => @$email->toaddress,
-            'cc'             => @$email->ccaddress,
-            'subject'        => $mail->getSubject()->getFieldValue(),
+            'to'             => $headers->get('To')->toString(),
+            'cc'             => $headers->get('Co')->toString(),
+            'subject'        => $subject,
 //            'body'           => @$message_body,
 //            'full_email'     => @$message,
             'has_attachment' => $has_attachments,
@@ -612,7 +613,6 @@ class Support
 //            'headers'        => @$structure->headers,
         );
 
-        $subject = Mime_Helper::decodeQuotedPrintable(@$structure->headers['subject']);
         $should_create_array = self::createIssueFromEmail($info, $headers, $message_body, $t['date'], $sender_email, $subject, $t['to'], $t['cc']);
         $should_create_issue = $should_create_array['should_create_issue'];
 
@@ -763,12 +763,7 @@ class Support
 
         if ($res > 0) {
             // need to delete the message from the server?
-            if (!$info['ema_leave_copy']) {
-                @imap_delete($mbox, $num);
-            } else {
-                // mark the message as already read
-                @imap_setflag_full($mbox, $num, '\\Seen');
-            }
+            self::deleteMessage($info, $mbox, $num);
         }
     }
 
