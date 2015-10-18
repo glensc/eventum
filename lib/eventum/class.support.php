@@ -237,7 +237,7 @@ class Support
      *
      * @param MailMessage $mail The Mail object
      */
-    public static function saveRoutedEmail($mail)
+    public static function saveRoutedEmail(MailMessage $mail)
     {
         if (!defined('APP_ROUTED_MAILS_SAVEDIR') || !APP_ROUTED_MAILS_SAVEDIR) {
             return;
@@ -520,7 +520,7 @@ class Support
             if (@$setup['email_routing']['status'] == 'enabled') {
                 $res = Routing::getMatchingIssueIDs($addresses, 'email');
                 if ($res != false) {
-                    $return = Routing::route_emails($message);
+                    $return = Routing::route_emails($mail);
                     if ($return === true) {
                         self::deleteMessage($info, $mbox, $num);
 
@@ -533,7 +533,7 @@ class Support
             if (@$setup['note_routing']['status'] == 'enabled') {
                 $res = Routing::getMatchingIssueIDs($addresses, 'note');
                 if ($res != false) {
-                    $return = Routing::route_notes($message);
+                    $return = Routing::route_notes($mail);
 
                     // if leave copy of emails on IMAP server is off we can
                     // bounce on note that user had no permission to write
@@ -592,24 +592,24 @@ class Support
             //return;
         }
 
-        $sender_email = Mail_Helper::getEmailAddress($email->fromaddress);
-        if (Misc::isError($sender_email)) {
-            $sender_email = 'Error Parsing Email <>';
-        }
+        $headers = $mail->getHeaders();
+
+        /** @var Zend\Mail\Address $sender_email */
+        $sender_email = $mail->getFromHeader();
 
         $t = array(
             'ema_id'         => $info['ema_id'],
             'message_id'     => $message_id,
-            'date'           => Date_Helper::convertDateGMTByTS($email->udate),
+            'date'           => Date_Helper::convertDateGMT($mail->getMailDate()),
             'from'           => $sender_email,
             'to'             => @$email->toaddress,
             'cc'             => @$email->ccaddress,
-            'subject'        => @$structure->headers['subject'],
-            'body'           => @$message_body,
-            'full_email'     => @$message,
+            'subject'        => $mail->getSubject()->getFieldValue(),
+//            'body'           => @$message_body,
+//            'full_email'     => @$message,
             'has_attachment' => $has_attachments,
             // the following items are not inserted, but useful in some methods
-            'headers'        => @$structure->headers,
+//            'headers'        => @$structure->headers,
         );
 
         $subject = Mime_Helper::decodeQuotedPrintable(@$structure->headers['subject']);

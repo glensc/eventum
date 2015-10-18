@@ -268,32 +268,23 @@ class Routing
     /**
      * Routes a note to the correct issue
      *
-     * @param   string $full_message The full note
+     * @param   MailMessage $mail The Mail object
      * @return  mixed   true or array(ERROR_CODE, ERROR_STRING) in case of failure
      */
-    public static function route_notes($full_message)
+    public static function route_notes(MailMessage $mail)
     {
         // save the full message for logging purposes
-        Note::saveRoutedNote($full_message);
-
-        // join the Content-Type line (for easier parsing?)
-        if (preg_match('/^boundary=/m', $full_message)) {
-            $pattern = "#(Content-Type: multipart/.+); ?\r?\n(boundary=.*)$#im";
-            $replacement = '$1; $2';
-            $full_message = preg_replace($pattern, $replacement, $full_message);
-        }
-
-        list($headers) = Mime_Helper::splitHeaderBody($full_message);
+        Note::saveRoutedNote($mail);
 
         // need some validation here
         if (empty($full_message)) {
             return array(self::EX_NOINPUT, ev_gettext('Error: The email message was empty.') . "\n");
         }
 
+        $headers = $mail->getHeaders();
+
         // remove the reply-to: header
-        if (preg_match('/^reply-to:.*/im', $full_message)) {
-            $full_message = preg_replace("/^(reply-to:).*\n/im", '', $full_message, 1);
-        }
+        $headers->removeHeader('Reply-To');
 
         // check if the email routing interface is even supposed to be enabled
         $setup = Setup::load();
@@ -306,19 +297,18 @@ class Routing
         if (empty($setup['note_routing']['address_host'])) {
             return array(self::EX_CONFIG, ev_gettext('Error: Please configure the email address domain.') . "\n");
         }
-        $structure = Mime_Helper::decode($full_message, true, true);
 
         // find which issue ID this email refers to
-        if (isset($structure->headers['to'])) {
-            $issue_id = self::getMatchingIssueIDs($structure->headers['to'], 'note');
+        $issue_id = null;
+        if ($headers->has('To')) {
+            $issue_id = self::getMatchingIssueIDs($mail->getAddresses('To'), 'note');
         }
-        // validation is always a good idea
-        if (empty($issue_id) and isset($structure->headers['cc'])) {
-            // we need to try the Cc header as well
-            $issue_id = self::getMatchingIssueIDs($structure->headers['cc'], 'note');
+        // we need to try the Cc header as well
+        if (!$issue_id && $headers->has('Cc')) {
+            $issue_id = self::getMatchingIssueIDs($mail->getAddresses('Cc'), 'note');
         }
 
-        if (empty($issue_id)) {
+        if (!$issue_id) {
             return array(self::EX_DATAERR, ev_gettext('Error: The routed note had no associated Eventum issue ID or had an invalid recipient address.') . "\n");
         }
 
