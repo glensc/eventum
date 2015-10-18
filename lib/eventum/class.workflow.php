@@ -653,21 +653,23 @@ class Workflow
      *
      * @param   integer $prj_id The ID of the project
      * @param   array   $info An array of info about the email account.
-     * @param   string  $headers The headers of the email.
-     * @param   string  $message_body The body of the message.
-     * @param   string  $date The date this message was sent
-     * @param   string  $from The name and email address of the sender.
-     * @param   string  $subject The subject of this message.
-     * @param   array   $to An array of to addresses
-     * @param   array   $cc An array of cc addresses
+     * @param   MailMessage $mail The Mail object
      * @return  string|array
      */
-    public static function getIssueIDForNewEmail($prj_id, $info, $headers, $message_body, $date, $from, $subject, $to, $cc)
+    public static function getIssueIDForNewEmail($prj_id, $info, MailMessage $mail)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return null;
         }
         $backend = self::_getBackend($prj_id);
+
+        $headers = $mail->getHeaders()->toArray();
+        $message_body = $mail->getContent();
+        $date = Date_Helper::convertDateGMT($mail->getMailDate());
+        $from = $mail->getFromHeader()->getEmail();
+        $subject = $mail->getSubject()->getFieldValue();
+        $to = join(',', (array)$mail->getAddresses('To'));
+        $cc = join(',', (array)$mail->getAddresses('Cc'));
 
         return $backend->getIssueIDforNewEmail($prj_id, $info, $headers, $message_body, $date, $from, $subject, $to, $cc);
     }

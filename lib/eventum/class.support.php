@@ -604,16 +604,17 @@ class Support
             'date'           => Date_Helper::convertDateGMT($mail->getMailDate()),
             'from'           => $sender_email,
             'to'             => $headers->get('To')->toString(),
-            'cc'             => $headers->get('Co')->toString(),
+            'cc'             => $headers->get('Cc')->toString(),
             'subject'        => $subject,
 //            'body'           => @$message_body,
 //            'full_email'     => @$message,
-            'has_attachment' => $has_attachments,
+//            'has_attachment' => $has_attachments,
             // the following items are not inserted, but useful in some methods
 //            'headers'        => @$structure->headers,
         );
 
-        $should_create_array = self::createIssueFromEmail($info, $headers, $message_body, $t['date'], $sender_email, $subject, $t['to'], $t['cc']);
+        $should_create_array = self::createIssueFromEmail($info, $mail);
+//        $should_create_array = self::createIssueFromEmail($info, $headers, $message_body, $t['date'], $sender_email, $subject, $t['to'], $t['cc']);
         $should_create_issue = $should_create_array['should_create_issue'];
 
         if (!empty($should_create_array['issue_id'])) {
@@ -699,11 +700,11 @@ class Support
                 // make variable available for workflow to be able to detect whether this email created new issue
                 $t['should_create_issue'] = $should_create_array['should_create_issue'];
 
-                $res = self::insertEmail($t, $structure, $sup_id);
+                $res = self::insertEmail($t, $mail, $sup_id);
                 if ($res != -1) {
                     // only extract the attachments from the email if we are associating the email to an issue
                     if (!empty($t['issue_id'])) {
-                        self::extractAttachments($t['issue_id'], $structure);
+                        self::extractAttachments($t['issue_id'], $mail);
 
                         // notifications about new emails are always external
                         $internal_only = false;
@@ -728,6 +729,9 @@ class Support
                         }
 
                         // try to get usr_id of sender, if not, use system account
+                        $usr_id = User::getUserIDByEmail($mail) ?: APP_SYSTEM_USER_ID;
+
+                        /*
                         $addr = Mail_Helper::getEmailAddress($structure->headers['from']);
                         if (Misc::isError($addr)) {
                             // XXX should we log or is this expected?
@@ -739,9 +743,10 @@ class Support
                                 $usr_id = APP_SYSTEM_USER_ID;
                             }
                         }
+                        */
 
                         // mark this issue as updated
-                        if ((!empty($t['customer_id'])) && ($t['customer_id'] != 'NULL') && ((empty($usr_id)) || (User::getRoleByUser($usr_id, $prj_id) == User::getRoleID('Customer')))) {
+                        if ((!empty($t['customer_id'])) && ($t['customer_id'] != 'NULL') && (empty($usr_id) || (User::getRoleByUser($usr_id, $prj_id) == User::getRoleID('Customer')))) {
                             Issue::markAsUpdated($t['issue_id'], 'customer action');
                         } else {
                             if ((!empty($usr_id)) && (User::getRoleByUser($usr_id, $prj_id) > User::getRoleID('Customer'))) {
@@ -752,7 +757,7 @@ class Support
                         }
                         // log routed email
                         History::add($t['issue_id'], $usr_id, 'email_routed', 'Email routed from {from}', array(
-                            'from' => $structure->headers['from'],
+                            'from' => $mail->getSender(),
                         ));
                     }
                 }
@@ -772,17 +777,20 @@ class Support
      * to a previous message.
      *
      * @param   array   $info An array of info about the email account.
-     * @param   string  $headers The headers of the email.
-     * @param   string  $message_body The body of the message.
-     * @param   string  $date The date this message was sent
-     * @param   string  $from The name and email address of the sender.
-     * @param   string  $subject The subject of this message.
-     * @param   array   $to An array of to addresses
-     * @param   array   $cc An array of cc addresses
+     * @param   MailMessage $mail The Mail object
      * @return  array   An array of information about the message
      */
-    public function createIssueFromEmail($info, $headers, $message_body, $date, $from, $subject, $to, $cc)
+    public function createIssueFromEmail($info, $mail)
     {
+        $headers = $mail->getHeaders();
+
+//        $message_body = '';
+//        $date = Date_Helper::convertDateGMT($mail->getMailDate());
+//        $from = ';';
+//        $subject = $mail->getSubject()->getFieldValue();
+//        $to = $headers->get('To')->toString();
+//        $cc = $headers->get('Co')->toString();
+
         $should_create_issue = false;
         $issue_id = '';
         $associate_email = '';
@@ -793,12 +801,10 @@ class Support
         $contract_id = false;
         $severity = false;
 
-        // we can't trust the in-reply-to from the imap c-client, so let's
-        // try to manually parse that value from the full headers
-        $references = Mail_Helper::getAllReferences($headers);
+        $references = $mail->getAllReferences();
 
-        $message_id = Mail_Helper::getMessageID($headers, $message_body);
-        $workflow = Workflow::getIssueIDforNewEmail($info['ema_prj_id'], $info, $headers, $message_body, $date, $from, $subject, $to, $cc);
+        $message_id = $mail->getMessageId();
+        $workflow = Workflow::getIssueIDforNewEmail($info['ema_prj_id'], $info, $mail);
         if (is_array($workflow)) {
             if (isset($workflow['customer_id'])) {
                 $customer_id = $workflow['customer_id'];
@@ -827,7 +833,7 @@ class Support
                 // Look for issue ID in the subject line
 
                 // look for [#XXXX] in the subject line
-                if (preg_match("/\[#(\d+)\]( Note| BLOCKED)*/", $subject, $matches)) {
+                if (preg_match("/\[#(\d+)\]( Note| BLOCKED)*/", $mail->getSubject()->getFieldValue(), $matches)) {
                     $should_create_issue = false;
                     $issue_id = $matches[1];
                     if (!Issue::exists($issue_id, false)) {
@@ -851,7 +857,7 @@ class Support
                             $type = 'note';
                             $parent_id = Note::getIDByMessageID($reference_msg_id);
                             break;
-                        } elseif ((self::exists($reference_msg_id)) || (Issue::getIssueByRootMessageID($reference_msg_id) != false)) {
+                        } elseif (self::exists($reference_msg_id) || Issue::getIssueByRootMessageID($reference_msg_id) != false) {
                             // email or issue exists
                             $issue_id = self::getIssueByMessageID($reference_msg_id);
                             if (empty($issue_id)) {
@@ -882,10 +888,7 @@ class Support
             }
         }
 
-        $sender_email = Mail_Helper::getEmailAddress($from);
-        if (Misc::isError($sender_email)) {
-            $sender_email = 'Error Parsing Email <>';
-        }
+        $sender_email = $mail->getSender();
 
         // only create a new issue if this email is coming from a known customer
         if (($should_create_issue) && ($info['ema_issue_auto_creation_options']['only_known_customers'] == 'yes') &&
@@ -902,7 +905,7 @@ class Support
             $options = Email_Account::getIssueAutoCreationOptions($info['ema_id']);
             Auth::createFakeCookie(APP_SYSTEM_USER_ID, $info['ema_prj_id']);
             $issue_id = Issue::createFromEmail($info['ema_prj_id'], APP_SYSTEM_USER_ID,
-                    $from, Mime_Helper::decodeQuotedPrintable($subject), $message_body, @$options['category'],
+                    $mail, @$options['category'],
                     @$options['priority'], @$options['users'], $date, $message_id, $severity, $customer_id, $contact_id,
                     $contract_id);
 

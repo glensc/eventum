@@ -1976,23 +1976,26 @@ class Issue
      *
      * @param   integer $prj_id The project ID
      * @param   integer $usr_id The user responsible for this action
-     * @param   string $sender The original sender of this email
-     * @param   string $summary The issue summary
-     * @param   string $description The issue description
+     * @param   MailMessage $mail The Mail object
      * @param   integer $category The category ID
      * @param   integer $priority The priority ID
      * @param   array $assignment The list of users to assign this issue to
-     * @param   string $date The date the email was originally sent.
-     * @param   string $msg_id The message ID of the email we are creating this issue from.
      * @param   integer $severity
      * @param   string $customer_id
      * @param   string $contact_id
      * @param   string $contract_id
      * @return int
      */
-    public static function createFromEmail($prj_id, $usr_id, $sender, $summary, $description, $category, $priority, $assignment,
-                             $date, $msg_id, $severity, $customer_id, $contact_id, $contract_id)
+    public static function createFromEmail($prj_id, $usr_id, MailMessage $mail, $category, $priority, $assignment,
+                             $severity, $customer_id, $contact_id, $contract_id)
     {
+
+        $sender = $mail->getSender();
+        $summary = $mail->getSubject()->getFieldValue();
+        $description = $mail->getContent();
+        $date = $mail->getMailDate();
+        $msg_id = $mail->getMessageId();
+
         $exclude_list = array();
         $managers = array();
 
