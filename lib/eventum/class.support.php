@@ -608,7 +608,7 @@ class Support
             'subject'        => $subject,
 //            'body'           => @$message_body,
 //            'full_email'     => @$message,
-//            'has_attachment' => $has_attachments,
+            'has_attachment' => $has_attachments,
             // the following items are not inserted, but useful in some methods
 //            'headers'        => @$structure->headers,
         );
@@ -1049,12 +1049,12 @@ class Support
             'sup_iss_id' => $row['issue_id'],
             'sup_customer_id' => $row['customer_id'],
             'sup_message_id' => $mail->getMessageId(),
-            'sup_date' => $row['date'],
+            'sup_date' => Date_Helper::convertDateGMT($mail->getMailDate()),
             'sup_from' => $mail->getSender(),
-            'sup_to' => $row['to'],
-            'sup_cc' => $row['cc'],
-            'sup_subject' => $row['subject'] ?: '',
-            'sup_has_attachment' => $row['has_attachment'],
+            'sup_to' => $mail->getHeaderValue('To'),
+            'sup_cc' => $mail->getHeaderValue('Cc'),
+            'sup_subject' => $mail->getSubject(),
+            'sup_has_attachment' => $mail->hasAttachments(),
         );
 
         if (!empty($parent_id)) {
@@ -1086,7 +1086,7 @@ class Support
                     ?, ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($new_sup_id, $row['body'], $row['full_email']));
+            DB_Helper::getInstance()->query($stmt, array($new_sup_id, $mail->getContent(), $mail->getRawContent()));
         } catch (DbException $e) {
             return -1;
         }
@@ -1101,7 +1101,7 @@ class Support
 
         // FIXME: $row['ema_id'] is empty when mail is sent via convert note!
         if ($prj_id !== false) {
-            Workflow::handleNewEmail($prj_id, @$row['issue_id'], $structure, $row, $closing);
+            Workflow::handleNewEmail($prj_id, @$row['issue_id'], $mail, $row, $closing);
         }
 
         return 1;
