@@ -2,7 +2,11 @@
 
 class LocaleTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
-        $localeStamp = dirname(__FILE__) . '/_locales.stamp';
+        if (!getenv('TRAVIS')) {
+            self::markTestSkipped('Tests require full localedb installation');
+        }
+
+        $localeStamp = __DIR__ . '/_locales.stamp';
         if (!file_exists($localeStamp)) {
             self::installLocales();
             touch($localeStamp);

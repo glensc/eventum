@@ -22,7 +22,7 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: Bryan Alsdorf <bryan@mysql.com>                             |
@@ -41,7 +41,7 @@ set_time_limit(0);
 define('APP_NAME', 'Eventum');
 define('APP_CHARSET', 'UTF-8');
 define('APP_DEFAULT_LOCALE', 'en_US');
-define('APP_PATH', realpath(dirname(__FILE__) . '/../..'));
+define('APP_PATH', realpath(__DIR__ . '/../..'));
 define('APP_INC_PATH', APP_PATH . '/lib/eventum');
 define('APP_CONFIG_PATH', APP_PATH . '/config');
 define('APP_SETUP_FILE', APP_CONFIG_PATH . '/setup.php');
@@ -61,9 +61,8 @@ if ($have_config) {
     exit(0);
 }
 
-if (defined('APP_PEAR_PATH')) {
+if (defined('APP_INC_PATH')) {
     set_include_path(
-        APP_PEAR_PATH . PATH_SEPARATOR .
         APP_INC_PATH . PATH_SEPARATOR .
         get_include_path()
     );
@@ -229,7 +228,7 @@ function getPermissionError($file, $desc, $is_directory, $exists)
     } else {
         $title = 'File';
     }
-    $error = "$title <b>'" . File_Util::realPath($file) . ($is_directory ? '/' : '') . "'</b> ";
+    $error = "$title <b>'" . $file . ($is_directory ? '/' : '') . "'</b> ";
 
     if (!$exists) {
         $error .= "does not exist. Please create the $title and reload this page.";
@@ -390,7 +389,7 @@ function getUserList($conn)
     }
 
     // FIXME: why lowercase neccessary?
-    $users = array_map('strtolower', $users);
+    $users = array_map(function ($s) { return strtolower($s); }, $users);
 
     return $users;
 }
@@ -404,7 +403,7 @@ function getTableList($conn)
     $tables = $conn->getColumn('SHOW TABLES');
 
     // FIXME: why lowercase neccessary?
-    $tables = array_map('strtolower', $tables);
+    $tables = array_map(function ($s) { return strtolower($s); }, $tables);
 
     return $tables;
 }
@@ -431,7 +430,7 @@ function get_queries($file)
 {
     $contents = file_get_contents($file);
     $queries = explode(';', $contents);
-    $queries = array_map('trim', $queries);
+    $queries = array_map(function ($s) { return trim($s); }, $queries);
     $queries = array_filter($queries);
 
     return $queries;
@@ -538,17 +537,17 @@ function setup_database()
         throw new RuntimeException("Database setup failed on upgrade:<br/><tt>{$e->getMessage()}</tt><br/><br/>You may want run update script <tt>$upgrade_script</tt> manually");
     }
 
-    $setup = Setup::load();
     // write db name now that it has been created
-    $setup['database']['database'] = $_POST['db_name'];
+    $setup = array();
+    $setup['database'] = $_POST['db_name'];
 
     // substitute the appropriate values in config.php!!!
     if (@$_POST['alternate_user'] == 'yes') {
-        $setup['database']['username'] = $_POST['eventum_user'];
-        $setup['database']['password'] = $_POST['eventum_password'];
+        $setup['username'] = $_POST['eventum_user'];
+        $setup['password'] = $_POST['eventum_password'];
     }
 
-    Setup::save($setup);
+    Setup::save(array('database' => $setup));
 }
 
 function write_file($file, $contents)
@@ -600,17 +599,6 @@ function write_setup()
     Setup::save($setup);
 }
 
-/**
- * create a random private key variable
- */
-function write_privatekey()
-{
-    $private_key_path = APP_CONFIG_PATH . '/private_key.php';
-
-    $private_key = '<' . "?php\n\$private_key = " . var_export(md5(microtime()), 1) . ";\n";
-    write_file($private_key_path, $private_key);
-}
-
 function write_config()
 {
     $config_file_path = APP_CONFIG_PATH . '/config.php';
@@ -640,7 +628,7 @@ function write_config()
 function install()
 {
     try {
-        write_privatekey();
+        Auth::generatePrivateKey();
         write_setup();
         setup_database();
         write_config();

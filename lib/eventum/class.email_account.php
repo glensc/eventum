@@ -22,7 +22,7 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
@@ -123,10 +123,14 @@ class Email_Account
                     {{%email_account}}
                  WHERE
                     ema_username=? AND
-                    ema_hostname=? AND
-                    ema_folder=?';
+                    ema_hostname=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($username, $hostname, $mailbox));
+            $params = array($username, $hostname);
+            if ($mailbox !== null) {
+                $stmt .= ' AND ema_folder=?';
+                $params[] = $mailbox;
+            }
+            $res = DB_Helper::getInstance()->getOne($stmt, $params);
         } catch (DbException $e) {
             return 0;
         }

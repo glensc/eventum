@@ -101,7 +101,7 @@ class Routing
         Support::saveRoutedEmail($mail);
 
         // check if the email routing interface is even supposed to be enabled
-        $setup = Setup::load();
+        $setup = Setup::get();
         if ($setup['email_routing']['status'] != 'enabled') {
             return array(self::EX_CONFIG, ev_gettext('Error: The email routing interface is disabled.') . "\n");
         }
@@ -118,8 +118,8 @@ class Routing
             return array(self::EX_CONFIG, ev_gettext('Error: The associated user for the email routing interface needs to be set.') . "\n");
         }
         unset($sys_account);
-
-        Auth::createFakeCookie(APP_SYSTEM_USER_ID);
+        
+        AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
 
         $headers = $mail->getHeaders();
 
@@ -150,6 +150,7 @@ class Routing
             return array(self::EX_CONFIG, ev_gettext('Error: Please provide the email account ID.') . "\n");
         }
 
+        
         // get the sender's email address
         // FIXME: this is "From" or "From:" header?
         /** @var Zend\Mail\Address $sender_email */
@@ -165,7 +166,8 @@ class Routing
         }
 
         $prj_id = Issue::getProjectID($issue_id);
-        Auth::createFakeCookie(APP_SYSTEM_USER_ID, $prj_id);
+        AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
+        AuthCookie::setProjectCookie($prj_id);
 
         // FIXME: does this need to be int?
         $has_attachments = (int)$mail->hasAttachments();
@@ -281,7 +283,7 @@ class Routing
         $headers->removeHeader('Reply-To');
 
         // check if the email routing interface is even supposed to be enabled
-        $setup = Setup::load();
+        $setup = Setup::get();
         if (@$setup['note_routing']['status'] != 'enabled') {
             return array(self::EX_CONFIG, ev_gettext('Error: The internal note routing interface is disabled.') . "\n");
         }
@@ -310,7 +312,7 @@ class Routing
         // check if the sender is allowed in this issue' project and if it is an internal user
         $sender_email = strtolower(Mail_Helper::getEmailAddress($structure->headers['from']));
         $sender_usr_id = User::getUserIDByEmail($sender_email, true);
-        if (((empty($sender_usr_id)) || (User::getRoleByUser($sender_usr_id, $prj_id) < User::getRoleID('Standard User')) ||
+        if (((empty($sender_usr_id)) || (User::getRoleByUser($sender_usr_id, $prj_id) < User::ROLE_USER) ||
                 (User::isPartner($sender_usr_id) && !Access::canViewInternalNotes($issue_id, $sender_usr_id))) &&
                 ((!Workflow::canSendNote($prj_id, $issue_id, $sender_email, $structure)))) {
             return array(self::EX_NOPERM, ev_gettext("Error: The sender of this email is not allowed in the project associated with issue #$issue_id.") . "\n");
@@ -322,7 +324,8 @@ class Routing
         } else {
             $unknown_user = false;
         }
-        Auth::createFakeCookie($sender_usr_id, $prj_id);
+        AuthCookie::setAuthCookie($sender_usr_id);
+        AuthCookie::setProjectCookie($prj_id);
 
         // parse the Cc: list, if any, and add these internal users to the issue notification list
         $addresses = array();
@@ -337,7 +340,7 @@ class Routing
         $cc_users = array();
         foreach ($addresses as $email) {
             $cc_usr_id = User::getUserIDByEmail(strtolower($email), true);
-            if ((!empty($cc_usr_id)) && (User::getRoleByUser($cc_usr_id, $prj_id) >= User::getRoleID('Standard User'))) {
+            if ((!empty($cc_usr_id)) && (User::getRoleByUser($cc_usr_id, $prj_id) >= User::ROLE_USER)) {
                 $cc_users[] = $cc_usr_id;
             }
         }
@@ -398,7 +401,7 @@ class Routing
         $headers->removeHeader('Reply-To');
 
         // check if the draft interface is even supposed to be enabled
-        $setup = Setup::load();
+        $setup = Setup::get();
         if (@$setup['draft_routing']['status'] != 'enabled') {
             return array(self::EX_CONFIG, ev_gettext('Error: The email draft interface is disabled.') . "\n");
         }
@@ -431,12 +434,13 @@ class Routing
         $sender_usr_id = User::getUserIDByEmail($sender_email, true);
         if (!empty($sender_usr_id)) {
             $sender_role = User::getRoleByUser($sender_usr_id, $prj_id);
-            if ($sender_role < User::getRoleID('Standard User')) {
+            if ($sender_role < User::ROLE_USER) {
                 return array(self::EX_NOPERM, ev_gettext("Error: The sender of this email is not allowed in the project associated with issue #$issue_id.") . "\n");
             }
         }
 
-        Auth::createFakeCookie(User::getUserIDByEmail($sender_email), $prj_id);
+        AuthCookie::setAuthCookie(User::getUserIDByEmail($sender_email));
+        AuthCookie::setProjectCookie($prj_id);
 
         $from = $mail->getHeaderValue('From');
         $to = $mail->getHeaderValue('To');
@@ -459,7 +463,7 @@ class Routing
      */
     public static function getMatchingIssueIDs($addresses, $type)
     {
-        $setup = Setup::load();
+        $setup = Setup::get();
         $settings = $setup["${type}_routing"];
         if (!is_array($settings)) {
             return false;
@@ -484,7 +488,7 @@ class Routing
             } else {
                 $host_aliases = explode(' ', $settings['host_alias']);
             }
-            $host_aliases = implode('|', array_map('quotemeta', $host_aliases));
+            $host_aliases = implode('|', array_map(function ($s) { return quotemeta($s); }, $host_aliases));
 
             $mail_domain = '(?:' . $mail_domain . '|' . $host_aliases . ')';
         }

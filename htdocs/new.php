@@ -29,9 +29,9 @@
 // | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../init.php';
+require_once __DIR__ . '/../init.php';
 
-Auth::checkAuthentication(APP_COOKIE);
+Auth::checkAuthentication();
 
 $usr_id = Auth::getUserID();
 $prj_id = Auth::getCurrentProject();
@@ -50,8 +50,7 @@ if ($issue_prj_id > 0 && $issue_prj_id != $prj_id) {
     // Switch the project back
     $assigned_projects = Project::getAssocList($usr_id);
     if (isset($assigned_projects[$issue_prj_id])) {
-        $cookie = Auth::getCookieInfo(APP_PROJECT_COOKIE);
-        Auth::setCurrentProject($issue_prj_id, $cookie['remember']);
+        AuthCookie::setProjectCookie($issue_prj_id);
         $prj_id = $issue_prj_id;
     } else {
         Misc::setMessage(ev_gettext('There was an error creating your issue.'), Misc::MSG_ERROR);
@@ -60,7 +59,7 @@ if ($issue_prj_id > 0 && $issue_prj_id != $prj_id) {
 }
 
 if (CRM::hasCustomerIntegration($prj_id)) {
-    if (Auth::getCurrentRole() == User::getRoleID('Customer')) {
+    if (Auth::getCurrentRole() == User::ROLE_CUSTOMER) {
         $crm = CRM::getInstance($prj_id);
         $customer_id = Auth::getCurrentCustomerID();
         $customer = $crm->getCustomer($customer_id);
@@ -131,7 +130,7 @@ $tpl->assign(array(
     'cats'                   => Category::getAssocList($prj_id),
     'priorities'             => Priority::getAssocList($prj_id),
     'severities'             => Severity::getList($prj_id),
-    'users'                  => Project::getUserAssocList($prj_id, 'active', User::getRoleID('Customer')),
+    'users'                  => Project::getUserAssocList($prj_id, 'active', User::ROLE_CUSTOMER),
     'releases'               => Release::getAssocList($prj_id),
     'custom_fields'          => Custom_Field::getListByProject($prj_id, 'report_form'),
     'max_attachment_size'    => Attachment::getMaxAttachmentSize(),
@@ -144,7 +143,7 @@ $tpl->assign(array(
 $prefs = Prefs::get($usr_id);
 $tpl->assign('user_prefs', $prefs);
 $tpl->assign('zones', Date_Helper::getTimezoneList());
-if (Auth::getCurrentRole() == User::getRoleID('Customer')) {
+if (Auth::getCurrentRole() == User::ROLE_CUSTOMER) {
     $crm = CRM::getInstance(Auth::getCurrentProject());
     $customer_contact_id = User::getCustomerContactID($usr_id);
     $contact = $crm->getContact($customer_contact_id);

@@ -28,12 +28,12 @@
 // | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../../init.php';
+require_once __DIR__ . '/../../init.php';
 
 $tpl = new Template_Helper();
 $tpl->setTemplate('get_emails.tpl.html');
 
-Auth::checkAuthentication(APP_COOKIE, null, true);
+Auth::checkAuthentication(null, true);
 
 $account = array(
     'ema_hostname' => $_POST['hostname'],

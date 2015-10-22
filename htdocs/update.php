@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 - 2008 MySQL AB                                   |
 // | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2013 Eventum Team.                              |
+// | Copyright (c) 2011 - 2015 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -22,13 +22,13 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../init.php';
+require_once __DIR__ . '/../init.php';
 
 $prj_id = Auth::getCurrentProject();
 $usr_id = Auth::getUserID();
@@ -40,7 +40,7 @@ $tpl = new Template_Helper();
 $tpl->setTemplate('update.tpl.html');
 $tpl->assign('user_prefs', Prefs::get($usr_id));
 
-Auth::checkAuthentication(APP_COOKIE);
+Auth::checkAuthentication();
 
 $issue_id = @$_POST['issue_id'] ? $_POST['issue_id'] : @$_GET['id'];
 $tpl->assign('issue_id', $issue_id);
@@ -57,9 +57,8 @@ Workflow::prePage($prj_id, 'update');
 // check if issue exists in another project and if it does, switch projects
 $iss_prj_id = Issue::getProjectID($issue_id);
 $auto_switched_from = false;
-if ((!empty($iss_prj_id)) && ($iss_prj_id != $prj_id) && (in_array($iss_prj_id, $associated_projects))) {
-    $cookie = Auth::getCookieInfo(APP_PROJECT_COOKIE);
-    Auth::setCurrentProject($iss_prj_id, $cookie['remember'], true);
+if (!empty($iss_prj_id) && $iss_prj_id != $prj_id && in_array($iss_prj_id, $associated_projects)) {
+    AuthCookie::setProjectCookie($iss_prj_id);
     $auto_switched_from = $iss_prj_id;
     $prj_id = $iss_prj_id;
     Misc::setMessage(ev_gettext('Note: Project automatically switched to "%1$s" from "%2$s".',
@@ -70,9 +69,9 @@ $tpl->assign('issue', $details);
 $tpl->assign('extra_title', ev_gettext('Update Issue #%1$s', $issue_id));
 
 // in the case of a customer user, also need to check if that customer has access to this issue
-if (($role_id == User::getRoleID('customer')) && ((empty($details)) || (User::getCustomerID($usr_id) != $details['iss_customer_id'])) ||
+if (($role_id == User::ROLE_CUSTOMER) && ((empty($details)) || (User::getCustomerID($usr_id) != $details['iss_customer_id'])) ||
         !Issue::canAccess($issue_id, $usr_id) ||
-        !($role_id > User::getRoleID('Reporter')) || !Issue::canUpdate($issue_id, $usr_id)) {
+        !($role_id > User::ROLE_REPORTER) || !Issue::canUpdate($issue_id, $usr_id)) {
     $tpl->setTemplate('base_full.tpl.html');
     Misc::setMessage(ev_gettext('Sorry, you do not have the required privileges to update this issue.'), Misc::MSG_ERROR);
     $tpl->displayTemplate();
@@ -192,7 +191,7 @@ $tpl->assign('issue_lock', $issue_lock);
     if (count($priorities) > 0 && ((!isset($issue_fields_display['priority'])) ||
         ($issue_fields_display['priority'] != false))) {
         if ((isset($issue_fields_display['priority']['min_role'])) &&
-            ($issue_fields_display['priority']['min_role'] > User::getRoleID('Customer'))) {
+            ($issue_fields_display['priority']['min_role'] > User::ROLE_CUSTOMER)) {
             $bgcolor = APP_INTERNAL_COLOR;
         } else {
             $bgcolor = '';
@@ -205,7 +204,7 @@ $tpl->assign('issue_lock', $issue_lock);
         );
     }
     $releases = Release::getAssocList($prj_id);
-    if ((count($releases) > 0) && ($role_id != User::getRoleID('Customer'))) {
+    if ((count($releases) > 0) && ($role_id != User::ROLE_CUSTOMER)) {
         $columns[0][] = array(
             'title' =>  ev_gettext('Scheduled Release'),
             'data'  =>  $details['pre_title'],
@@ -280,7 +279,7 @@ $tpl->assign('issue_lock', $issue_lock);
             'field' =>  'estimated_dev_time',
         );
     }
-    if ($role_id > User::getRoleID('Customer')) {
+    if ($role_id > User::ROLE_CUSTOMER) {
         $columns[1][] = array(
             'title' =>  ev_gettext('Duplicates'),
             'field' =>  'duplicates',
@@ -293,7 +292,7 @@ $tpl->assign('issue_lock', $issue_lock);
         );
     }
     $groups = Group::getAssocList($prj_id);
-    if (($role_id > User::getRoleID('Customer')) && (count($groups) > 0)) {
+    if (($role_id > User::ROLE_CUSTOMER) && (count($groups) > 0)) {
         $columns[1][] = array(
             'title' =>  ev_gettext('Group'),
             'data' =>  isset($details['group']) ? $details['group']['grp_name'] : '',
@@ -308,7 +307,7 @@ $tpl->assign('issue_lock', $issue_lock);
         'status'       => $statuses,
         'releases'     => $releases,
         'resolutions'  => Resolution::getAssocList(),
-        'users'        => Project::getUserAssocList($prj_id, 'active', User::getRoleID('Customer')),
+        'users'        => Project::getUserAssocList($prj_id, 'active', User::ROLE_CUSTOMER),
         'one_week_ts'  => time() + (7 * Date_Helper::DAY),
         'groups'       => Group::getAssocList($prj_id),
         'current_year' =>   date('Y'),

@@ -29,13 +29,13 @@
 // | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../../init.php';
+require_once __DIR__ . '/../../init.php';
 
 // This report shows a list of activity performed in recent history.
 $tpl = new Template_Helper();
 $tpl->setTemplate('reports/recent_activity.tpl.html');
 
-Auth::checkAuthentication(APP_COOKIE);
+Auth::checkAuthentication();
 
 try {
     $controller = new RecentActivity();

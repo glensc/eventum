@@ -5,7 +5,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 - 2008 MySQL AB                                   |
 // | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2014 Eventum Team.                              |
+// | Copyright (c) 2011 - 2015 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -21,14 +21,14 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: Bryan Alsdorf <bryan@mysql.com>                             |
 // | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../../../init.php';
+require_once __DIR__ . '/../../../init.php';
 
 // creates user accounts for all the customers
 $prj_id = 1;
@@ -71,7 +71,7 @@ foreach ($customers as $customer_id => $customer_name) {
                 echo "</pre>";
             }
             $new_usr_id = DB_Helper::get_last_insert_id();
-            Project::associateUser($prj_id, $new_usr_id, User::getRoleID("Customer"));
+            Project::associateUser($prj_id, $new_usr_id, User::ROLE_CUSTOMER);
         }
     }
     echo "<hr />";

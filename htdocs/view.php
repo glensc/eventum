@@ -29,12 +29,12 @@
 // | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../init.php';
+require_once __DIR__ . '/../init.php';
 
 $tpl = new Template_Helper();
 $tpl->setTemplate('view.tpl.html');
 
-Auth::checkAuthentication(APP_COOKIE);
+Auth::checkAuthentication();
 
 $prj_id = Auth::getCurrentProject();
 $usr_id = Auth::getUserID();
@@ -50,8 +50,7 @@ $tpl->assign('issue_id', $issue_id);
 $iss_prj_id = Issue::getProjectID($issue_id);
 $auto_switched_from = false;
 if ((!empty($iss_prj_id)) && ($iss_prj_id != $prj_id) && (in_array($iss_prj_id, $associated_projects))) {
-    $cookie = Auth::getCookieInfo(APP_PROJECT_COOKIE);
-    Auth::setCurrentProject($iss_prj_id, $cookie['remember'], true);
+    AuthCookie::setProjectCookie($iss_prj_id);
     $auto_switched_from = $prj_id;
     $prj_id = $iss_prj_id;
 }
@@ -70,7 +69,7 @@ if (!Issue::canAccess($issue_id, $usr_id)) {
 } else {
 
     // if the issue has a different customer then the currently selected one, switch customers
-    if (Auth::getCurrentRole() == User::getRoleID('Customer') && Auth::getCurrentCustomerID() != $details['iss_customer_id']) {
+    if (Auth::getCurrentRole() == User::ROLE_CUSTOMER && Auth::getCurrentCustomerID() != $details['iss_customer_id']) {
         Auth::setCurrentCustomerID($details['iss_customer_id']);
         Misc::setMessage("Active customer changed to '" . $details['customer']->getName() . '"');
         Auth::redirect(APP_RELATIVE_URL . 'view.php?id=' . $issue_id);
@@ -92,7 +91,8 @@ if (!Issue::canAccess($issue_id, $usr_id)) {
             $options = Search::saveSearchParams();
             $sides = Issue::getSides($issue_id, $options);
 
-            $cookie = Auth::getCookieInfo(APP_PROJECT_COOKIE);
+            // FIXME: this $cookie seems unused
+            $cookie = AuthCookie::getProjectCookie();
             if (!empty($auto_switched_from)) {
                 $tpl->assign(array(
                     'project_auto_switched' =>  1,
@@ -140,7 +140,7 @@ if (!Issue::canAccess($issue_id, $usr_id)) {
             if ((!isset($issue_fields_display['priority'])) ||
                 ($issue_fields_display['priority'] != false)) {
                 if ((isset($issue_fields_display['priority']['min_role'])) &&
-                    ($issue_fields_display['priority']['min_role'] > User::getRoleID('Customer'))) {
+                    ($issue_fields_display['priority']['min_role'] > User::ROLE_CUSTOMER)) {
                     $bgcolor = APP_INTERNAL_COLOR;
                 } else {
                     $bgcolor = '';
@@ -153,7 +153,7 @@ if (!Issue::canAccess($issue_id, $usr_id)) {
                 );
             }
             $releases = Release::getAssocList($prj_id);
-            if ((count($releases) > 0) && ($role_id != User::getRoleID('Customer'))) {
+            if ((count($releases) > 0) && ($role_id != User::ROLE_CUSTOMER)) {
                 $columns[0][] = array(
                     'title' =>  ev_gettext('Scheduled Release'),
                     'data'  =>  $details['pre_title'],
@@ -222,11 +222,11 @@ if (!Issue::canAccess($issue_id, $usr_id)) {
                 ($issue_fields_display['estimated_dev_time'] != false)) {
                 $columns[1][] = array(
                     'title' =>  ev_gettext('Estimated Dev. Time'),
-                    'data'  =>  $details['iss_dev_time'] . empty($details['iss_dev_time']) ? '' : ' hours',
+                    'data'  =>  empty($details['iss_dev_time']) ? '' : $details['iss_dev_time'] . ' hours',
                     'field' =>  'estimated_dev_time',
                 );
             }
-            if ($role_id > User::getRoleID('Customer')) {
+            if ($role_id > User::ROLE_CUSTOMER) {
                 $columns[1][] = array(
                     'title' =>  ev_gettext('Duplicates'),
                     'field' =>  'duplicates',
@@ -239,7 +239,7 @@ if (!Issue::canAccess($issue_id, $usr_id)) {
                 );
             }
             $groups = Group::getAssocList($prj_id);
-            if (($role_id > User::getRoleID('Customer')) && (count($groups) > 0)) {
+            if (($role_id > User::ROLE_CUSTOMER) && (count($groups) > 0)) {
                 $columns[1][] = array(
                     'title' =>  ev_gettext('Group'),
                     'data' =>  isset($details['group']) ? $details['group']['grp_name'] : '',
@@ -255,7 +255,7 @@ if (!Issue::canAccess($issue_id, $usr_id)) {
                 'files'               => Attachment::getList($issue_id),
                 'emails'              => Support::getEmailsByIssue($issue_id),
                 'zones'               => Date_Helper::getTimezoneList(),
-                'users'               => Project::getUserAssocList($prj_id, 'active', User::getRoleID('Customer')),
+                'users'               => Project::getUserAssocList($prj_id, 'active', User::ROLE_CUSTOMER),
                 'ema_id'              => Email_Account::getEmailAccount(),
                 'max_attachment_size' => Attachment::getMaxAttachmentSize(),
                 'quarantine'          => Issue::getQuarantineInfo($issue_id),
@@ -267,7 +267,7 @@ if (!Issue::canAccess($issue_id, $usr_id)) {
                 'is_user_notified'   => Notification::isUserNotified($issue_id, $usr_id),
             ));
 
-            if ($role_id != User::getRoleID('customer')) {
+            if ($role_id != User::ROLE_CUSTOMER) {
                 if (@$_COOKIE['show_all_drafts'] == 1) {
                     $show_all_drafts = true;
                 } else {

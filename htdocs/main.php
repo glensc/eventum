@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 - 2008 MySQL AB                                   |
 // | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2013 Eventum Team.                              |
+// | Copyright (c) 2011 - 2015 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -22,18 +22,18 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../init.php';
+require_once __DIR__ . '/../init.php';
 
 $tpl = new Template_Helper();
 $tpl->setTemplate('main.tpl.html');
 
-Auth::checkAuthentication(APP_COOKIE);
+Auth::checkAuthentication();
 
 $prj_id = Auth::getCurrentProject();
 $role_id = Auth::getCurrentRole();
@@ -55,7 +55,7 @@ if (isset($_COOKIE[APP_HIDE_CLOSED_STATS_COOKIE])) {
 }
 $tpl->assign('hide_closed', $hide_closed);
 
-if ($role_id == User::getRoleID('customer')) {
+if ($role_id == User::ROLE_CUSTOMER) {
     $crm = CRM::getInstance($prj_id);
     // need the activity dashboard here
     $contact_id = User::getCustomerContactID($usr_id);
@@ -65,7 +65,7 @@ if ($role_id == User::getRoleID('customer')) {
         'customer'  =>  $crm->getCustomer($customer_id),
     ));
 } else {
-    if ((Auth::getCurrentRole() <= User::getRoleID('Reporter')) && (Project::getSegregateReporters($prj_id))) {
+    if ((Auth::getCurrentRole() <= User::ROLE_REPORTER) && (Project::getSegregateReporters($prj_id))) {
         $tpl->assign('hide_stats', true);
     } else {
         $tpl->assign('hide_stats', false);

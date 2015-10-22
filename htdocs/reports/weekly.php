@@ -22,18 +22,18 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: Bryan Alsdorf <bryan@mysql.com>                             |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../../init.php';
+require_once __DIR__ . '/../../init.php';
 
 $tpl = new Template_Helper();
 $tpl->setTemplate('reports/weekly.tpl.html');
 
-Auth::checkAuthentication(APP_COOKIE);
+Auth::checkAuthentication();
 
 if (!Access::canAccessReports(Auth::getUserID())) {
     echo 'Invalid role';
@@ -62,7 +62,7 @@ if (count(@$_POST['end']) > 0 &&
 
 $tpl->assign(array(
     'weeks' => Date_Helper::getWeekOptions(3, 0),
-    'users' => Project::getUserAssocList($prj_id, 'active', User::getRoleID('Customer')),
+    'users' => Project::getUserAssocList($prj_id, 'active', User::ROLE_CUSTOMER),
     'start_date'    =>  @$start_date,
     'end_date'      =>  @$end_date,
     'report_type'   =>  @$_REQUEST['report_type'],

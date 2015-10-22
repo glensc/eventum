@@ -33,7 +33,7 @@
 if (!empty($_POST['language'])) {
     define('SKIP_LANGUAGE_INIT', true);
 }
-require_once dirname(__FILE__) . '/../init.php';
+require_once __DIR__ . '/../init.php';
 
 $cat = isset($_POST['cat']) ? (string) $_POST['cat'] : null;
 $usr_id = Auth::getUserID();
@@ -49,7 +49,7 @@ if ($cat == 'update_account') {
 $tpl = new Template_Helper();
 $tpl->setTemplate('preferences.tpl.html');
 
-Auth::checkAuthentication(APP_COOKIE);
+Auth::checkAuthentication();
 
 if (Auth::isAnonUser()) {
     Auth::redirect('index.php');
@@ -72,12 +72,30 @@ if ($cat == 'update_account') {
 } elseif ($cat == 'update_email') {
     $res = User::updateEmail($usr_id);
 } elseif ($cat == 'update_password') {
-    $res = Auth::updatePassword($usr_id, $_POST['new_password'], $_POST['confirm_password']);
+    // verify current password
+    if (!Auth::isCorrectPassword(Auth::getUserLogin(), $_POST['password'])) {
+        Misc::setMessage(ev_gettext('Incorrect password'), Misc::MSG_ERROR);
+        $res = -3;
+    } elseif ($_POST['new_password'] != $_POST['confirm_password']) {
+        Misc::setMessage(ev_gettext('New passwords mismatch'), Misc::MSG_ERROR);
+        $res = -2;
+    } elseif ($_POST['password'] == $_POST['new_password']) {
+        Misc::setMessage(ev_gettext('Please set different password than current'), Misc::MSG_ERROR);
+        $res = -2;
+    } else {
+        try {
+            User::updatePassword($usr_id, $_POST['new_password']);
+            $res = 1;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            $res = -1;
+        }
+    }
 }
 
 if ($res == 1) {
     Misc::setMessage(ev_gettext('Your information has been updated'));
-} elseif ($res == -1) {
+} elseif ($res !== null) {
     Misc::setMessage(ev_gettext('Sorry, there was an error updating your information'), Misc::MSG_ERROR);
 }
 

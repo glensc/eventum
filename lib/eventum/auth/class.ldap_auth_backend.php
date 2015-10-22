@@ -148,7 +148,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
      * @param string $uid login or email
      * @return array
      */
-    private function getRemoteUserInfo($uid)
+    public function getRemoteUserInfo($uid)
     {
         if (strpos($uid, '@') === false) {
             $filter = Net_LDAP2_Filter::create('uid', 'equals', $uid);
@@ -287,7 +287,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         if (!empty($data['customer_id']) && !empty($data['contact_id'])) {
             foreach ($data['role'] as $prj_id => $role) {
                 if ($role > 0) {
-                    $data['role'][$prj_id] = User::getRoleID('Customer');
+                    $data['role'][$prj_id] = User::ROLE_CUSTOMER;
                 }
             }
         }
@@ -463,7 +463,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
             'default_role' => array(),
         );
 
-        if (Auth::hasValidCookie(APP_COOKIE)) {
+        if (AuthCookie::hasAuthCookie()) {
             // ensure there is entry for current project
             $prj_id = Auth::getCurrentProject();
 

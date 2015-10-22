@@ -21,18 +21,17 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 
 // we init paths ourselves like init.php does, to be independent and not
 // needing actual config being present.
-define('APP_PATH', realpath(dirname(__FILE__) . '/..'));
-define('APP_CONFIG_PATH', dirname(__FILE__));
+define('APP_PATH', realpath(__DIR__ . '/..'));
+define('APP_CONFIG_PATH', __DIR__);
 define('APP_SETUP_FILE', APP_CONFIG_PATH . '/_setup.php');
 define('APP_ERROR_LOG', STDERR);
 define('APP_INC_PATH', APP_PATH . '/lib/eventum');
-define('APP_PEAR_PATH', APP_PATH . '/lib/pear');
 define('APP_SYSTEM_USER_ID', 1);
 define('APP_CHARSET', 'UTF-8');
 define('APP_DEFAULT_LOCALE', 'en_US');
@@ -45,10 +44,14 @@ define('APP_DEFAULT_REFRESH_RATE', 0);
 define('APP_DEFAULT_ASSIGNED_EMAILS', true);
 define('APP_DEFAULT_NEW_EMAILS', false);
 define('APP_DEFAULT_COPY_OF_OWN_ACTION', 0);
+define('APP_RELATIVE_URL', '/eventum/');
+define('APP_COOKIE_DOMAIN', null);
+define('APP_COOKIE_EXPIRE', time() + (60 * 60 * 8));
+define('APP_COOKIE_URL', APP_RELATIVE_URL);
+define('APP_PROJECT_COOKIE', 'eventum_project');
+define('APP_PROJECT_COOKIE_EXPIRE', time() + (60 * 60 * 24));
 
 require_once APP_PATH . '/autoload.php';
-
-require_once APP_INC_PATH . '/gettext.php';
 
 // set default timezone
 date_default_timezone_set(APP_DEFAULT_TIMEZONE);
@@ -75,7 +78,7 @@ if (!file_exists(APP_SETUP_FILE)) {
 
 if (!getenv('TRAVIS')) {
     // init these from setup file
-    $setup = &Setup::load(true);
+    $setup = Setup::get();
 
     // used for tests
     define('APP_ADMIN_USER_ID', $setup['admin_user']);

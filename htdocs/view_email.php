@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 - 2008 MySQL AB                                   |
 // | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2013 Eventum Team.                              |
+// | Copyright (c) 2011 - 2015 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -28,7 +28,7 @@
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../init.php';
+require_once __DIR__ . '/../init.php';
 
 $usr_id = Auth::getUserID();
 $prj_id = Auth::getCurrentProject();
@@ -36,7 +36,7 @@ $prj_id = Auth::getCurrentProject();
 $tpl = new Template_Helper();
 $tpl->setTemplate('view_email.tpl.html');
 
-Auth::checkAuthentication(APP_COOKIE, 'index.php?err=5', true);
+Auth::checkAuthentication('index.php?err=5', true);
 $issue_id = Support::getIssueFromEmail($_GET['id']);
 
 if (($issue_id != 0 && !Issue::canAccess($issue_id, $usr_id)) ||
@@ -64,7 +64,7 @@ if (@$_GET['cat'] == 'list_emails') {
         'previous' => $sides['previous'],
         'next'     => $sides['next'],
     ));
-} elseif ((@$_GET['cat'] == 'move_email') && (Auth::getCurrentRole() >= User::getRoleID('Standard User'))) {
+} elseif ((@$_GET['cat'] == 'move_email') && (Auth::getCurrentRole() >= User::ROLE_USER)) {
     $res = Support::moveEmail(@$_GET['id'], @$_GET['ema_id'], @$_GET['new_ema_id']);
     $tpl->assign('move_email_result', $res);
     $tpl->assign('current_user_prefs', Prefs::get(Auth::getUserID()));

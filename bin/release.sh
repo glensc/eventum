@@ -2,11 +2,9 @@
 set -e
 set -x
 app=eventum
-rc=dev # development version
-#rc=RC1 # release candidate
-#rc= # release
 dir=$app
 podir=po
+topdir=$(pwd)
 
 find_prog() {
 	set +x
@@ -28,7 +26,7 @@ find_prog() {
 # see http://stackoverflow.com/a/5531813
 update_timestamps() {
 	set +x
-	echo "Updating timestamps from last commit of each file, please wait..."
+	echo >&2 "Updating timestamps from last commit of each file in ${dir#$topdir/}, please wait..."
 	git ls-files | while read file; do
 		# skip files which were not exported
 		test -f "$dir/$file" || continue
@@ -39,21 +37,35 @@ update_timestamps() {
 }
 
 vcs_checkout() {
+	local submodule dir=$dir absdir
+
 	rm -rf $dir
 	install -d $dir
-	dir=$(readlink -f $dir)
+	absdir=$(readlink -f $dir)
 
 	# setup submodules
 	git submodule init
 	git submodule update
 
+	# ensure we have latest master in submodules
+	git submodule foreach 'cd $toplevel/$path && git checkout master && git pull'
+
 	git archive HEAD | tar -x -C $dir
 	# include submodules
 	# see http://stackoverflow.com/a/16843717
-	dir=$dir git submodule foreach 'cd $toplevel/$path && git archive HEAD | tar -x -C $dir/$path/'
+	dir=$absdir git submodule foreach 'cd $toplevel/$path && git archive HEAD | tar -x -C $dir/$path/'
 
 	update_timestamps
-	po_checkout
+
+	local submodule
+	for submodule in $(git submodule -q foreach 'echo $path'); do
+		cd $submodule
+		dir=$absdir/$submodule update_timestamps
+		cd $topdir
+	done
+
+	# reset submodules to previous state
+	git submodule update
 }
 
 # checkout localizations from launchpad
@@ -61,7 +73,7 @@ po_checkout() {
 	if [ -d $podir ]; then
 	  cd $podir
 	  bzr pull
-	  cd -
+	  cd ..
 	else
 	  bzr branch lp:~glen666/eventum/po $podir
 	fi
@@ -72,10 +84,6 @@ po_checkout() {
 # setup $version and update APP_VERSION in init.php
 update_version() {
 	version=$(awk -F"'" '/APP_VERSION/{print $4}' init.php)
-
-	if [ "$rc" != "dev" ]; then
-		return
-	fi
 
 	version=$(git describe --tags)
 	# not good tags, try trimming
@@ -89,29 +97,81 @@ update_version() {
 		}" init.php
 }
 
+# clean trailing spaces/tabs
+clean_whitespace() {
+	sed -i -e 's/[\t ]\+$//' "$@"
+}
+
 # setup composer deps
 composer_install() {
-	# composer hack, see .travis.yml
-	sed -i -e 's#pear/#pear-pear.php.net/#' composer.json
+	# first install with dev to get assets installed
+	$composer install --prefer-dist --ignore-platform-reqs
+
+	# and then without dev to get clean autoloader
+	mv htdocs/components htdocs/components.save
 	$composer install --prefer-dist --no-dev --ignore-platform-reqs
+	mv htdocs/components.save/* htdocs/components
+	rmdir htdocs/components.save
+
+	# clean vendor and dump autoloader again
+	clean_vendor
+	$composer dump-autoload
+
+	# save dependencies information
 	$composer licenses --no-dev --no-ansi > deps
 	# avoid composer warning in resulting doc file
 	grep Warning: deps && exit 1
+	clean_whitespace deps
 	cat deps >> docs/DEPENDENCIES.md && rm deps
 }
 
 # create phpcompatinfo report
 phpcompatinfo_report() {
 	$phpcompatinfo analyser:run --alias current --output docs/PhpCompatInfo.txt
+	clean_whitespace docs/PhpCompatInfo.txt
 }
 
-# remove bundled deps
-cleanup_dist() {
-	# cleanup vendors
-	rm -r vendor/php-gettext/php-gettext/{tests,examples}
-	rm -f vendor/php-gettext/php-gettext/[A-Z]*
+# common cleanups:
+# - remove closing php tag
+# - strip trailing whitespace
+# - use unix newlines
+clean_scripts() {
+	# here's shell oneliner to remove ?> from all files which have it on their last line:
+	find -name '*.php' | xargs -r sed -i -e '${/^?>$/d}'
+	# sometimes if you are hit by this problem, you need to kill last empty line first:
+	find -name '*.php' | xargs -r sed -i -e '${/^$/d}'
+	# and as well can remove trailing spaces/tabs:
+	find -name '*.php' | xargs -r sed -i -e 's/[\t ]\+$//'
+	# remove DOS EOL
+	find -name '*.php' | xargs -r sed -i -e 's,\r$,,'
+}
+
+# cleanup excess files from vendor
+# but not that much that composer won't work
+clean_vendor() {
+	rm vendor/*/*/.coveralls.yml
+	rm vendor/*/*/.gitattributes
+	rm vendor/*/*/.gitignore
+	rm vendor/*/*/.travis.yml
+	rm vendor/*/*/CONTRIBUTING.md
+	rm vendor/*/*/COPYING
+	rm vendor/*/*/ChangeLog*
+	rm vendor/*/*/LICENSE*
+	rm vendor/*/*/README*
+	rm vendor/*/*/composer.lock
+	rm vendor/*/*/phpunit.xml*
+
+	rm -r vendor/*/*/tests
+	rm -r vendor/*/*/test
+	rm -r vendor/*/*/doc
+	rm -r vendor/*/*/docs
+	rm -r vendor/*/*/examples
 	rm -r vendor/bin
-	rm -r vendor/pear-pear.php.net/PEAR/bin
+
+	rm -f vendor/php-gettext/php-gettext/[A-Z]*
+	rm vendor/smarty-gettext/smarty-gettext/tsmarty2c.1
+	rm vendor/ircmaxell/security-lib/lib/SecurityLib/composer.json
+	rm vendor/ircmaxell/password-compat/version-test.php
 
 	# smarty: use -f, as dist and src packages differ
 	# smarty src
@@ -121,7 +181,32 @@ cleanup_dist() {
 	rm -rf vendor/smarty/smarty/demo
 	rm -f vendor/smarty/smarty/{[A-Z]*,*.txt}
 
-	rm vendor/composer/*.json
+	# not used, and fails php lint under 5.3
+	rm vendor/zendframework/zend-stdlib/src/Guard/*Trait.php
+	rm vendor/zendframework/zend-stdlib/src/Hydrator/*Trait.php
+
+	# we need *only* zf-config Config.php class
+	rm -r vendor/zendframework/zend-stdlib
+	mkdir tmp
+	mv vendor/zendframework/zend-config/src/{Config.php,Exception} tmp
+	rm -r vendor/zendframework/zend-config/*
+	mv tmp vendor/zendframework/zend-config/src
+
+	# pear
+	rm vendor/pear*/*/package.xml
+	rm -r vendor/pear-pear.php.net/Math_Stats/{data,contrib}
+	rm vendor/pear-pear.php.net/XML_RPC/XML/RPC/Dump.php
+	rm vendor/pear/pear-core-minimal/src/OS/Guess.php
+	rm vendor/pear/net_smtp/phpdoc.sh
+
+	# not used
+	rm -r vendor/pear/console_getopt
+
+	mkdir tmp
+	mv vendor/pear/db/DB/{common,mysql*}.php tmp
+	rm -r vendor/pear/db/DB/*.php
+	mv tmp/*.php vendor/pear/db/DB
+	rmdir tmp
 
 	# we need just LiberationSans-Regular.ttf
 	mv vendor/fonts/liberation/{,.}LiberationSans-Regular.ttf
@@ -131,19 +216,18 @@ cleanup_dist() {
 	# need just phplot.php and maybe rgb.php
 	rm -r vendor/phplot/phplot/{contrib,[A-Z]*}
 
-	# component related deps, not needed runtime
-	rm -r vendor/symfony/process
-	rm -r vendor/kriswallsmith/assetic
-	rm -r vendor/robloach/component-installer
-	rm -r vendor/components
-	rm -r vendor/malsup/form
-	rm -r vendor/enyo/dropzone
-	install -d vendor/kriswallsmith/assetic/src
-	touch vendor/kriswallsmith/assetic/src/functions.php
-	echo '<?php return array();' > vendor/composer/autoload_namespaces.php
-	rmdir --ignore-fail-on-non-empty vendor/*/
-	# cleanup components
+	cd vendor
+	clean_scripts
+	cd ..
+
+	# auto-fix pear packages
+	make pear-fix php-cs-fixer=$phpcsfixer
+	# run twice, to fix all occurrences
+	make pear-fix php-cs-fixer=$phpcsfixer
+
+	# component related sources, not needed runtime
 	rm htdocs/components/*/*-built.js
+	rm htdocs/components/*/*-built.css
 	rm htdocs/components/*-built.js
 	rm htdocs/components/jquery-ui/*.js
 	rm htdocs/components/require.*
@@ -156,31 +240,29 @@ cleanup_dist() {
 
 	# not ready yet
 	rm lib/eventum/db/DbYii.php
+}
 
-	# this will do clean pear in vendor dir
-	touch pear.download pear.install pear.clean
-	./bin/update-pear.sh
-	rm pear.download pear.install pear.clean
-
-	# auto-fix pear packages
-	make pear-fix php-cs-fixer=$phpcsfixer
-	# run twice, to fix all occurrences
-	make pear-fix php-cs-fixer=$phpcsfixer
-
+build_phars() {
 	# eventum standalone cli
 	make -C cli eventum.phar composer=$composer box=$box
 	# eventum scm
 	make -C scm phar box=$box
-
-	rm composer.lock
 }
 
 cleanup_postdist() {
-	rm -f composer.json bin/{dyncontent-chksum.pl,update-pear.sh}
-	rm -f cli/{composer.json,box.json.dist,Makefile}
+	rm composer.json phpcompatinfo.json
+	rm cli/{composer.json,box.json.dist,Makefile}
+
+	# cleanup vendors
+	rm vendor/composer/*.json
+	rm vendor/*/*/composer.json
+	rm vendor/*/LICENSE
+	rm composer.lock
 }
 
 phplint() {
+	echo "Running php lint on source files using $(php --version | head -n1)"
+
 	find -name '*.php' | xargs -l1 php -n -l
 }
 
@@ -215,16 +297,19 @@ upload_tarball() {
 }
 
 prepare_source() {
+	# add dirs for customization
+	install -d config/{workflow,custom_field,templates,crm,partner,include}
+
 	update_version
 	composer_install
 	phpcompatinfo_report
 
 	# update to include checksums of js/css files
-	./bin/dyncontent-chksum.pl
+	$topdir/bin/dyncontent-chksum.pl
 
-	cleanup_dist
+	build_phars
 
-	# setup locatlization
+	# setup localization
 	make -C localization install clean
 
 	# install dirs and fix permissions
@@ -236,13 +321,7 @@ prepare_source() {
 	# cleanup rest of the stuff, that was neccessary for release preparation process
 	cleanup_postdist
 
-	if [ "$rc" != "dev" ]; then
-		phplint
-	fi
-
-	if [ "$rc" = "dev" ]; then
-		rc=
-	fi
+	phplint
 }
 
 # download tools
@@ -255,11 +334,12 @@ phpcompatinfo=$(find_prog phpcompatinfo)
 
 # checkout
 vcs_checkout
+po_checkout
 
 # tidy up
 cd $dir
 	prepare_source
-cd -
+cd ..
 
 make_tarball
 sign_tarball

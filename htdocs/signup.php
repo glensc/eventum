@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 - 2008 MySQL AB                                   |
 // | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2013 Eventum Team.                              |
+// | Copyright (c) 2011 - 2015 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -22,24 +22,24 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../init.php';
+require_once __DIR__ . '/../init.php';
 
 $tpl = new Template_Helper();
 $tpl->setTemplate('signup.tpl.html');
 
 // log anonymous users out so they can use the signup form
-if (Auth::hasValidCookie(APP_COOKIE) && Auth::isAnonUser()) {
+if (AuthCookie::hasAuthCookie() && Auth::isAnonUser()) {
     Auth::logout();
 }
 
 if (@$_POST['cat'] == 'signup') {
-    $setup = Setup::load();
+    $setup = Setup::get();
     $res = User::createVisitorAccount($setup['accounts_role'], $setup['accounts_projects']);
     $tpl->assign('signup_result', $res);
     Misc::mapMessages($res, array(

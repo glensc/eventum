@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2003 - 2008 MySQL AB                                   |
 // | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2013 Eventum Team.                              |
+// | Copyright (c) 2011 - 2015 Eventum Team.                              |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -22,18 +22,18 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../../init.php';
+require_once __DIR__ . '/../../init.php';
 
 $tpl = new Template_Helper();
 $tpl->setTemplate('reports/stalled_issues.tpl.html');
 
-Auth::checkAuthentication(APP_COOKIE);
+Auth::checkAuthentication();
 
 if (!Access::canAccessReports(Auth::getUserID())) {
     echo 'Invalid role';
@@ -60,12 +60,12 @@ $data = Report::getStalledIssuesByUser($prj_id, @$_REQUEST['developers'], @$_REQ
 
 $groups = Group::getAssocList($prj_id);
 $assign_options = array();
-if ((count($groups) > 0) && (Auth::getCurrentRole() > User::getRoleID('Customer'))) {
+if ((count($groups) > 0) && (Auth::getCurrentRole() > User::ROLE_CUSTOMER)) {
     foreach ($groups as $grp_id => $grp_name) {
         $assign_options["grp:$grp_id"] = 'Group: ' . $grp_name;
     }
 }
-$assign_options += Project::getUserAssocList($prj_id, 'active', User::getRoleID('Standard User'));
+$assign_options += Project::getUserAssocList($prj_id, 'active', User::ROLE_USER);
 
 $tpl->assign(array(
     'users' =>  $assign_options,

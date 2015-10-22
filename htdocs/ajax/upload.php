@@ -26,13 +26,13 @@
 // | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../../init.php';
+require_once __DIR__ . '/../../init.php';
 
 // handle ajax upload
 // FIXME: no identity logged who added the file.
 try {
     // check if logged in. if not, just give error
-    if (!Auth::hasValidCookie(APP_COOKIE)) {
+    if (!AuthCookie::hasAuthCookie()) {
         throw new BadFunctionCallException(ev_gettext('Must be logged in'));
     }
 

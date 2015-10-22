@@ -1,13 +1,32 @@
 Eventum Issue Tracking System
 =============================
 
-2015-??-??, Version 3.0.3
+2015-??-??, Version 3.0.4
+-------------------------
+- Fix few Static & Deprecated calls (Craig Pinfold, #72)
+- Use randomlib for private key generation, add UI to regenerate it (Elan Ruusamäe, #73)
+- Fix misplaced {if} in preferences template (Robbert-Jan Roos, LP#1506279)
+- Auth and Project cookie related internal refactor (Elan Ruusamäe, #74)
+- Set limit 20 retries to try to send one mail (Elan Ruusamäe)
+- Add html_charset to be APP_CHARSET (Elan Ruusamäe, LP#741768)
+- Use password_hash family functions for password hashing (Elan Ruusamäe, GH#77)
+- Unify size of pri_id in databases (Elan Ruusamäe, LP#1450152)
+- Handle mbstring function overload (Elan Ruusamäe, LP#1494732)
+- Make version table log based (Elan Ruusamäe)
+- Removed local/include/ from include path and added to composer instead (Bryan Alsdorf)
+- Use zf2 config for setup config (Elan Ruusamäe, #80)
+
+2015-10-13, Version 3.0.3
 -------------------------
 - Added bin/truncate_mail_queue.php (Bryan Alsdorf)
 - Add admin interface for required fields (Bryan Alsdorf, #67)
 - UI fix for Issue Assignees (Kristo Klausson, #68)
 - Remove File/Util.php manual include (Elan Ruusamäe, LP#1494536)
 - Eventum Mail Processing Enhancements (Kevin Seymour, LP#1481894)
+- Fix bugs with estimated dev time (Bryan Alsdorf, LP#1494723)
+- Display pretty error page for auth exceptions (Bryan Alsdorf)
+- Fix POP3 download bug (Craig Pinfold, #66, #69)
+- Add autosize plugin to all TEXAREAs (Elan Ruusamäe, #70)
 
 2015-08-04, Version 3.0.2
 -------------------------
@@ -288,6 +307,7 @@ Eventum Issue Tracking System
 - Fixed bug with displaying help (Bryan)
 - Fixed bug with dynamic custom fields (Bryan)
 - Fixed formatting bug in email accounts admin page (Bryan)
+- Fixed bug with fix-charset script (Bryan Alsdorf, Bug #42294)
 
 2009-01-14, Version 2.2
 -----------------------

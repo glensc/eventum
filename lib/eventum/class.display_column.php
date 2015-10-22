@@ -22,7 +22,7 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: Bryan Alsdorf <bryan@mysql.com>                             |
@@ -72,7 +72,7 @@ class Display_Column
             unset($data['custom_fields']);
         }
         // remove customer field if user has a role of customer
-        if ($current_role == User::getRoleID('Customer')) {
+        if ($current_role == User::ROLE_CUSTOMER) {
             unset($data['iss_customer_id']);
         }
 
@@ -149,7 +149,7 @@ class Display_Column
      * @param   string $column The name of the column
      * @return  string Info on the column
      */
-    public function getColumnInfo($page, $column)
+    public static function getColumnInfo($page, $column)
     {
         $columns = self::getAllColumns($page);
 

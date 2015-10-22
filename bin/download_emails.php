@@ -33,7 +33,7 @@
 // script tried to disable memory_limit by setting it to a negative value -2147483648 bytes which is not allowed
 ini_set('memory_limit', '2047M');
 
-require_once dirname(__FILE__).'/../init.php';
+require_once __DIR__ . '/../init.php';
 
 // setup constant to be used globally
 define('SAPI_CLI', 'cli' == php_sapi_name());
@@ -242,9 +242,11 @@ if ($mbox == false) {
 if ($account['ema_get_only_new']) {
     $emails = Support::getNewEmails($mbox);
 
-    foreach ($emails as $i) {
-        $mail = ImapMessage::createFromImap($mbox, $i, $account);
-        Support::getEmailInfo($mail, $account);
+    if (is_array($emails)) {
+        foreach ($emails as $i) {
+            $mail = ImapMessage::createFromImap($mbox, $i, $account);
+            Support::getEmailInfo($mail, $account);
+        }
     }
 } else {
     $emails = Support::getTotalEmails($mbox);

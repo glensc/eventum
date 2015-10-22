@@ -32,6 +32,11 @@
 class Mail_Queue
 {
     /**
+     * Number of times to retry 'error' status mails before giving up.
+     */
+    const MAX_RETRIES = 20;
+
+    /**
      * Adds an email to the outgoing mail queue.
      *
      * @param   string $recipient The recipient of this email
@@ -67,7 +72,7 @@ class Mail_Queue
         $headers = array();
 
         // add specialized headers
-        if ((!empty($issue_id)) && ((!empty($to_usr_id)) && (User::getRoleByUser($to_usr_id, Issue::getProjectID($issue_id)) != User::getRoleID('Customer'))) ||
+        if ((!empty($issue_id)) && ((!empty($to_usr_id)) && (User::getRoleByUser($to_usr_id, Issue::getProjectID($issue_id)) != User::ROLE_CUSTOMER)) ||
                 (@in_array(Mail_Helper::getEmailAddress($recipient), $reminder_addresses))) {
             $headers += Mail_Helper::getSpecializedHeaders($issue_id, $type, $sender_usr_id);
         }
@@ -123,7 +128,7 @@ class Mail_Queue
             $params['maq_type_id'] = $type_id;
         }
 
-        $stmt = 'INSERT INTO {{%mail_queue}} SET '.DB_Helper::buildSet($params);
+        $stmt = 'INSERT INTO {{%mail_queue}} SET ' . DB_Helper::buildSet($params);
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DbException $e) {
@@ -145,6 +150,7 @@ class Mail_Queue
     public static function send($status, $limit = null, $merge = false)
     {
         if ($merge !== false) {
+            // TODO: handle self::MAX_RETRIES, but that should be done per queue item
             foreach (self::_getMergedList($status, $limit) as $maq_ids) {
                 $emails = self::_getEntries($maq_ids);
                 $recipients = array();
@@ -200,6 +206,12 @@ class Mail_Queue
         }
 
         foreach (self::_getList($status, $limit) as $maq_id) {
+            $errors = self::getQueueErrorCount($maq_id);
+            if ($errors > self::MAX_RETRIES) {
+                // TODO: mark as status 'failed'
+                continue;
+            }
+
             $email = self::_getEntry($maq_id);
             $result = self::_sendEmail($email['recipient'], $email['headers'], $email['body'], $status);
 
@@ -418,6 +430,20 @@ class Mail_Queue
         }
 
         return $res;
+    }
+
+    /**
+     * Return number of errors for this queue item
+     *
+     * @param int $maq_id
+     * @return int
+     */
+    private function getQueueErrorCount($maq_id)
+    {
+        $sql = 'select count(*) from {{%mail_queue_log}} where mql_maq_id=? and mql_status=?';
+        $res = DB_Helper::getInstance()->getOne($sql, array($maq_id, 'error'));
+
+        return (int) $res;
     }
 
     /**

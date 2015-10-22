@@ -52,7 +52,7 @@ class Notification
             return true;
         }
         $subscribed_emails = self::getSubscribedEmails($issue_id, 'emails');
-        $subscribed_emails = array_map('strtolower', $subscribed_emails);
+        $subscribed_emails = array_map(function ($s) { return strtolower($s); }, $subscribed_emails);
         if (@in_array($email, $subscribed_emails)) {
             return true;
         } else {
@@ -172,7 +172,7 @@ class Notification
      */
     public static function getFixedFromHeader($issue_id, $sender, $type)
     {
-        $setup = Setup::load();
+        $setup = Setup::get();
         if ($type == 'issue') {
             $routing = 'email_routing';
         } else {
@@ -300,7 +300,7 @@ class Notification
 
         // automatically subscribe this sender to email notifications on this issue
         $subscribed_emails = self::getSubscribedEmails($issue_id, 'emails');
-        $subscribed_emails = array_map('strtolower', $subscribed_emails);
+        $subscribed_emails = array_map(function ($s) { return strtolower($s); }, $subscribed_emails);
         if ((!self::isIssueRoutingSender($issue_id, $sender)) &&
                 (!$mail->isBounceMessage()) &&
                 (!in_array($sender_email, $subscribed_emails)) &&
@@ -319,7 +319,7 @@ class Notification
                 }
             } else {
                 // if we are only supposed to send email to internal users, check if the role is lower than standard user
-                if ($internal_only == true && (User::getRoleByUser($user['sub_usr_id'], Issue::getProjectID($issue_id)) < User::getRoleID('standard user'))) {
+                if ($internal_only == true && (User::getRoleByUser($user['sub_usr_id'], Issue::getProjectID($issue_id)) < User::ROLE_USER)) {
                     continue;
                 }
                 // check if we are only supposed to send email to the assignees
@@ -366,7 +366,7 @@ class Notification
         $mail->setSubject(Mail_Helper::formatSubject($issue_id, $mail->getSubject()));
 
         if (empty($type)) {
-            if (($sender_usr_id != false) && (User::getRoleByUser($sender_usr_id, Issue::getProjectID($issue_id)) == User::getRoleID('Customer'))) {
+            if (($sender_usr_id != false) && (User::getRoleByUser($sender_usr_id, Issue::getProjectID($issue_id)) == User::ROLE_CUSTOMER)) {
                 $type = 'customer_email';
             } else {
                 $type = 'other_email';
@@ -628,9 +628,9 @@ class Notification
 
         $emails = array();
         $users = self::getUsersByIssue($issue_id, 'updated');
-        $user_emails = Project::getUserEmailAssocList(Issue::getProjectID($issue_id), 'active', User::getRoleID('Customer'));
+        $user_emails = Project::getUserEmailAssocList(Issue::getProjectID($issue_id), 'active', User::ROLE_CUSTOMER);
         // FIXME: $user_emails unused
-        $user_emails = array_map('strtolower', $user_emails);
+        $user_emails = array_map(function ($s) { return strtolower($s); }, $user_emails);
 
         foreach ($users as $user) {
             if (empty($user['sub_usr_id'])) {
@@ -734,8 +734,8 @@ class Notification
         if ($extra_recipients && (count($extra) > 0)) {
             $users = array_merge($users, $extra);
         }
-        $user_emails = Project::getUserEmailAssocList(Issue::getProjectID($issue_id), 'active', User::getRoleID('Customer'));
-        $user_emails = array_map('strtolower', $user_emails);
+        $user_emails = Project::getUserEmailAssocList(Issue::getProjectID($issue_id), 'active', User::ROLE_CUSTOMER);
+        $user_emails = array_map(function ($s) { return strtolower($s); }, $user_emails);
 
         foreach ($users as $user) {
             if (empty($user['sub_usr_id'])) {
@@ -750,7 +750,7 @@ class Notification
                     continue;
                 }
                 // if we are only supposed to send email to internal users, check if the role is lower than standard user
-                if (($internal_only == true) && (User::getRoleByUser($user['sub_usr_id'], Issue::getProjectID($issue_id)) < User::getRoleID('standard user'))) {
+                if (($internal_only == true) && (User::getRoleByUser($user['sub_usr_id'], Issue::getProjectID($issue_id)) < User::ROLE_USER)) {
                     continue;
                 }
                 if ($type == 'notes' && User::isPartner($user['sub_usr_id']) &&
@@ -1018,7 +1018,7 @@ class Notification
                     usr_status = 'active' AND
                     pru_role > ?";
         $params = array(
-            $prj_id, User::getRoleID('Customer'),
+            $prj_id, User::ROLE_CUSTOMER,
         );
 
         if (count($exclude_list) > 0) {
@@ -1032,7 +1032,7 @@ class Notification
         foreach ($res as $row) {
             $subscriber = Mail_Helper::getFormattedName($row['usr_full_name'], $row['usr_email']);
             // don't send these emails to customers
-            if (($row['pru_role'] == User::getRoleID('Customer')) || (!empty($row['usr_customer_id']))
+            if (($row['pru_role'] == User::ROLE_CUSTOMER) || (!empty($row['usr_customer_id']))
                     || (!empty($row['usr_customer_contact_id']))) {
                 continue;
             }
@@ -1316,7 +1316,7 @@ class Notification
                                      $type = false)
     {
         // don't save any irc notification if this feature is disabled
-        $setup = Setup::load();
+        $setup = Setup::get();
         if (@$setup['irc_notification'] != 'enabled') {
             return false;
         }
@@ -1641,7 +1641,7 @@ class Notification
         }
 
         foreach ($users as $user) {
-            if ($user['pru_role'] != User::getRoleID('Customer')) {
+            if ($user['pru_role'] != User::ROLE_CUSTOMER) {
                 $subscribers['staff'][] = $user['usr_full_name'];
             } else {
                 $subscribers['customers'][] = $user['usr_full_name'];
@@ -1685,7 +1685,7 @@ class Notification
                 if (empty($email['sub_email'])) {
                     continue;
                 }
-                if ((!empty($email['pru_role'])) && ($email['pru_role'] != User::getRoleID('Customer'))) {
+                if ((!empty($email['pru_role'])) && ($email['pru_role'] != User::ROLE_CUSTOMER)) {
                     $subscribers['staff'][] = $email['usr_full_name'];
                 } else {
                     $subscribers['customers'][] = $email['sub_email'];
@@ -2041,7 +2041,7 @@ class Notification
         }
 
         $actions = array();
-        $setup = Setup::load();
+        $setup = Setup::get();
 
         if (@$setup['update'] == 1) {
             $actions[] = 'updated';

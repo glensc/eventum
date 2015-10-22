@@ -22,25 +22,18 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: João Prado Maia <jpm@mysql.com>                             |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../init.php';
-
-$setup = Setup::load();
-if (empty($setup['tool_caption'])) {
-    $setup['tool_caption'] = APP_NAME;
-}
+require_once __DIR__ . '/../init.php';
 
 function sendAuthenticateHeader()
 {
-    global $setup;
-
     // FIXME: escape tool_caption properly
-    header('WWW-Authenticate: Basic realm="' . $setup['tool_caption'] . '"');
+    header('WWW-Authenticate: Basic realm="' . Misc::getToolCaption() . '"');
     header('HTTP/1.0 401 Unauthorized');
 }
 
@@ -138,7 +131,7 @@ function authorizeRequest()
         }
 
         $usr_id = User::getUserIDByEmail($authUser);
-        Auth::createFakeCookie($usr_id);
+        AuthCookie::setAuthCookie($usr_id);
     }
 
     // check if the required parameter 'custom_id' is really being passed
@@ -173,14 +166,15 @@ $options = array(
     'custom_field'  => $filter['cst_custom_field'],
     'search_type'   => $filter['cst_search_type'],
 );
-$issues = Search::getListing($filter['cst_prj_id'], $options, 0, 'ALL', true);
+
+$issues = Search::getListing($filter['cst_prj_id'], $options, 0, 'ALL');
 $issues = $issues['list'];
 Issue::getDescriptionByIssues($issues);
 
 $tpl->assign(array(
     'charset' => APP_CHARSET,
     'project_title' => Project::getName($filter['cst_prj_id']),
-    'setup' => $setup,
+    'setup' => Setup::get(),
     'filter' => $filter,
     'issues' => $issues,
 ));

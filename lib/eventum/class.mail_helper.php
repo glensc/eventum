@@ -299,8 +299,8 @@ class Mail_Helper
      */
     public static function getSMTPSettings()
     {
-        $settings = Setup::load();
-        settype($settings['smtp']['auth'], 'boolean');
+        $settings = Setup::get();
+
         if (file_exists('/etc/mailname')) {
             $settings['smtp']['localhost'] = trim(file_get_contents('/etc/mailname'));
         }
@@ -441,7 +441,7 @@ class Mail_Helper
      */
     public static function addWarningMessage($issue_id, $to, $mail)
     {
-        $setup = Setup::load();
+        $setup = Setup::get();
         $enabled = @$setup['email_routing']['status'] == 'enabled' && $setup['email_routing']['warning']['status'] == 'enabled';
         if (!$enabled) {
             return;
@@ -457,7 +457,7 @@ class Mail_Helper
 
         // don't add anything if the recipient is a known customer contact
         $recipient_role_id = User::getRoleByUser($recipient_usr_id, Issue::getProjectID($issue_id));
-        if ($recipient_role_id == User::getRoleID('Customer')) {
+        if ($recipient_role_id == User::ROLE_CUSTOMER) {
             return;
         }
 
@@ -513,7 +513,12 @@ class Mail_Helper
         $to = Mime_Helper::encodeAddress($to);
         $subject = Mime_Helper::encode($subject);
 
-        $body = $this->mime->get(array('text_charset' => APP_CHARSET, 'head_charset' => APP_CHARSET, 'text_encoding' => APP_EMAIL_ENCODING));
+        $body = $this->mime->get(array(
+            'text_charset' => APP_CHARSET,
+            'html_charset' => APP_CHARSET,
+            'head_charset' => APP_CHARSET,
+            'text_encoding' => APP_EMAIL_ENCODING,
+        ));
         $headers = array(
             'From'    => $from,
             'To'      => self::fixAddressQuoting($to),
@@ -553,7 +558,12 @@ class Mail_Helper
         $to = Mime_Helper::encodeAddress($to);
         $subject = Mime_Helper::encode($subject);
 
-        $body = $this->mime->get(array('text_charset' => APP_CHARSET, 'head_charset' => APP_CHARSET, 'text_encoding' => APP_EMAIL_ENCODING));
+        $body = $this->mime->get(array(
+            'text_charset' => APP_CHARSET,
+            'html_charset' => APP_CHARSET,
+            'head_charset' => APP_CHARSET,
+            'text_encoding' => APP_EMAIL_ENCODING,
+        ));
         $this->setHeaders(array(
             'From'    => $from,
             'To'      => $to,
@@ -576,11 +586,12 @@ class Mail_Helper
      * Method used to save a copy of the given email to a configurable address.
      *
      * @param   array $email The email to save.
+     * @return bool
      */
     public static function saveOutgoingEmailCopy(&$email)
     {
         // check early: do we really want to save every outgoing email?
-        $setup = Setup::load();
+        $setup = Setup::get();
         $save_outgoing_email = !empty($setup['smtp']['save_outgoing_email']) && $setup['smtp']['save_outgoing_email'] == 'yes';
         if (!$save_outgoing_email || empty($setup['smtp']['save_address'])) {
             return false;
@@ -629,10 +640,10 @@ class Mail_Helper
 
         // add specialized headers if they are not already added
         if (empty($headers['X-Eventum-Type'])) {
-            $headers += self::getSpecializedHeaders($issue_id, $email['maq_type'], $headers, $sender_usr_id);
+            $headers += self::getSpecializedHeaders($issue_id, $email['maq_type'], $sender_usr_id);
         }
 
-        $params = self::getSMTPSettings($address);
+        $params = self::getSMTPSettings();
         $mail = Mail::factory('smtp', $params);
         $res = $mail->send($address, $headers, $body);
         if (Misc::isError($res)) {
@@ -793,7 +804,7 @@ class Mail_Helper
         }
         if (preg_match('/^References: (.+?)(\r?\n\r?\n|\r?\n\r?\S)/smi', $text_headers, $matches)) {
             $references = explode(' ', self::unfold(trim($matches[1])));
-            $references = array_map('trim', $references);
+            $references = array_map(function ($s) { return trim($s); }, $references);
             // return the first message-id in the list of references
             return $references[0];
         }
@@ -815,7 +826,7 @@ class Mail_Helper
         }
         if (preg_match('/^References: (.+?)(\r?\n\r?\n|\r?\n\r?\S)/smi', $text_headers, $matches)) {
             $references = array_merge($references, explode(' ', self::unfold(trim($matches[1]))));
-            $references = array_map('trim', $references);
+            $references = array_map(function ($s) { return trim($s); }, $references);
             $references = array_unique($references);
         }
         foreach ($references as $key => $reference) {
@@ -863,8 +874,14 @@ class Mail_Helper
          not clear what the fuck this is supposed to do!
 
         add In-Reply-To: header with value of $reference_msg_id?
+*/
 
-
+        /**
+         * Make sure that In-Reply-To and References headers are set and reference a message in this issue.
+         * If not, set to be the root message ID of the issue. This is to ensure messages are threaded by
+         * issue in mail clients.
+         */
+        /*
         if (preg_match('/^In-Reply-To: (.*)/mi', $text_headers) > 0) {
             // replace existing header
             $text_headers = preg_replace('/^In-Reply-To: (.*)/mi', 'In-Reply-To: ' . $reference_msg_id, $text_headers, 1);

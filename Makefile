@@ -6,12 +6,16 @@ bindir          := /usr/bin
 logdir          := /var/log/$(name)
 smartyplugindir := $(datadir)/lib/Smarty/plugins
 
+PHPCOMPATINFO_VERSION := 4.4.0
+PHPUNIT_VERSION := 4.8.11
+PHPAB_VERSION := 1.20.3
+
 define find_tool
 $(shell PATH=$$PATH:. which $1.phar 2>/dev/null || which $1 2>/dev/null || echo false)
 endef
 
 define fetch_tool
-curl -sS $1 -o $@.tmp && chmod +x $@.tmp && mv $@.tmp $@
+curl -sSf $1 -o $@.tmp && chmod +x $@.tmp && mv $@.tmp $@
 endef
 
 php-cs-fixer := $(call find_tool, php-cs-fixer)
@@ -44,10 +48,13 @@ php-cs-fixer.phar:
 	$(call fetch_tool,http://get.sensiolabs.org/php-cs-fixer.phar)
 
 phpcompatinfo.phar:
-	$(call fetch_tool,http://bartlett.laurent-laville.org/get/phpcompatinfo-4.4.0.phar)
+	$(call fetch_tool,http://bartlett.laurent-laville.org/get/phpcompatinfo-$(PHPCOMPATINFO_VERSION).phar)
 
 phpunit.phar:
-	$(call fetch_tool,https://phar.phpunit.de/phpunit.phar)
+	$(call fetch_tool,https://phar.phpunit.de/phpunit-$(PHPUNIT_VERSION).phar)
+
+phpab.phar:
+	$(call fetch_tool,http://phpab.net/phpab-$(PHPAB_VERSION).phar)
 
 pear-fix: composer.lock
 	-$(php-cs-fixer) fix vendor/pear-pear.php.net --fixers=php4_constructor --verbose

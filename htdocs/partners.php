@@ -4,7 +4,7 @@
 // +----------------------------------------------------------------------+
 // | Eventum - Issue Tracking System                                      |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2011 Eventum Team              .                       |
+// | Copyright (c) 2011-2015 Eventum Team              .                  |
 // |                                                                      |
 // | This program is free software; you can redistribute it and/or modify |
 // | it under the terms of the GNU General Public License as published by |
@@ -20,22 +20,22 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 // | Authors: Bryan Alsdorf <balsdorf@gmail.com>                          |
 // +----------------------------------------------------------------------+
 
-require_once dirname(__FILE__) . '/../init.php';
+require_once __DIR__ . '/../init.php';
 
 $tpl = new Template_Helper();
 $tpl->setTemplate('select_partners.tpl.html');
 
-Auth::checkAuthentication(APP_COOKIE, 'index.php?err=5', true);
+Auth::checkAuthentication('index.php?err=5', true);
 
 $issue_id = @$_POST['issue_id'] ? $_POST['issue_id'] : $_GET['iss_id'];
 
-if ((!Access::canViewDrafts($issue_id, Auth::getUserID())) || (Auth::getCurrentRole() <= User::getRoleID('Standard User'))) {
+if ((!Access::canViewDrafts($issue_id, Auth::getUserID())) || (Auth::getCurrentRole() <= User::ROLE_USER)) {
     $tpl = new Template_Helper();
     $tpl->setTemplate('permission_denied.tpl.html');
     $tpl->displayTemplate();

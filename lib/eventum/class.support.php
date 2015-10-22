@@ -485,7 +485,7 @@ class Support
      */
     public static function getEmailInfo(ImapMessage $mail, $info)
     {
-        Auth::createFakeCookie(APP_SYSTEM_USER_ID);
+        AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
 
         // check if the current message was already seen
         if ($info['ema_get_only_new'] && $mail->isSeen()) {
@@ -499,8 +499,9 @@ class Support
             return;
         }
 
-        // FIXME: does it needs to be int?
-        $has_attachments = (int)$mail->hasAttachments();
+        // we can't trust the in-reply-to from the imap c-client, so let's
+        // try to manually parse that value from the full headers
+        $reference_msg_id = Mail_Helper::getReferenceMessageID($headers);
 
         // pass in $mail object so it can be modified
         $workflow = Workflow::preEmailDownload($mail->getProjectId(), $mail);
@@ -510,7 +511,7 @@ class Support
 
         // route emails if necessary
         if ($info['ema_use_routing'] == 1) {
-            $setup = Setup::load();
+            $setup = Setup::get();
 
             // we create addresses array so it can be reused
             $addresses = $mail->getAddresses();
@@ -633,7 +634,8 @@ class Support
             $t['issue_id'] = 0;
         } else {
             $prj_id = Issue::getProjectID($t['issue_id']);
-            Auth::createFakeCookie(APP_SYSTEM_USER_ID, $prj_id);
+            AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
+            AuthCookie::setProjectCookie($prj_id);
         }
         if ($should_create_array['type'] == 'note') {
             // assume that this is not a valid note
@@ -644,13 +646,14 @@ class Support
                 $usr_id = User::getUserIDByEmail($sender_email);
                 if (!empty($usr_id)) {
                     $role_id = User::getRoleByUser($usr_id, $prj_id);
-                    if ($role_id > User::getRoleID('Customer')) {
+                    if ($role_id > User::ROLE_CUSTOMER) {
                         // actually a valid user so insert the note
 
-                        Auth::createFakeCookie($usr_id, $prj_id);
+                        AuthCookie::setAuthCookie($usr_id);
+                        AuthCookie::setProjectCookie($prj_id);
 
-                        $users = Project::getUserEmailAssocList($prj_id, 'active', User::getRoleID('Customer'));
-                        $user_emails = array_map('strtolower', array_values($users));
+                        $users = Project::getUserEmailAssocList($prj_id, 'active', User::ROLE_CUSTOMER);
+                        $user_emails = array_map(function ($s) { return strtolower($s); }, array_values($users));
                         $users = array_flip($users);
 
                         $addresses = array();
@@ -743,10 +746,10 @@ class Support
                         */
 
                         // mark this issue as updated
-                        if ((!empty($t['customer_id'])) && ($t['customer_id'] != 'NULL') && (empty($usr_id) || (User::getRoleByUser($usr_id, $prj_id) == User::getRoleID('Customer')))) {
+                        if ((!empty($t['customer_id'])) && ($t['customer_id'] != 'NULL') && ((empty($usr_id)) || (User::getRoleByUser($usr_id, $prj_id) == User::ROLE_CUSTOMER))) {
                             Issue::markAsUpdated($t['issue_id'], 'customer action');
                         } else {
-                            if ((!empty($usr_id)) && (User::getRoleByUser($usr_id, $prj_id) > User::getRoleID('Customer'))) {
+                            if ((!empty($usr_id)) && (User::getRoleByUser($usr_id, $prj_id) > User::ROLE_CUSTOMER)) {
                                 Issue::markAsUpdated($t['issue_id'], 'staff response');
                             } else {
                                 Issue::markAsUpdated($t['issue_id'], 'user response');
@@ -764,7 +767,6 @@ class Support
         }
 
         if ($res > 0) {
-            // need to delete the message from the server?
             $mail->deleteMessage();
         }
     }
@@ -825,7 +827,7 @@ class Support
         } elseif (is_numeric($workflow)) {
             $issue_id = $workflow;
         } else {
-            $setup = Setup::load();
+            $setup = Setup::get();
             if (@$setup['subject_based_routing']['status'] == 'enabled') {
                 // Look for issue ID in the subject line
 
@@ -900,7 +902,8 @@ class Support
         // check whether we need to create a new issue or not
         if (($info['ema_issue_auto_creation'] == 'enabled') && ($should_create_issue) && (!$mail->isBounceMessage())) {
             $options = Email_Account::getIssueAutoCreationOptions($info['ema_id']);
-            Auth::createFakeCookie(APP_SYSTEM_USER_ID, $info['ema_prj_id']);
+            AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
+            AuthCookie::setProjectCookie($info['ema_prj_id']);
             $issue_id = Issue::createFromEmail($info['ema_prj_id'], APP_SYSTEM_USER_ID,
                     $mail, @$options['category'],
                     @$options['priority'], @$options['users'], $date, $message_id, $severity, $customer_id, $contact_id,
@@ -1375,7 +1378,7 @@ class Support
         }
 
         // handle 'private' issues.
-        if (Auth::getCurrentRole() < User::getRoleID('Manager')) {
+        if (Auth::getCurrentRole() < User::ROLE_MANAGER) {
             $stmt .= ' AND (iss_private = 0 OR iss_private IS NULL)';
         }
 
@@ -1877,7 +1880,7 @@ class Support
                 try {
                     $contract = $crm->getContract(Issue::getContractID($issue_id));
                     $contact_emails = array_keys($contract->getContactEmailAssocList());
-                    $contact_emails = array_map('strtolower', $contact_emails);
+                    $contact_emails = array_map(function ($s) { return strtolower($s); }, $contact_emails);
                 } catch (CRMException $e) {
                     $contact_emails = array();
                 }
@@ -1904,7 +1907,7 @@ class Support
                 $is_allowed = false;
             } elseif ((!Authorized_Replier::isAuthorizedReplier($issue_id, $sender_email)) &&
                     (!Issue::isAssignedToUser($issue_id, $sender_usr_id)) &&
-                    (User::getRoleByUser($sender_usr_id, Issue::getProjectID($issue_id)) != User::getRoleID('Customer'))) {
+                    (User::getRoleByUser($sender_usr_id, Issue::getProjectID($issue_id)) != User::ROLE_CUSTOMER)) {
                 $is_allowed = false;
             }
         }
@@ -2016,7 +2019,7 @@ class Support
             } else {
                 $fixed_body = $body;
             }
-            if (User::getRoleByUser(User::getUserIDByEmail(Mail_Helper::getEmailAddress($from)), Issue::getProjectID($issue_id)) == User::getRoleID('Customer')) {
+            if (User::getRoleByUser(User::getUserIDByEmail(Mail_Helper::getEmailAddress($from)), Issue::getProjectID($issue_id)) == User::ROLE_CUSTOMER) {
                 $type = 'customer_email';
             } else {
                 $type = 'other_email';
@@ -2248,7 +2251,7 @@ class Support
         );
 
         // associate this new email with a customer, if appropriate
-        if (Auth::getCurrentRole() == User::getRoleID('Customer')) {
+        if (Auth::getCurrentRole() == User::ROLE_CUSTOMER) {
             if ($issue_id) {
                 $crm = CRM::getInstance($prj_id);
                 try {
@@ -2279,10 +2282,10 @@ class Support
             Notification::notifyNewEmail($current_usr_id, $issue_id, $email, $internal_only, false, $type, $sup_id);
             // mark this issue as updated
             $has_customer = $email['customer_id'] && $email['customer_id'] != 'NULL';
-            if ($has_customer && (!$current_usr_id || User::getRoleByUser($current_usr_id, $prj_id) == User::getRoleID('Customer'))) {
+            if ($has_customer && (!$current_usr_id || User::getRoleByUser($current_usr_id, $prj_id) == User::ROLE_CUSTOMER)) {
                 Issue::markAsUpdated($issue_id, 'customer action');
             } else {
-                if ($sender_usr_id && User::getRoleByUser($sender_usr_id, $prj_id) > User::getRoleID('Customer')) {
+                if ($sender_usr_id && User::getRoleByUser($sender_usr_id, $prj_id) > User::ROLE_CUSTOMER) {
                     Issue::markAsUpdated($issue_id, 'staff response');
                 } else {
                     Issue::markAsUpdated($issue_id, 'user response');
@@ -2645,6 +2648,13 @@ class Support
             $email_details = array();
             $email_details['issue_id'] = $issue_id;
             $email_details['from'] = $sender_email;
+
+            // XXX: review and remove unneeded ones
+            // these are from 01c7db33
+            $email_details['full_message'] = $options['full_message'];
+            $email_details['title'] = $mail->getSubject();
+            $email_details['note'] = $mail->getContent();
+            $email_details['message_id'] = $options['message_id'];
 
             // avoid having this type of message re-open the issue
             if ($mail->isVacationAutoResponder()) {
