@@ -435,11 +435,10 @@ class Support
     /**
      * Bounce message to sender.
      *
-     * @param   object  $message parsed message structure.
+     * @param   ImapMessage $mail The Mail object
      * @param   array   array(ERROR_CODE, ERROR_STRING) of error to bounce
-     * @return  void
      */
-    public function bounceMessage($message, $error)
+    public function bounceMessage($mail, $error)
     {
         // open text template
         $tpl = new Template_Helper();
@@ -447,11 +446,11 @@ class Support
         $tpl->assign(array(
             'error_code'        => $error[0],
             'error_message'     => $error[1],
-            'date'              => $message->date,
-            'subject'           => Mime_Helper::fixEncoding($message->subject),
+            'date'              => $mail->getMailDate(),
+            'subject'           => $mail->getSubject(),
             'from'              => Mime_Helper::fixEncoding($message->fromaddress),
-            'to'                => Mime_Helper::fixEncoding($message->toaddress),
-            'cc'                => Mime_Helper::fixEncoding(@$message->ccaddress),
+            'to'                => $mail->getTo(),
+            'cc'                => $mail->getCc(),
         ));
 
         $sender_email = Mail_Helper::getEmailAddress($message->fromaddress);
@@ -481,11 +480,11 @@ class Support
      *
      * XXX this function does more than that.
      *
-     * @param   MailMessage $mail The Mail object
+     * @param   ImapMessage $mail The Mail object
      * @param   array $info The support email account information
      * @return  void
      */
-    public static function getEmailInfo(MailMessage $mail, $info)
+    public static function getEmailInfo(ImapMessage $mail, $info)
     {
         Auth::createFakeCookie(APP_SYSTEM_USER_ID);
 
@@ -522,8 +521,7 @@ class Support
                 if ($res != false) {
                     $return = Routing::route_emails($mail);
                     if ($return === true) {
-                        self::deleteMessage($info, $mbox, $num);
-
+                        $mail->deleteMessage();
                         return;
                     }
                     // TODO: handle errors?
@@ -543,7 +541,7 @@ class Support
 
                     if ($info['ema_leave_copy']) {
                         if ($return === true) {
-                            self::deleteMessage($info, $mbox, $num);
+                            $mail->deleteMessage();
                         }
                     } else {
                         if ($return !== true) {

@@ -243,7 +243,7 @@ if ($account['ema_get_only_new']) {
     $emails = Support::getNewEmails($mbox);
 
     foreach ($emails as $i) {
-        $mail = MailMessage::createFromImap($mbox, $i);
+        $mail = ImapMessage::createFromImap($mbox, $i, $info);
         Support::getEmailInfo($mail, $account);
     }
 } else {
@@ -251,7 +251,7 @@ if ($account['ema_get_only_new']) {
 
     if ($emails > 0) {
         for ($i = 1; $i <= $emails; $i++) {
-            $mail = MailMessage::createFromImap($mbox, $i);
+            $mail = ImapMessage::createFromImap($mbox, $i, $info);
             Support::getEmailInfo($mail, $account);
         }
     }
