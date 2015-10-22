@@ -448,7 +448,7 @@ class Support
             'error_message'     => $error[1],
             'date'              => $mail->getMailDate(),
             'subject'           => $mail->getSubject(),
-            'from'              => Mime_Helper::fixEncoding($message->fromaddress),
+            'from'              => $mail->getFromHeader()->toString(),
             'to'                => $mail->getTo(),
             'cc'                => $mail->getCc(),
         ));
@@ -482,7 +482,6 @@ class Support
      *
      * @param   ImapMessage $mail The Mail object
      * @param   array $info The support email account information
-     * @return  void
      */
     public static function getEmailInfo(ImapMessage $mail, $info)
     {
@@ -547,9 +546,9 @@ class Support
                         if ($return !== true) {
                             // in case of error, create bounce, but still
                             // delete email not to send bounce in next process :)
-                            self::bounceMessage($email, $return);
+                            self::bounceMessage($mail, $return);
                         }
-                        self::deleteMessage($info, $mbox, $num);
+                        $mail->deleteMessage();
                     }
 
                     return;
@@ -568,7 +567,7 @@ class Support
 
                     if ($info['ema_leave_copy']) {
                         if ($return === true) {
-                            self::deleteMessage($info, $mbox, $num);
+                            $mail->deleteMessage();
                         }
                     } else {
                         if ($return !== true) {
@@ -576,7 +575,7 @@ class Support
                             // delete email not to send bounce in next process :)
                             self::bounceMessage($email, $return);
                         }
-                        self::deleteMessage($info, $mbox, $num);
+                        $mail->deleteMessage();
                     }
 
                     return;
@@ -766,7 +765,7 @@ class Support
 
         if ($res > 0) {
             // need to delete the message from the server?
-            self::deleteMessage($info, $mbox, $num);
+            $mail->deleteMessage();
         }
     }
 
