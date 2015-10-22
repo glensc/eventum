@@ -448,12 +448,12 @@ class Support
             'error_message'     => $error[1],
             'date'              => $mail->getMailDate(),
             'subject'           => $mail->getSubject(),
-            'from'              => $mail->getFromHeader()->toString(),
-            'to'                => $mail->getTo(),
-            'cc'                => $mail->getCc(),
+            'from'              => $mail->getHeaderValue('From'),
+            'to'                => $mail->getHeaderValue('To'),
+            'cc'                => $mail->getHeaderValue('Cc'),
         ));
 
-        $sender_email = Mail_Helper::getEmailAddress($message->fromaddress);
+        $sender_email = $mail->getSender();
         $usr_id = User::getUserIDByEmail($sender_email);
         // change the current locale
         if ($usr_id) {
@@ -503,7 +503,7 @@ class Support
         $has_attachments = (int)$mail->hasAttachments();
 
         // pass in $mail object so it can be modified
-        $workflow = Workflow::preEmailDownload($info['ema_prj_id'], $info, $mail);
+        $workflow = Workflow::preEmailDownload($mail->getProjectId(), $mail);
         if ($workflow === -1) {
             return;
         }
@@ -557,7 +557,7 @@ class Support
             if (@$setup['draft_routing']['status'] == 'enabled') {
                 $res = Routing::getMatchingIssueIDs($addresses, 'draft');
                 if ($res != false) {
-                    $return = Routing::route_drafts($message);
+                    $return = Routing::route_drafts($mail);
 
                     // if leave copy of emails on IMAP server is off we can
                     // bounce on note that user had no permission to write
@@ -573,7 +573,7 @@ class Support
                         if ($return !== true) {
                             // in case of error, create bounce, but still
                             // delete email not to send bounce in next process :)
-                            self::bounceMessage($email, $return);
+                            self::bounceMessage($mail, $return);
                         }
                         $mail->deleteMessage();
                     }

@@ -591,15 +591,14 @@ class Workflow
     }
 
     /**
-     * Called at the begining of the email download process. If it returns -1, the
+     * Called at the beginning of the email download process. If it returns -1, the
      * rest of the email code will not be executed.
      *
      * @param   integer $prj_id The project ID
-     * @param   array $account An array containing the information on the email account.
-     * @param   MailMessage $mail The Mail Message object
+     * @param   ImapMessage $mail The Mail Message object
      * @return  mixed null by default, -1 if the rest of the email script should not be processed.
      */
-    public static function preEmailDownload($prj_id, $account, $mail)
+    public static function preEmailDownload($prj_id, $mail)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return null;
@@ -607,8 +606,7 @@ class Workflow
         $backend = self::_getBackend($prj_id);
 
         // NOTE: these no longer exist, just pass as null them
-        $num = $message = $email = $structure = null;
-        return $backend->preEmailDownload($prj_id, $account, $mail, $num, $message, $email, $structure);
+        return $backend->preEmailDownload($prj_id, $mail);
     }
 
     /**

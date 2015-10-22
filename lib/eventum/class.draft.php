@@ -34,9 +34,9 @@ class Draft
     /**
      * Method used to save the routed draft into a backup directory.
      *
-     * @param   string $message The full body of the draft
+     * @param MailMessage $mail The Mail object
      */
-    public static function saveRoutedMessage($message)
+    public static function saveRoutedMessage($mail)
     {
         if (!defined('APP_ROUTED_MAILS_SAVEDIR') || !APP_ROUTED_MAILS_SAVEDIR) {
             return;
@@ -44,7 +44,7 @@ class Draft
         list($usec) = explode(' ', microtime());
         $filename = date('Y-m-d_H-i-s_') . $usec . '.draft.txt';
         $file = APP_ROUTED_MAILS_SAVEDIR . '/routed_drafts/' . $filename;
-        file_put_contents($file, $message);
+        file_put_contents($file, $mail->getRawContent());
         chmod($file, 0644);
     }
 
