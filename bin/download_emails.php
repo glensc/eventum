@@ -198,7 +198,7 @@ if ($config['fix-lock']) {
 }
 
 // check if there is another instance of this script already running
-if (!Lock::acquire('download_emails_' . $account_id)) {
+if (false && !Lock::acquire('download_emails_' . $account_id)) {
     if (SAPI_CLI) {
         fatal(
             'Another instance of the script is still running for the specified account.',
