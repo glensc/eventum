@@ -118,7 +118,7 @@ class Routing
             return array(self::EX_CONFIG, ev_gettext('Error: The associated user for the email routing interface needs to be set.') . "\n");
         }
         unset($sys_account);
-        
+
         AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
 
         $headers = $mail->getHeaders();
@@ -150,7 +150,7 @@ class Routing
             return array(self::EX_CONFIG, ev_gettext('Error: Please provide the email account ID.') . "\n");
         }
 
-        
+
         // get the sender's email address
         // FIXME: this is "From" or "From:" header?
         /** @var Zend\Mail\Address $sender_email */
@@ -284,7 +284,7 @@ class Routing
 
         // check if the email routing interface is even supposed to be enabled
         $setup = Setup::get();
-        if (@$setup['note_routing']['status'] != 'enabled') {
+        if ($setup['note_routing']['status'] != 'enabled') {
             return array(self::EX_CONFIG, ev_gettext('Error: The internal note routing interface is disabled.') . "\n");
         }
         if (empty($setup['note_routing']['address_prefix'])) {
@@ -402,7 +402,7 @@ class Routing
 
         // check if the draft interface is even supposed to be enabled
         $setup = Setup::get();
-        if (@$setup['draft_routing']['status'] != 'enabled') {
+        if ($setup['draft_routing']['status'] != 'enabled') {
             return array(self::EX_CONFIG, ev_gettext('Error: The email draft interface is disabled.') . "\n");
         }
         if (empty($setup['draft_routing']['address_prefix'])) {

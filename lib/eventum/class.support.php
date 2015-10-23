@@ -516,7 +516,7 @@ class Support
             // we create addresses array so it can be reused
             $addresses = $mail->getAddresses();
 
-            if (@$setup['email_routing']['status'] == 'enabled') {
+            if ($setup['email_routing']['status'] == 'enabled') {
                 $res = Routing::getMatchingIssueIDs($addresses, 'email');
                 if ($res != false) {
                     $return = Routing::route_emails($mail);
@@ -528,7 +528,7 @@ class Support
                     return;
                 }
             }
-            if (@$setup['note_routing']['status'] == 'enabled') {
+            if ($setup['note_routing']['status'] == 'enabled') {
                 $res = Routing::getMatchingIssueIDs($addresses, 'note');
                 if ($res != false) {
                     $return = Routing::route_notes($mail);
@@ -555,7 +555,7 @@ class Support
                     return;
                 }
             }
-            if (@$setup['draft_routing']['status'] == 'enabled') {
+            if ($setup['draft_routing']['status'] == 'enabled') {
                 $res = Routing::getMatchingIssueIDs($addresses, 'draft');
                 if ($res != false) {
                     $return = Routing::route_drafts($mail);
@@ -828,7 +828,7 @@ class Support
             $issue_id = $workflow;
         } else {
             $setup = Setup::get();
-            if (@$setup['subject_based_routing']['status'] == 'enabled') {
+            if ($setup['subject_based_routing']['status'] == 'enabled') {
                 // Look for issue ID in the subject line
 
                 // look for [#XXXX] in the subject line
