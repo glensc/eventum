@@ -447,7 +447,7 @@ class Support
             'error_code'        => $error[0],
             'error_message'     => $error[1],
             'date'              => $mail->getMailDate(),
-            'subject'           => $mail->getSubject(),
+            'subject'           => $mail->subject,
             'from'              => $mail->getHeaderValue('From'),
             'to'                => $mail->getHeaderValue('To'),
             'cc'                => $mail->getHeaderValue('Cc'),
@@ -595,7 +595,7 @@ class Support
         /** @var string $sender_email */
         $sender_email = $mail->getSender();
 
-        $subject = $mail->getSubject();
+        $subject = $mail->subject;
         $t = array(
             'ema_id'         => $info['ema_id'],
             'message_id'     => $message_id,
@@ -832,7 +832,7 @@ class Support
                 // Look for issue ID in the subject line
 
                 // look for [#XXXX] in the subject line
-                if (preg_match("/\[#(\d+)\]( Note| BLOCKED)*/", $mail->getSubject(), $matches)) {
+                if (preg_match("/\[#(\d+)\]( Note| BLOCKED)*/", $mail->subject, $matches)) {
                     $should_create_issue = false;
                     $issue_id = $matches[1];
                     if (!Issue::exists($issue_id, false)) {
@@ -1053,7 +1053,7 @@ class Support
             'sup_from' => $mail->getSender(),
             'sup_to' => $mail->getHeaderValue('To'),
             'sup_cc' => $mail->getHeaderValue('Cc'),
-            'sup_subject' => $mail->getSubject(),
+            'sup_subject' => $mail->subject,
             'sup_has_attachment' => $mail->hasAttachments(),
         );
 
@@ -2638,7 +2638,7 @@ class Support
             );
 
             $body = Mail_Helper::getCannedBlockedMsgExplanation() . $mail->getContent();
-            $res = Note::insertNote(Auth::getUserID(), $issue_id, $mail->getSubject(), $body, $options);
+            $res = Note::insertNote(Auth::getUserID(), $issue_id, $mail->subject, $body, $options);
 
             // associate the email attachments as internal-only files on this issue
             if ($res != -1) {
@@ -2652,7 +2652,7 @@ class Support
             // XXX: review and remove unneeded ones
             // these are from 01c7db33
             $email_details['full_message'] = $options['full_message'];
-            $email_details['title'] = $mail->getSubject();
+            $email_details['title'] = $mail->subject;
             $email_details['note'] = $mail->getContent();
             $email_details['message_id'] = $options['message_id'];
 

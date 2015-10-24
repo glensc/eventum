@@ -179,7 +179,7 @@ class Routing
 
         // Remove excess Re's
         // Note: the method will still keep one 'Re'
-        $mail->setSubject(Mail_Helper::removeExcessRe($mail->getSubject()));
+        $mail->setSubject(Mail_Helper::removeExcessRe($mail->subject));
 
         // TODO: remove all params that use $mail in some form and pass just $mail object
         // as for example content and headers could be rewritten later!
@@ -191,7 +191,7 @@ class Routing
             'from'           => $mail->from,
             'to'             => $mail->getTo(),
             'cc'             => $mail->getCc(),
-            'subject'        => $mail->getSubject(),
+            'subject'        => $mail->subject,
 //            'body'           => $mail->getContent(), // FIXME: needed
 //            'full_email'     => $mail->getRawContent(), // FIXME: needed?
             'has_attachment' => $has_attachments,
@@ -446,7 +446,7 @@ class Routing
         $to = $mail->getHeaderValue('To');
         $cc = $mail->getHeaderValue('Cc');
 
-        Draft::saveEmail($issue_id, $to, $cc, $mail->getSubject(), $mail->getContent(), false, false, false);
+        Draft::saveEmail($issue_id, $to, $cc, $mail->subject, $mail->getContent(), false, false, false);
         // XXX: need to handle attachments coming from drafts as well?
         $usr_id = Auth::getUserID();
         History::add($issue_id, $usr_id, 'draft_routed', 'Draft routed from {from}', array('from' => $from));
