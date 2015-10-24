@@ -664,7 +664,7 @@ class Workflow
         $headers = $mail->getHeaders()->toArray();
         $message_body = $mail->getContent();
         $date = Date_Helper::convertDateGMT($mail->getMailDate());
-        $from = $mail->getFromHeader()->getEmail();
+        $from = $mail->getSender();
         $subject = $mail->getSubject();
         $to = join(',', (array)$mail->getAddresses('To'));
         $cc = join(',', (array)$mail->getAddresses('Cc'));

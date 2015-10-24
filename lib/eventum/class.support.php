@@ -592,15 +592,15 @@ class Support
 
         $headers = $mail->getHeaders();
 
-        /** @var Zend\Mail\Address $sender_email */
-        $sender_email = $mail->getFromHeader();
+        /** @var string $sender_email */
+        $sender_email = $mail->getSender();
 
         $subject = $mail->getSubject();
         $t = array(
             'ema_id'         => $info['ema_id'],
             'message_id'     => $message_id,
             'date'           => Date_Helper::convertDateGMT($mail->getMailDate()),
-            'from'           => $sender_email,
+            'from'           => $mail->from,
             'to'             => $mail->getTo(),
             'cc'             => $mail->getCc(),
             'subject'        => $subject,

@@ -153,8 +153,8 @@ class Routing
 
         // get the sender's email address
         // FIXME: this is "From" or "From:" header?
-        /** @var Zend\Mail\Address $sender_email */
-        $sender_email = $mail->getFromHeader();
+        /** @var string $sender_email */
+        $sender_email = $mail->getSender();
 
         // strip out the warning message sent to staff users
         if (($setup['email_routing']['status'] == 'enabled') &&
@@ -188,7 +188,7 @@ class Routing
             'ema_id'         => $email_account_id,
             'message_id'     => $mail->messageId,
             'date'           => Date_Helper::getCurrentDateGMT(),
-            'from'           => $sender_email->toString(), // FIXME: needs address or header?
+            'from'           => $mail->from,
             'to'             => $mail->getTo(),
             'cc'             => $mail->getCc(),
             'subject'        => $mail->getSubject(),
@@ -259,7 +259,7 @@ class Routing
 
             // log routed email
             History::add($issue_id, $usr_id, 'email_routed', 'Email routed from {from}', array(
-                'from' => $mail->getFromHeader()->toString(),
+                'from' => $mail->from,
             ));
         }
 
@@ -429,7 +429,7 @@ class Routing
 
         $prj_id = Issue::getProjectID($issue_id);
         // check if the sender is allowed in this issue' project and if it is an internal user
-        $sender_email = $mail->getFromHeader();
+        $sender_email = $mail->getSender();
 
         $sender_usr_id = User::getUserIDByEmail($sender_email, true);
         if (!empty($sender_usr_id)) {

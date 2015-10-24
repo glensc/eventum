@@ -289,7 +289,7 @@ class Notification
 //        $full_message = $mail['full_email'];
 //        $sender = $mail['from'];
 //        $sender_email = strtolower(Mail_Helper::getEmailAddress($sender));
-        $sender = $mail->getFromHeader()->toString();
+        $sender = $mail->from;
         $sender_email = $mail->getSender();
 
         // get ID of whoever is sending this.
