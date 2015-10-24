@@ -448,9 +448,9 @@ class Support
             'error_message'     => $error[1],
             'date'              => $mail->getMailDate(),
             'subject'           => $mail->subject,
-            'from'              => $mail->getHeaderValue('From'),
-            'to'                => $mail->getHeaderValue('To'),
-            'cc'                => $mail->getHeaderValue('Cc'),
+            'from'              => $mail->from,
+            'to'                => $mail->to,
+            'cc'                => $mail->cc,
         ));
 
         $sender_email = $mail->getSender();
@@ -595,15 +595,14 @@ class Support
         /** @var string $sender_email */
         $sender_email = $mail->getSender();
 
-        $subject = $mail->subject;
         $t = array(
             'ema_id'         => $info['ema_id'],
             'message_id'     => $message_id,
             'date'           => Date_Helper::convertDateGMT($mail->getMailDate()),
             'from'           => $mail->from,
-            'to'             => $mail->getTo(),
-            'cc'             => $mail->getCc(),
-            'subject'        => $subject,
+            'to'             => $mail->to,
+            'cc'             => $mail->cc,
+            'subject'        => $mail->subject,
 //            'body'           => @$message_body,
 //            'full_email'     => @$message,
             'has_attachment' => $has_attachments,
@@ -1051,8 +1050,8 @@ class Support
             'sup_message_id' => $mail->messageId,
             'sup_date' => Date_Helper::convertDateGMT($mail->getMailDate()),
             'sup_from' => $mail->getSender(),
-            'sup_to' => $mail->getHeaderValue('To'),
-            'sup_cc' => $mail->getHeaderValue('Cc'),
+            'sup_to' => $mail->to,
+            'sup_cc' => $mail->cc,
             'sup_subject' => $mail->subject,
             'sup_has_attachment' => $mail->hasAttachments(),
         );

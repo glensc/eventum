@@ -189,8 +189,8 @@ class Routing
             'message_id'     => $mail->messageId,
             'date'           => Date_Helper::getCurrentDateGMT(),
             'from'           => $mail->from,
-            'to'             => $mail->getTo(),
-            'cc'             => $mail->getCc(),
+            'to'             => $mail->to,
+            'cc'             => $mail->cc,
             'subject'        => $mail->subject,
 //            'body'           => $mail->getContent(), // FIXME: needed
 //            'full_email'     => $mail->getRawContent(), // FIXME: needed?
@@ -442,14 +442,10 @@ class Routing
         AuthCookie::setAuthCookie(User::getUserIDByEmail($sender_email));
         AuthCookie::setProjectCookie($prj_id);
 
-        $from = $mail->getHeaderValue('From');
-        $to = $mail->getHeaderValue('To');
-        $cc = $mail->getHeaderValue('Cc');
-
-        Draft::saveEmail($issue_id, $to, $cc, $mail->subject, $mail->getContent(), false, false, false);
+        Draft::saveEmail($issue_id, $mail->to, $mail->cc, $mail->subject, $mail->getContent(), false, false, false);
         // XXX: need to handle attachments coming from drafts as well?
         $usr_id = Auth::getUserID();
-        History::add($issue_id, $usr_id, 'draft_routed', 'Draft routed from {from}', array('from' => $from));
+        History::add($issue_id, $usr_id, 'draft_routed', 'Draft routed from {from}', array('from' => $mail->from));
 
         return true;
     }
