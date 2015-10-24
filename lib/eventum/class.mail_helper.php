@@ -848,7 +848,7 @@ class Mail_Helper
      */
     public static function rewriteThreadingHeaders(MailMessage $mail, $issue_id, $type = 'email')
     {
-        $msg_id = $mail->getMessageId();
+        $msg_id = $mail->messageId;
 
         // check if the In-Reply-To header exists and if so, does it relate to a message stored in Eventum
         // if it does not, set new In-Reply-To header

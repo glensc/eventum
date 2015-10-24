@@ -1994,7 +1994,7 @@ class Issue
         $summary = $mail->getSubject();
         $description = $mail->getContent();
         $date = $mail->getMailDate();
-        $msg_id = $mail->getMessageId();
+        $msg_id = $mail->messageId;
 
         $exclude_list = array();
         $managers = array();

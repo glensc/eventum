@@ -186,7 +186,7 @@ class Routing
         $t = array(
             'issue_id'       => $issue_id,
             'ema_id'         => $email_account_id,
-            'message_id'     => $mail->getMessageId(),
+            'message_id'     => $mail->messageId,
             'date'           => Date_Helper::getCurrentDateGMT(),
             'from'           => $sender_email->toString(), // FIXME: needs address or header?
             'to'             => $mail->getTo(),

@@ -492,7 +492,7 @@ class Support
             return;
         }
 
-        $message_id = $mail->getMessageId();
+        $message_id = $mail->messageId;
 
         // if message_id already exists, return immediately -- nothing to do
         if (self::exists($message_id) || Note::exists($message_id)) {
@@ -802,7 +802,7 @@ class Support
 
         $references = $mail->getAllReferences();
 
-        $message_id = $mail->getMessageId();
+        $message_id = $mail->messageId;
         $workflow = Workflow::getIssueIDforNewEmail($info['ema_prj_id'], $info, $mail);
         if (is_array($workflow)) {
             if (isset($workflow['customer_id'])) {
@@ -1048,7 +1048,7 @@ class Support
             'sup_ema_id' => $row['ema_id'],
             'sup_iss_id' => $row['issue_id'],
             'sup_customer_id' => $row['customer_id'],
-            'sup_message_id' => $mail->getMessageId(),
+            'sup_message_id' => $mail->messageId,
             'sup_date' => Date_Helper::convertDateGMT($mail->getMailDate()),
             'sup_from' => $mail->getSender(),
             'sup_to' => $mail->getHeaderValue('To'),
@@ -2634,7 +2634,7 @@ class Support
                 'send_notification' => $notify,
                 'is_blocked' => true,
                 'full_message' => $mail->getRawContent(),
-                'message_id'  => $mail->getMessageId(),
+                'message_id'  => $mail->messageId,
             );
 
             $body = Mail_Helper::getCannedBlockedMsgExplanation() . $mail->getContent();
