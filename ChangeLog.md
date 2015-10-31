@@ -1,7 +1,10 @@
 Eventum Issue Tracking System
 =============================
 
-2015-??-??, Version 3.0.4
+2015-??-??, Version 3.0.5
+-------------------------
+
+2015-10-31, Version 3.0.4
 -------------------------
 - Fix few Static & Deprecated calls (Craig Pinfold, #72)
 - Use randomlib for private key generation, add UI to regenerate it (Elan Ruusamäe, #73)
@@ -16,6 +19,12 @@ Eventum Issue Tracking System
 - Removed local/include/ from include path and added to composer instead (Bryan Alsdorf)
 - Use zf2 config for setup config (Elan Ruusamäe, #80)
 - Improvements to messageId generator, make it use RandomLib (Elan Ruusamäe)
+- IRC bot improvements (Elan Ruusamäe, #82)
+- Use var/ path for writable data (Elan Ruusamäe, #81)
+- Pass array of changed fields to Workflow::handleCustomFieldsUpdated (Bryan Alsdorf)
+- Custom Fields Weekly report: take also params from GET (Kristo Klausson, #86)
+- Manage Emails: Accept prj_id from GET to allow link bookmarking (Elan Ruusamäe)
+- Add DebugBar debug bar in development mode (Elan Ruusamäe, #87)
 
 2015-10-13, Version 3.0.3
 -------------------------

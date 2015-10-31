@@ -22,11 +22,8 @@
 // | along with this program; if not, write to:                           |
 // |                                                                      |
 // | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                          |
+// | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
-// +----------------------------------------------------------------------+
-// | Authors: Bryan Alsdorf <bryan@mysql.com>                             |
-// | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
 // +----------------------------------------------------------------------+
 //
 
@@ -78,7 +75,7 @@ class Workflow
                  ORDER BY
                     prj_id';
         try {
-            $res = DB_Helper::getInstance()->fetchAssoc($stmt);
+            $res = DB_Helper::getInstance()->getPair($stmt);
         } catch (DbException $e) {
             return '';
         }
@@ -421,15 +418,16 @@ class Workflow
      * @param   integer $issue_id The ID of the issue
      * @param   array $old The custom fields before the update.
      * @param   array $new The custom fields after the update.
+     * @param   array $changed An array containing what was changed.
      */
-    public static function handleCustomFieldsUpdated($prj_id, $issue_id, $old, $new)
+    public static function handleCustomFieldsUpdated($prj_id, $issue_id, $old, $new, $changed)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;
         }
 
         $backend = self::_getBackend($prj_id);
-        $backend->handleCustomFieldsUpdated($prj_id, $issue_id, $old, $new);
+        $backend->handleCustomFieldsUpdated($prj_id, $issue_id, $old, $new, $changed);
     }
 
     /**

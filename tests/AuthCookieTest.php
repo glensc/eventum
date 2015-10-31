@@ -1,6 +1,6 @@
 <?php
 
-class AuthCookieTest extends PHPUnit_Framework_TestCase
+class AuthCookieTest extends TestCase
 {
     public static function setupBeforeClass()
     {
@@ -12,9 +12,7 @@ class AuthCookieTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        if (getenv('TRAVIS') || getenv('JENKINS_HOME')) {
-            $this->markTestSkipped("Missing Travis/Jenkins setup");
-        }
+        $this->skipCi("Missing Travis/Jenkins setup");
     }
 
     public function testAuthCookie()

@@ -1,6 +1,6 @@
 <?php
 
-class DateHelperTest extends PHPUnit_Framework_TestCase
+class DateHelperTest extends TestCase
 {
     /**
      * timezone used for preferred user timezone tests
@@ -12,9 +12,7 @@ class DateHelperTest extends PHPUnit_Framework_TestCase
      */
     public function hasDatabase()
     {
-        if (getenv('TRAVIS')) {
-            $this->markTestSkipped('Test requires database');
-        }
+        $this->skipTravis('Test requires database');
         $this->assertTrue(true, "has database");
     }
 

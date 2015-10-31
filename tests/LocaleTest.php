@@ -1,10 +1,10 @@
 <?php
 
-class LocaleTest extends PHPUnit_Framework_TestCase {
-    public static function setUpBeforeClass() {
-        if (!getenv('TRAVIS')) {
-            self::markTestSkipped('Tests require full localedb installation');
-        }
+class LocaleTest extends TestCase
+{
+    public static function setUpBeforeClass()
+    {
+        self::skipJenkins('Tests require full localedb installation');
 
         $localeStamp = __DIR__ . '/_locales.stamp';
         if (!file_exists($localeStamp)) {
@@ -13,7 +13,8 @@ class LocaleTest extends PHPUnit_Framework_TestCase {
         }
     }
 
-    private static function installLocales() {
+    private static function installLocales()
+    {
         $localeDir = APP_PATH . '/localization';
 
         $rc = system("make -sC $localeDir install localedir=.");
@@ -26,12 +27,14 @@ class LocaleTest extends PHPUnit_Framework_TestCase {
      * @test
      * @dataProvider availableLanguages
      */
-    public function testLocales($code, $language) {
+    public function testLocales($code, $language)
+    {
         $enabled = Language::set($code);
         $this->assertTrue($enabled, "Language '$language' ($code) is valid");
     }
 
-    public function availableLanguages() {
+    public function availableLanguages()
+    {
         $langs = Language::getAvailableLanguages(false);
 
         $res = array();

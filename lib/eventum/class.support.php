@@ -25,9 +25,6 @@
 // | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
-// | Authors: João Prado Maia <jpm@mysql.com>                             |
-// | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
-// +----------------------------------------------------------------------+
 //
 
 
@@ -160,7 +157,7 @@ class Support
                  ORDER BY
                     ' . $options['sort_by'] . ' ' . $options['sort_order'];
         try {
-            $res = DB_Helper::getInstance()->fetchAssoc($stmt);
+            $res = DB_Helper::getInstance()->getPair($stmt);
         } catch (DbException $e) {
             return '';
         }
@@ -1839,7 +1836,7 @@ class Support
                     {{%support_email}}
                  WHERE
                     sup_id IN ($list)";
-        $subjects = DB_Helper::getInstance()->fetchAssoc($stmt, $items);
+        $subjects = DB_Helper::getInstance()->getPair($stmt, $items);
 
         $usr_id = Auth::getUserID();
         foreach ($items as $item) {

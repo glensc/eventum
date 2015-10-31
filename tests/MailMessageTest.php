@@ -1,7 +1,11 @@
 <?php
 
-class MailMessageTest extends PHPUnit_Framework_TestCase
+class MailMessageTest extends TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        self::skipCi("Not ready yet");
+    }
 
     public function testMissingMessageId()
     {

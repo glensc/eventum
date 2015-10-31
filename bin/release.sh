@@ -104,6 +104,9 @@ clean_whitespace() {
 
 # setup composer deps
 composer_install() {
+	# this file does not exist in git export, but referenced in composer.json
+	install -d tests
+	touch tests/TestCase.php
 	# first install with dev to get assets installed
 	$composer install --prefer-dist --ignore-platform-reqs
 
@@ -116,6 +119,9 @@ composer_install() {
 	# clean vendor and dump autoloader again
 	clean_vendor
 	$composer dump-autoload
+
+	# cleanup again
+	rm -r tests
 
 	# save dependencies information
 	$composer licenses --no-dev --no-ansi > deps
@@ -240,6 +246,10 @@ clean_vendor() {
 
 	# not ready yet
 	rm lib/eventum/db/DbYii.php
+	rm lib/eventum/db/Db*Pdo.php
+	rm lib/eventum/mail/ImapMessage.php
+	rm lib/eventum/mail/MailMessage.php
+	rm lib/eventum/mail/MailStorage.php
 }
 
 build_phars() {
@@ -313,10 +323,10 @@ prepare_source() {
 	make -C localization install clean
 
 	# install dirs and fix permissions
-	install -d logs templates_c locks htdocs/customer
-	touch logs/{cli.log,errors.log,irc_bot.log,login_attempts.log}
+	install -d var/{log,cache,lock}
+	touch var/log/{cli.log,errors.log,irc_bot.log,login_attempts.log}
 	chmod -R a+rX .
-	chmod -R a+rwX templates_c locks logs config
+	chmod -R a+rwX config var
 
 	# cleanup rest of the stuff, that was neccessary for release preparation process
 	cleanup_postdist

@@ -25,9 +25,6 @@
 // | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
-// | Authors: João Prado Maia <jpm@mysql.com>                             |
-// | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
-// +----------------------------------------------------------------------+
 //
 
 /**
@@ -1733,7 +1730,7 @@ class Notification
      * Method used to get the subscribed actions for a given
      * subscription ID.
      *
-     * @param   integer $sub_id The subcription ID
+     * @param   integer $sub_id The subscription ID
      * @return  array The subscribed actions
      */
     public function getSubscribedActions($sub_id)

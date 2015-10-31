@@ -25,9 +25,6 @@
 // | 51 Franklin Street, Suite 330                                        |
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
-// | Authors: Bryan Alsdorf <bryan@mysql.com>                             |
-// | Authors: Elan Ruusamäe <glen@delfi.ee>                               |
-// +----------------------------------------------------------------------+
 //
 
 // XXX: try reading $_ENV['HOSTNAME'] and then ask the user if nothing could be found
@@ -42,15 +39,17 @@ define('APP_NAME', 'Eventum');
 define('APP_CHARSET', 'UTF-8');
 define('APP_DEFAULT_LOCALE', 'en_US');
 define('APP_PATH', realpath(__DIR__ . '/../..'));
+define('APP_VAR_PATH', APP_PATH . '/var');
 define('APP_INC_PATH', APP_PATH . '/lib/eventum');
 define('APP_CONFIG_PATH', APP_PATH . '/config');
 define('APP_SETUP_FILE', APP_CONFIG_PATH . '/setup.php');
 define('APP_TPL_PATH', APP_PATH . '/templates');
-define('APP_TPL_COMPILE_PATH', APP_PATH . '/templates_c');
-define('APP_LOG_PATH', APP_PATH . '/logs');
+define('APP_TPL_COMPILE_PATH', APP_VAR_PATH . '/cache');
+define('APP_LOG_PATH', APP_VAR_PATH . '/log');
 define('APP_ERROR_LOG', APP_LOG_PATH . '/errors.log');
-define('APP_LOCKS_PATH', APP_PATH . '/locks');
+define('APP_LOCKS_PATH', APP_VAR_PATH . '/lock');
 define('APP_LOCAL_PATH', APP_CONFIG_PATH);
+define('APP_RELATIVE_URL', '../');
 
 header('Content-Type: text/html; charset=' . APP_CHARSET);
 
@@ -70,66 +69,11 @@ if (defined('APP_INC_PATH')) {
 require_once APP_PATH . '/autoload.php';
 
 list($warnings, $errors) = checkRequirements();
-if ((count($warnings) > 0) || (count($errors) > 0)) {
-    echo '<html>
-<head>
-<style type="text/css">
-<!--
-.default {
-  font-family: Verdana, Arial, Helvetica, sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 70%;
-}
--->
-</style>
-<title>Eventum Setup</title>
-</head>
-<body>
-
-<br /><br />
-
-<table width="600" bgcolor="#003366" border="0" cellspacing="0" cellpadding="1" align="center">
-  <tr>
-    <td>
-      <table bgcolor="#FFFFFF" width="100%" cellspacing="1" cellpadding="2" border="0">
-        <tr>
-          <td><img src="../images/icons/error.gif" hspace="2" vspace="2" border="0" align="left"></td>
-          <td width="100%" class="default"><span style="font-weight: bold; font-size: 160%; color: red;">Configuration Error:</span></td>
-        </tr>
-        <tr>
-          <td colspan="2" class="default">
-            <br />
-            <b>The following problems were found:</b>
-            <br /><br />
-            ', implode("\n<hr>\n", array_merge($errors, $warnings)), '
-            <br /><br />
-            <b>Please resolve the issues described above. For file permission errors, please provide the appropriate permissions to the user that the web server run as to write in the directories and files specified above.</b>
-            <br /><br />
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-
-</body>
-</html>';
-    if (count($errors) > 0) {
+if ($warnings || $errors) {
+    Misc::displayRequirementErrors(array_merge($errors, $warnings), 'Eventum Setup');
+    if ($errors) {
         exit(1);
     }
-}
-
-if (!function_exists('gettext')) {
-    function gettext($str)
-    {
-        return $str;
-    }
-}
-
-function ev_gettext($str)
-{
-    return $str;
 }
 
 $tpl = new Template_Helper();
@@ -152,7 +96,7 @@ foreach ($pieces as $piece) {
 }
 $relative_url[] = '';
 $relative_url = implode('/', $relative_url);
-
+define('APP_REL_URL',$relative_url);
 $tpl->assign('phpversion', phpversion());
 $tpl->assign('core', array(
     'rel_url'   =>  $relative_url,
@@ -172,6 +116,11 @@ $tpl->assign('default_weekday', getFirstWeekday());
 $tpl->setTemplate('setup.tpl.html');
 $tpl->displayTemplate(false);
 
+/**
+ * Checks for $file for write permission.
+ *
+ * IMPORTANT: if the file does not exist, an empty file is created.
+ */
 function checkPermissions($file, $desc, $is_directory = false)
 {
     clearstatcache();
@@ -619,7 +568,7 @@ function write_config()
         "'%{APP_ENABLE_FULLTEXT}%'" => e($enable_fulltext),
     );
 
-    $config_contents = file_get_contents('config.php');
+    $config_contents = file_get_contents(APP_CONFIG_PATH . '/config.dist.php');
     $config_contents = str_replace(array_keys($replace), array_values($replace), $config_contents);
 
     write_file($config_file_path, $config_contents);
