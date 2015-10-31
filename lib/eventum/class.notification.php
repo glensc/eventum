@@ -2035,6 +2035,7 @@ class Notification
             'updated',
             'closed',
             'emails',
+            'notes',
             'files',
         );
     }
