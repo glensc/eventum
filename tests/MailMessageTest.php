@@ -2,11 +2,6 @@
 
 class MailMessageTest extends TestCase
 {
-    public static function setUpBeforeClass()
-    {
-        self::skipCi("Not ready yet");
-    }
-
     public function testMissingMessageId()
     {
         $raw = "X-foo: 1\r\n\r\nnada";
@@ -90,6 +85,19 @@ class MailMessageTest extends TestCase
             }, iterator_to_array($message->getTo())
         );
         $this->assertEquals($exp, join(',', $res));
+    }
+
+    public function testMultipleToHeaders() {
+        $message = MailMessage::createFromFile(__DIR__ . '/data/duplicate-from.txt');
+
+        $to = $message->getTo();
+        $this->assertInstanceOf('Zend\Mail\AddressList', $to);
+        $this->assertEquals('issue-73358@eventum.example.org', $message->to);
+
+        $message = MailMessage::createFromFile(__DIR__ . '/data/duplicate-msgid.txt');
+        $to = $message->getTo();
+        $this->assertInstanceOf('Zend\Mail\AddressList', $to);
+        $this->assertEquals("support@example.org,\r\n support-2@example.org", $message->to);
     }
 
     public function testIsBounceMessage()
