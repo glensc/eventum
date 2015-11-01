@@ -496,10 +496,6 @@ class Support
             return;
         }
 
-        // we can't trust the in-reply-to from the imap c-client, so let's
-        // try to manually parse that value from the full headers
-        $reference_msg_id = Mail_Helper::getReferenceMessageID($headers);
-
         // pass in $mail object so it can be modified
         $workflow = Workflow::preEmailDownload($mail->getProjectId(), $mail);
         if ($workflow === -1) {
