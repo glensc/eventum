@@ -1971,9 +1971,8 @@ class Issue
     /**
      * Creates an issue with the given email information.
      *
-     * @param   integer $prj_id The project ID
+     * @param   ImapMessage  $mail The Mail object
      * @param   integer $usr_id The user responsible for this action
-     * @param   MailMessage $mail The Mail object
      * @param   integer $category The category ID
      * @param   integer $priority The priority ID
      * @param   array $assignment The list of users to assign this issue to
@@ -1983,14 +1982,15 @@ class Issue
      * @param   string $contract_id
      * @return int
      */
-    public static function createFromEmail($prj_id, $usr_id, MailMessage $mail, $category, $priority, $assignment,
+    public static function createFromEmail(ImapMessage $mail, $usr_id, $category, $priority, $assignment,
                              $severity, $customer_id, $contact_id, $contract_id)
     {
+        $prj_id = $mail->getProjectId();
 
-        $sender = $mail->getSender();
+        $sender = $mail->from;
         $summary = $mail->subject;
         $description = $mail->getContent();
-        $date = $mail->getMailDate();
+        $date = Date_Helper::getRFC822Date($mail->getMailDate());
         $msg_id = $mail->messageId;
 
         $exclude_list = array();

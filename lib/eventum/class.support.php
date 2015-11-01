@@ -583,8 +583,6 @@ class Support
             //return;
         }
 
-        $headers = $mail->getHeaders();
-
         /** @var string $sender_email */
         $sender_email = $mail->getSender();
 
@@ -598,13 +596,12 @@ class Support
             'subject'        => $mail->subject,
 //            'body'           => @$message_body,
 //            'full_email'     => @$message,
-            'has_attachment' => $has_attachments,
+            'has_attachment' => $mail->hasAttachments(),
             // the following items are not inserted, but useful in some methods
 //            'headers'        => @$structure->headers,
         );
 
         $should_create_array = self::createIssueFromEmail($info, $mail);
-//        $should_create_array = self::createIssueFromEmail($info, $headers, $message_body, $t['date'], $sender_email, $subject, $t['to'], $t['cc']);
         $should_create_issue = $should_create_array['should_create_issue'];
 
         if (!empty($should_create_array['issue_id'])) {
@@ -649,14 +646,6 @@ class Support
                         $users = array_flip($users);
 
                         $addresses = array();
-                        $to_addresses = Mail_Helper::getEmailAddresses(@$structure->headers['to']);
-                        if (count($to_addresses)) {
-                            $addresses = $to_addresses;
-                        }
-                        $cc_addresses = Mail_Helper::getEmailAddresses(@$structure->headers['cc']);
-                        if (count($cc_addresses)) {
-                            $addresses = array_merge($addresses, $cc_addresses);
-                        }
                         $cc_users = array();
                         foreach ($addresses as $email) {
                             if (in_array(strtolower($email), $user_emails)) {
@@ -677,7 +666,7 @@ class Support
 
                         // need to handle attachments coming from notes as well
                         if ($res != -1) {
-                            Support::extractAttachments($t['issue_id'], $structure, true, $res);
+                            Support::extractAttachments($t['issue_id'], $mail, true, $res);
                         }
                     }
                 }
@@ -768,20 +757,11 @@ class Support
      * to a previous message.
      *
      * @param   array   $info An array of info about the email account.
-     * @param   MailMessage $mail The Mail object
+     * @param   ImapMessage $mail The Mail object
      * @return  array   An array of information about the message
      */
-    public function createIssueFromEmail($info, $mail)
+    public function createIssueFromEmail($info, ImapMessage $mail)
     {
-        $headers = $mail->getHeaders();
-
-//        $message_body = '';
-//        $date = Date_Helper::convertDateGMT($mail->getMailDate());
-//        $from = ';';
-//        $subject = $mail->getSubject()->getFieldValue();
-//        $to = $headers->get('To')->toString();
-//        $cc = $headers->get('Co')->toString();
-
         $should_create_issue = false;
         $issue_id = '';
         $associate_email = '';
@@ -794,7 +774,6 @@ class Support
 
         $references = $mail->getAllReferences();
 
-        $message_id = $mail->messageId;
         $workflow = Workflow::getIssueIDforNewEmail($info['ema_prj_id'], $info, $mail);
         if (is_array($workflow)) {
             if (isset($workflow['customer_id'])) {
@@ -896,10 +875,9 @@ class Support
             $options = Email_Account::getIssueAutoCreationOptions($info['ema_id']);
             AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
             AuthCookie::setProjectCookie($info['ema_prj_id']);
-            $issue_id = Issue::createFromEmail($info['ema_prj_id'], APP_SYSTEM_USER_ID,
-                    $mail, @$options['category'],
-                    @$options['priority'], @$options['users'], $date, $message_id, $severity, $customer_id, $contact_id,
-                    $contract_id);
+            $issue_id = Issue::createFromEmail($mail, APP_SYSTEM_USER_ID,
+                    @$options['category'], @$options['priority'], @$options['users'],
+                    $severity, $customer_id, $contact_id, $contract_id);
 
             // add sender to authorized repliers list if they are not a real user
             $sender_usr_id = User::getUserIDByEmail($sender_email, true);
