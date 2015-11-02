@@ -1989,7 +1989,7 @@ class Issue
 
         $sender = $mail->from;
         $summary = $mail->subject;
-        $description = $mail->getContent();
+        $description = $mail->getMessageBody();
         $date = Date_Helper::getRFC822Date($mail->getMailDate());
         $msg_id = $mail->messageId;
 
