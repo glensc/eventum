@@ -674,8 +674,8 @@ class Support
         } else {
             // check if we need to block this email
             if (($should_create_issue == true) || (!self::blockEmailIfNeeded($mail, $t))) {
-                if (!empty($t['issue_id'])) {
-                    list($t['full_email'], $t['headers']) = Mail_Helper::rewriteThreadingHeaders($t['issue_id'], $t['full_email'], $t['headers'], 'email');
+                if ($t['issue_id']) {
+                    Mail_Helper::rewriteThreadingHeaders($mail, $t['issue_id'], 'email');
                 }
 
                 // make variable available for workflow to be able to detect whether this email created new issue
@@ -712,20 +712,6 @@ class Support
                         // try to get usr_id of sender, if not, use system account
                         $usr_id = User::getUserIDByEmail($mail) ?: APP_SYSTEM_USER_ID;
 
-                        /*
-                        $addr = Mail_Helper::getEmailAddress($structure->headers['from']);
-                        if (Misc::isError($addr)) {
-                            // XXX should we log or is this expected?
-                            Error_Handler::logError(array($addr->getMessage()." addr: $addr", $addr->getDebugInfo()), __FILE__, __LINE__);
-                            $usr_id = APP_SYSTEM_USER_ID;
-                        } else {
-                            $usr_id = User::getUserIDByEmail($addr);
-                            if (!$usr_id) {
-                                $usr_id = APP_SYSTEM_USER_ID;
-                            }
-                        }
-                        */
-
                         // mark this issue as updated
                         if ((!empty($t['customer_id'])) && ($t['customer_id'] != 'NULL') && ((empty($usr_id)) || (User::getRoleByUser($usr_id, $prj_id) == User::ROLE_CUSTOMER))) {
                             Issue::markAsUpdated($t['issue_id'], 'customer action');
@@ -738,7 +724,7 @@ class Support
                         }
                         // log routed email
                         History::add($t['issue_id'], $usr_id, 'email_routed', 'Email routed from {from}', array(
-                            'from' => $mail->getSender(),
+                            'from' => $mail->from,
                         ));
                     }
                 }
