@@ -839,18 +839,22 @@ class Mail_Helper
     /**
      * Checks to make sure In-Reply-To and References headers are correct.
      *
+     * Make sure that In-Reply-To and References headers are set and reference a message in this issue.
+     * If not, set to be the root message ID of the issue. This is to ensure messages are threaded by
+     * issue in mail clients.
+     *
      * @param MailMessage $mail
      * @param int $issue_id
      * @param string $type
      */
     public static function rewriteThreadingHeaders(MailMessage $mail, $issue_id, $type = 'email')
     {
-        $msg_id = $mail->messageId;
-
-        // check if the In-Reply-To header exists and if so, does it relate to a message stored in Eventum
+        // check if the In-Reply-To header exists and if so,
+        // does it relate to a message stored in Eventum
         // if it does not, set new In-Reply-To header
+
         $reference_msg_id = $mail->getReferenceMessageId();
-        $reference_issue_id = false;
+        $reference_issue_id = null;
         if ($reference_msg_id) {
             // check if referenced msg id is associated with this issue
             if ($type == 'note') {
@@ -865,49 +869,8 @@ class Mail_Helper
         }
         $references = self::getReferences($issue_id, $reference_msg_id, $type);
 
-        // now the fun part, re-writing the email headers
-        // NOTE: not adding message-id, it is always present
-
-        /*
-         not clear what the fuck this is supposed to do!
-
-        add In-Reply-To: header with value of $reference_msg_id?
-*/
-
-        /**
-         * Make sure that In-Reply-To and References headers are set and reference a message in this issue.
-         * If not, set to be the root message ID of the issue. This is to ensure messages are threaded by
-         * issue in mail clients.
-         */
-        /*
-        if (preg_match('/^In-Reply-To: (.*)/mi', $text_headers) > 0) {
-            // replace existing header
-            $text_headers = preg_replace('/^In-Reply-To: (.*)/mi', 'In-Reply-To: ' . $reference_msg_id, $text_headers, 1);
-        } else {
-            // add new header after message ID
-            $text_headers = preg_replace('/^Message-ID: (.*)$/mi', "Message-ID: $1\r\nIn-Reply-To: $reference_msg_id", $text_headers, 1);
-        }
-        */
-        $headers['in-reply-to'] = $reference_msg_id;
-
-        /*
-         *          not clear what the fuck this is supposed to do!
-
-        add to References header $references?
-
-
-        if (preg_match('/^References: (.*)/mi', $text_headers) > 0) {
-            // replace existing header
-            $text_headers = preg_replace('/^References: (.*)/mi', 'References: ' . self::fold(implode(' ', $references)), $text_headers, 1);
-        } else {
-            // add new header after In-Reply-To
-            $text_headers = preg_replace('/^In-Reply-To: (.*)$/mi', "In-Reply-To: $1\r\nReferences: " . self::fold(implode(' ', $references)), $text_headers, 1);
-        }
-        */
-        $headers['references'] = self::fold(implode(' ', $references));
-
-        $headers = $mail->getHeaders();
-//        $headers->setH
+        $mail->setInReplyTo($reference_msg_id);
+        $mail->setReferences($references);
     }
 
     /**
