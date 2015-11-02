@@ -749,7 +749,7 @@ class Support
     public function createIssueFromEmail($info, ImapMessage $mail)
     {
         $should_create_issue = false;
-        $issue_id = '';
+        $issue_id = null;
         $associate_email = '';
         $type = 'email';
         $parent_id = '';
