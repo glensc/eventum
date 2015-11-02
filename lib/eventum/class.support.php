@@ -587,7 +587,7 @@ class Support
         $sender_email = $mail->getSender();
 
         $t = array(
-            'ema_id'         => $info['ema_id'],
+            'ema_id'         => $mail->getEmailAccountId(),
             'message_id'     => $message_id,
             'date'           => Date_Helper::convertDateGMT($mail->getMailDate()),
             'from'           => $mail->from,
@@ -760,7 +760,7 @@ class Support
 
         $references = $mail->getAllReferences();
 
-        $workflow = Workflow::getIssueIDforNewEmail($info['ema_prj_id'], $info, $mail);
+        $workflow = Workflow::getIssueIDforNewEmail($mail->getEmailAccountId(), $info, $mail);
         if (is_array($workflow)) {
             if (isset($workflow['customer_id'])) {
                 $customer_id = $workflow['customer_id'];
@@ -847,10 +847,11 @@ class Support
         $sender_email = $mail->getSender();
 
         // only create a new issue if this email is coming from a known customer
+        $prj_id = $info['ema_prj_id'];
         if (($should_create_issue) && ($info['ema_issue_auto_creation_options']['only_known_customers'] == 'yes') &&
-                (CRM::hasCustomerIntegration($info['ema_prj_id'])) && !$customer_id) {
+                (CRM::hasCustomerIntegration($prj_id)) && !$customer_id) {
             try {
-                $crm = CRM::getInstance($info['ema_prj_id']);
+                $crm = CRM::getInstance($prj_id);
                 $should_create_issue = true;
             } catch (CRMException $e) {
                 $should_create_issue = false;
@@ -860,7 +861,7 @@ class Support
         if (($info['ema_issue_auto_creation'] == 'enabled') && ($should_create_issue) && (!$mail->isBounceMessage())) {
             $options = Email_Account::getIssueAutoCreationOptions($info['ema_id']);
             AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
-            AuthCookie::setProjectCookie($info['ema_prj_id']);
+            AuthCookie::setProjectCookie($prj_id);
             $issue_id = Issue::createFromEmail($mail, APP_SYSTEM_USER_ID,
                     @$options['category'], @$options['priority'], @$options['users'],
                     $severity, $customer_id, $contact_id, $contract_id);
@@ -878,10 +879,10 @@ class Support
         }
         // need to check crm for customer association
         if (!empty($from)) {
-            if (CRM::hasCustomerIntegration($info['ema_prj_id']) && !$customer_id) {
+            if (CRM::hasCustomerIntegration($prj_id) && !$customer_id) {
                 // check for any customer contact association
                 try {
-                    $crm = CRM::getInstance($info['ema_prj_id']);
+                    $crm = CRM::getInstance($prj_id);
                     $contact = $crm->getContactByEmail($sender_email);
                     $contact_id = $contact->getContactID();
                     $contracts = $contact->getContracts(array(CRM_EXCLUDE_EXPIRED));
