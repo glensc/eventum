@@ -281,6 +281,9 @@ class Notification
      */
     public static function notifyNewEmail($usr_id, $issue_id, $mail, $internal_only = false, $assignee_only = false, $type = '', $sup_id = false)
     {
+        if (!$mail instanceof MailMessage) {
+            die;
+        }
         $prj_id = Issue::getProjectID($issue_id);
 
 //        $full_message = $mail['full_email'];

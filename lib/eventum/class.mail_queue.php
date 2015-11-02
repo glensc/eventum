@@ -81,6 +81,9 @@ class Mail_Queue
         if (empty($issue_id)) {
             $issue_id = 'null';
         }
+        if (!$mail instanceof MailMessage) {
+            echo die;
+        }
         // if the Date: header is missing, add it.
         // FIXME: do in class? or add setDate() method?
         if (!$mail->getHeaders()->has('Date')) {

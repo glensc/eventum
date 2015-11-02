@@ -706,7 +706,7 @@ class Support
                         }
 
                         if (self::isAllowedToEmail($t['issue_id'], $sender_email)) {
-                            Notification::notifyNewEmail(Auth::getUserID(), $t['issue_id'], $t, $internal_only, $assignee_only, '', $sup_id);
+//                            Notification::notifyNewEmail(Auth::getUserID(), $t['issue_id'], $t, $internal_only, $assignee_only, '', $sup_id);
                         }
 
                         // try to get usr_id of sender, if not, use system account
@@ -2664,7 +2664,7 @@ class Support
             if ((!in_array($address, $subscribers)) && (!in_array($address, $addresses_not_too_add))) {
                 Notification::subscribeEmail(Auth::getUserID(), $email['issue_id'], $address, Notification::getDefaultActions($email['issue_id'], $address, 'add_extra_recipients'));
                 if ($is_auto_created) {
-                    Notification::notifyAutoCreatedIssue($prj_id, $email['issue_id'], $email['from'], $email['date'], $email['subject'], $address);
+//                    Notification::notifyAutoCreatedIssue($prj_id, $email['issue_id'], $email['from'], $email['date'], $email['subject'], $address);
                 }
             }
         }

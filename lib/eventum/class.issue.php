@@ -2143,10 +2143,10 @@ class Issue
         Workflow::handleNewIssue($prj_id, $issue_id, $has_TAM, $has_RR);
 
         // send special 'an issue was auto-created for you' notification back to the sender
-        Notification::notifyAutoCreatedIssue($prj_id, $issue_id, $sender, $date, $summary);
+//        Notification::notifyAutoCreatedIssue($prj_id, $issue_id, $sender, $date, $summary);
 
         // also notify any users that want to receive emails anytime a new issue is created
-        Notification::notifyNewIssue($prj_id, $issue_id, $exclude_list);
+//        Notification::notifyNewIssue($prj_id, $issue_id, $exclude_list);
 
         return $issue_id;
     }
