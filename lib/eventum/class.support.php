@@ -1042,7 +1042,7 @@ class Support
                     ?, ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($new_sup_id, $mail->getContent(), $mail->getRawContent()));
+            DB_Helper::getInstance()->query($stmt, array($new_sup_id, $mail->getMessageBody(), $mail->getRawContent()));
         } catch (DbException $e) {
             return -1;
         }
