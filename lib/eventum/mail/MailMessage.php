@@ -62,9 +62,11 @@ class MailMessage extends Message
     {
         parent::__construct($params);
 
-        // TODO: do not set this for "child" messages (attachments)
-        $helper = new SanitizeHeaders();
-        $helper($this);
+        // do not do this for "child" messages (attachments)
+        if (!empty($params['root'])) {
+            $helper = new SanitizeHeaders();
+            $helper($this);
+        }
     }
 
     /**
@@ -75,7 +77,7 @@ class MailMessage extends Message
      */
     public static function createFromString($raw)
     {
-        $message = new self(array('raw' => $raw));
+        $message = new self(array('root' => true, 'raw' => $raw));
         return $message;
     }
 
@@ -87,7 +89,7 @@ class MailMessage extends Message
      */
     public static function createFromFile($filename)
     {
-        $message = new self(array('file' => $filename));
+        $message = new self(array('root' => true, 'file' => $filename));
 
         return $message;
     }
@@ -103,13 +105,41 @@ class MailMessage extends Message
     }
 
     /**
-     * Return true if mail has attachments
+     * Return true if mail has attachments,
+     * inline text messages are not accounted as attachments.
      *
      * @return  boolean
      */
     public function hasAttachments()
     {
-        return $this->isMultipart() && $this->countParts() > 0;
+        $have_multipart = $this->isMultipart() && $this->countParts() > 0;
+        if (!$have_multipart) {
+            return false;
+        }
+
+        $has_attachments = false;
+
+        // check what really the attachments are
+        foreach ($this as $part) {
+            $ctype = $part->getHeaderField('Content-Type');
+            $disposition = $part->getHeaderField('Content-Disposition');
+            $filename = $part->getHeaderField('Content-Disposition', 'filename');
+            $is_attachment = $disposition == 'attachment' || $filename;
+
+            if (in_array($ctype, array('text/plain', 'text/html', 'text/enriched'))) {
+                $has_attachments |= $is_attachment;
+            } else {
+                // avoid treating forwarded messages as attachments
+                $is_attachment |= ($disposition == 'inline' && $ctype != 'message/rfc822');
+                // handle inline images
+                $type = current(explode('/', $ctype));
+                $is_attachment |= $type == 'image';
+
+                $has_attachments |= $is_attachment;
+            }
+        }
+
+        return (bool)$has_attachments;
     }
 
     /**
