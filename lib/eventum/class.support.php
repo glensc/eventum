@@ -910,7 +910,6 @@ class Support
      * server.
      *
      * @param   resource $mbox The mailbox
-     * @return  void
      */
     public static function closeEmailServer($mbox)
     {
