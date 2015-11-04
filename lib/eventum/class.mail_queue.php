@@ -57,12 +57,7 @@ class Mail_Queue
             throw new InvalidArgumentException("Can handle only one recipient, got $count");
         }
 
-        // get recipient is confusing
-        // obtain first address from addresses list
-        // FIXME: add ->getRecipient method
-        $addresses = current($mail->getTo());
-        $address = current($addresses);
-        $recipient = $address->toString();
+        $recipient = $mail->to;
 
         // avoid sending emails out to users with inactive status
         $recipient_email = Mail_Helper::getEmailAddress($recipient);
