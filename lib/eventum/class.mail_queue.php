@@ -36,7 +36,6 @@ class Mail_Queue
     /**
      * Adds an email to the outgoing mail queue.
      *
-     * @param   string $recipient The recipient of this email
      * @param   MailMessage $mail The Mail object
      * @param   integer $save_email_copy Whether to send a copy of this email to a configurable address or not (eventum_sent@)
      * @param   integer $issue_id The ID of the issue. If false, email will not be associated with issue.
@@ -46,14 +45,29 @@ class Mail_Queue
      * @return  true, or a PEAR_Error object
      * @status PORTED
      */
-    public static function add($recipient, $mail, $save_email_copy = 0, $issue_id = null, $type = '', $sender_usr_id = null, $type_id = null)
-    {
-        Workflow::modifyMailQueue(Auth::getCurrentProject(false), $recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id);
+    public static function add($mail, $save_email_copy = 0, $issue_id = null, $type = '', $sender_usr_id = null, $type_id = null) {
+        // TODO: convert poorly ordered params to $options
+
+        // Workflow needs to be rewritten
+//        Workflow::modifyMailQueue(Auth::getCurrentProject(false), $recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id);
+
+        $to = $mail->getTo();
+        if (count($to) != 1) {
+            $count = count($to);
+            throw new InvalidArgumentException("Can handle only one recipient, got $count");
+        }
+
+        // get recipient is confusing
+        // obtain first address from addresses list
+        // FIXME: add ->getRecipient method
+        $addresses = current($mail->getTo());
+        $address = current($addresses);
+        $recipient = $address->toString();
 
         // avoid sending emails out to users with inactive status
         $recipient_email = Mail_Helper::getEmailAddress($recipient);
         $usr_id = User::getUserIDByEmail($recipient_email);
-        if (!empty($usr_id)) {
+        if ($usr_id) {
             $user_status = User::getStatusByEmail($recipient_email);
             // if user is not set to an active status, then silently ignore
             if ((!User::isActiveStatus($user_status)) && (!User::isPendingStatus($user_status))) {
@@ -79,14 +93,14 @@ class Mail_Queue
         $headers['Auto-submitted'] = 'auto-generated'; // the RFC 3834 way
 
         if (empty($issue_id)) {
+            // FIXME: why string not NULL?
             $issue_id = 'null';
         }
-        if (!$mail instanceof MailMessage) {
-            echo die;
-        }
+
         // if the Date: header is missing, add it.
         // FIXME: do in class? or add setDate() method?
         if (!$mail->getHeaders()->has('Date')) {
+//            throw new InvalidArgumentException("Date missing, not cool");
             $headers['Date'] = date('D, j M Y H:i:s O');
         }
         /*
@@ -115,7 +129,7 @@ class Mail_Queue
             'maq_sender_ip_address' => !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '',
             'maq_recipient' => $recipient,
             'maq_headers' => $mail->getHeaders()->toString(),
-            'maq_body' => $mail->getContent(),
+            'maq_body' => $mail->getContent(), // FIXME: getrawcontent? what?
             'maq_iss_id' => $issue_id,
             'maq_subject' => $mail->subject,
             'maq_type' => $type,
