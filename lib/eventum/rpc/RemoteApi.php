@@ -40,7 +40,6 @@ class RemoteApi
     /**
      * @param int $prj_id
      * @return struct
-     * @access protected
      */
     public function getDeveloperList($prj_id)
     {
@@ -64,7 +63,6 @@ class RemoteApi
     /**
      * @param int $issue_id
      * @return struct
-     * @access protected
      */
     public function getSimpleIssueDetails($issue_id)
     {
@@ -90,7 +88,6 @@ class RemoteApi
      * @param boolean $show_all_issues
      * @param string $status
      * @return array
-     * @access protected
      */
     public function getOpenIssues($prj_id, $show_all_issues, $status)
     {
@@ -123,7 +120,6 @@ class RemoteApi
      * @param string $email
      * @param string $password
      * @return string
-     * @access public
      */
     public function isValidLogin($email, $password)
     {
@@ -140,7 +136,6 @@ class RemoteApi
      * Method used to check if Eventum RPC can be reached
      *
      * @return bool
-     * @access protected
      * @since 3.0.2
      */
     public function checkAuthentication()
@@ -158,7 +153,6 @@ class RemoteApi
      *
      * @param string $parameter
      * @return string
-     * @access protected
      * @since 3.0.2
      */
     public function getServerParameter($parameter)
@@ -173,7 +167,6 @@ class RemoteApi
     /**
      * @param bool $only_customer_projects
      * @return array
-     * @access protected
      */
     public function getUserAssignedProjects($only_customer_projects)
     {
@@ -198,7 +191,6 @@ class RemoteApi
     /**
      * @param int $issue_id
      * @return struct
-     * @access protected
      */
     public function getIssueDetails($issue_id)
     {
@@ -231,7 +223,6 @@ class RemoteApi
     /**
      * @param int $issue_id
      * @return struct
-     * @access protected
      */
     public function getTimeTrackingCategories($issue_id)
     {
@@ -250,7 +241,6 @@ class RemoteApi
      * @param string $summary
      * @param int $time_spent
      * @return string
-     * @access protected
      * @since 3.0.2 checks access via Issue::canUpdate
      */
     public function recordTimeWorked($issue_id, $cat_id, $summary, $time_spent)
@@ -272,7 +262,6 @@ class RemoteApi
      * @param int $issue_id
      * @param string $new_status
      * @return string
-     * @access protected
      */
     public function setIssueStatus($issue_id, $new_status)
     {
@@ -291,7 +280,6 @@ class RemoteApi
      * @param int $project_id
      * @param string $developer
      * @return string
-     * @access protected
      */
     public function assignIssue($issue_id, $project_id, $developer)
     {
@@ -324,7 +312,6 @@ class RemoteApi
      * @param int $issue_id
      * @param int $project_id
      * @return string
-     * @access protected
      */
     public function takeIssue($issue_id, $project_id)
     {
@@ -365,7 +352,6 @@ class RemoteApi
      * @param int $project_id
      * @param string $new_replier
      * @return string
-     * @access protected
      */
     public function addAuthorizedReplier($issue_id, $project_id, $new_replier)
     {
@@ -400,7 +386,6 @@ class RemoteApi
     /**
      * @param int $issue_id
      * @return array
-     * @access protected
      */
     public function getFileList($issue_id)
     {
@@ -417,7 +402,6 @@ class RemoteApi
     /**
      * @param int $file_id
      * @return struct
-     * @access protected
      */
     public function getFile($file_id)
     {
@@ -439,7 +423,6 @@ class RemoteApi
      * @param string $file_description
      * @param bool $internal_only
      * @return struct
-     * @access protected
      * @since 3.0.2
      */
     public function addFile($issue_id, $filename, $mimetype, $contents, $file_description, $internal_only)
@@ -475,7 +458,6 @@ class RemoteApi
      * @param int $prj_id
      * @param string $field
      * @param string $value
-     * @access protected
      * @return string
      */
     public function lookupCustomer($prj_id, $field, $value)
@@ -509,7 +491,6 @@ class RemoteApi
      * @param bool $send_notification
      * @param string $note
      * @return string
-     * @access protected
      */
     public function closeIssue($issue_id, $new_status, $resolution_id, $send_notification, $note)
     {
@@ -541,7 +522,6 @@ class RemoteApi
     /**
      * @param int $prj_id
      * @return struct
-     * @access protected
      */
     public function getClosedAbbreviationAssocList($prj_id)
     {
@@ -554,7 +534,6 @@ class RemoteApi
      * @param int $prj_id
      * @param bool $show_closed
      * @return struct
-     * @access protected
      */
     public function getAbbreviationAssocList($prj_id, $show_closed)
     {
@@ -566,7 +545,6 @@ class RemoteApi
     /**
      * @param int $issue_id
      * @return array
-     * @access protected
      */
     public function getEmailListing($issue_id)
     {
@@ -606,7 +584,6 @@ class RemoteApi
      * @param int $issue_id
      * @param int $email_id
      * @return array
-     * @access protected
      */
     public function getEmail($issue_id, $email_id)
     {
@@ -639,7 +616,6 @@ class RemoteApi
     /**
      * @param int $issue_id
      * @return array
-     * @access protected
      */
     public function getNoteListing($issue_id)
     {
@@ -653,7 +629,6 @@ class RemoteApi
      * @param int $issue_id
      * @param int $note_id
      * @return array
-     * @access protected
      */
     public function getNote($issue_id, $note_id)
     {
@@ -672,7 +647,6 @@ class RemoteApi
      * @param string $target
      * @param bool $authorize_sender
      * @return string
-     * @access protected
      */
     public function convertNote($issue_id, $note_id, $target, $authorize_sender)
     {
@@ -691,7 +665,6 @@ class RemoteApi
      *
      * @param int $issue_id
      * @return string
-     * @access protected
      */
     public function mayChangeIssue($issue_id)
     {
@@ -717,7 +690,6 @@ class RemoteApi
      * @param DateTime $end
      * @param struct $options
      * @return string
-     * @access protected
      * @since 3.0.2
      */
     public function getWeeklyReportData($prj_id, $start, $end, $options)
@@ -733,7 +705,6 @@ class RemoteApi
      * @param string $end
      * @param bool $separate_closed
      * @return string
-     * @access protected
      * @deprecated use getWeeklyReportData() and format data yourself
      */
     public function getWeeklyReport($week, $start, $end, $separate_closed)
@@ -779,7 +750,6 @@ class RemoteApi
 
     /**
      * @return array
-     * @access public
      */
     public function getResolutionAssocList()
     {
@@ -791,7 +761,6 @@ class RemoteApi
     /**
      * @param string $action
      * @return string
-     * @access protected
      */
     public function timeClock($action)
     {
@@ -823,7 +792,6 @@ class RemoteApi
     /**
      * @param int $issue_id
      * @return array
-     * @access protected
      */
     public function getDraftListing($issue_id)
     {
@@ -836,7 +804,6 @@ class RemoteApi
      * @param int $issue_id
      * @param int $draft_id
      * @return struct
-     * @access protected
      */
     public function getDraft($issue_id, $draft_id)
     {
@@ -857,7 +824,6 @@ class RemoteApi
      * @param int $issue_id
      * @param int $draft_id
      * @return string
-     * @access protected
      */
     public function sendDraft($issue_id, $draft_id)
     {
@@ -880,7 +846,6 @@ class RemoteApi
      * @param int $issue_id
      * @param array $types
      * @return string
-     * @access protected
      */
     public function redeemIssue($issue_id, $types)
     {
@@ -929,7 +894,6 @@ class RemoteApi
      * @param int $issue_id
      * @param array $types
      * @return string
-     * @access protected
      */
     public function unredeemIssue($issue_id, $types)
     {
@@ -976,7 +940,6 @@ class RemoteApi
      * @param int $issue_id
      * @param bool $redeemed_only
      * @return array
-     * @access protected
      */
     public function getIncidentTypes($issue_id, $redeemed_only)
     {
@@ -1016,7 +979,6 @@ class RemoteApi
     /**
      * @param string $command
      * @return string
-     * @access protected
      */
     public function logCommand($command)
     {
