@@ -705,7 +705,7 @@ class Support
                         }
 
                         if (self::isAllowedToEmail($t['issue_id'], $sender_email)) {
-//                            Notification::notifyNewEmail(Auth::getUserID(), $t['issue_id'], $t, $internal_only, $assignee_only, '', $sup_id);
+                            Notification::notifyNewEmail(Auth::getUserID(), $t['issue_id'], $t, $internal_only, $assignee_only, '', $sup_id);
                         }
 
                         // try to get usr_id of sender, if not, use system account
