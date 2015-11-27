@@ -3,6 +3,21 @@
  */
 
 
+function select_project()
+{
+}
+
+select_project.ready = function()
+{
+    $('#project_select_form input[name=project]').on('change', function() {
+	        $(this).closest("form").submit();
+    });
+    $('#project_select_form .project_label').on('click', function() {
+	        $(this).closest("form").submit();
+    });
+}
+
+
 /*
  * List Issues Page
  */
@@ -496,6 +511,9 @@ issue_update.validateForm = function()
         Validation.errors[Validation.errors.length] = new Option('Percentage complete should be between 0 and 100', 'percent_complete');
         return false;
     }
+
+    Validation.checkCustomFields(f);
+
     return true;
 };
 

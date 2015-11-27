@@ -34,7 +34,7 @@ define('APP_ERROR_LOG', STDERR);
 define('APP_INC_PATH', APP_PATH . '/lib/eventum');
 define('APP_SYSTEM_USER_ID', 1);
 define('APP_CHARSET', 'UTF-8');
-define('APP_EMAIL_ENCODING', 'APP_CHARSET');
+define('APP_EMAIL_ENCODING', APP_CHARSET);
 define('APP_DEFAULT_LOCALE', 'en_US');
 define('APP_HOSTNAME', 'eventum.example.org');
 define('APP_LOCKS_PATH', sys_get_temp_dir());
@@ -52,6 +52,13 @@ define('APP_COOKIE_URL', APP_RELATIVE_URL);
 define('APP_PROJECT_COOKIE', 'eventum_project');
 define('APP_PROJECT_COOKIE_EXPIRE', time() + (60 * 60 * 24));
 define('APP_BASE_URL', 'http://localhost');
+define('APP_LOG_PATH', APP_CONFIG_PATH);
+define('APP_LOCAL_PATH', APP_CONFIG_PATH);
+define('APP_TPL_COMPILE_PATH', APP_CONFIG_PATH.'/tpl_c');
+define('APP_TPL_PATH', APP_PATH . '/templates');
+define('APP_NAME', 'Eventum Tests');
+define('APP_VERSION', '3.x.y-dev');
+define('APP_AUTH_BACKEND', 'mysql_auth_backend');
 
 require_once APP_PATH . '/autoload.php';
 

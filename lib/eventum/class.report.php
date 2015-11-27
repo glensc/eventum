@@ -858,6 +858,7 @@ class Report
 
         return $data;
     }
+
     /**
      * Returns data for the custom fields weekly report, based on the field and options passed in.
      *
@@ -950,6 +951,7 @@ class Report
 
         return $res;
     }
+
     /**
      * Returns workload information for the specified date range and interval.
      *
@@ -969,7 +971,7 @@ class Report
         switch ($interval) {
             case 'day':
                 $format = '%m/%d/%y';
-                $order_by = "%1\$s";
+                $order_by = '%1$s';
                 break;
             case 'dow':
                 $format = '%W';
@@ -981,7 +983,7 @@ class Report
                 } else {
                     $format = '%v/%y';
                 }
-                $order_by = "%1\$s";
+                $order_by = '%1$s';
                 break;
             case 'dom':
                 $format = '%d';
@@ -992,7 +994,7 @@ class Report
                     $order_by = "DATE_FORMAT(%1\$s, '%%m')";
                 } else {
                     $format = '%b/%y';
-                    $order_by = "%1\$s";
+                    $order_by = '%1$s';
                 }
                 break;
             default:

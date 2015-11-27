@@ -64,7 +64,7 @@ class DB_Helper
             }
             /** @global $error_type */
             $error_type = 'db';
-            require_once APP_PATH . '/htdocs/offline.php';
+            require APP_PATH . '/htdocs/offline.php';
             exit(2);
         }
 
@@ -124,8 +124,8 @@ class DB_Helper
     {
         try {
             $stmt = "show variables like 'max_allowed_packet'";
-            $res = DB_Helper::getInstance(false)->getPair($stmt);
-            $max_allowed_packet = (int)$res['max_allowed_packet'];
+            $res = self::getInstance(false)->getPair($stmt);
+            $max_allowed_packet = (int) $res['max_allowed_packet'];
         } catch (DbException $e) {
         }
 
@@ -150,7 +150,8 @@ class DB_Helper
      * @see https://github.com/yiisoft/yii2/blob/2.0.0/framework/db/Connection.php#L761-L783
      * @internal
      */
-    public static function quoteTableName(DbInterface $db, $tablePrefix , $sql) {
+    public static function quoteTableName(DbInterface $db, $tablePrefix, $sql)
+    {
         $sql = preg_replace_callback(
             '/(\\{\\{(%?[\w\-\. ]+%?)\\}\\}|\\[\\[([\w\-\. ]+)\\]\\])/',
             function ($matches) use ($db, $tablePrefix) {
@@ -177,7 +178,7 @@ class DB_Helper
     public static function get_last_insert_id()
     {
         $stmt = 'SELECT last_insert_id()';
-        $res = (integer)DB_Helper::getInstance()->getOne($stmt);
+        $res = (integer) self::getInstance()->getOne($stmt);
 
         return $res;
     }
@@ -286,15 +287,5 @@ class DB_Helper
         END)";
 
         return str_replace("\n", ' ', $sql);
-    }
-
-    public static function fatalDBError($e)
-    {
-        /** @var $e PEAR_Error */
-        Error_Handler::logError(array($e->getMessage(), $e->getDebugInfo()), __FILE__, __LINE__);
-        /** @global $error_type */
-        $error_type = 'db';
-        require_once APP_PATH . '/htdocs/offline.php';
-        exit(2);
     }
 }

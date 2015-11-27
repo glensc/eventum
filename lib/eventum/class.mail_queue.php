@@ -54,7 +54,8 @@ class Mail_Queue
         $type_id = isset($options['type_id']) ? $options['type_id'] : false;
 
         // Workflow needs to be rewritten
-//        Workflow::modifyMailQueue(Auth::getCurrentProject(false), $recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id);
+//        Workflow::modifyMailQueue($prj_id, $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
+
 
         $to = $mail->getTo();
         if (count($to) != 1) {
@@ -70,7 +71,7 @@ class Mail_Queue
         if ($usr_id) {
             $user_status = User::getStatusByEmail($recipient_email);
             // if user is not set to an active status, then silently ignore
-            if ((!User::isActiveStatus($user_status)) && (!User::isPendingStatus($user_status))) {
+            if (!User::isActiveStatus($user_status) && !User::isPendingStatus($user_status)) {
                 return false;
             }
         }
@@ -80,11 +81,9 @@ class Mail_Queue
 
         $reminder_addresses = Reminder::_getReminderAlertAddresses();
 
-        $headers = array();
-
-        // add specialized headers
-        if ((!empty($issue_id)) && ((!empty($to_usr_id)) && (User::getRoleByUser($to_usr_id, Issue::getProjectID($issue_id)) != User::ROLE_CUSTOMER)) ||
-                (@in_array(Mail_Helper::getEmailAddress($recipient), $reminder_addresses))) {
+        $role_id = User::getRoleByUser($to_usr_id, Issue::getProjectID($issue_id));
+        $is_reminder_address = in_array(Mail_Helper::getEmailAddress($recipient), $reminder_addresses);
+        if ($issue_id && ($to_usr_id && $role_id != User::ROLE_CUSTOMER) || $is_reminder_address) {
             $headers += Mail_Helper::getSpecializedHeaders($issue_id, $type, $sender_usr_id);
         }
 
@@ -115,7 +114,7 @@ class Mail_Queue
 /*
         $res = Mail_Helper::prepareHeaders($headers);
         if (Misc::isError($res)) {
-            Error_Handler::logError(array($res->getMessage(), $res->getDebugInfo()), __FILE__, __LINE__);
+            Logger::app()->error($res->getMessage(), array('debug' => $res->getDebugInfo()));
 
             return $res;
         }*/
@@ -184,7 +183,7 @@ class Mail_Queue
 
                 $res = Mail_Helper::prepareHeaders($headers);
                 if (Misc::isError($res)) {
-                    Error_Handler::logError(array($res->getMessage(), $res->getDebugInfo()), __FILE__, __LINE__);
+                    Logger::app()->error($res->getMessage(), array('debug' => $res->getDebugInfo()));
 
                     return;
                 }
@@ -290,10 +289,7 @@ class Mail_Queue
         $mail = Mail::factory('smtp', Mail_Helper::getSMTPSettings());
         $res = $mail->send($recipient, $headers, $body);
         if (Misc::isError($res)) {
-            // special handling of errors when the mail server is down
-            $msg = $res->getMessage();
-            $cant_notify = ($status == 'error' || strstr($msg, 'unable to connect to smtp server') || stristr($msg, 'Failed to connect to') !== false);
-            Error_Handler::logError(array($msg, $res->getDebugInfo()), __FILE__, __LINE__, !$cant_notify);
+            Logger::app()->error($res->getMessage(), array('debug' => $res->getDebugInfo()));
 
             return $res;
         }

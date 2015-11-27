@@ -42,10 +42,8 @@ class DbPdo extends DbBasePdo implements DbInterface
 
         $pdo = new PDO($dsn, $config['username'], $config['password'], $options);
 
-        global $debugbar;
-        if ($debugbar) {
-            $pdo = new DebugBar\DataCollector\PDO\TraceablePDO($pdo);
-            $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($pdo));
+        if (Eventum\DebugBar::hasDebugBar()) {
+            $pdo = Eventum\DebugBar::getTraceablePDO($pdo);
         }
 
         $this->db = $pdo;
@@ -108,6 +106,7 @@ class DbPdo extends DbBasePdo implements DbInterface
         $stmt->execute($params);
 
         $this->convertFetchMode($fetchmode);
+
         return $stmt->fetch($fetchmode);
     }
 
@@ -144,7 +143,7 @@ class DbPdo extends DbBasePdo implements DbInterface
 
     public function quoteIdentifier($str)
     {
-        return "`" . str_replace("`", "``", $str) . "`";
+        return '`' . str_replace('`', '``', $str) . '`';
     }
 
     /**
@@ -156,6 +155,7 @@ class DbPdo extends DbBasePdo implements DbInterface
         $stmt = $this->db->prepare($query);
         $this->convertParams($params);
         $stmt->execute($params);
+
         return $stmt->fetchAll($fetchmode);
     }
 

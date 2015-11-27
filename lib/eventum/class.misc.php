@@ -27,7 +27,6 @@
 // +----------------------------------------------------------------------+
 //
 
-
 /**
  * Class to hold methods and algorythms that woudln't fit in other classes, such
  * as functions to work around PHP bugs or incompatibilities between separate
@@ -99,6 +98,7 @@ class Misc
     /*
      * Merge two arrays so that $a contains all keys that $b would
      */
+
     public static function array_extend($a, $b)
     {
         foreach ($b as $k => $v) {
@@ -130,6 +130,61 @@ class Misc
         }
 
         return strlen($data);
+    }
+
+    /**
+     * Process string with callback function. Input can be string or array of strings
+     *
+     * @param string|string[] $mixed
+     * @param callable $callback
+     * @return string|string[]
+     */
+    private static function walk($mixed, $callback)
+    {
+        if (!$mixed) {
+            return $mixed;
+        }
+
+        if (is_array($mixed)) {
+            foreach ($mixed as $i => $item) {
+                $mixed[$i] = $callback($item);
+            }
+
+            return $mixed;
+        } else {
+            return $callback($mixed);
+        }
+    }
+
+    /**
+     * Lowercase string, it can be array of strings
+     *
+     * @param string|string[] $mixed
+     * @param string $encoding The string encoding. Default UTF-8.
+     * @return string|string[]
+     */
+    public static function lowercase($mixed, $encoding = APP_CHARSET)
+    {
+        $converter = function ($str) use ($encoding) {
+            return mb_convert_case($str, MB_CASE_LOWER, $encoding);
+        };
+
+        return self::walk($mixed, $converter);
+    }
+
+    /**
+     * Removes leading and trailing whitespace from input.
+     *
+     * @param string|string[] $mixed
+     * @return string|string[]
+     */
+    public static function trim($mixed)
+    {
+        $converter = function ($str) {
+            return trim($str);
+        };
+
+        return self::walk($mixed, $converter);
     }
 
     /**
@@ -794,7 +849,7 @@ class Misc
     {
         foreach ($map as $val => $info) {
             if ($result == $val) {
-                Misc::setMessage($info[0], $info[1]);
+                self::setMessage($info[0], $info[1]);
 
                 return;
             }
@@ -807,7 +862,7 @@ class Misc
             $update_tpl = new Template_Helper();
             $update_tpl->setTemplate('include/notified_list.tpl.html');
             $update_tpl->assign('notify_list', $notify_list);
-            Misc::setMessage($update_tpl->getTemplateContents(false), Misc::MSG_HTML_BOX);
+            self::setMessage($update_tpl->getTemplateContents(false), self::MSG_HTML_BOX);
         }
     }
 
@@ -878,7 +933,7 @@ class Misc
 
     public static function displayErrorMessage($msg)
     {
-        Misc::setMessage($msg, Misc::MSG_ERROR);
+        self::setMessage($msg, self::MSG_ERROR);
         $tpl = new Template_Helper();
         $tpl->setTemplate('error_message.tpl.html');
         $tpl->displayTemplate();
@@ -935,6 +990,7 @@ class Misc
      * Generate a random byte string of the requested size.
      *
      * Uses Medium Strength Generator
+     *
      * @link https://github.com/ircmaxell/RandomLib#factory-getlowstrengthgenerator
      *
      * @param int $size

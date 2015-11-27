@@ -949,7 +949,7 @@ class Issue
      * @param   integer $issue_id The issue ID
      * @return  array The list of duplicates
      */
-    public function getDuplicateList($issue_id)
+    public static function getDuplicateList($issue_id)
     {
         $res = self::getDuplicateDetailsList($issue_id);
         if (count($res) == 0) {
@@ -971,7 +971,7 @@ class Issue
      * @param   integer $issue_id The issue ID
      * @return  array The list of duplicates
      */
-    public function getDuplicateDetailsList($issue_id)
+    public static function getDuplicateDetailsList($issue_id)
     {
         static $returns;
 
@@ -1106,7 +1106,7 @@ class Issue
      * @param   integer $issue_id The issue ID
      * @return  array The list of users
      */
-    public function getAssignedUsersStatus($issue_id)
+    public static function getAssignedUsersStatus($issue_id)
     {
         $stmt = 'SELECT
                     usr_id,
@@ -1414,7 +1414,7 @@ class Issue
         global $errors;
 
         // trim and remove empty values
-        $associated_issues = array_filter(array_map(function ($s) { return trim($s); }, $associated_issues));
+        $associated_issues = array_filter(Misc::trim($associated_issues));
 
         // make sure all associated issues are valid (and in this project)
         foreach ($associated_issues as $i => $iss_id) {
@@ -1423,7 +1423,7 @@ class Issue
                 unset($associated_issues[$i]);
                 continue;
             }
-            if (!Issue::exists($iss_id, false)) {
+            if (!self::exists($iss_id, false)) {
                 $error = ev_gettext(
                     'Issue #%s does not exist and was removed from the list of associated issues.', $iss_id
                 );
@@ -1538,8 +1538,8 @@ class Issue
         if (isset($_POST['release'])) {
             $params['iss_pre_id'] = $_POST['release'];
         }
-        if (isset($_POST['percent_complete'])) {
-            $params['iss_percent_complete'] = $_POST['percent_complete'];
+        if (isset($_POST['percentage_complete'])) {
+            $params['iss_percent_complete'] = $_POST['percentage_complete'];
         }
         if (isset($_POST['group'])) {
             $params['iss_grp_id'] = $_POST['group'];
@@ -1638,8 +1638,8 @@ class Issue
             $updated_fields['Summary'] = '';
         }
 
-        if (isset($_POST['percent_complete']) && $current['iss_original_percent_complete'] != $_POST['percent_complete']) {
-            $updated_fields['Percent complete'] = History::formatChanges($current['iss_original_percent_complete'], $_POST['percent_complete']);
+        if (isset($_POST['percentage_complete']) && $current['iss_original_percent_complete'] != $_POST['percentage_complete']) {
+            $updated_fields['Percentage complete'] = History::formatChanges($current['iss_original_percent_complete'], $_POST['percentage_complete']);
         }
 
         if ($current['iss_original_description'] != $_POST['description']) {
@@ -2058,12 +2058,12 @@ class Issue
             try {
                 if ($contract_id != false) {
                     $contract = $crm->getContract($contract_id);
-                    $data['contract'] =  $contract->getContractID();
+                    $data['contract'] = $contract->getContractID();
                 } elseif (isset($contact)) {
                     // Just use first contract / customer for now.
                     $contracts = $contact->getContracts(array('active' => true));
                     $contract = $contracts[0];
-                    $data['contract'] =  $contract->getContractID();
+                    $data['contract'] = $contract->getContractID();
                 }
             } catch (ContractNotFoundException $e) {
             }
@@ -2173,6 +2173,7 @@ class Issue
      * @return  array
      */
     private static $insert_errors = array();
+
     public static function getInsertErrors()
     {
         return self::$insert_errors;
@@ -3143,7 +3144,7 @@ class Issue
                 continue;
             }
 
-            $issue_details = Issue::getDetails($issue_id);
+            $issue_details = self::getDetails($issue_id);
 
             $updated_fields = array();
 
@@ -3197,7 +3198,7 @@ class Issue
                 }
 
                 $prj_id = Auth::getCurrentProject();
-                $usr_ids = Issue::getAssignedUserIDs($issue_id);
+                $usr_ids = self::getAssignedUserIDs($issue_id);
                 Workflow::handleAssignmentChange($prj_id, $issue_id, Auth::getUserID(), $issue_details, $usr_ids, false);
                 Notification::notifyNewAssignment($new_assignees, $issue_id);
                 $updated_fields['Assignment'] = History::formatChanges(implode(', ', $current_assignees), implode(', ', $new_user_names));
@@ -3367,7 +3368,7 @@ class Issue
      * @param   integer $issue_id The issue ID
      * @return  array The list of associated issues
      */
-    public function getAssociatedIssues($issue_id)
+    public static function getAssociatedIssues($issue_id)
     {
         $issues = self::getAssociatedIssuesDetails($issue_id);
         $associated = array();
@@ -3385,7 +3386,7 @@ class Issue
      * @param   integer $issue_id The issue ID
      * @return  array The list of associated issues
      */
-    public function getAssociatedIssuesDetails($issue_id)
+    public static function getAssociatedIssuesDetails($issue_id)
     {
         static $returns;
 
@@ -3778,7 +3779,7 @@ class Issue
         if (empty($res)) {
             $returns[$msg_id] = false;
         } else {
-            $returns[$msg_id] =  $res;
+            $returns[$msg_id] = $res;
         }
 
         return $returns[$msg_id];
@@ -3837,8 +3838,8 @@ class Issue
      */
     public static function getCloneIssueTemplateVariables($issue_id)
     {
-        $prj_id = Issue::getProjectID($issue_id);
-        $clone_details = Issue::getDetails($issue_id);
+        $prj_id = self::getProjectID($issue_id);
+        $clone_details = self::getDetails($issue_id);
         $defaults = array(
             'clone_iss_id'  =>  $issue_id,
             'category'  =>  $clone_details['iss_prc_id'],

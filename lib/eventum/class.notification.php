@@ -49,8 +49,8 @@ class Notification
             return true;
         }
         $subscribed_emails = self::getSubscribedEmails($issue_id, 'emails');
-        $subscribed_emails = array_map(function ($s) { return strtolower($s); }, $subscribed_emails);
-        if (@in_array($email, $subscribed_emails)) {
+        $subscribed_emails = Misc::lowercase($subscribed_emails);
+        if (in_array($email, $subscribed_emails)) {
             return true;
         } else {
             return false;
@@ -300,7 +300,7 @@ class Notification
 
         // automatically subscribe this sender to email notifications on this issue
         $subscribed_emails = self::getSubscribedEmails($issue_id, 'emails');
-        $subscribed_emails = array_map(function ($s) { return strtolower($s); }, $subscribed_emails);
+        $subscribed_emails = Misc::lowercase($subscribed_emails);
         if ((!self::isIssueRoutingSender($issue_id, $sender)) &&
                 (!$mail->isBounceMessage()) &&
                 (!in_array($sender_email, $subscribed_emails)) &&
@@ -373,14 +373,21 @@ class Notification
             }
         }
 
+        $options = array(
+            'save_email_copy' => 1,
+            'issue_id' => $issue_id,
+            'type' => $type,
+            'sender_usr_id' => $sender_usr_id,
+            'type_id' => $sup_id,
+        );
+
         foreach ($emails as $to) {
             $clone = clone $mail;
             $clone->setTo($to);
 
             // add the warning message about replies being blocked or not
             Mail_Helper::addWarningMessage($issue_id, $to, $clone);
-
-            Mail_Queue::add($to, $clone, 1, $issue_id, $type, $sender_usr_id, $sup_id);
+            Mail_Queue::addMail($clone, $options);
         }
     }
 
@@ -639,7 +646,6 @@ class Notification
         $data['diffs'] = implode("\n", $diffs);
         $data['updated_by'] = User::getFullName(Auth::getUserID());
 
-
         $all_emails = array();
         $role_emails = array(
             User::ROLE_VIEWER => array(),
@@ -769,7 +775,7 @@ class Notification
             $users = array_merge($users, $extra);
         }
         $user_emails = Project::getUserEmailAssocList(Issue::getProjectID($issue_id), 'active', User::ROLE_CUSTOMER);
-        $user_emails = array_map(function ($s) { return strtolower($s); }, $user_emails);
+        $user_emails = Misc::lowercase($user_emails);
 
         foreach ($users as $user) {
             if (empty($user['sub_usr_id'])) {

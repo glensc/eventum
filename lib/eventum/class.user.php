@@ -54,6 +54,7 @@ class User
     );
 
     private static $localized_roles;
+
     private static function getLocalizedRoles()
     {
         if (self::$localized_roles === null) {
@@ -323,9 +324,10 @@ class User
         $usr_id = DB_Helper::get_last_insert_id();
 
         try {
-            User::updatePassword($usr_id, $_POST['passwd']);
+            self::updatePassword($usr_id, $_POST['passwd']);
         } catch (Exception $e) {
-            error_log($e->getMessage());
+            Logger::app()->error($e);
+
             return -1;
         }
 
@@ -401,7 +403,7 @@ class User
         $usr_id = self::getUserIDByEmail($email);
         // create the new password
         $password = substr(md5(microtime() . uniqid('')), 0, 12);
-        User::updatePassword($usr_id, $password, true);
+        self::updatePassword($usr_id, $password, true);
     }
 
     public static function getUserIDByExternalID($external_id)
@@ -438,12 +440,12 @@ class User
 
         if (!is_string($email)) {
             if (Misc::isError($email)) {
-                Error_Handler::logError(array($email->getMessage(), $email->getDebugInfo()), __FILE__, __LINE__);
+                Logger::app()->error($email->getMessage(), array('debug' => $email->getDebugInfo()));
 
                 return null;
             }
 
-            Error_Handler::logError('$email parameter is not a string: '.gettype($email), __FILE__, __LINE__);
+            Logger::app()->error('$email parameter is not a string', array('type' => gettype($email)));
 
             return null;
         }
@@ -645,7 +647,7 @@ class User
         static $returns;
 
         if ($usr_id == APP_SYSTEM_USER_ID) {
-            return User::ROLE_ADMINISTRATOR;
+            return self::ROLE_ADMINISTRATOR;
         }
 
         if (!empty($returns[$usr_id][$prj_id])) {
@@ -892,7 +894,7 @@ class User
             return $returns[$email];
         }
 
-        $email = User::getEmail(User::getUserIDByEmail($email, true));
+        $email = self::getEmail(self::getUserIDByEmail($email, true));
 
         $stmt = 'SELECT
                     usr_status
@@ -1026,7 +1028,7 @@ class User
 
         $res = Auth::getAuthBackend()->updatePassword($usr_id, $password);
         if (!$res) {
-            throw new BadMethodCallException("Password set rejected by auth backend");
+            throw new BadMethodCallException('Password set rejected by auth backend');
         }
 
         if ($send_notification) {
@@ -1100,9 +1102,10 @@ class User
 
         if (!empty($data['password'])) {
             try {
-                User::updatePassword($usr_id, $data['password']);
+                self::updatePassword($usr_id, $data['password']);
             } catch (Exception $e) {
-                error_log($e->getMessage());
+                Logger::app()->error($e);
+
                 return -1;
             }
         }
@@ -1226,10 +1229,12 @@ class User
 
         $usr_id = DB_Helper::get_last_insert_id();
 
-        try {
-            User::updatePassword($usr_id, $user['password']);
-        } catch (Exception $e) {
-            return -1;
+        if ($user['password'] != '') {
+            try {
+                self::updatePassword($usr_id, $user['password']);
+            } catch (Exception $e) {
+                return -1;
+            }
         }
 
         // add the project associations!
@@ -1287,8 +1292,8 @@ class User
             $role = current($roles);
             $role = $role['pru_role'];
             if ($show_customers == false && (
-                ((@$roles[Auth::getCurrentProject()]['pru_role']) == User::ROLE_CUSTOMER) ||
-                (count($roles) == 1 && $role == User::ROLE_CUSTOMER))) {
+                ((@$roles[Auth::getCurrentProject()]['pru_role']) == self::ROLE_CUSTOMER) ||
+                (count($roles) == 1 && $role == self::ROLE_CUSTOMER))) {
                 continue;
             }
 
@@ -1301,7 +1306,7 @@ class User
             }
 
             // add email aliases
-            $row['aliases'] = User::getAliases($row['usr_id']);
+            $row['aliases'] = self::getAliases($row['usr_id']);
 
             $data[] = $row;
         }
@@ -1699,7 +1704,7 @@ class User
 
     public static function getExternalID($usr_id)
     {
-        $details = User::getDetails($usr_id);
+        $details = self::getDetails($usr_id);
 
         return $details['usr_external_id'];
     }

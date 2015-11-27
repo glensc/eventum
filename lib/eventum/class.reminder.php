@@ -26,7 +26,6 @@
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 
-
 /**
  * Class to handle the business logic related to the reminder emails
  * that the system sends out.
@@ -1026,7 +1025,7 @@ class Reminder
         $setup = Setup::get();
         if ($setup['email_reminder']['status'] == 'enabled' && $setup['email_reminder']['addresses']) {
             $emails = explode(',', $setup['email_reminder']['addresses']);
-            $emails = array_map(function ($s) { return trim($s); }, $emails);
+            $emails = Misc::trim($emails);
         }
 
         return $emails;

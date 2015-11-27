@@ -86,8 +86,8 @@ class Command_Line
             }
             $prompt .= 'Please enter the status';
             $status = CLI_Misc::prompt($prompt, false);
-            $lowercase_keys = array_map(function ($s) { return strtolower($s); }, array_keys($list));
-            $lowercase_values = array_map(function ($s) { return strtolower($s); }, array_values($list));
+            $lowercase_keys = Misc::lowercase(array_keys($list));
+            $lowercase_values = Misc::lowercase(array_values($list));
 
             if ((!in_array(strtolower($status), $lowercase_keys)) &&
                     (!in_array(strtolower($status), $lowercase_values))) {
@@ -201,7 +201,6 @@ class Command_Line
      * Method used to parse the eventum command line configuration file
      * and return the appropriate configuration settings.
      *
-     * @access  public
      * @return  array The configuration settings
      */
     public static function getEnvironmentSettings()
@@ -465,8 +464,8 @@ class Command_Line
         // check if the given status is a valid option
         $statuses = $client->getAbbreviationAssocList($auth[0], $auth[1], (int) $details['iss_prj_id'], false);
 
-        $titles = array_map(function ($s) { return strtolower($s); }, array_values($statuses));
-        $abbreviations = array_map(function ($s) { return strtolower($s); }, array_keys($statuses));
+        $titles = Misc::lowercase(array_values($statuses));
+        $abbreviations = Misc::lowercase(array_keys($statuses));
         if ((!in_array(strtolower($new_status), $titles)) &&
                 (!in_array(strtolower($new_status), $abbreviations))) {
             self::quit("Status '$new_status' could not be matched against the list of available statuses");
@@ -591,6 +590,7 @@ Account Manager: ' . @$details['customer']['account_manager_name'];
 
         echo $msg;
     }
+
     /**
      * Method used to print the list of open issues.
      *
@@ -607,8 +607,8 @@ Account Manager: ' . @$details['customer']['account_manager_name'];
         if (!empty($status)) {
             $statuses = $client->getAbbreviationAssocList($auth[0], $auth[1], $project_id, true);
 
-            $titles = array_map(function ($s) { return strtolower($s); }, array_values($statuses));
-            $abbreviations = array_map(function ($s) { return strtolower($s); }, array_keys($statuses));
+            $titles = Misc::lowercase(array_values($statuses));
+            $abbreviations = Misc::lowercase(array_keys($statuses));
             if ((!in_array(strtolower($status), $titles)) &&
                     (!in_array(strtolower($status), $abbreviations))) {
                 self::quit("Status '$status' could not be matched against the list of available statuses");
@@ -1234,7 +1234,6 @@ Account Manager: ' . @$details['customer']['account_manager_name'];
      * Method used to check whether the current execution needs to have a
      * confirmation message shown before performing the requested action or not.
      *
-     * @access  public
      * @return  boolean
      */
     public static function isSafeExecution()
@@ -1252,7 +1251,6 @@ Account Manager: ' . @$details['customer']['account_manager_name'];
     /**
      * Method used to print a usage statement for the command line interface.
      *
-     * @access  public
      * @param   string $script The current script name
      */
     public static function usage($script)
@@ -1402,7 +1400,6 @@ $explanation
     /**
      * Method used to print a message to standard output and halt processing.
      *
-     * @access  public
      * @param   string $msg The message that needs to be printed
      */
     public static function quit($msg)

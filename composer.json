@@ -35,7 +35,7 @@
 		"test": "phpunit"
 	},
 	"autoload": {
-		"classmap": [ "lib/eventum/" ],
+		"classmap": [ "src", "lib/eventum" ],
 		"files": [ "lib/eventum/gettext.php" ]
 	},
 	"autoload-dev": {
@@ -47,7 +47,6 @@
 		"eventum/rpc": "~3.0.0",
 		"ext-filter": "*",
 		"ext-iconv": "*",
-		"ext-imap": "*",
 		"ext-json": "*",
 		"ext-mbstring": "*",
 		"ext-mysqli": "*",
@@ -57,6 +56,7 @@
 		"fonts/liberation":"*",
 		"ircmaxell/password-compat": "~1.0.4",
 		"ircmaxell/random-lib": "~1.1.0",
+		"monolog/monolog": "~1.17.2",
 		"pear-pear.php.net/mail_mimedecode": "*",
 		"pear-pear.php.net/math_stats": "*",
 		"pear-pear.php.net/net_ldap2": "~2.1",
@@ -99,6 +99,7 @@
 		"zendframework/zend-mail": "2.4.*"
 	},
 	"suggest": {
+		"ext-imap": "Support for fetching mail over IMAP/POP3",
 		"ext-ldap": "Adds support for LDAP auth backend"
 	}
 }

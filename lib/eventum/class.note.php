@@ -26,7 +26,6 @@
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 
-
 /**
  * Class to handle the business logic related to adding, updating or
  * deleting notes from the application.
@@ -350,7 +349,7 @@ class Note
         ), $options);
 
         $prj_id = Issue::getProjectID($issue_id);
-        // NOTE: workflow takes may modify the parameters as $data is passed as reference
+        // NOTE: workflow may modify the parameters as $data is passed as reference
         $data = array(
             'title' => &$title,
             'note' => &$note,

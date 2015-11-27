@@ -26,7 +26,6 @@
 // | Boston, MA 02110-1301, USA.                                          |
 // +----------------------------------------------------------------------+
 
-
 /**
  * Class to handle the business logic related to the administration
  * of custom fields in the system.
@@ -34,7 +33,6 @@
 
 class Custom_Field
 {
-
     public static $option_types = array('combo', 'multiple', 'checkbox');
 
     /**
@@ -133,7 +131,6 @@ class Custom_Field
         return true;
     }
 
-
     /**
      * Updates custom field values from the $_POST array.
      */
@@ -144,6 +141,7 @@ class Custom_Field
             if ($send_notification) {
                 Notification::notifyIssueUpdated($_POST['issue_id'], array(), array(), $updated_fields);
             }
+
             return $updated_fields;
         }
     }
@@ -331,11 +329,12 @@ class Custom_Field
                 $usr_full_name = User::getFullName($usr_id);
                 foreach ($changes as $min_role => $role_changes) {
                     History::add($issue_id, $usr_id, 'custom_field_updated', 'Custom field updated ({changes}) by {user}', array(
-                        'changes' => join('; ', $role_changes),
+                        'changes' => implode('; ', $role_changes),
                         'user' => $usr_full_name
                     ), $min_role);
                 }
             }
+
             return $updated_fields;
         }
 
@@ -357,6 +356,7 @@ class Custom_Field
                 $role_updates[$fld_id] = $field;
             }
         }
+
         return $role_updates;
     }
 
@@ -367,7 +367,7 @@ class Custom_Field
      * @param   bool $role If specified only fields that $role can see will be returned
      * @return  array
      */
-    public static function formatUpdatesToDiffs($updated_fields, $role=false)
+    public static function formatUpdatesToDiffs($updated_fields, $role = false)
     {
         if ($role) {
             $updated_fields = self::getUpdatedFieldsForRole($updated_fields, $role);
@@ -392,6 +392,7 @@ class Custom_Field
                 }
             }
         }
+
         return $diffs;
     }
 
@@ -512,6 +513,7 @@ class Custom_Field
                 $row['fld_report_form_required'] = $backend->isRequired($row['fld_id'], 'report');
                 $row['fld_anonymous_form_required'] = $backend->isRequired($row['fld_id'], 'anonymous');
                 $row['fld_close_form_required'] = $backend->isRequired($row['fld_id'], 'close');
+                $row['edit_form_required'] = $backend->isRequired($row['fld_id'], 'edit');
             }
             if ((is_object($backend)) && (method_exists($backend, 'getValidationJS'))) {
                 $row['validation_js'] = $backend->getValidationJS($row['fld_id'], $form_type);
@@ -669,6 +671,7 @@ class Custom_Field
                     fld_report_form_required,
                     fld_anonymous_form_required,
                     fld_close_form_required,
+                    fld_edit_form_required,
                     ' . self::getDBValueFieldSQL() . ' as value,
                     icf_value,
                     icf_value_date,
@@ -775,6 +778,7 @@ class Custom_Field
                 $fields[$key]['fld_report_form_required'] = $backend->isRequired($fields[$key]['fld_id'], 'report', $iss_id);
                 $fields[$key]['fld_anonymous_form_required'] = $backend->isRequired($fields[$key]['fld_id'], 'anonymous', $iss_id);
                 $fields[$key]['fld_close_form_required'] = $backend->isRequired($fields[$key]['fld_id'], 'close', $iss_id);
+                $fields[$key]['fld_edit_form_required'] = $backend->isRequired($fields[$key]['fld_id'], 'edit', $iss_id);
             }
             if ((is_object($backend)) && (method_exists($backend, 'getValidationJS'))) {
                 $fields[$key]['validation_js'] = $backend->getValidationJS($fields[$key]['fld_id'], $form_type, $iss_id);
@@ -892,6 +896,9 @@ class Custom_Field
         if (empty($_POST['close_form_required'])) {
             $_POST['close_form_required'] = 0;
         }
+        if (empty($_POST['edit_form_required'])) {
+            $_POST['edit_form_required'] = 0;
+        }
         if (empty($_POST['list_display'])) {
             $_POST['list_display'] = 0;
         }
@@ -913,6 +920,7 @@ class Custom_Field
                     fld_anonymous_form_required,
                     fld_close_form,
                     fld_close_form_required,
+                    fld_edit_form_required,
                     fld_list_display,
                     fld_min_role,
                     fld_rank,
@@ -920,7 +928,7 @@ class Custom_Field
                  ) VALUES (
                      ?, ?, ?, ?, ?,
                      ?, ?, ?, ?, ?,
-                     ?, ?, ?
+                     ?, ?, ?, ?
                  )';
         try {
             DB_Helper::getInstance()->query($stmt, array(
@@ -933,6 +941,7 @@ class Custom_Field
                 $_POST['anon_form_required'],
                 $_POST['close_form'],
                 $_POST['close_form_required'],
+                $_POST['edit_form_required'],
                 $_POST['list_display'],
                 $_POST['min_role'],
                 $_POST['rank'],
@@ -1202,6 +1211,9 @@ class Custom_Field
         if (empty($_POST['close_form_required'])) {
             $_POST['close_form_required'] = 0;
         }
+        if (empty($_POST['edit_form_required'])) {
+            $_POST['edit_form_required'] = 0;
+        }
         if (empty($_POST['min_role'])) {
             $_POST['min_role'] = 1;
         }
@@ -1221,6 +1233,7 @@ class Custom_Field
                     fld_anonymous_form_required=?,
                     fld_close_form=?,
                     fld_close_form_required=?,
+                    fld_edit_form_required=?,
                     fld_list_display=?,
                     fld_min_role=?,
                     fld_rank = ?,
@@ -1238,6 +1251,7 @@ class Custom_Field
                 $_POST['anon_form_required'],
                 $_POST['close_form'],
                 $_POST['close_form_required'],
+                $_POST['edit_form_required'],
                 $_POST['list_display'],
                 $_POST['min_role'],
                 $_POST['rank'],
