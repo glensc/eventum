@@ -1,31 +1,15 @@
 <?php
 
-/* vim: set expandtab tabstop=4 shiftwidth=4 encoding=utf-8: */
-// +----------------------------------------------------------------------+
-// | Eventum - Issue Tracking System                                      |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2003 - 2008 MySQL AB                                   |
-// | Copyright (c) 2008 - 2010 Sun Microsystem Inc.                       |
-// | Copyright (c) 2011 - 2015 Eventum Team.                              |
-// |                                                                      |
-// | This program is free software; you can redistribute it and/or modify |
-// | it under the terms of the GNU General Public License as published by |
-// | the Free Software Foundation; either version 2 of the License, or    |
-// | (at your option) any later version.                                  |
-// |                                                                      |
-// | This program is distributed in the hope that it will be useful,      |
-// | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
-// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        |
-// | GNU General Public License for more details.                         |
-// |                                                                      |
-// | You should have received a copy of the GNU General Public License    |
-// | along with this program; if not, write to:                           |
-// |                                                                      |
-// | Free Software Foundation, Inc.                                       |
-// | 51 Franklin Street, Suite 330                                        |
-// | Boston, MA 02110-1301, USA.                                          |
-// +----------------------------------------------------------------------+
-//
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
 
 /**
  * Class to handle the business logic related to the email feature of
@@ -33,7 +17,6 @@
  *
  * NOTE: this class needs splitting to more specific logic
  */
-
 class Support
 {
     /**
@@ -335,7 +318,6 @@ class Support
         }
 
         foreach ($res as &$row) {
-            $row['sup_date'] = Date_Helper::getFormattedDate($row['sup_date']);
             $row['sup_subject'] = Mime_Helper::fixEncoding($row['sup_subject']);
             $row['sup_from'] = Mime_Helper::fixEncoding($row['sup_from']);
         }
@@ -1254,7 +1236,6 @@ class Support
         }
 
         foreach ($res as &$row) {
-            $row['sup_date'] = Date_Helper::getFormattedDate($row['sup_date']);
             $row['sup_subject'] = Mime_Helper::fixEncoding($row['sup_subject']);
             $row['sup_from'] = implode(', ', Mail_Helper::getName($row['sup_from'], true));
             if ((empty($row['sup_to'])) && (!empty($row['sup_iss_id']))) {
@@ -1529,6 +1510,8 @@ class Support
     /**
      * Method used to get the support email entry details.
      *
+     * FIXME: $ema_id is unused
+     *
      * @param   integer $ema_id The support email account ID
      * @param   integer $sup_id The support email ID
      * @return  array The email entry details
@@ -1554,7 +1537,6 @@ class Support
         $res['message'] = $res['seb_body'];
         $res['attachments'] = Mime_Helper::getAttachmentCIDs($res['seb_full_email']);
         $res['timestamp'] = Date_Helper::getUnixTimestamp($res['sup_date'], 'GMT');
-        $res['sup_date'] = Date_Helper::getFormattedDate($res['sup_date']);
         $res['sup_subject'] = Mime_Helper::fixEncoding($res['sup_subject']);
         // TRANSLATORS: %1 = email subject
         $res['reply_subject'] = Mail_Helper::removeExcessRe(ev_gettext('Re: %1$s', $res['sup_subject']), true);
@@ -1723,7 +1705,6 @@ class Support
         }
 
         foreach ($res as &$row) {
-            $row['sup_date'] = Date_Helper::getFormattedDate($row['sup_date']);
             $row['sup_subject'] = Mime_Helper::fixEncoding($row['sup_subject']);
             $row['sup_from'] = Mime_Helper::fixEncoding($row['sup_from']);
             $row['sup_to'] = Mime_Helper::fixEncoding($row['sup_to']);

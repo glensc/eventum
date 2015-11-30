@@ -1,3 +1,13 @@
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
 
 $(document).ready(function() {
 
@@ -82,6 +92,15 @@ $(document).ready(function() {
 
     // autosize
     autosize($('textarea'));
+
+    // jquery timeago
+    $('abbr.timeago').timeago().click(function() {
+        var $el = $(this);
+        // on click toggle between views
+        var old = $el.attr('title');
+        $el.attr('title', $el.text());
+        $el.text(old);
+    });
 });
 
 function Eventum()
