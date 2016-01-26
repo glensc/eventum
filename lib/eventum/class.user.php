@@ -580,8 +580,8 @@ class User
             $exclude_role = array($exclude_role);
         }
 
-        foreach ($exclude_role as $role_title) {
-            unset($roles[self::getRoleID($role_title)]);
+        foreach ($exclude_role as $role_id) {
+            unset($roles[$role_id]);
         }
 
         return $roles;
@@ -704,6 +704,7 @@ class User
                 $roles = Project::getAssocList($row['usr_id'], false, true);
                 $row['projects'] = array_keys($roles);
                 $row['roles'] = $roles;
+                $row['aliases'] = self::getAliases($row['usr_id']);
             }
             $returns[$key] = $res;
         }

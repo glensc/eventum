@@ -276,6 +276,7 @@ issue_view.ready = function(page_id)
     $('.remove_quarantine').click(issue_view.removeQuarantine);
     $('.clear_duplicate').click(issue_view.clearDuplicateStatus);
     $('.reply_issue').click(issue_view.replyIssue);
+    $('.reply_issue_note').click(issue_view.replyIssueNote);
     $('.edit_incident_redemption').click(issue_view.editIncidentRedemption);
 
     $('.mark_duplicate').click(function() { window.location.href='duplicate.php?id=' + issue_view.get_issue_id(); });
@@ -452,6 +453,13 @@ issue_view.replyIssue = function()
     popupWin.focus();
 };
 
+issue_view.replyIssueNote = function()
+{
+    var features = 'width=740,height=580,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
+    var popupWin = window.open('post_note.php?cat=issue_reply' + '&issue_id=' + issue_view.get_issue_id(), '_replyIssueNote' + issue_view.get_issue_id(), features);
+    popupWin.focus();
+};
+
 issue_view.clearDuplicateStatus = function()
 {
     var features = 'width=420,height=400,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
@@ -505,6 +513,8 @@ issue_update.ready = function(page_id)
     $('.open_history').click(issue_view.openHistory);
     $('.open_nl').click(issue_view.openNotificationList);
     $('.open_ar').click(issue_view.openAuthorizedReplier);
+
+    $('#severity').bind('change', issue_update.display_severity_description).change();
 };
 
 issue_update.validateForm = function()
@@ -533,6 +543,16 @@ issue_update.closeIssue = function(e)
         window.location.href='close.php?id=' + issue_view.get_issue_id();
     }
     e.preventDefault();
+};
+
+issue_update.display_severity_description = function()
+{
+    var description = $('#severity :selected').attr('data-desc');
+    if (description == undefined || description == '') {
+        $('#severity_desc').hide();
+    } else {
+        $('#severity_desc').text(description).show();
+    }
 };
 
 

@@ -1541,7 +1541,8 @@ class Support
         // TRANSLATORS: %1 = email subject
         $res['reply_subject'] = Mail_Helper::removeExcessRe(ev_gettext('Re: %1$s', $res['sup_subject']), true);
         $res['sup_from'] = Mime_Helper::fixEncoding($res['sup_from']);
-        $res['sup_to'] = Mime_Helper::fixEncoding($res['sup_to']);
+        $res['sup_to'] = Mail_helper::formatEmailAddresses(Mime_Helper::fixEncoding($res['sup_to']));
+        $res['sup_cc'] = Mail_helper::formatEmailAddresses(Mime_Helper::fixEncoding($res['sup_cc']));
 
         if (!empty($res['sup_iss_id'])) {
             $res['reply_subject'] = Mail_Helper::formatSubject($res['sup_iss_id'], $res['reply_subject']);
@@ -1707,8 +1708,8 @@ class Support
         foreach ($res as &$row) {
             $row['sup_subject'] = Mime_Helper::fixEncoding($row['sup_subject']);
             $row['sup_from'] = Mime_Helper::fixEncoding($row['sup_from']);
-            $row['sup_to'] = Mime_Helper::fixEncoding($row['sup_to']);
-            $row['sup_cc'] = Mime_Helper::fixEncoding($row['sup_cc']);
+            $row['sup_to'] = Mail_Helper::formatEmailAddresses(Mime_Helper::fixEncoding($row['sup_to']));
+            $row['sup_cc'] = Mail_Helper::formatEmailAddresses(Mime_Helper::fixEncoding($row['sup_cc']));
         }
 
         return $res;
@@ -2021,6 +2022,7 @@ class Support
             'parent_sup_id' => $parent_sup_id,
             'iaf_ids' => $iaf_ids,
             'add_unknown' => isset($_POST['add_unknown']) && $_POST['add_unknown'] == 'yes',
+            'add_cc_to_ar' => isset($_POST['add_cc_to_ar']) && $_POST['add_cc_to_ar'] == 'yes',
             'ema_id' => isset($_POST['ema_id']) ? (int) $_POST['ema_id'] : null,
         );
 
@@ -2041,6 +2043,7 @@ class Support
      * - (int) parent_sup_id
      * - (array) iaf_ids attachment file ids
      * - (bool) add_unknown
+     * - (bool) add_cc_to_ar
      * - (int) ema_id
      * @return int 1 if it worked, -1 otherwise
      */
@@ -2056,6 +2059,7 @@ class Support
         $parent_sup_id = isset($options['parent_sup_id']) ? $options['parent_sup_id'] : null;
         $iaf_ids = isset($options['iaf_ids']) ? (array) $options['iaf_ids'] : null;
         $add_unknown = isset($options['add_unknown']) ? (bool) $options['add_unknown'] : false;
+        $add_cc_to_ar = isset($options['add_cc_to_ar']) ? (bool) $options['add_cc_to_ar'] : false;
         $ema_id = isset($options['ema_id']) ? (int) $options['ema_id'] : null;
 
         $current_usr_id = Auth::getUserID();
@@ -2117,7 +2121,7 @@ class Support
         }
 
         // only send a direct email if the user doesn't want to add the Cc'ed people to the notification list
-        if (($add_unknown || Workflow::shouldAutoAddToNotificationList($prj_id)) && $issue_id) {
+        if ($add_unknown && $issue_id) {
             // add the recipients to the notification list of the associated issue
             $recipients = array($to);
             $recipients = array_merge($recipients, self::getRecipientsCC($cc));
@@ -2177,6 +2181,12 @@ class Support
                 self::sendDirectEmail(
                     $issue_id, $from, $to, $cc,
                     $subject, $body, $_FILES['attachment'], $message_id);
+            }
+        }
+
+        if ($add_cc_to_ar) {
+            foreach (self::getRecipientsCC($cc) as $recipient) {
+                Authorized_Replier::manualInsert($issue_id, $recipient);
             }
         }
 

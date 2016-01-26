@@ -21,7 +21,7 @@ class Workflow
     public static function getBackendList()
     {
         $files = Misc::getFileList(APP_INC_PATH . '/workflow');
-        $files = array_merge($files, Misc::getFileList(APP_LOCAL_PATH. '/workflow'));
+        $files = array_merge($files, Misc::getFileList(APP_LOCAL_PATH . '/workflow'));
         $list = array();
         foreach ($files as $file) {
             // display a prettyfied backend name in the admin section
@@ -145,7 +145,7 @@ class Workflow
      * @param   integer $prj_id The project ID
      * @param   integer $issue_id The ID of the issue
      * @param   integer $usr_id The ID of the user changing the issue.
-     * @param   array   $changes
+     * @param   array $changes
      * @return  mixed. True to continue, anything else to cancel the change and return the value
      */
     public static function preIssueUpdated($prj_id, $issue_id, $usr_id, &$changes)
@@ -382,7 +382,7 @@ class Workflow
      * @param   boolean $send_notification Whether to send a notification about this action or not
      * @param   integer $resolution_id The resolution ID
      * @param   integer $status_id The status ID
-     * @param   string  $reason The reason for closing this issue
+     * @param   string $reason The reason for closing this issue
      * @param   integer $usr_id The ID of the user closing this issue
      * @return  void
      */
@@ -483,8 +483,8 @@ class Workflow
      *
      * @param   integer $prj_id The project ID.
      * @param   integer $issue_id The ID of the issue.
-     * @param   string  $event The event to return additional email addresses for. Currently only "new_issue" is supported.
-     * @param   array   $extra Extra information, contains different info depending on where it is called from
+     * @param   string $event The event to return additional email addresses for. Currently only "new_issue" is supported.
+     * @param   array $extra Extra information, contains different info depending on where it is called from
      * @return  array   An array of email addresses to be notified.
      */
     public static function getAdditionalEmailAddresses($prj_id, $issue_id, $event, $extra = false)
@@ -559,7 +559,7 @@ class Workflow
      *
      * @param   integer $prj_id The project ID
      * @param   integer $issue_id The ID of the issue
-     * @param   string  $email The email address added
+     * @param   string $email The email address added
      * @return  boolean
      */
     public static function handleAuthorizedReplierAdded($prj_id, $issue_id, &$email)
@@ -597,7 +597,7 @@ class Workflow
      *
      * @param   integer $prj_id
      * @param   integer $issue_id
-     * @param   array   $data
+     * @param   array $data
      * @return  mixed   Null by default, false if the note should not be inserted
      */
     public static function preNoteInsert($prj_id, $issue_id, &$data)
@@ -718,8 +718,8 @@ class Workflow
      * @see     Notification::getDefaultActions()
      * @param   integer $prj_id The project ID
      * @param   integer $issue_id The ID of the issue
-     * @param   string  $email The email address of the user being added
-     * @param   string  $source The source of this call
+     * @param   string $email The email address of the user being added
+     * @param   string $source The source of this call
      * @return  array   an array of actions
      */
     public static function getNotificationActions($prj_id, $issue_id, $email, $source)
@@ -738,7 +738,7 @@ class Workflow
      * @see     class.issue_field.php
      * @param   integer $prj_id The project ID
      * @param   integer $issue_id The ID of the issue
-     * @param   string  $location The location to display these fields at
+     * @param   string $location The location to display these fields at
      * @return  array   an array of fields to display and their associated options
      */
     public static function getIssueFieldsToDisplay($prj_id, $issue_id, $location)

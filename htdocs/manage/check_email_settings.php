@@ -13,26 +13,5 @@
 
 require_once __DIR__ . '/../../init.php';
 
-$tpl = new Template_Helper();
-$tpl->setTemplate('get_emails_ajax.tpl.html');
-
-Auth::checkAuthentication(null, true);
-
-$account = array(
-    'ema_hostname' => $_POST['hostname'],
-    'ema_port' => $_POST['port'],
-    'ema_type' => $_POST['type'],
-    'ema_folder' => $_POST['folder'],
-    'ema_username' => $_POST['username'],
-    'ema_password' => $_POST['password'],
-);
-try {
-    $mbox = new MailStorage($account);
-    $tpl->assign('error', 'no_error');
-
-} catch (Exception $e) {
-    error_log(get_class($e));
-    $tpl->assign('error', 'could_not_connect');
-}
-
-$tpl->displayTemplate();
+$controller = new Eventum\Controller\Manage\CheckEmailSettingsController();
+$controller->run();
