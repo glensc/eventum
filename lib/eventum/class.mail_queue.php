@@ -67,6 +67,7 @@ class Mail_Queue
         $recipient = Mail_Helper::fixAddressQuoting($recipient);
 
         $reminder_addresses = Reminder::_getReminderAlertAddresses();
+        $headers = array();
 
         $role_id = User::getRoleByUser($to_usr_id, Issue::getProjectID($issue_id));
         $is_reminder_address = in_array(Mail_Helper::getEmailAddress($recipient), $reminder_addresses);
