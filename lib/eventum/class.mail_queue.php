@@ -39,18 +39,17 @@ class Mail_Queue
         $type = isset($options['type']) ? $options['type'] : '';
         $sender_usr_id = isset($options['sender_usr_id']) ? $options['sender_usr_id'] : false;
         $type_id = isset($options['type_id']) ? $options['type_id'] : false;
+        $recipient = $mail->to;
 
-        // Workflow needs to be rewritten
-//        Workflow::modifyMailQueue($prj_id, $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
-
+        $prj_id = Auth::getCurrentProject(false);
+        // TODO: Workflow needs to be rewritten
+        //Workflow::modifyMailQueue($prj_id, $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
 
         $to = $mail->getTo();
         if (count($to) != 1) {
             $count = count($to);
             throw new InvalidArgumentException("Can handle only one recipient, got $count");
         }
-
-        $recipient = $mail->to;
 
         // avoid sending emails out to users with inactive status
         $recipient_email = Mail_Helper::getEmailAddress($recipient);
@@ -87,28 +86,10 @@ class Mail_Queue
         // if the Date: header is missing, add it.
         // FIXME: do in class? or add setDate() method?
         if (!$mail->getHeaders()->has('Date')) {
-//            throw new InvalidArgumentException("Date missing, not cool");
             $headers['Date'] = date('D, j M Y H:i:s O');
         }
-        /*
-        if (!empty($headers['To'])) {
-            $headers['To'] = Mail_Helper::fixAddressQuoting($headers['To']);
-        }
-        */
+
         $mail->setHeaders($headers);
-
-        // encode headers and add special mime headers
-//        $headers = Mime_Helper::encodeHeaders($headers);
-/*
-        $res = Mail_Helper::prepareHeaders($headers);
-        if (Misc::isError($res)) {
-            Logger::app()->error($res->getMessage(), array('debug' => $res->getDebugInfo()));
-
-            return $res;
-        }*/
-
-        // convert array of headers into text headers
-//        list(, $text_headers) = $res;
 
         $params = array(
             'maq_save_copy' => $save_email_copy,
