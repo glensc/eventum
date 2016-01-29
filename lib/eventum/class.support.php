@@ -11,6 +11,8 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Mail\Exception\RoutingException;
+
 /**
  * Class to handle the business logic related to the email feature of
  * the application.
@@ -317,11 +319,6 @@ class Support
             return '';
         }
 
-        foreach ($res as &$row) {
-            $row['sup_subject'] = Mime_Helper::fixEncoding($row['sup_subject']);
-            $row['sup_from'] = Mime_Helper::fixEncoding($row['sup_from']);
-        }
-
         return $res;
     }
 
@@ -415,14 +412,14 @@ class Support
      * @param   ImapMessage $mail The Mail object
      * @param   array   array(ERROR_CODE, ERROR_STRING) of error to bounce
      */
-    public function bounceMessage($mail, $error)
+    private function bounceMessage($mail, $error)
     {
         // open text template
         $tpl = new Template_Helper();
         $tpl->setTemplate('notifications/bounced_email.tpl.text');
         $tpl->assign(array(
-            'error_code'        => $error[0],
-            'error_message'     => $error[1],
+            'error_code'        => $error->getCode(),
+            'error_message'     => $error->getMessage(),
             'date'              => $mail->getMailDate(),
             'subject'           => $mail->subject,
             'from'              => $mail->from,
@@ -485,83 +482,36 @@ class Support
 
         // route emails if necessary
         if ($info['ema_use_routing'] == 1) {
-            $setup = Setup::get();
-
-            // we create addresses array so it can be reused
-            $addresses = $mail->getAddresses();
-
-            if ($setup['email_routing']['status'] == 'enabled') {
-                $res = Routing::getMatchingIssueIDs($addresses, 'email');
-                if ($res != false) {
-                    $return = Routing::route_emails($mail);
-                    if ($return === true) {
-                        $mail->deleteMessage();
-                        return;
-                    }
-                    // TODO: handle errors?
-                    return;
+            try {
+                $routed = Routing::route($message);
+            } catch (RoutingException $e) {
+                // "if leave copy of emails on IMAP server" is "off",
+                // then we can bounce on the message
+                // otherwise proper would be to create table -
+                // eventum_bounce: bon_id, bon_message_id, bon_error
+                if (!$info['ema_leave_copy']) {
+                    self::bounceMessage($email, $e);
+                    self::deleteMessage($info, $mbox, $num);
                 }
-            }
-            if ($setup['note_routing']['status'] == 'enabled') {
-                $res = Routing::getMatchingIssueIDs($addresses, 'note');
-                if ($res != false) {
-                    $return = Routing::route_notes($mail);
 
-                    // if leave copy of emails on IMAP server is off we can
-                    // bounce on note that user had no permission to write
-                    // here.
-                    // otherwise proper would be to create table -
-                    // eventum_bounce: bon_id, bon_message_id, bon_error
-
-                    if ($info['ema_leave_copy']) {
-                        if ($return === true) {
-                            $mail->deleteMessage();
-                        }
-                    } else {
-                        if ($return !== true) {
-                            // in case of error, create bounce, but still
-                            // delete email not to send bounce in next process :)
-                            self::bounceMessage($mail, $return);
-                        }
-                        $mail->deleteMessage();
-                    }
-
-                    return;
-                }
-            }
-            if ($setup['draft_routing']['status'] == 'enabled') {
-                $res = Routing::getMatchingIssueIDs($addresses, 'draft');
-                if ($res != false) {
-                    $return = Routing::route_drafts($mail);
-
-                    // if leave copy of emails on IMAP server is off we can
-                    // bounce on note that user had no permission to write
-                    // here.
-                    // otherwise proper would be to create table -
-                    // eventum_bounce: bon_id, bon_message_id, bon_error
-
-                    if ($info['ema_leave_copy']) {
-                        if ($return === true) {
-                            $mail->deleteMessage();
-                        }
-                    } else {
-                        if ($return !== true) {
-                            // in case of error, create bounce, but still
-                            // delete email not to send bounce in next process :)
-                            self::bounceMessage($mail, $return);
-                        }
-                        $mail->deleteMessage();
-                    }
-
-                    return;
-                }
+                return;
             }
 
-            // TODO:
-            // disabling return here allows routing and issue auto creating from same account
-            // but it will download email store it in database and do nothing
-            // with it if it does not match support@ address.
-            //return;
+            // the mail was routed
+            if ($routed === true) {
+                if (!$info['ema_leave_copy']) {
+                    self::deleteMessage($info, $mbox, $num);
+                }
+
+                return;
+            }
+
+            // no match for issue-, note-, draft- routing,
+            // continue to allow routing and issue auto creating from same account,
+            // but it will download email, store it in database and do nothing with it
+            // if it does not match support@ address.
+            // by "do nothing" it is meant that the mail will be downloaded each time
+            // the mails are processed from imap account.
         }
 
         /** @var string $sender_email */
@@ -1236,7 +1186,6 @@ class Support
         }
 
         foreach ($res as &$row) {
-            $row['sup_subject'] = Mime_Helper::fixEncoding($row['sup_subject']);
             $row['sup_from'] = implode(', ', Mail_Helper::getName($row['sup_from'], true));
             if ((empty($row['sup_to'])) && (!empty($row['sup_iss_id']))) {
                 $row['sup_to'] = 'Notification List';
@@ -1244,7 +1193,7 @@ class Support
                 $to = Mail_Helper::getName($row['sup_to']);
                 // Ignore unformattable headers
                 if (!Misc::isError($to)) {
-                    $row['sup_to'] = Mime_Helper::fixEncoding($to);
+                    $row['sup_to'] = $to;
                 }
             }
             if (CRM::hasCustomerIntegration($prj_id)) {
@@ -1537,12 +1486,10 @@ class Support
         $res['message'] = $res['seb_body'];
         $res['attachments'] = Mime_Helper::getAttachmentCIDs($res['seb_full_email']);
         $res['timestamp'] = Date_Helper::getUnixTimestamp($res['sup_date'], 'GMT');
-        $res['sup_subject'] = Mime_Helper::fixEncoding($res['sup_subject']);
         // TRANSLATORS: %1 = email subject
         $res['reply_subject'] = Mail_Helper::removeExcessRe(ev_gettext('Re: %1$s', $res['sup_subject']), true);
-        $res['sup_from'] = Mime_Helper::fixEncoding($res['sup_from']);
-        $res['sup_to'] = Mail_helper::formatEmailAddresses(Mime_Helper::fixEncoding($res['sup_to']));
-        $res['sup_cc'] = Mail_helper::formatEmailAddresses(Mime_Helper::fixEncoding($res['sup_cc']));
+        $res['sup_to'] = Mail_Helper::formatEmailAddresses($res['sup_to']);
+        $res['sup_cc'] = Mail_Helper::formatEmailAddresses($res['sup_cc']);
 
         if (!empty($res['sup_iss_id'])) {
             $res['reply_subject'] = Mail_Helper::formatSubject($res['sup_iss_id'], $res['reply_subject']);
@@ -1611,11 +1558,6 @@ class Support
             $res = DB_Helper::getInstance()->getAll($stmt, $params);
         } catch (DbException $e) {
             return '';
-        }
-
-        foreach ($res as &$row) {
-            $row['sup_subject'] = Mime_Helper::fixEncoding($row['sup_subject']);
-            $row['sup_from'] = Mime_Helper::fixEncoding($row['sup_from']);
         }
 
         return $res;
@@ -1706,10 +1648,8 @@ class Support
         }
 
         foreach ($res as &$row) {
-            $row['sup_subject'] = Mime_Helper::fixEncoding($row['sup_subject']);
-            $row['sup_from'] = Mime_Helper::fixEncoding($row['sup_from']);
-            $row['sup_to'] = Mail_Helper::formatEmailAddresses(Mime_Helper::fixEncoding($row['sup_to']));
-            $row['sup_cc'] = Mail_Helper::formatEmailAddresses(Mime_Helper::fixEncoding($row['sup_cc']));
+            $row['sup_to'] = Mail_Helper::formatEmailAddresses($row['sup_to']);
+            $row['sup_cc'] = Mail_Helper::formatEmailAddresses($row['sup_cc']);
         }
 
         return $res;
