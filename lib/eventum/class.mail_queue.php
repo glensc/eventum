@@ -11,6 +11,8 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Mail\MailMessage;
+
 class Mail_Queue
 {
     /**
