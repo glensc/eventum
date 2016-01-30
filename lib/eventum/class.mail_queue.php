@@ -31,7 +31,7 @@ class Mail_Queue
      * - string $type The type of message this is.
      * - integer $sender_usr_id The id of the user sending this email.
      * - integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
-     * @return bool or a PEAR_Error object
+     * @return bool true if entry was added to mail queue table
      */
     public static function addMail($mail, $recipient, array $options = array())
     {
