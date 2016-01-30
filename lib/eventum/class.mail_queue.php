@@ -90,7 +90,7 @@ class Mail_Queue
             'maq_sender_ip_address' => !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '',
             'maq_recipient' => $recipient,
             'maq_headers' => $mail->getHeaders()->toString(),
-            'maq_body' => $mail->getContent(), // FIXME: getrawcontent? what?
+            'maq_body' => $mail->getContent(),
             'maq_iss_id' => $issue_id ?: null,
             'maq_subject' => $mail->subject,
             'maq_type' => $type,
