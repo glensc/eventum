@@ -24,6 +24,7 @@ class Mail_Queue
      * Adds an email to the outgoing mail queue.
      *
      * @param MailMessage $mail The Mail object
+     * @param string $recipient The recipient, can be E-Mail header form ("User <email@example.org>")
      * @param array $options Optional options:
      * - integer $save_email_copy Whether to send a copy of this email to a configurable address or not (eventum_sent@)
      * - integer $issue_id The ID of the issue. If false, email will not be associated with issue.
@@ -32,7 +33,7 @@ class Mail_Queue
      * - integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      * @return bool or a PEAR_Error object
      */
-    public static function addMail(MailMessage $mail, array $options = array())
+    public static function addMail(MailMessage $mail, $recipient, array $options = array())
     {
         $save_email_copy = isset($options['save_email_copy']) ? $options['save_email_copy'] : 0;
         $issue_id = isset($options['issue_id']) ? $options['issue_id'] : false;
@@ -62,26 +63,20 @@ class Mail_Queue
             }
         }
 
-        $to_usr_id = User::getUserIDByEmail($recipient_email);
         $recipient = Mail_Helper::fixAddressQuoting($recipient);
 
         $reminder_addresses = Reminder::_getReminderAlertAddresses();
         $headers = array();
 
-        $role_id = User::getRoleByUser($to_usr_id, Issue::getProjectID($issue_id));
+        $role_id = User::getRoleByUser($usr_id, Issue::getProjectID($issue_id));
         $is_reminder_address = in_array(Mail_Helper::getEmailAddress($recipient), $reminder_addresses);
-        if ($issue_id && ($to_usr_id && $role_id != User::ROLE_CUSTOMER) || $is_reminder_address) {
-            $headers += Mail_Helper::getSpecializedHeaders($issue_id, $type, $sender_usr_id);
+        if ($issue_id && ($usr_id && $role_id != User::ROLE_CUSTOMER) || $is_reminder_address) {
+            $headers += Mail_Helper::getSpecializedHeaders($issue_id, $type);
         }
 
         // try to prevent triggering absence auto responders
         $headers['precedence'] = 'bulk'; // the 'classic' way, works with e.g. the unix 'vacation' tool
         $headers['Auto-submitted'] = 'auto-generated'; // the RFC 3834 way
-
-        if (empty($issue_id)) {
-            // FIXME: why string not NULL?
-            $issue_id = 'null';
-        }
 
         // if the Date: header is missing, add it.
         // FIXME: do in class? or add setDate() method?
@@ -98,7 +93,7 @@ class Mail_Queue
             'maq_recipient' => $recipient,
             'maq_headers' => $mail->getHeaders()->toString(),
             'maq_body' => $mail->getContent(), // FIXME: getrawcontent? what?
-            'maq_iss_id' => $issue_id,
+            'maq_iss_id' => $issue_id ?: null,
             'maq_subject' => $mail->subject,
             'maq_type' => $type,
         );

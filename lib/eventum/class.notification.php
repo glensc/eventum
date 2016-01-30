@@ -371,7 +371,7 @@ class Notification
 
             // add the warning message about replies being blocked or not
             Mail_Helper::addWarningMessage($issue_id, $to, $clone);
-            Mail_Queue::addMail($clone, $options);
+            Mail_Queue::addMail($clone, $to, $options);
         }
     }
 
@@ -1221,7 +1221,7 @@ class Notification
             $mail = new Mail_Helper();
             $mail->setTextBody($text_message);
             $mail->setHeaders(Mail_Helper::getBaseThreadingHeaders($issue_id));
-            $setup = $mail->getSMTPSettings();
+            $setup = Mail_Helper::getSMTPSettings();
             $from = self::getFixedFromHeader($issue_id, $setup['from'], 'issue');
             $recipient = Mime_Helper::fixEncoding($recipient);
             // TRANSLATORS: %1: $issue_id, %2 = iss_summary
@@ -1249,69 +1249,69 @@ class Notification
             $crm = CRM::getInstance($prj_id);
 
             return $crm->notifyEmailConvertedIntoIssue($issue_id, $sup_ids, $customer_id);
-        } else {
-            // build the list of recipients
-            $recipients = array();
-            $recipient_emails = array();
-            foreach ($sup_ids as $sup_id) {
-                $senders = Support::getSender(array($sup_id));
-                if (count($senders) > 0) {
-                    $sender_email = Mail_Helper::getEmailAddress($senders[0]);
-                    $recipients[$sup_id] = $senders[0];
-                    $recipient_emails[] = $sender_email;
-                }
-            }
-
-            if (!$recipients) {
-                return false;
-            }
-
-            $data = Issue::getDetails($issue_id);
-            foreach ($recipients as $sup_id => $recipient) {
-                $recipient_usr_id = User::getUserIDByEmail(Mail_Helper::getEmailAddress($recipient));
-
-                // open text template
-                $tpl = new Template_Helper();
-                $tpl->setTemplate('notifications/new_auto_created_issue.tpl.text');
-                $tpl->assign(array(
-                    'data'        => $data,
-                    'sender_name' => Mail_Helper::getName($recipient),
-                    'app_title'   => Misc::getToolCaption(),
-                    'recipient_name'    => Mail_Helper::getName($recipient),
-                ));
-                $email_details = Support::getEmailDetails(Email_Account::getAccountByEmail($sup_id), $sup_id);
-                $tpl->assign(array(
-                    'email' => array(
-                        'date'    => $email_details['sup_date'],
-                        'from'    => $email_details['sup_from'],
-                        'subject' => $email_details['sup_subject'],
-                    ),
-                ));
-
-                // change the current locale
-                if (!empty($recipient_usr_id)) {
-                    Language::set(User::getLang($recipient_usr_id));
-                } else {
-                    Language::set(APP_DEFAULT_LOCALE);
-                }
-
-                $text_message = $tpl->getTemplateContents();
-
-                // send email (use PEAR's classes)
-                $mail = new Mail_Helper();
-                $mail->setTextBody($text_message);
-                $setup = $mail->getSMTPSettings();
-                $from = self::getFixedFromHeader($issue_id, $setup['from'], 'issue');
-                $mail->setHeaders(Mail_Helper::getBaseThreadingHeaders($issue_id));
-
-                // TRANSLATORS: %1 - issue_id, %2 - iss_summary
-                $subject = ev_gettext('[#%1$s] Issue Created: %2$s', $issue_id, $data['iss_summary']);
-                $mail->send($from, $recipient, $subject, 1, $issue_id, 'email_converted_to_issue');
-            }
-            Language::restore();
-
-            return $recipient_emails;
         }
+
+        // build the list of recipients
+        $recipients = array();
+        $recipient_emails = array();
+        foreach ($sup_ids as $sup_id) {
+            $senders = Support::getSender(array($sup_id));
+            if (count($senders) > 0) {
+                $sender_email = Mail_Helper::getEmailAddress($senders[0]);
+                $recipients[$sup_id] = $senders[0];
+                $recipient_emails[] = $sender_email;
+            }
+        }
+
+        if (!$recipients) {
+            return false;
+        }
+
+        $data = Issue::getDetails($issue_id);
+        foreach ($recipients as $sup_id => $recipient) {
+            $recipient_usr_id = User::getUserIDByEmail(Mail_Helper::getEmailAddress($recipient));
+
+            // open text template
+            $tpl = new Template_Helper();
+            $tpl->setTemplate('notifications/new_auto_created_issue.tpl.text');
+            $tpl->assign(array(
+                'data'        => $data,
+                'sender_name' => Mail_Helper::getName($recipient),
+                'app_title'   => Misc::getToolCaption(),
+                'recipient_name'    => Mail_Helper::getName($recipient),
+            ));
+            $email_details = Support::getEmailDetails(Email_Account::getAccountByEmail($sup_id), $sup_id);
+            $tpl->assign(array(
+                'email' => array(
+                    'date'    => $email_details['sup_date'],
+                    'from'    => $email_details['sup_from'],
+                    'subject' => $email_details['sup_subject'],
+                ),
+            ));
+
+            // change the current locale
+            if (!empty($recipient_usr_id)) {
+                Language::set(User::getLang($recipient_usr_id));
+            } else {
+                Language::set(APP_DEFAULT_LOCALE);
+            }
+
+            // TRANSLATORS: %1 - issue_id, %2 - iss_summary
+            $subject = ev_gettext('[#%1$s] Issue Created: %2$s', $issue_id, $data['iss_summary']);
+            $text_message = $tpl->getTemplateContents();
+
+            // send email (use PEAR's classes)
+            $mail = new Mail_Helper();
+            $mail->setTextBody($text_message);
+            $setup = Mail_Helper::getSMTPSettings();
+            $from = self::getFixedFromHeader($issue_id, $setup['from'], 'issue');
+            $mail->setHeaders(Mail_Helper::getBaseThreadingHeaders($issue_id));
+
+            $mail->send($from, $recipient, $subject, 1, $issue_id, 'email_converted_to_issue');
+        }
+        Language::restore();
+
+        return $recipient_emails;
     }
 
     /**
@@ -1404,21 +1404,10 @@ class Notification
             'user'         => $info,
         ));
 
-        // change the current locale
-        Language::set(User::getLang($usr_id));
-
-        $text_message = $tpl->getTemplateContents();
-
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
-        $setup = $mail->getSMTPSettings();
-        $to = $mail->getFormattedName($info['usr_full_name'], $info['usr_email']);
-
         // TRANSLATORS: %s - APP_SHORT_NAME
         $subject = ev_gettext('%s: User account information updated', APP_SHORT_NAME);
-        $mail->send($setup['from'], $to, $subject);
-
-        Language::restore();
+        $text_message = $tpl->getTemplateContents();
+        self::notifyUserByMail($usr_id, $subject, $text_message);
     }
 
     /**
@@ -1442,22 +1431,10 @@ class Notification
             'user'         => $info,
         ));
 
-        // change the current locale
-        Language::set(User::getLang($usr_id));
-
-        $text_message = $tpl->getTemplateContents();
-
-        // send email (use PEAR's classes)
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
-        $setup = $mail->getSMTPSettings();
-        $to = $mail->getFormattedName($info['usr_full_name'], $info['usr_email']);
-
         // TRANSLATORS: %s - APP_SHORT_NAME
         $subject = ev_gettext('%s: User account password changed', APP_SHORT_NAME);
-        $mail->send($setup['from'], $to, $subject);
-
-        Language::restore();
+        $text_message = $tpl->getTemplateContents();
+        self::notifyUserByMail($usr_id, $subject, $text_message);
     }
 
     /**
@@ -1481,22 +1458,11 @@ class Notification
             'user'         => $info,
         ));
 
-        // change the current locale
-        Language::set(User::getLang($usr_id));
-
-        $text_message = $tpl->getTemplateContents();
-
-        // send email (use PEAR's classes)
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
-        $setup = $mail->getSMTPSettings();
-        $to = $mail->getFormattedName($info['usr_full_name'], $info['usr_email']);
 
         // TRANSLATORS: %s - APP_SHORT_NAME
         $subject = ev_gettext('%s: New User information', APP_SHORT_NAME);
-        $mail->send($setup['from'], $to, $subject);
-
-        Language::restore();
+        $text_message = $tpl->getTemplateContents();
+        self::notifyUserByMail($usr_id, $subject, $text_message);
     }
 
     /**
@@ -1510,39 +1476,42 @@ class Notification
     {
         $prj_id = Issue::getProjectID($issue_id);
         $assignees = Issue::getAssignedUserIDs($issue_id);
-        if (count($assignees) > 0) {
-
-            // get issue details
-            $issue = Issue::getDetails($issue_id);
-            // open text template
-            $tpl = new Template_Helper();
-            $tpl->setTemplate('notifications/' . $type . '.tpl.text');
-            $tpl->assign(array(
-                'app_title'    => Misc::getToolCaption(),
-                'issue'        => $issue,
-                'data'         => $data,
-            ));
-
-            foreach ($assignees as $usr_id) {
-                $usr_email = User::getFromHeader($usr_id);
-                if (!Workflow::shouldEmailAddress($prj_id, Mail_Helper::getEmailAddress($usr_email))) {
-                    continue;
-                }
-
-                // change the current locale
-                Language::set(User::getLang($usr_id));
-                $text_message = $tpl->getTemplateContents();
-                $from = self::getFixedFromHeader($issue_id, '', 'issue');
-                $subject = "[#$issue_id] $title: " . $issue['iss_summary'];
-
-                // send email (use PEAR's classes)
-                $mail = new Mail_Helper();
-                $mail->setTextBody($text_message);
-                $mail->setHeaders(Mail_Helper::getBaseThreadingHeaders($issue_id));
-                $mail->send($from, $usr_email, $subject, true, $issue_id, $type);
-            }
-            Language::restore();
+        if (!$assignees) {
+            return;
         }
+
+        // get issue details
+        $issue = Issue::getDetails($issue_id);
+        // open text template
+        $tpl = new Template_Helper();
+        $tpl->setTemplate('notifications/' . $type . '.tpl.text');
+        $tpl->assign(array(
+            'app_title'    => Misc::getToolCaption(),
+            'issue'        => $issue,
+            'data'         => $data,
+        ));
+
+        foreach ($assignees as $usr_id) {
+            $usr_email = User::getFromHeader($usr_id);
+            if (!Workflow::shouldEmailAddress($prj_id, Mail_Helper::getEmailAddress($usr_email))) {
+                continue;
+            }
+
+            $subject = "[#$issue_id] $title: " . $issue['iss_summary'];
+            $text_message = $tpl->getTemplateContents();
+
+            // change the current locale
+            Language::set(User::getLang($usr_id));
+
+            $from = self::getFixedFromHeader($issue_id, '', 'issue');
+
+            // send email (use PEAR's classes)
+            $mail = new Mail_Helper();
+            $mail->setTextBody($text_message);
+            $mail->setHeaders(Mail_Helper::getBaseThreadingHeaders($issue_id));
+            $mail->send($from, $usr_email, $subject, true, $issue_id, $type);
+        }
+        Language::restore();
     }
 
     /**
@@ -1615,18 +1584,10 @@ class Notification
             'user'         => $info,
         ));
 
-        Language::set(User::getLang($usr_id));
-        $text_message = $tpl->getTemplateContents();
-
-        // send email (use PEAR's classes)
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
-        $setup = $mail->getSMTPSettings();
-        $to = $mail->getFormattedName($info['usr_full_name'], $info['usr_email']);
         // TRANSLATORS: %s = APP_SHORT_NAME
         $subject = ev_gettext('%s: Your User Account Details', APP_SHORT_NAME);
-        $mail->send($setup['from'], $to, $subject);
-        Language::restore();
+        $text_message = $tpl->getTemplateContents();
+        self::notifyUserByMail($usr_id, $subject, $text_message);
     }
 
     /**
@@ -2343,5 +2304,29 @@ class Notification
         ));
 
         return 1;
+    }
+
+    /**
+     * Send email to $usr_id
+     *     self::notifyUserByMail($usr_id, $subject, $text_message);
+     *
+     * @param int $usr_id
+     * @param string $subject
+     * @param string $text_message
+     */
+    private static function notifyUserByMail($usr_id, $subject, $text_message) {
+        $info = User::getDetails($usr_id);
+
+        // change the current locale
+        Language::set(User::getLang($usr_id));
+
+        // send email (use PEAR's classes)
+        $mail = new Mail_Helper();
+        $mail->setTextBody($text_message);
+        $setup = Mail_Helper::getSMTPSettings();
+        $to = $mail->getFormattedName($info['usr_full_name'], $info['usr_email']);
+        $mail->send($setup['from'], $to, $subject);
+
+        Language::restore();
     }
 }
