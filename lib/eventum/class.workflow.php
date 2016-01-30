@@ -674,7 +674,7 @@ class Workflow
         }
         $backend = self::_getBackend($prj_id);
 
-        $o_headers = $headers = $mail->getHeaders()->toArray();
+        $o_headers = $headers = $mail->getHeadersArray();
         $o_body = $body = $mail->getContent();
 
         $backend->modifyMailQueue($prj_id, $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
