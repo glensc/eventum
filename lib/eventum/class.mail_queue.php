@@ -23,7 +23,7 @@ class Mail_Queue
     /**
      * Adds an email to the outgoing mail queue.
      *
-     * @param MailMessage $mail The Mail object
+     * @param array|MailMessage $mail The Mail object
      * @param string $recipient The recipient, can be E-Mail header form ("User <email@example.org>")
      * @param array $options Optional options:
      * - integer $save_email_copy Whether to send a copy of this email to a configurable address or not (eventum_sent@)
@@ -33,24 +33,22 @@ class Mail_Queue
      * - integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      * @return bool or a PEAR_Error object
      */
-    public static function addMail(MailMessage $mail, $recipient, array $options = array())
+    public static function addMail($mail, $recipient, array $options = array())
     {
+        /** @var MailMessage $mail */
+        if (!$mail instanceof MailMessage) {
+            /** @var array $mail */
+            $mail = MailMessage::createFromHeaderBody($mail['headers'], $mail['body']);
+        }
+
         $save_email_copy = isset($options['save_email_copy']) ? $options['save_email_copy'] : 0;
         $issue_id = isset($options['issue_id']) ? $options['issue_id'] : false;
         $type = isset($options['type']) ? $options['type'] : '';
         $sender_usr_id = isset($options['sender_usr_id']) ? $options['sender_usr_id'] : false;
         $type_id = isset($options['type_id']) ? $options['type_id'] : false;
-        $recipient = $mail->to;
 
         $prj_id = Auth::getCurrentProject(false);
-        // TODO: Workflow needs to be rewritten
-        //Workflow::modifyMailQueue($prj_id, $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
-
-        $to = $mail->getTo();
-        if (count($to) != 1) {
-            $count = count($to);
-            throw new InvalidArgumentException("Can handle only one recipient, got $count");
-        }
+        Workflow::modifyMailQueue($prj_id, $recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id);
 
         // avoid sending emails out to users with inactive status
         $recipient_email = Mail_Helper::getEmailAddress($recipient);

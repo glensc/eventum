@@ -11,6 +11,8 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Mail\MailMessage;
+
 class Workflow
 {
     /**
@@ -672,7 +674,35 @@ class Workflow
         }
         $backend = self::_getBackend($prj_id);
 
-        $backend->modifyMailQueue($prj_id, $recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id);
+        $mh = $mail->getHeaders();
+        $o_headers = $headers = $mh->toArray();
+        $o_body = $body = $mail->getContent();
+
+        $backend->modifyMailQueue($prj_id, $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
+
+        if ($o_headers != $headers) {
+            foreach (array_keys($o_headers) as $k) {
+                if (!isset($headers[$k])) {
+                    // header removed
+                    $mh->removeHeader($k);
+                } elseif ($headers[$k] != $o_headers[$k]) {
+                    // header changed
+                    $mh->removeHeader($k);
+                    $mh->addHeaderLine($k, $headers[$k]);
+                }
+                unset($headers[$k]);
+            }
+            // headers added
+            foreach ($headers as $k => $v) {
+                $mh->addHeaderLine($k, $v);
+            }
+            // invoke lazy loader, this will throw if some header is not conformin
+            $mh->forceLoading();
+        }
+
+        if ($o_body != $body) {
+            $mail->setContent($body);
+        }
     }
 
     /**
