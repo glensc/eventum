@@ -667,41 +667,21 @@ class Workflow
      * @param   integer $sender_usr_id The id of the user sending this email.
      * @param   integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      */
-    public static function modifyMailQueue($prj_id, &$recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id)
+    public static function modifyMailQueue($prj_id, &$recipient, &$mail, $issue_id, $type, $sender_usr_id, $type_id)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;
         }
         $backend = self::_getBackend($prj_id);
 
-        $mh = $mail->getHeaders();
-        $o_headers = $headers = $mh->toArray();
+        $o_headers = $headers = $mail->getHeaders()->toArray();
         $o_body = $body = $mail->getContent();
 
         $backend->modifyMailQueue($prj_id, $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
 
-        if ($o_headers != $headers) {
-            foreach (array_keys($o_headers) as $k) {
-                if (!isset($headers[$k])) {
-                    // header removed
-                    $mh->removeHeader($k);
-                } elseif ($headers[$k] != $o_headers[$k]) {
-                    // header changed
-                    $mh->removeHeader($k);
-                    $mh->addHeaderLine($k, $headers[$k]);
-                }
-                unset($headers[$k]);
-            }
-            // headers added
-            foreach ($headers as $k => $v) {
-                $mh->addHeaderLine($k, $v);
-            }
-            // invoke lazy loader, this will throw if some header is not conformin
-            $mh->forceLoading();
-        }
-
-        if ($o_body != $body) {
-            $mail->setContent($body);
+        // recreate mail object if headers or body was modified by workflow method
+        if ($o_headers != $headers || $o_body != $body) {
+            $mail = MailMessage::createFromHeaderBody($headers, $body);
         }
     }
 
