@@ -152,7 +152,7 @@ class Mail_Queue
                 }
 
                 list(, $text_headers) = $res;
-                $result = self::_sendEmail($recipients, $text_headers, $email['body'], $status);
+                $result = self::_sendEmail($recipients, $text_headers, $email['body']);
 
                 if (Misc::isError($e = $result)) {
                     /** @var PEAR_Error $e */
@@ -189,7 +189,7 @@ class Mail_Queue
             }
 
             $email = self::_getEntry($maq_id);
-            $result = self::_sendEmail($email['recipient'], $email['headers'], $email['body'], $status);
+            $result = self::_sendEmail($email['recipient'], $email['headers'], $email['body']);
 
             if (Misc::isError($e = $result)) {
                 /** @var PEAR_Error $e */
@@ -216,10 +216,9 @@ class Mail_Queue
      * @param   string $recipient The recipient of this message
      * @param   string $text_headers The full headers of this message
      * @param   string $body The full body of this message
-     * @param   string $status The status of this message
      * @return  true, or a PEAR_Error object
      */
-    private function _sendEmail($recipient, $text_headers, &$body, $status)
+    private function _sendEmail($recipient, $text_headers, &$body)
     {
         $header_names = Mime_Helper::getHeaderNames($text_headers);
         $_headers = self::_getHeaders($text_headers, $body);
@@ -254,6 +253,7 @@ class Mail_Queue
         $recipient = Mime_Helper::encodeAddress($recipient);
         $res = $mail->send($recipient, $headers, $body);
         if (Misc::isError($res)) {
+            /** @var PEAR_Error $res */
             Logger::app()->error($res->getMessage(), array('debug' => $res->getDebugInfo()));
 
             return $res;
@@ -490,13 +490,6 @@ class Mail_Queue
             $res = DB_Helper::getInstance()->getAll($stmt, array($issue_id));
         } catch (DatabaseException $e) {
             return false;
-        }
-
-        if (count($res) > 0) {
-            foreach ($res as &$row) {
-                $row['maq_recipient'] = Mime_Helper::decodeAddress($row['maq_recipient']);
-                $row['maq_subject'] = Mime_Helper::fixEncoding($row['maq_subject']);
-            }
         }
 
         return $res;
