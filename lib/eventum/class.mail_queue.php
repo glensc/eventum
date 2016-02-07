@@ -11,6 +11,7 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Db\DatabaseException;
 use Eventum\Mail\MailMessage;
 
 class Mail_Queue
@@ -88,7 +89,7 @@ class Mail_Queue
             'maq_save_copy' => $save_email_copy,
             'maq_queued_date' => Date_Helper::getCurrentDateGMT(),
             'maq_sender_ip_address' => !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '',
-            'maq_recipient' => $recipient,
+            'maq_recipient' => $recipient, // XXX: should be decoded form
             'maq_headers' => $mail->getHeaders()->toString(),
             'maq_body' => $mail->getContent(),
             'maq_iss_id' => $issue_id ?: null,
@@ -106,7 +107,7 @@ class Mail_Queue
         $stmt = 'INSERT INTO {{%mail_queue}} SET ' . DB_Helper::buildSet($params);
         try {
             DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -249,6 +250,8 @@ class Mail_Queue
         }
 
         $mail = Mail::factory('smtp', Mail_Helper::getSMTPSettings());
+        // TODO: mail::send wants just bare addresses, do that ourselves
+        $recipient = Mime_Helper::encodeAddress($recipient);
         $res = $mail->send($recipient, $headers, $body);
         if (Misc::isError($res)) {
             Logger::app()->error($res->getMessage(), array('debug' => $res->getDebugInfo()));
@@ -297,7 +300,7 @@ class Mail_Queue
                     $limit OFFSET 0";
         try {
             $res = DB_Helper::getInstance()->getColumn($sql, array($status));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -333,7 +336,7 @@ class Mail_Queue
 
         try {
             $res = DB_Helper::getInstance()->getAll($sql, array($status));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -367,7 +370,7 @@ class Mail_Queue
                     maq_id=?';
         try {
             $res = DB_Helper::getInstance()->getRow($stmt, array($maq_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -397,7 +400,7 @@ class Mail_Queue
                     maq_id IN (' . implode(',', $maq_ids) . ')';
         try {
             $res = DB_Helper::getInstance()->getAll($stmt);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -447,7 +450,7 @@ class Mail_Queue
         );
         try {
             DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -485,7 +488,7 @@ class Mail_Queue
                     maq_queued_date ASC';
         try {
             $res = DB_Helper::getInstance()->getAll($stmt, array($issue_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -522,7 +525,7 @@ class Mail_Queue
                     maq_id = ?';
         try {
             $res = DB_Helper::getInstance()->getRow($stmt, array($maq_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -547,7 +550,7 @@ class Mail_Queue
         $params[] = $type_id;
         try {
             $res = DB_Helper::getInstance()->getColumn($sql, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -576,7 +579,7 @@ class Mail_Queue
                     maq_queued_date <= DATE_SUB(NOW(), INTERVAL 1 MONTH)";
         try {
             DB_Helper::getInstance()->query($sql);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 

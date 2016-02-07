@@ -154,7 +154,6 @@ class Routing
             throw RoutingException::noEmaiAccountConfigured();
         }
 
-
         // get the sender's email address
         // FIXME: this is "From" or "From:" header?
         /** @var string $sender_email */
@@ -163,7 +162,6 @@ class Routing
         // strip out the warning message sent to staff users
         if (($setup['email_routing']['status'] == 'enabled') &&
                 ($setup['email_routing']['warning']['status'] == 'enabled')) {
-
             $content = Mail_Helper::stripWarningMessage($mail->getContent());
             // FIXME XXX: this probably will blow up. think of better way
             $mail->setContent($content);
@@ -426,7 +424,6 @@ class Routing
         if (empty($setup['draft_routing']['address_host'])) {
             throw RoutingException::noEmailDomainConfigured();
         }
-
 
         // find which issue ID this email refers to
         $issue_id = null;

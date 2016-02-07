@@ -11,6 +11,7 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Db\DatabaseException;
 use Eventum\Mail\MailMessage;
 
 class Workflow
@@ -62,7 +63,7 @@ class Workflow
                     prj_id';
         try {
             $res = DB_Helper::getInstance()->getPair($stmt);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -442,12 +443,13 @@ class Workflow
      * Called when SCM checkins are associated.
      *
      * @param   integer $prj_id The project ID.
+     * @param   ScmCheckin $scm SCM config associated with the commit
      * @param   integer $issue_id The ID of the issue.
      * @param   array $files File list with their version numbers changes made on.
      * @param   string $username SCM user doing the checkin.
      * @param   string $commit_msg Message associated with the SCM commit.
      */
-    public static function handleSCMCheckins($prj_id, $issue_id, $files, $username, $commit_msg)
+    public static function handleSCMCheckins($prj_id, $scm, $issue_id, $files, $username, $commit_msg)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;
@@ -458,7 +460,7 @@ class Workflow
         /**
          * @deprecated. The $module parameter is deprecated. always NULL, use 'module' from $file object
          */
-        $backend->handleSCMCheckins($prj_id, $issue_id, null, $files, $username, $commit_msg);
+        $backend->handleSCMCheckins($prj_id, $issue_id, null, $files, $username, $commit_msg, $scm);
     }
 
     /**
@@ -650,8 +652,8 @@ class Workflow
         $date = Date_Helper::convertDateGMT($mail->getMailDate());
         $from = $mail->getSender();
         $subject = $mail->subject;
-        $to = join(',', (array)$mail->getAddresses('To'));
-        $cc = join(',', (array)$mail->getAddresses('Cc'));
+        $to = implode(',', (array)$mail->getAddresses('To'));
+        $cc = implode(',', (array)$mail->getAddresses('Cc'));
 
         return $backend->getIssueIDforNewEmail($prj_id, $info, $headers, $message_body, $date, $from, $subject, $to, $cc);
     }

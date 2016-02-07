@@ -11,6 +11,8 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Db\DatabaseException;
+
 /**
  * Class to handle all of the business logic related to sending email
  * notifications on actions regarding the issues.
@@ -80,7 +82,7 @@ class Notification
 
         try {
             $res = DB_Helper::getInstance()->getColumn($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -127,7 +129,7 @@ class Notification
 
         try {
             $res = DB_Helper::getInstance()->getAll($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
         $data = array();
@@ -404,7 +406,7 @@ class Notification
                     not_usr_id=usr_id';
         try {
             $res = DB_Helper::getInstance()->getRow($stmt, array($note_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -448,7 +450,7 @@ class Notification
                     sup_id IN ($items)";
         try {
             $res = DB_Helper::getInstance()->getAll($stmt, $sup_ids);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -485,7 +487,7 @@ class Notification
                     iat_id=?';
         try {
             $res = DB_Helper::getInstance()->getRow($stmt, array($issue_id, $attachment_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -544,7 +546,7 @@ class Notification
         }
         try {
             $res = DB_Helper::getInstance()->getAll($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -1203,7 +1205,7 @@ class Notification
                 'sender_can_access' =>  $can_access,
                 'email' => array(
                     'date'    => $date,
-                    'from'    => Mime_Helper::fixEncoding($sender),
+                    'from'    => Mime_Helper::decodeQuotedPrintable($sender),
                     'subject' => $subject,
                 ),
             ));
@@ -1223,7 +1225,7 @@ class Notification
             $mail->setHeaders(Mail_Helper::getBaseThreadingHeaders($issue_id));
             $setup = Mail_Helper::getSMTPSettings();
             $from = self::getFixedFromHeader($issue_id, $setup['from'], 'issue');
-            $recipient = Mime_Helper::fixEncoding($recipient);
+            $recipient = Mime_Helper::decodeQuotedPrintable($recipient);
             // TRANSLATORS: %1: $issue_id, %2 = iss_summary
             $subject = ev_gettext('[#%1$s] Issue Created: %2$s', $issue_id, $data['iss_summary']);
             $mail->send($from, $recipient, $subject, 0, $issue_id, 'auto_created_issue');
@@ -1378,7 +1380,7 @@ class Notification
         $stmt = 'INSERT INTO {{%irc_notice}} SET '. DB_Helper::buildSet($params);
         try {
             DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1457,7 +1459,6 @@ class Notification
             'app_title'    => Misc::getToolCaption(),
             'user'         => $info,
         ));
-
 
         // TRANSLATORS: %s - APP_SHORT_NAME
         $subject = ev_gettext('%s: New User information', APP_SHORT_NAME);
@@ -1644,7 +1645,7 @@ class Notification
         }
         try {
             $users = DB_Helper::getInstance()->getAll($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -1685,7 +1686,7 @@ class Notification
             }
             try {
                 $emails = DB_Helper::getInstance()->getAll($stmt, $params);
-            } catch (DbException $e) {
+            } catch (DatabaseException $e) {
                 return array();
             }
 
@@ -1725,7 +1726,7 @@ class Notification
                     sub_id=?';
         try {
             $res = DB_Helper::getInstance()->getRow($stmt, array($sub_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1755,7 +1756,7 @@ class Notification
                     sbt_sub_id=?';
         try {
             $res = DB_Helper::getInstance()->getPair($stmt, array($sub_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1781,7 +1782,7 @@ class Notification
                     sub_iss_id=?';
         try {
             $res = DB_Helper::getInstance()->getAll($stmt, array($issue_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1816,7 +1817,7 @@ class Notification
                     sub_usr_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($issue_id, $usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return null;
         }
 
@@ -1841,7 +1842,7 @@ class Notification
                     sub_iss_id IN ($items)";
         try {
             $res = DB_Helper::getInstance()->getColumn($stmt, $ids);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1917,7 +1918,7 @@ class Notification
         }
         try {
             $sub_id = DB_Helper::getInstance()->getOne($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1927,7 +1928,7 @@ class Notification
                     sub_id=?';
         try {
             DB_Helper::getInstance()->query($stmt, array($sub_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1937,7 +1938,7 @@ class Notification
                     sbt_sub_id=?';
         try {
             DB_Helper::getInstance()->query($stmt, array($sub_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1971,7 +1972,7 @@ class Notification
                     sub_id=?';
         try {
             $res = DB_Helper::getInstance()->getRow($stmt, array($sub_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -2009,7 +2010,7 @@ class Notification
         }
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return null;
         }
 
@@ -2116,7 +2117,7 @@ class Notification
                  )";
         try {
             DB_Helper::getInstance()->query($stmt, array($issue_id, $subscriber_usr_id, Date_Helper::getCurrentDateGMT()));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -2202,7 +2203,7 @@ class Notification
                  )";
         try {
             DB_Helper::getInstance()->query($stmt, array($issue_id, Date_Helper::getCurrentDateGMT(), $email));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -2281,7 +2282,7 @@ class Notification
                     sub_id=?";
         try {
             DB_Helper::getInstance()->query($stmt, array($email, $usr_id, $sub_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -2314,7 +2315,8 @@ class Notification
      * @param string $subject
      * @param string $text_message
      */
-    private static function notifyUserByMail($usr_id, $subject, $text_message) {
+    private static function notifyUserByMail($usr_id, $subject, $text_message)
+    {
         $info = User::getDetails($usr_id);
 
         // change the current locale

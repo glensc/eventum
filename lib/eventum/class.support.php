@@ -11,7 +11,9 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Db\DatabaseException;
 use Eventum\Mail\Exception\RoutingException;
+use Eventum\Mail\ImapMessage;
 
 /**
  * Class to handle the business logic related to the email feature of
@@ -42,7 +44,7 @@ class Support
                     sup_id IN (' . DB_Helper::buildList($sup_ids) . ')';
         try {
             $res = DB_Helper::getInstance()->getAll($stmt, $sup_ids);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -53,7 +55,7 @@ class Support
             if (!$account_details['leave_copy']) {
                 // try to re-use an open connection to the imap server
                 if (!in_array($row['sup_ema_id'], array_keys($accounts))) {
-                    $accounts[$row['sup_ema_id']] = self::connectEmailServer(Email_Account::getDetails($row['sup_ema_id']));
+                    $accounts[$row['sup_ema_id']] = self::connectEmailServer(Email_Account::getDetails($row['sup_ema_id'], true));
                 }
                 $mbox = $accounts[$row['sup_ema_id']];
                 if ($mbox !== false) {
@@ -93,7 +95,7 @@ class Support
                     sup_id=?';
         try {
             DB_Helper::getInstance()->query($stmt, array($sup_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -103,7 +105,7 @@ class Support
                     seb_sup_id=?';
         try {
             DB_Helper::getInstance()->query($stmt, array($sup_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -142,7 +144,7 @@ class Support
                     ' . $options['sort_by'] . ' ' . $options['sort_order'];
         try {
             $res = DB_Helper::getInstance()->getPair($stmt);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -188,7 +190,7 @@ class Support
                     sup_id ASC';
         try {
             $res = DB_Helper::getInstance()->getPair($stmt, array($issue_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -246,7 +248,7 @@ class Support
                     sup_id IN (' . DB_Helper::buildList($sup_ids) . ')';
         try {
             $res = DB_Helper::getInstance()->getColumn($stmt, $sup_ids);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -285,7 +287,7 @@ class Support
                     sup_id IN ($list)";
         try {
             DB_Helper::getInstance()->query($stmt, $items);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -315,7 +317,7 @@ class Support
         $params = array(Auth::getCurrentProject());
         try {
             $res = DB_Helper::getInstance()->getAll($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -341,7 +343,7 @@ class Support
                     sup_ema_id IN (' . DB_Helper::buildList($ids) . ')';
         try {
             DB_Helper::getInstance()->query($stmt);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -866,7 +868,7 @@ class Support
                     sup_ema_id=?';
         try {
             $res = DB_Helper::getInstance()->getColumn($stmt, array($ema_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -889,7 +891,7 @@ class Support
                     sup_message_id = ?';
         try {
             $res = DB_Helper::getInstance()->getOne($sql, array($message_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -955,7 +957,7 @@ class Support
         $stmt = 'INSERT INTO {{%support_email}} SET ' . DB_Helper::buildSet($params);
         try {
             DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -974,7 +976,7 @@ class Support
                  )';
         try {
             DB_Helper::getInstance()->query($stmt, array($new_sup_id, $mail->getMessageBody(), $mail->getRawContent()));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -1160,7 +1162,7 @@ class Support
                     ' . Misc::escapeInteger($max) . ' OFFSET ' . Misc::escapeInteger($start);
         try {
             $res = DB_Helper::getInstance()->getAll($stmt);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array(
                 'list' => '',
                 'info' => '',
@@ -1362,7 +1364,7 @@ class Support
                     sup_id IN ($list)";
         try {
             DB_Helper::getInstance()->query($stmt, $items);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -1479,7 +1481,7 @@ class Support
                     sup_id=?';
         try {
             $res = DB_Helper::getInstance()->getRow($stmt, array($sup_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1520,7 +1522,7 @@ class Support
                 LIMIT 1 OFFSET $offset";
         try {
             $res = DB_Helper::getInstance()->getRow($stmt, array($issue_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -1556,7 +1558,7 @@ class Support
         array_unshift($params, Auth::getCurrentProject());
         try {
             $res = DB_Helper::getInstance()->getAll($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1580,7 +1582,7 @@ class Support
                     seb_sup_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($sup_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1604,7 +1606,7 @@ class Support
                     seb_sup_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($sup_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1639,7 +1641,7 @@ class Support
                     sup_id ASC";
         try {
             $res = DB_Helper::getInstance()->getAll($stmt, array($issue_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1673,7 +1675,7 @@ class Support
                     sup_id IN ($list)";
         try {
             DB_Helper::getInstance()->query($stmt, $items);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -1706,7 +1708,7 @@ class Support
                     sup_id IN ($list)";
         try {
             DB_Helper::getInstance()->query($stmt, $items);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -2212,7 +2214,7 @@ class Support
                     sup_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($sup_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -2239,7 +2241,7 @@ class Support
                     sup_message_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($message_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -2270,7 +2272,7 @@ class Support
                     sup_message_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($message_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -2294,7 +2296,7 @@ class Support
                     sup_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($sup_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -2319,7 +2321,7 @@ class Support
                     child.sup_message_id = ?';
         try {
             $res = DB_Helper::getInstance()->getOne($sql, array($msg_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -2362,7 +2364,7 @@ class Support
         $params = array(Auth::getCurrentProject(), $start, $end, "%{$usr_info['usr_email']}%");
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -2391,7 +2393,7 @@ class Support
                     ema_id = ?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($ema_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -2451,7 +2453,7 @@ class Support
         $params = array($new_ema_id, $issue_id, $customer_id, $sup_id, $current_ema_id);
         try {
             DB_Helper::getInstance()->query($sql, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -2603,7 +2605,7 @@ class Support
             if ((!in_array($address, $subscribers)) && (!in_array($address, $addresses_not_too_add))) {
                 Notification::subscribeEmail(Auth::getUserID(), $email['issue_id'], $address, Notification::getDefaultActions($email['issue_id'], $address, 'add_extra_recipients'));
                 if ($is_auto_created) {
-//                    Notification::notifyAutoCreatedIssue($prj_id, $email['issue_id'], $email['from'], $email['date'], $email['subject'], $address);
+                    //                    Notification::notifyAutoCreatedIssue($prj_id, $email['issue_id'], $email['from'], $email['date'], $email['subject'], $address);
                 }
             }
         }
@@ -2623,7 +2625,7 @@ class Support
 
         try {
             DB_Helper::getInstance()->query('SET @sup_seq = 0');
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return 0;
         }
 
@@ -2639,7 +2641,7 @@ class Support
                     sup_id ASC';
         try {
             $res = DB_Helper::getInstance()->getPair($sql, array($issue_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return 0;
         }
 

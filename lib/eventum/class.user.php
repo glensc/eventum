@@ -11,6 +11,8 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Db\DatabaseException;
+
 /**
  * Class to handle the business logic related to the administration
  * of users and permissions in the system.
@@ -75,7 +77,7 @@ class User
 
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($customer_contact_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -99,7 +101,7 @@ class User
                     usr_customer_contact_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($customer_contact_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -123,7 +125,7 @@ class User
                     usr_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -148,7 +150,7 @@ class User
                     usr_id=?';
         try {
             DB_Helper::getInstance()->query($stmt, array($sms_email, $usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -172,7 +174,7 @@ class User
                     usr_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -202,7 +204,7 @@ class User
                     usr_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -227,7 +229,7 @@ class User
                     usr_email=?";
         try {
             DB_Helper::getInstance()->query($stmt, array($email));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -253,7 +255,7 @@ class User
                     usr_email=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($email));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -300,7 +302,7 @@ class User
                     'pending',
                 )
             );
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -399,7 +401,7 @@ class User
                     usr_external_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($sql, array($external_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return null;
         }
 
@@ -526,7 +528,7 @@ class User
                     usr_full_name ASC';
         try {
             $res = DB_Helper::getInstance()->getPair($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -633,7 +635,7 @@ class User
                     pru_prj_id=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($usr_id, $prj_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -657,39 +659,55 @@ class User
 
     /**
      * Method used to get the account details of a list users.
+     * Options:
+     * - groups Whether to load groups information for users, default true
      *
-     * @param   array $usr_ids The user ID
-     * @return  array List of accounts with account details
+     * @param array $usr_ids The user ID
+     * @param array $options
+     * @return array List of accounts with account details
      */
-    public static function getDetailsAssoc($usr_ids)
+    public static function getDetailsAssoc($usr_ids, $options = array())
     {
         static $returns;
-        $key = md5(serialize($usr_ids));
+        $key = md5(serialize(array($usr_ids, $options)));
 
         if (empty($returns[$key])) {
             $itemlist = DB_Helper::buildList($usr_ids);
 
             $stmt = "SELECT
-                        *
+                        usr.*,
+                        GROUP_CONCAT(ual_email) ual_email
                      FROM
-                        {{%user}}
+                        {{%user}} usr
+                     LEFT JOIN {{%user_alias}} ual ON ual.ual_usr_id=usr.usr_id
                      WHERE
-                        usr_id IN ($itemlist)";
+                        usr_id IN ($itemlist)
+                     GROUP BY usr_id
+                     ";
             try {
                 $res = DB_Helper::getInstance()->getAll($stmt, $usr_ids);
-            } catch (DbException $e) {
+            } catch (DatabaseException $e) {
                 return null;
             }
 
+            $load_groups = isset($options['groups']) ? $options['groups'] : true;
+
             foreach ($res as &$row) {
-                $row['groups'] = self::getGroups($row['usr_id']);
-                $row['group_ids'] = array_keys($row['groups']);
-                $row['group_names'] = array_values($row['groups']);
+                // TODO: unset usr_password, load only when needed
+                //unset($row['usr_password']);
+
+                if ($load_groups) {
+                    $row['groups'] = self::getGroups($row['usr_id']);
+                    $row['group_ids'] = array_keys($row['groups']);
+                    $row['group_names'] = array_values($row['groups']);
+                }
+
                 $roles = Project::getAssocList($row['usr_id'], false, true);
                 $row['projects'] = array_keys($roles);
                 $row['roles'] = $roles;
-                $row['aliases'] = self::getAliases($row['usr_id']);
+                $row['aliases'] = explode(',', $row['ual_email']);
             }
+
             $returns[$key] = $res;
         }
 
@@ -739,7 +757,7 @@ class User
             } else {
                 $res = DB_Helper::getInstance()->getColumn($stmt, $items);
             }
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -791,7 +809,7 @@ class User
             } else {
                 $res = DB_Helper::getInstance()->getColumn($stmt, $items);
             }
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             if (!is_array($usr_id)) {
                 return '';
             } else {
@@ -829,7 +847,7 @@ class User
                     ugr_usr_id = ?';
         try {
             $res = DB_Helper::getInstance()->getPair($sql, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -873,7 +891,7 @@ class User
                     usr_email=?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($email));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -921,7 +939,7 @@ class User
         $params = array_merge(array($status), $usr_ids);
         try {
             DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -945,7 +963,7 @@ class User
                     usr_id=?';
         try {
             DB_Helper::getInstance()->query($stmt, array($full_name, $usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -970,7 +988,7 @@ class User
                     usr_id=?';
         try {
             DB_Helper::getInstance()->query($stmt, array($_POST['email'], $usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -1066,7 +1084,7 @@ class User
 
         try {
             DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -1088,7 +1106,7 @@ class User
                         pru_usr_id=?';
             try {
                 DB_Helper::getInstance()->query($stmt, array($usr_id));
-            } catch (DbException $e) {
+            } catch (DatabaseException $e) {
                 return -1;
             }
 
@@ -1111,7 +1129,7 @@ class User
                             $prj_id, $usr_id, $role,
                         )
                     );
-                } catch (DbException $e) {
+                } catch (DatabaseException $e) {
                     return -1;
                 }
             }
@@ -1124,7 +1142,7 @@ class User
                         ugr_usr_id=?';
             try {
                 DB_Helper::getInstance()->query($stmt, array($usr_id));
-            } catch (DbException $e) {
+            } catch (DatabaseException $e) {
                 return -1;
             }
 
@@ -1210,7 +1228,7 @@ class User
                  )';
         try {
             DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -1251,19 +1269,27 @@ class User
     /**
      * Method used to get the list of users available in the system.
      *
-     * @param   boolean $show_customers Whether to return customers or not
+     * Options:
+     * - customers Whether to include customers in list, default true, i.e do not filter out
+     * - inactive Whether to include inactive users in list, default false
+     * - groups Whether to load groups information for users
+     *
+     * @param array $options
      * @return  array The list of users
      */
-    public static function getList($show_customers, $show_inactive)
+    public static function getList($options = array())
     {
         // FIXME: what about other statuses like "pending"?
         $stmt = 'SELECT
-                    *
+                    usr_id
                  FROM
                     {{%user}}
                  WHERE
                     usr_id != ?';
         $params = array(APP_SYSTEM_USER_ID);
+
+        $show_inactive = isset($options['inactive']) ? $options['inactive'] : false;
+        $show_customers = isset($options['customers']) ? $options['customers'] : true;
 
         if (!$show_inactive) {
             $stmt .= ' AND usr_status != ?';
@@ -1274,32 +1300,39 @@ class User
                     usr_status ASC,
                     usr_full_name ASC';
         try {
-            $res = DB_Helper::getInstance()->getAll($stmt, $params);
-        } catch (DbException $e) {
-            return '';
+            $usr_ids = DB_Helper::getInstance()->getColumn($stmt, $params);
+        } catch (DatabaseException $e) {
+            return null;
         }
 
+        $prj_id = Auth::getCurrentProject();
         $data = array();
-        foreach ($res as &$row) {
-            $roles = Project::getAssocList($row['usr_id'], false, true);
-            $role = current($roles);
-            $role = $role['pru_role'];
-            if ($show_customers == false && (
-                ((@$roles[Auth::getCurrentProject()]['pru_role']) == self::ROLE_CUSTOMER) ||
-                (count($roles) == 1 && $role == self::ROLE_CUSTOMER))) {
-                continue;
+
+        $get_partner_name = function ($name) {
+            static $cache;
+            if (!isset($cache[$name])) {
+                $cache[$name] = Partner::getName($name);
             }
 
-            $row['roles'] = $roles;
-            $row['groups'] = self::getGroups($row['usr_id']);
-            $row['group_ids'] = array_keys($row['groups']);
-            $row['group_names'] = array_values($row['groups']);
+            return $cache[$name];
+        };
+
+        $res = self::getDetailsAssoc($usr_ids, $options);
+        foreach ($res as $row) {
+            // handle show_customers = false
+            if ($show_customers == false) {
+                $roles = $row['roles'];
+                $role = current($roles);
+                $role = $role['pru_role'];
+                if ((@$roles[$prj_id]['pru_role'] == self::ROLE_CUSTOMER)
+                    || (count($roles) == 1 && $role == self::ROLE_CUSTOMER)) {
+                    continue;
+                }
+            }
+
             if (!empty($row['usr_par_code'])) {
-                $row['partner_name'] = Partner::getName($row['usr_par_code']);
+                $row['partner_name'] = $get_partner_name($row['usr_par_code']);
             }
-
-            // add email aliases
-            $row['aliases'] = self::getAliases($row['usr_id']);
 
             $data[] = $row;
         }
@@ -1328,7 +1361,7 @@ class User
                     {{%user}}';
         try {
             $res = DB_Helper::getInstance()->getPair($stmt);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1354,7 +1387,7 @@ class User
                     usr_full_name ASC';
         try {
             $res = DB_Helper::getInstance()->getPair($stmt);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1385,7 +1418,7 @@ class User
                     usr_id=?';
         try {
             $res = DB_Helper::getInstance()->getRow($stmt, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1425,7 +1458,7 @@ class User
                     usr_clocked_in=1';
         try {
             $res = DB_Helper::getInstance()->getPair($stmt);
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -1448,7 +1481,7 @@ class User
                     usr_id = ?';
         try {
             DB_Helper::getInstance()->query($stmt, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -1471,7 +1504,7 @@ class User
                     usr_id = ?';
         try {
             DB_Helper::getInstance()->query($stmt, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -1499,7 +1532,7 @@ class User
                     usr_id = ?';
         try {
             $res = DB_Helper::getInstance()->getOne($stmt, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return -1;
         }
 
@@ -1523,7 +1556,7 @@ class User
                         usr_id = ?';
             try {
                 $res = DB_Helper::getInstance()->getOne($sql, array($usr_id));
-            } catch (DbException $e) {
+            } catch (DatabaseException $e) {
                 return APP_DEFAULT_LOCALE;
             }
 
@@ -1546,7 +1579,7 @@ class User
                     usr_id = ?';
         try {
             DB_Helper::getInstance()->query($sql, array($language, $usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1563,7 +1596,7 @@ class User
                     ual_usr_id = ?';
         try {
             $res = DB_Helper::getInstance()->getColumn($sql, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return array();
         }
 
@@ -1593,7 +1626,7 @@ class User
 
         try {
             DB_Helper::getInstance()->query($sql, array($usr_id, $email));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1609,7 +1642,7 @@ class User
                     ual_email = ?';
         try {
             DB_Helper::getInstance()->query($sql, array($usr_id, $email));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1626,7 +1659,7 @@ class User
                     ual_email = ?';
         try {
             $res = DB_Helper::getInstance()->getOne($sql, array($email));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return '';
         }
 
@@ -1643,7 +1676,7 @@ class User
                     usr_id = ?';
         try {
             $res = DB_Helper::getInstance()->getOne($sql, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1660,7 +1693,7 @@ class User
                     usr_id = ?';
         try {
             $res = DB_Helper::getInstance()->getOne($sql, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 
@@ -1669,9 +1702,14 @@ class User
 
     public static function getExternalID($usr_id)
     {
-        $details = self::getDetails($usr_id);
+        $sql = 'SELECT
+                    usr_external_id
+                FROM
+                    {{%user}}
+                WHERE
+                    usr_id = ?';
 
-        return $details['usr_external_id'];
+        return DB_Helper::getInstance()->getOne($sql, array($usr_id));
     }
 
     public static function unlock($usr_id)
@@ -1684,7 +1722,7 @@ class User
                     usr_id=?';
         try {
             DB_Helper::getInstance()->query($stmt, array($usr_id));
-        } catch (DbException $e) {
+        } catch (DatabaseException $e) {
             return false;
         }
 

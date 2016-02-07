@@ -11,16 +11,22 @@
  * that were distributed with this source code.
  */
 
-require_once __DIR__ . '/../../init.php';
+namespace Eventum\Db;
 
-Auth::checkAuthentication();
+use RuntimeException;
 
-if (!Access::canAccessReports(Auth::getUserID())) {
-    echo 'Invalid role';
-    exit;
+class DatabaseException extends RuntimeException
+{
+    public $context;
+
+    public function setExceptionLocation($file, $line)
+    {
+        $this->file = $file;
+        $this->line = $line;
+    }
+
+    public function setContext($context)
+    {
+        $this->context = $context;
+    }
 }
-
-$type = isset($_GET['type']) ? $_GET['type'] : null;
-
-$plot = new PlotHelper();
-$plot->WorkloadTimePeriodGraph($type);
