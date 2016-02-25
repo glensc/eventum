@@ -684,4 +684,40 @@ class MailMessageTest extends TestCase
         );
         Mail_Queue::addMail($mail, $to, $options);
     }
+
+    /**
+     * a test showing a valid header can not be loaded from string using Headers::fromString method
+     * due underlying fail in iconv_mime_encode
+     * @see https://github.com/zendframework/zend-mail/issues/64
+     */
+    public function testParseHeaders()
+    {
+        $header
+            = "Subject: [#77675] New Issue:xxxxxxxxx xxxxxxx xxxxxxxx xxxxxxxxxxxxx xxxxxxxxxx xxxxxxxx, =?utf-8?b?dMOkaHRhZWc=?= xx.xx, xxxx\r\n";
+        try {
+            /** @see \Zend\Mail\Header\HeaderWrap::canBeEncoded */
+            \Zend\Mail\Headers::fromString($header);
+        } catch (PHPUnit_Framework_Error_Notice $e) {
+            error_log($e->getMessage());
+        }
+
+        // the above fails with:
+        // "iconv_mime_encode(): Unknown error (7)"
+        // because it iconv_mime_encode fails:
+        $value = "[#77675] New Issue:xxxxxxxxx xxxxxxx xxxxxxxx xxxxxxxxxxxxx xxxxxxxxxx xxxxxxxx, tähtaeg xx.xx, xxxx";
+        try {
+            // it fails with line length exactly 76, but suceeds with anything else, like 75 or 77
+            $v = iconv_mime_encode("x-test", $value, array("scheme" => "Q", 'line-length' => '76',"line-break-chars" => " "));
+        } catch (PHPUnit_Framework_Error_Notice $e) {
+            error_log($e->getMessage());
+        }
+
+        // the same handled better in encodeQuotedPrintable
+        $v = Mime_Helper::encodeQuotedPrintable($value);
+        var_dump($v);
+
+        // this works too
+        $v= \Zend\Mail\Header\HeaderWrap::mimeEncodeValue($value, 'UTF-8');
+        var_dump($v);
+    }
 }
