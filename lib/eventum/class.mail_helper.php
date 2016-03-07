@@ -12,6 +12,7 @@
  */
 
 use Eventum\Mail\MailMessage;
+use Eventum\Monolog\Logger;
 
 /**
  * Class to handle the business logic related to sending email to

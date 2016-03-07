@@ -22,7 +22,7 @@ ini_set('memory_limit', '512M');
 ini_set('session.cache_limiter', 'nocache');
 
 define('APP_URL', 'https://github.com/eventum/eventum');
-define('APP_VERSION', '3.0.10-dev');
+define('APP_VERSION', '3.0.11-dev');
 
 // define base path
 define('APP_PATH', __DIR__);
@@ -122,7 +122,7 @@ Misc::stripInput($_POST);
 // set default timezone
 date_default_timezone_set(APP_DEFAULT_TIMEZONE);
 
-Logger::initialize();
+Eventum\Monolog\Logger::initialize();
 Language::setup();
 
 // set charset
