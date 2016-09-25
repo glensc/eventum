@@ -12,8 +12,7 @@ php:
   - hhvm
   - nightly
 
-# testing
-# https://github.com/box-project/box2/blob/gh-pages/installer.php#L48-L57
+# testing https://github.com/box-project/box2/blob/gh-pages/installer.php#L48-L57
 script: |
     php -r '$phar = new ReflectionExtension("phar");var_dump($phar->getVersion());'
 
