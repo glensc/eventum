@@ -52,6 +52,27 @@ class TwigTemplateTest extends TestCase
     }
 
     /**
+     * test is_array():
+     * {% if is_array(selected_cfo_ids) and in_array(key, selected_cfo_ids) %}checked{% endif %} />{{ display }}</label></li>
+     */
+    public function testIsArray()
+    {
+        $template = "{% if is_array(selected_cfo_ids) and in_array(key, selected_cfo_ids) %}checked{% endif %}";
+        $params = [];
+
+        // undefined
+        $res = $this->renderInline($template, $params);
+        $this->assertEquals('', $res);
+
+        $params = [
+            'selected_cfo_ids' => ['ff'],
+            'key' => 'ff',
+        ];
+        $res = $this->renderInline($template, $params);
+        $this->assertEquals('checked', $res);
+    }
+
+    /**
      * Helper to get template with params processed without template file
      *
      * @param string $template
@@ -65,6 +86,7 @@ class TwigTemplateTest extends TestCase
         $twig = new Twig_Environment($loader);
 
         TwigTemplate::addFilters($twig);
+        TwigTemplate::addFunctions($twig);
 
         return $twig->render($filename, $params);
     }

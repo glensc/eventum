@@ -16,6 +16,7 @@ namespace Eventum\Templating;
 use Twig_Environment;
 use Twig_Loader_Filesystem;
 use Twig_SimpleFilter;
+use Twig_SimpleFunction;
 
 /**
  * twig template engine base class used by rembi
@@ -53,7 +54,17 @@ class TwigTemplate extends Twig_Environment
     /**
      * @param Twig_Environment $twig
      */
-    public static function addFilters($twig) {
+    public static function addFilters($twig)
+    {
         $twig->addFilter(new Twig_SimpleFilter('rot13', 'str_rot13'));
+    }
+
+    /**
+     * @param Twig_Environment $twig
+     */
+    public static function addFunctions($twig)
+    {
+        $twig->addFunction(new Twig_SimpleFunction('in_array', 'in_array'));
+        $twig->addFunction(new Twig_SimpleFunction('is_array', 'is_array'));
     }
 }
