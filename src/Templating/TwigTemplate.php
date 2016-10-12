@@ -37,7 +37,12 @@ class TwigTemplate extends Twig_Environment
             'cache' => false,
             'auto_reload' => false
         ];
-        $loader = new Twig_Loader_Filesystem([APP_LOCAL_PATH . '/templates', APP_TPL_PATH]);
+        $loader = new Twig_Loader_Filesystem();
+        foreach ([APP_LOCAL_PATH . '/templates', APP_TPL_PATH] as $path) {
+            if (is_dir($path)) {
+                $loader->addPath($path);
+            }
+        }
 
         parent::__construct($loader, $options);
     }
