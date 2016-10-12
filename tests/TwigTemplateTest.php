@@ -11,12 +11,15 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Templating\TwigTemplate;
+
 class TwigTemplateTest extends TestCase
 {
     /**
-     * a @count like this:
+     * test that explressions like this:
      * {% if resolutions|@count > 0 %}
-     * can be replaced with:
+     * {% if incident_details|default('') != '' and incident_details|@count > 0 %}
+     * can be replaced with simple condition:
      * {% if resolutions %}
      */
     public function testAtCount()
@@ -39,11 +42,29 @@ class TwigTemplateTest extends TestCase
         $this->assertEquals('New Year Resolutions', $res);
     }
 
-    private function renderInline($template, $params)
+    /**
+     * test filters
+     */
+    public function testRot13()
+    {
+        $res = $this->renderInline("{{ 'Twig'|rot13 }}");
+        $this->assertEquals('Gjvt', $res);
+    }
+
+    /**
+     * Helper to get template with params processed without template file
+     *
+     * @param string $template
+     * @param array $params
+     * @return string
+     */
+    private function renderInline($template, $params = [])
     {
         $filename = 'test.html';
         $loader = new Twig_Loader_Array([$filename => $template]);
         $twig = new Twig_Environment($loader);
+
+        TwigTemplate::addFilters($twig);
 
         return $twig->render($filename, $params);
     }
