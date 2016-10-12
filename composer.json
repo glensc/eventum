@@ -85,6 +85,7 @@
 		"sphinx/php-sphinxapi": "2.0.*",
 		"symfony/http-foundation": "~2.7.0",
 		"theorchard/monolog-cascade": "^0.3.1",
+		"twig/twig": "^1.26",
 		"willdurand/email-reply-parser": "dev-set-sig-regex",
 		"zendframework/zend-config": "2.4.*",
 		"zendframework/zend-mail": "dev-develop-2.4"
