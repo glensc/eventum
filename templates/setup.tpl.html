@@ -1,4 +1,4 @@
-{extends "base.tpl.html"}
+{extends "base.html.twig.html"}
 {block "title"}Eventum Installation{/block}
 
 {block javascripts}
@@ -100,20 +100,20 @@ function disableAuthFields(bool)
 {/block}
 
 {block name="content"}
-{if $result|default:'' != '' and $result|default:'' != 'success'}
+{% if result|default('') != '' and result|default('') != 'success' %}
 <br />
 <table width="400" bgcolor="#003366" border="0" cellspacing="0" cellpadding="1" align="center">
   <tr>
     <td>
       <table bgcolor="#FFFFFF" width="100%" cellspacing="1" cellpadding="2" border="0">
         <tr>
-          <td><img src="{$core.rel_url}images/icons/error.gif" hspace="2" vspace="2" border="0" align="left"></td>
+          <td><img src="{{ core.rel_url }}images/icons/error.gif" hspace="2" vspace="2" border="0" align="left"></td>
           <td width="100%"><span style="font-weight: bold; font-size: 160%; color: red;">{t}An Error Was Found{/t}</span></td>
         </tr>
         <tr>
           <td colspan="2">
             <br />
-            <b>{t}Details{/t}: {$result}</b>
+            <b>{t}Details{/t}: {{ result }}</b>
             <br /><br />
           </td>
         </tr>
@@ -121,9 +121,9 @@ function disableAuthFields(bool)
     </td>
   </tr>
 </table>
-{/if}
+{% endif %}
 
-{if $db_result|default:''}
+{% if db_result|default('') %}
   <br />
   <table width="400" bgcolor="#003366" border="0" cellspacing="0" cellpadding="1" align="center">
     <tr>
@@ -143,9 +143,9 @@ function disableAuthFields(bool)
       </td>
     </tr>
   </table>
-{/if}
+{% endif %}
 
-{if $result|default:'' == 'success'}
+{% if result|default('') == 'success' %}
 <br />
 <table width="400" bgcolor="#003366" border="0" cellspacing="0" cellpadding="1" align="center">
   <tr>
@@ -159,7 +159,7 @@ function disableAuthFields(bool)
             <br />
             <b>{t}Thank You, Eventum is now properly setup and ready to be used. Open the following URL to login on it for the first time:{/t}</b>
             <br />
-            <a href="{if $smarty.post.is_ssl|default:'' == 'yes'}https://{else}http://{/if}{$smarty.post.hostname}{$smarty.post.relative_url}">{if $smarty.post.is_ssl|default:'' == 'yes'}https://{else}http://{/if}{$smarty.post.hostname}{$smarty.post.relative_url}</a>
+            <a href="{% if smarty.post.is_ssl|default('') == 'yes' %}https://{% else %}http://{% endif %}{{ smarty.post.hostname }}{{ smarty.post.relative_url }}">{% if smarty.post.is_ssl|default('') == 'yes' %}https://{% else %}http://{% endif %}{{ smarty.post.hostname }}{{ smarty.post.relative_url }}</a>
             <br /><br />
             {t}Email Address{/t}: admin@example.com {t}(literally){/t}<br />
             {t}Password{/t}: admin<br />
@@ -170,11 +170,11 @@ function disableAuthFields(bool)
             {t 1="setup"}Remember to protect your '%1' directory (like changing its permissions) to prevent anyone else from changing your existing Eventum configuration.{/t}
             <br /><br />
             {t}In order to check if your permissions are setup correctly visit the{/t} <a href="check_permissions.php">{t}Check Permissions{/t}</a> {t}page{/t}.
-            {if not $is_imap_enabled}
+            {% if not is_imap_enabled %}
             <br /><br />
             <hr size="1" noshade color="#000000">
             {t}WARNING: If you want to use the email integration features to download messages saved on a IMAP/POP3 server, you will need to enable the IMAP extension in your PHP.INI configuration file. See the PHP manual for more details.{/t}
-            {/if}
+            {% endif %}
             </b>
             <br /><br />
           </td>
@@ -183,7 +183,7 @@ function disableAuthFields(bool)
     </td>
   </tr>
 </table>
-{else}
+{% else %}
 <br />
 
 <form name="install_form" id="install_form" method="post" onSubmit="return validateForm(this)" data-persist="garlic" data-destroy="false">
@@ -204,11 +204,11 @@ function disableAuthFields(bool)
             <b>{t}Server Hostname{/t}: *</b>
           </td>
           <td>
-            {assign var="tabindex" value="1"}
-            <input type="text" name="hostname" value="{$smarty.post.hostname|default:$smarty.server.HTTP_HOST}" size="30" tabindex="{$tabindex}">
-            {include file="error_icon.tpl.html" field="hostname"}
+            {% set tabindex = '1' %}
+            <input type="text" name="hostname" value="{$smarty.post.hostname|default:$smarty.server.HTTP_HOST}" size="30" tabindex="{{ tabindex }}">
+            {% include "error_icon.html.twig.html" with {'field' : 'hostname'} %}
             <br/>
-            <label><input type="checkbox" name="is_ssl" value="yes" tabindex="{$tabindex}" {if $ssl_mode == 'enabled'}checked{/if}>{t}SSL Server{/t}</label>
+            <label><input type="checkbox" name="is_ssl" value="yes" tabindex="{{ tabindex }}" {% if ssl_mode == 'enabled' %}checked{% endif %}>{t}SSL Server{/t}</label>
           </td>
         </tr>
         <tr>
@@ -216,8 +216,8 @@ function disableAuthFields(bool)
             <b>{t}Eventum Relative URL{/t}: *</b>
           </td>
           <td>
-            <input type="text" name="relative_url" value="{$smarty.post.rel_url|default:$core.rel_url}" size="30" tabindex="{$tabindex}">
-            {include file="error_icon.tpl.html" field="relative_url"}
+            <input type="text" name="relative_url" value="{$smarty.post.rel_url|default:$core.rel_url}" size="30" tabindex="{{ tabindex }}">
+            {% include "error_icon.html.twig.html" with {'field' : 'relative_url'} %}
           </td>
         </tr>
         <tr>
@@ -225,8 +225,8 @@ function disableAuthFields(bool)
             <nobr>&nbsp;<b>{t}MySQL Server Hostname{/t}: *</b></nobr>
           </td>
           <td>
-            <input type="text" name="db_hostname" size="30" tabindex="{$tabindex}" value="{$smarty.post.db_hostname|default:'localhost'}">
-            {include file="error_icon.tpl.html" field="db_hostname"}
+            <input type="text" name="db_hostname" size="30" tabindex="{{ tabindex }}" value="{$smarty.post.db_hostname|default:'localhost'}">
+            {% include "error_icon.html.twig.html" with {'field' : 'db_hostname'} %}
           </td>
         </tr>
         <tr>
@@ -234,15 +234,15 @@ function disableAuthFields(bool)
             <b>{t}MySQL Database{/t}: *</b>
           </td>
           <td>
-            <input type="text" name="db_name" size="30" tabindex="{$tabindex}" value="{$smarty.post.db_name|default:'eventum'}">
-            {include file="error_icon.tpl.html" field="db_name"}
+            <input type="text" name="db_name" size="30" tabindex="{{ tabindex }}" value="{$smarty.post.db_name|default:'eventum'}">
+            {% include "error_icon.html.twig.html" with {'field' : 'db_name'} %}
             <br/>
-            <label><input type="checkbox" name="create_db" value="yes" tabindex="{$tabindex}" {if $smarty.post.create_db|default:'' == 'yes'}checked{/if}> Create Database</label>
+            <label><input type="checkbox" name="create_db" value="yes" tabindex="{{ tabindex }}" {% if smarty.post.create_db|default('') == 'yes' %}checked{% endif %}> Create Database</label>
           </td>
         </tr>
         <tr>
           <td colspan="2" align="center">
-            <label><input type="checkbox" name="drop_tables" value="yes" tabindex="{$tabindex}" {if $smarty.post.drop_tables|default:'' == 'yes'}checked{/if}> {t}Drop Tables If They Already Exist{/t}</label>
+            <label><input type="checkbox" name="drop_tables" value="yes" tabindex="{{ tabindex }}" {% if smarty.post.drop_tables|default('') == 'yes' %}checked{% endif %}> {t}Drop Tables If They Already Exist{/t}</label>
           </td>
         </tr>
         <tr>
@@ -250,8 +250,8 @@ function disableAuthFields(bool)
             <b>{t}MySQL Username{/t}: *</b>
           </td>
           <td>
-            <input type="text" name="db_username" size="20" tabindex="{$tabindex}" value="{$smarty.post.db_username|default:''}">
-            {include file="error_icon.tpl.html" field="db_username"}
+            <input type="text" name="db_username" size="20" tabindex="{{ tabindex }}" value="{$smarty.post.db_username|default:''}">
+            {% include "error_icon.html.twig.html" with {'field' : 'db_username'} %}
           </td>
         </tr>
         <tr>
@@ -264,12 +264,12 @@ function disableAuthFields(bool)
             <b>{t}MySQL Password{/t}:</b>
           </td>
           <td>
-            <input type="password" name="db_password" size="20" tabindex="{$tabindex}" value="{$smarty.post.db_password|default:''}" autocomplete="off">
+            <input type="password" name="db_password" size="20" tabindex="{{ tabindex }}" value="{$smarty.post.db_password|default:''}" autocomplete="off">
           </td>
         </tr>
         <tr>
           <td colspan="2" align="center">
-            <label><input type="checkbox" name="alternate_user" value="yes" onClick="toggleAlternateUserFields();"  tabindex="{$tabindex}" {if $smarty.post.alternate_user|default:'' == 'yes'}checked{/if}>{t}Use a Separate MySQL User for Normal Eventum Use{/t}</label>
+            <label><input type="checkbox" name="alternate_user" value="yes" onClick="toggleAlternateUserFields();"  tabindex="{{ tabindex }}" {% if smarty.post.alternate_user|default('') == 'yes' %}checked{% endif %}>{t}Use a Separate MySQL User for Normal Eventum Use{/t}</label>
           </td>
         </tr>
         <tr id="alternate_user_row">
@@ -291,8 +291,8 @@ function disableAuthFields(bool)
                               <nobr>&nbsp;<b>{t}Username{/t}: *</b>&nbsp;</nobr>
                             </td>
                             <td>
-                              <nobr><input type="text" name="eventum_user" size="20" value="{$smarty.post.eventum_user|default:''}" tabindex="{$tabindex}">&nbsp;</nobr>
-                              {include file="error_icon.tpl.html" field="eventum_user"}
+                              <nobr><input type="text" name="eventum_user" size="20" value="{$smarty.post.eventum_user|default:''}" tabindex="{{ tabindex }}">&nbsp;</nobr>
+                              {% include "error_icon.html.twig.html" with {'field' : 'eventum_user'} %}
                             </td>
                           </tr>
                           <tr>
@@ -300,12 +300,12 @@ function disableAuthFields(bool)
                               <nobr>&nbsp;<b>{t}Password{/t}:</b>&nbsp;</nobr>
                             </td>
                             <td>
-                              <nobr><input type="password" name="eventum_password" size="20" value="{$smarty.post.eventum_password|default:''}" tabindex="{$tabindex}" autocomplete="off">&nbsp;</nobr>
+                              <nobr><input type="password" name="eventum_password" size="20" value="{$smarty.post.eventum_password|default:''}" tabindex="{{ tabindex }}" autocomplete="off">&nbsp;</nobr>
                             </td>
                           </tr>
                           <tr>
                             <td colspan="2" align="center">
-                              <label><input type="checkbox" name="create_user" value="yes" tabindex="{$tabindex}" {if $smarty.post.create_user|default:'' == 'yes'}checked{/if}>{t}Create User and Permissions{/t}</label>
+                              <label><input type="checkbox" name="create_user" value="yes" tabindex="{{ tabindex }}" {% if smarty.post.create_user|default('') == 'yes' %}checked{% endif %}>{t}Create User and Permissions{/t}</label>
                             </td>
                           </tr>
                         </table>
@@ -331,7 +331,7 @@ function disableAuthFields(bool)
           </td>
         </tr>
 
-        {if $default_timezone == 'UTC'}
+        {% if default_timezone == 'UTC' %}
         <tr>
           <td colspan="2">
             <b>{t}Note{/t}:</b><br>
@@ -344,7 +344,7 @@ function disableAuthFields(bool)
               {t escape=no}if <tt>php.ini</tt> path is different, get proper filename from <tt>php --ini</tt> command output.{/t}
           </td>
         </tr>
-        {/if}
+        {% endif %}
 
         <tr>
           <td width="100" align="right" valign="top">
@@ -354,7 +354,7 @@ function disableAuthFields(bool)
             <select name="default_timezone">
               {html_options values=$zones output=$zones selected=$smarty.post.default_timezone|default:$default_timezone}
             </select><br/>
-            {include file="lookup_field.tpl.html" lookup_field_name="search" lookup_field_target="default_timezone"}
+            {% include "lookup_field.html.twig.html" with {'lookup_field_name' : 'search', 'lookup_field_target' : 'default_timezone'} %}
           </td>
         </tr>
         <tr>
@@ -362,8 +362,8 @@ function disableAuthFields(bool)
             <b>{t}Week starts on{/t}:</b>
           </td>
           <td width="80%">
-            <label><input type="radio" name="default_weekday" {if $smarty.post.default_weekday|default:$default_weekday != "1"}checked{/if} value="0"> {t}Sunday{/t}</label>&nbsp;&nbsp;
-            <label><input type="radio" name="default_weekday" {if $smarty.post.default_weekday|default:$default_weekday == "1"}checked{/if} value="1"> {t}Monday{/t}</label>
+            <label><input type="radio" name="default_weekday" {% if smarty.post.default_weekday|default(default_weekday) != "1" %}checked{% endif %} value="0"> {t}Sunday{/t}</label>&nbsp;&nbsp;
+            <label><input type="radio" name="default_weekday" {% if smarty.post.default_weekday|default(default_weekday) == "1" %}checked{% endif %} value="1"> {t}Monday{/t}</label>
           </td>
         </tr>
         </tr>
@@ -393,8 +393,8 @@ function disableAuthFields(bool)
             <b>{t}Sender{/t}: *</b>
           </td>
           <td width="80%">
-            <input type="text" name="setup[smtp][from]" size="30" value="{$smarty.request.setup.smtp.from|default:''|escape:"html"}" tabindex="{$tabindex}">
-            {include file="error_icon.tpl.html" field="setup[smtp][from]"}
+            <input type="text" name="setup[smtp][from]" size="30" value="{$smarty.request.setup.smtp.from|default:''|escape:"html"}" tabindex="{{ tabindex }}">
+            {% include "error_icon.html.twig.html" with {'field' : 'setup[smtp][from]'} %}
             <br/>
             <span><i>({t}must be a valid email address{/t})</i></span>
           </td>
@@ -404,8 +404,8 @@ function disableAuthFields(bool)
             <b>{t}Hostname{/t}: *</b>
           </td>
           <td width="80%">
-            <input type="text" name="setup[smtp][host]" size="30" value="{$smarty.request.setup.smtp.host|default:'localhost'|escape:"html"}" tabindex="{$tabindex}">
-            {include file="error_icon.tpl.html" field="setup[smtp][host]"}
+            <input type="text" name="setup[smtp][host]" size="30" value="{$smarty.request.setup.smtp.host|default:'localhost'|escape:"html"}" tabindex="{{ tabindex }}">
+            {% include "error_icon.html.twig.html" with {'field' : 'setup[smtp][host]'} %}
           </td>
         </tr>
         <tr>
@@ -413,8 +413,8 @@ function disableAuthFields(bool)
             <b>{t}Port{/t}: *</b>
           </td>
           <td width="80%">
-            <input type="text" name="setup[smtp][port]" size="5" value="{$smarty.request.setup.smtp.port|default:'25'}" tabindex="{$tabindex}">
-            {include file="error_icon.tpl.html" field="setup[smtp][port]"}
+            <input type="text" name="setup[smtp][port]" size="5" value="{$smarty.request.setup.smtp.port|default:'25'}" tabindex="{{ tabindex }}">
+            {% include "error_icon.html.twig.html" with {'field' : 'setup[smtp][port]'} %}
           </td>
         </tr>
         <tr>
@@ -422,9 +422,9 @@ function disableAuthFields(bool)
             <b>{t}Requires Authentication?{/t}&nbsp;</b>
           </td>
           <td width="80%">
-            <label><input type="radio" name="setup[smtp][auth]" value="1" {if $smarty.request.setup.smtp.auth|default:'' == 1}checked{/if} onClick="disableAuthFields(false);" tabindex="{$tabindex}">
+            <label><input type="radio" name="setup[smtp][auth]" value="1" {% if smarty.request.setup.smtp.auth|default('') == 1 %}checked{% endif %} onClick="disableAuthFields(false);" tabindex="{{ tabindex }}">
             {t}Yes{/t}</label>&nbsp;&nbsp;
-            <label><input type="radio" name="setup[smtp][auth]" value="0" {if $smarty.request.setup.smtp.auth|default:'' != 1}checked{/if} onClick="disableAuthFields(true);" tabindex="{$tabindex}">
+            <label><input type="radio" name="setup[smtp][auth]" value="0" {% if smarty.request.setup.smtp.auth|default('') != 1 %}checked{% endif %} onClick="disableAuthFields(true);" tabindex="{{ tabindex }}">
             {t}No{/t}</label>
           </td>
         </tr>
@@ -433,8 +433,8 @@ function disableAuthFields(bool)
             <b>{t}Username{/t}:&nbsp;</b>
           </td>
           <td width="80%">
-            <input type="text" name="setup[smtp][username]" size="20" value="{$smarty.request.setup.smtp.username|default:''|escape:"html"}" tabindex="{$tabindex}">
-            {include file="error_icon.tpl.html" field="setup[smtp][username]"}
+            <input type="text" name="setup[smtp][username]" size="20" value="{$smarty.request.setup.smtp.username|default:''|escape:"html"}" tabindex="{{ tabindex }}">
+            {% include "error_icon.html.twig.html" with {'field' : 'setup[smtp][username]'} %}
           </td>
         </tr>
         <tr>
@@ -442,13 +442,13 @@ function disableAuthFields(bool)
             <b>{t}Password{/t}:&nbsp;</b>
           </td>
           <td width="80%">
-            <input type="password" name="setup[smtp][password]" size="20" value="{$smarty.request.setup.smtp.password|default:''|escape:"html"}" tabindex="{$tabindex}" autocomplete="off">
-            {include file="error_icon.tpl.html" field="setup[smtp][password]"}
+            <input type="password" name="setup[smtp][password]" size="20" value="{$smarty.request.setup.smtp.password|default:''|escape:"html"}" tabindex="{{ tabindex }}" autocomplete="off">
+            {% include "error_icon.html.twig.html" with {'field' : 'setup[smtp][password]'} %}
           </td>
         </tr>
         <tr>
           <td colspan="2" bgcolor="#666666" align="right">
-            <input style="font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 90%;" type="submit" value="{t}Start Installation{/t} &gt;&gt;" tabindex="{$tabindex}">
+            <input style="font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 90%;" type="submit" value="{t}Start Installation{/t} &gt;&gt;" tabindex="{{ tabindex }}">
           </td>
         </tr>
       </table>
@@ -471,13 +471,13 @@ function setFocus()
     document.install_form.hostname.focus();
     toggleAlternateUserFields();
 
-    {if $smarty.request.setup.smtp.auth|default:'' != 1}
+    {% if smarty.request.setup.smtp.auth|default('') != 1 %}
     disableAuthFields(true);
-    {/if}
+    {% endif %}
 
 }
 //-->
 </script>
 
-{/if}
+{% endif %}
 {/block}

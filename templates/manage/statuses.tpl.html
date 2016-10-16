@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -61,12 +61,12 @@
   </script>
 
   <form id="status_form" method="post">
-  {if $smarty.get.cat|default:'' == 'edit'}
+  {% if smarty.get.cat|default('') == 'edit' %}
   <input type="hidden" name="cat" value="update">
-  <input type="hidden" name="id" value="{$smarty.get.id|intval}">
-  {else}
+  <input type="hidden" name="id" value="{{ smarty.get.id|intval }}">
+  {% else %}
   <input type="hidden" name="cat" value="new">
-  {/if}
+  {% endif %}
             <table class="bordered">
               <tr class="title">
                 <th colspan="2">
@@ -79,7 +79,7 @@
                 </th>
                 <td>
                   <input type="text" name="title" size="40" value="{$info.sta_title|default:''|escape:"html"}">
-                  {include file="error_icon.tpl.html" field="title"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
                 </td>
               </tr>
               <tr>
@@ -88,7 +88,7 @@
                 </th>
                 <td>
                   <input type="text" name="abbreviation" size="5" value="{$info.sta_abbreviation|default:''}" maxlength="3">
-                  {include file="error_icon.tpl.html" field="abbreviation"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'abbreviation'} %}
                   <span>{t}(three letter abbreviation){/t}</span>
                 </td>
               </tr>
@@ -98,7 +98,7 @@
                 </th>
                 <td>
                   <input type="text" name="rank" size="5" value="{$info.sta_rank|default:''}">
-                  {include file="error_icon.tpl.html" field="rank"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'rank'} %}
                 </td>
               </tr>
               <tr>
@@ -106,8 +106,8 @@
                   {t}Closed Context ?{/t}
                 </th>
                 <td>
-                  <label><input type="radio" name="is_closed" value="1" {if $info.sta_is_closed|default:'' == '1'}checked{/if}> {t}Yes{/t}</label>
-                  <label><input type="radio" name="is_closed" value="0" {if $info.sta_is_closed|default:'' != '1'}checked{/if}> {t}No{/t}</label>
+                  <label><input type="radio" name="is_closed" value="1" {% if info.sta_is_closed|default('') == '1' %}checked{% endif %}> {t}Yes{/t}</label>
+                  <label><input type="radio" name="is_closed" value="0" {% if info.sta_is_closed|default('') != '1' %}checked{% endif %}> {t}No{/t}</label>
                 </td>
               </tr>
               <tr>
@@ -118,7 +118,7 @@
                   <select name="projects[]" multiple size="3">
                   {html_options options=$project_list selected=$info.projects|default:''}
                   </select>
-                  {include file="error_icon.tpl.html" field="projects[]"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'projects[]'} %}
                 </td>
               </tr>
               <tr>
@@ -127,17 +127,17 @@
                 </th>
                 <td>
                   <input type="text" name="color" size="10" value="{$info.sta_color|default:''}">
-                  {include file="error_icon.tpl.html" field="color"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'color'} %}
                   <span>{t}(RGB hex. This color will be used in the issue listing page and graphical stats){/t}</span>
                 </td>
               </tr>
               <tr class="buttons">
                 <td colspan="2" align="center">
-                  {if $smarty.get.cat|default:'' == 'edit'}
+                  {% if smarty.get.cat|default('') == 'edit' %}
                   <input type="submit" value="{t}Update Status{/t}">
-                  {else}
+                  {% else %}
                   <input type="submit" value="{t}Create Status{/t}">
-                  {/if}
+                  {% endif %}
                   <input type="reset" value="{t}Reset{/t}">
                 </td>
               </tr>
@@ -162,17 +162,17 @@
             </tr>
             {section name="i" loop=$list}
             <tr class="{cycle values='odd,even'}">
-              <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{$list[i].sta_id}"></td>
-              <td align="center">{$list[i].sta_rank}</td>
-              <td align="center">{$list[i].sta_abbreviation}</td>
+              <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{{ list[i].sta_id }}"></td>
+              <td align="center">{{ list[i].sta_rank }}</td>
+              <td align="center">{{ list[i].sta_abbreviation }}</td>
               <td width="40%">
-                &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].sta_id}" title="{t}update this entry{/t}">{$list[i].sta_title}</a>
+                &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].sta_id }}" title="{t}update this entry{/t}">{{ list[i].sta_title }}</a>
               </td>
               <td width="30%">
                 &nbsp;{$list[i].projects|escape:"html"}
               </td>
-              <td width="30%" bgcolor="{$list[i].sta_color}">
-                &nbsp;{$list[i].sta_color}
+              <td width="30%" bgcolor="{{ list[i].sta_color }}">
+                &nbsp;{{ list[i].sta_color }}
               </td>
             </tr>
             {sectionelse}

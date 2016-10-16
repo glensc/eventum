@@ -1,13 +1,13 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "javascripts" append}
 
   <script type="text/javascript">
-    {*FIXME: what uses the projects var? *}
+    {#FIXME: what uses the projects var? #}
   var projects = [];
-  {foreach from=$project_list key=prj_id item=prj_title name=projects}
-    projects[{$smarty.foreach.projects.iteration-1}] = {$prj_id};
-  {/foreach}
+  {% for prj_id, prj_title in project_list %}
+    projects[{{ loop.index-1 }}] = {{ prj_id }};
+  {% endfor %}
 
   function openAliasList(e)
   {
@@ -24,16 +24,16 @@
   </script>
 {/block}
 
-{*
+{#
  NOTE: we load the includes in reverse orders
- even logically in users.tpl we append form and list templates,
+ even logically in users.html.twig we append form and list templates,
  but smarty messes it up and reverses the order:
 
- list.tpl, form.tpl while it should be form.tpl, list.tpl
-*}
+ list.html.twig, form.html.twig while it should be form.html.twig, list.html.twig
+#}
 
-{if isset($list)}
-  {include file="manage/users_list.tpl.html"}
-{/if}
+{% if isset(list) %}
+  {% include "manage/users_list.html.twig.html" %}
+{% endif %}
 
-{include file="manage/users_form.tpl.html"}
+{% include "manage/users_form.html.twig.html" %}

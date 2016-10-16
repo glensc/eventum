@@ -1,34 +1,34 @@
 {textformat style="email"}{t escape=no name=$app_title}This is an automated message sent at your request from %1.{/t}
 
-{if $data.reason|default:'' != ''}
+{% if data.reason|default('') != '' %}
 {t escape=no name=$data.closer_name reason=$data.reason}This issue was just closed by %1 with the message:
 
 %2.{/t}
-{else}
+{% else %}
 {t escape=no name=$data.closer_name}This issue was just closed by %1.{/t}
-{/if}
+{% endif %}
 
 
 {t escape=no}To view more details of this issue, or to update it, please visit the following URL{/t}:
-{$core.base_url}view.php?id={$data.iss_id}
+{{ core.base_url }}view.php?id={{ data.iss_id }}
 {/textformat}
 
 ----------------------------------------------------------------------
-               {t escape=no}ID{/t}: {$data.iss_id}
-          {t escape=no}Summary{/t}: {$data.iss_summary}
-        {t escape=no}Submitted{/t}: {$data.iss_created_date|format_date}
-           {t escape=no}Status{/t}: {$data.sta_title}
-          {t escape=no}Project{/t}: {$data.prj_title}
-      {t escape=no}Reported By{/t}: {$data.reporter}
-{if $data.prc_title != ''}
-         {t escape=no}Category{/t}: {$data.prc_title}
-{/if}
-         {t escape=no}Priority{/t}: {$data.pri_title}
+               {t escape=no}ID{/t}: {{ data.iss_id }}
+          {t escape=no}Summary{/t}: {{ data.iss_summary }}
+        {t escape=no}Submitted{/t}: {{ data.iss_created_date|format_date }}
+           {t escape=no}Status{/t}: {{ data.sta_title }}
+          {t escape=no}Project{/t}: {{ data.prj_title }}
+      {t escape=no}Reported By{/t}: {{ data.reporter }}
+{% if data.prc_title != '' %}
+         {t escape=no}Category{/t}: {{ data.prc_title }}
+{% endif %}
+         {t escape=no}Priority{/t}: {{ data.pri_title }}
       {t escape=no}Description{/t}:
 ----------------------------------------------------------------------
-{$data.iss_original_description}
+{{ data.iss_original_description }}
 ----------------------------------------------------------------------
 
 {textformat style="email"}
 {t escape=no name=$app_title}Please Note: If you do not wish to receive any future email notifications from %1, please change your account preferences by visiting the URL below{/t}:
-{$core.base_url}preferences.php{/textformat}
+{{ core.base_url }}preferences.php{/textformat}

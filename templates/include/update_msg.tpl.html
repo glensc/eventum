@@ -1,21 +1,21 @@
-{if $has_duplicates|default:'' == 'yes'}
+{% if has_duplicates|default('') == 'yes' %}
     {t}Also, all issues that are marked as duplicates from this one were updated as well.{/t}
-{/if}
+{% endif %}
 
-{if $errors|default:'' != '' and $errors|@count > 0}
+{% if errors|default('') != '' and errors|@count > 0 %}
     However, there are some warnings you should be aware of:
     <ul>
-    {foreach from=$errors key=section item=sub_errors}
-    <li>{$section}
+    {% for section, sub_errors in errors %}
+    <li>{{ section }}
       <ul>
-      {foreach from=$sub_errors item=msg}
-        <li>{$msg}</li>
-      {/foreach}
+      {% for msg in sub_errors %}
+        <li>{{ msg }}</li>
+      {% endfor %}
       </ul>
     </li>
-    {/foreach}
+    {% endfor %}
     </ul>
-    {/if}
+    {% endif %}
     </span>
 
-{include file="include/notified_list.tpl.html"}
+{% include "include/notified_list.html.twig.html" %}

@@ -1,14 +1,14 @@
-{extends "base.tpl.html"}
-{block "title"}{$extra_title}{/block}
+{extends "base.html.twig.html"}
+{block "title"}{{ extra_title }}{/block}
 
 {block "content"}
 
 <script type="text/javascript">
 <!--
-window.name = '_email' + {$email.sup_id}
-var issue_id = '{$issue_id}';
-var ema_id = '{$email.sup_ema_id}';
-var sup_id = '{$email.sup_id}';
+window.name = '_email' + {{ email.sup_id }}
+var issue_id = '{{ issue_id }}';
+var ema_id = '{{ email.sup_ema_id }}';
+var sup_id = '{{ email.sup_id }}';
 
 function reply(ema_id, id)
 {
@@ -26,7 +26,7 @@ function replyAsNote(account_id, email_id)
 function loadReport(id)
 {
 
-    document.writeln('<link rel="stylesheet" href="{$core.rel_url}css/main.css" type="text/css">');
+    document.writeln('<link rel="stylesheet" href="{{ core.rel_url }}css/main.css" type="text/css">');
     document.writeln('<span>Please wait a few moments.</span><br />');
     document.writeln('<br /><span>{t}Re-directing the parent window to the issue report page. This window will be closed automatically.{/t}</span>');
     window.opener.location.href = 'new.php?cat=associate&item[]=' + id;
@@ -38,7 +38,7 @@ function associate(f)
     var field = getFormElement(f, 'issue');
     if (field.options[field.selectedIndex].value == 'new') {
 
-        loadReport({$smarty.get.id|intval});
+        loadReport({{ smarty.get.id|intval }});
 
     } else {
         var hidden_field = getFormElement(f, 'issue');
@@ -50,18 +50,18 @@ function openRawHeaders()
 {
 
     var features = 'width=740,height=580,top=60,left=60,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
-    var headersWin = window.open('view_headers.php?id={$smarty.get.id|intval}', '_headers', features);
+    var headersWin = window.open('view_headers.php?id={{ smarty.get.id|intval }}', '_headers', features);
     headersWin.focus();
 
 }
 function viewEmail(ema_id, id)
 {
 
-{if $smarty.get.cat|default:'' == 'list_emails'}
+{% if smarty.get.cat|default('') == 'list_emails' %}
     window.location.href = 'view_email.php?cat=list_emails&ema_id=' + ema_id + '&id=' + id;
-{else}
+{% else %}
     window.location.href = 'view_email.php?issue_id=' + issue_id + '&ema_id=' + ema_id + '&id=' + id;
-{/if}
+{% endif %}
 
 }
 function moveMessage()
@@ -84,66 +84,66 @@ $().ready(function(e) {
 //-->
 </script>
 
-{if $move_email_result|default:'' != ''}
+{% if move_email_result|default('') != '' %}
 <br />
 <center>
   <span>
-    {if $move_email_result == -1}
+    {% if move_email_result == -1 %}
       {t}An error occurred while trying to run your query{/t}
-    {else}
+    {% else %}
       {t}Thank you, the email was successfully moved.{/t}
-    {/if}
+    {% endif %}
   </span>
 </center>
 <script type="text/javascript">
 <!--
-{if $core.current_user_prefs.close_popup_windows == '1'}
+{% if core.current_user_prefs.close_popup_windows == '1' %}
 setTimeout('Eventum.close_and_refresh()', 2000);
-{/if}
+{% endif %}
 //-->
 </script>
 <br />
-{if not $core.current_user_prefs.close_popup_windows}
+{% if not core.current_user_prefs.close_popup_windows %}
 <center>
   <span><a href="javascript:void(null);" onClick="Eventum.close_and_refresh();">{t}Continue{/t}</a></span>
 </center>
-{/if}
-{else}
+{% endif %}
+{% else %}
 <form method="post" action="popup.php" name="view_email">
 <input type="hidden" name="cat" value="associate">
-<input type="hidden" name="item[]" value="{$smarty.get.id|intval}">
+<input type="hidden" name="item[]" value="{{ smarty.get.id|intval }}">
       <table class="bordered">
         <tr class="title">
           <th colspan="2">
-            {t}View Email Details{/t}{if $issue_id} ({t}Associated with Issue{/t} <a href="view.php?id={$issue_id}">#{$issue_id}</a>){/if}
+            {t}View Email Details{/t}{% if issue_id %} ({t}Associated with Issue{/t} <a href="view.php?id={{ issue_id }}">#{{ issue_id }}</a>){% endif %}
           </th>
         </tr>
-        {if $next.sup_id != "" || $previous.sup_id != ""}
+        {% if next.sup_id != "" || previous.sup_id != "" %}
         <tr class="buttons">
           <td colspan="2" align="center">
             <table border="0" width="100%" cellspacing="0" cellpadding="1">
               <tr>
                 <td>
-                  {if $previous.sup_id != ""}
-                  <input type="button" value="&lt;&lt; {t}Previous Message{/t}" onClick="viewEmail({$previous.ema_id}, {$previous.sup_id});">
-                  {/if}
+                  {% if previous.sup_id != "" %}
+                  <input type="button" value="&lt;&lt; {t}Previous Message{/t}" onClick="viewEmail({{ previous.ema_id }}, {{ previous.sup_id }});">
+                  {% endif %}
                 </td>
                 <td align="right">
-                  {if $next.sup_id != ""}
-                  <input type="button" value="{t}Next Message{/t} &gt;&gt;" onClick="viewEmail({$next.ema_id}, {$next.sup_id});">
-                  {/if}
+                  {% if next.sup_id != "" %}
+                  <input type="button" value="{t}Next Message{/t} &gt;&gt;" onClick="viewEmail({{ next.ema_id }}, {{ next.sup_id }});">
+                  {% endif %}
                 </td>
               </tr>
             </table>
           </td>
         </tr>
-        {/if}
+        {% endif %}
         <tr>
           <th width="120">
             {t}Received{/t}:
           </th>
           <td>
-            {$email.sup_date|timeago}
+            {{ email.sup_date|timeago }}
           </td>
         </tr>
         <tr>
@@ -159,14 +159,14 @@ setTimeout('Eventum.close_and_refresh()', 2000);
             {t}To{/t}:
           </th>
           <td>
-            {if $email.sup_to == ""}
+            {% if email.sup_to == "" %}
             <i>{t}sent to notification list{/t}</i>
-            {else}
+            {% else %}
             {$email.sup_to|escape:"html"}
-            {/if}
+            {% endif %}
           </td>
         </tr>
-        {if $role|default:'' != $core.roles.customer && $recipients|@count > 0}
+        {% if role|default('') != core.roles.customer && recipients|@count > 0 %}
         <tr>
           <th width="120">
             {t}Recipients{/t}:
@@ -174,13 +174,13 @@ setTimeout('Eventum.close_and_refresh()', 2000);
           <td>
             {strip}
             {section name="i" loop=$recipients}
-              {if not $smarty.section.i.first}, {/if}
+              {% if not smarty.section.i.first %}, {% endif %}
               {$recipients[i]|escape:"html"}
             {/section}
             {/strip}
           </td>
         </tr>
-        {/if}
+        {% endif %}
         <tr>
           <th width="120">
             {t}Cc{/t}:
@@ -197,19 +197,19 @@ setTimeout('Eventum.close_and_refresh()', 2000);
             {$email.sup_subject|escape:"html"}
           </td>
         </tr>
-        {if $email.attachments}
+        {% if email.attachments %}
         <tr>
           <th width="120">
             {t}Attachments{/t}:
           </th>
           <td >
             {section name="i" loop=$email.attachments}
-            <a title="{t}download file{/t}" href="get_attachment.php?sup_id={$email.sup_id}&filename={$email.attachments[i].filename|escape:"url"}{if $email.attachments[i].cid}&cid={$email.attachments[i].cid|escape:"html"}{/if}"><img src="{$core.rel_url}images/attachment.gif" border="0"></a>
-            <a title="{t}download file{/t}" href="get_attachment.php?sup_id={$email.sup_id}&filename={$email.attachments[i].filename|escape:"url"}{if $email.attachments[i].cid}&cid={$email.attachments[i].cid|escape:"html"}{/if}">{$email.attachments[i].filename}</a><br />
+            <a title="{t}download file{/t}" href="get_attachment.php?sup_id={{ email.sup_id }}&filename={$email.attachments[i].filename|escape:"url"}{% if email.attachments[i].cid %}&cid={$email.attachments[i].cid|escape:"html"}{% endif %}"><img src="{{ core.rel_url }}images/attachment.gif" border="0"></a>
+            <a title="{t}download file{/t}" href="get_attachment.php?sup_id={{ email.sup_id }}&filename={$email.attachments[i].filename|escape:"url"}{% if email.attachments[i].cid %}&cid={$email.attachments[i].cid|escape:"html"}{% endif %}">{{ email.attachments[i].filename }}</a><br />
             {/section}
           </td>
         </tr>
-        {/if}
+        {% endif %}
         <tr class="buttons">
           <td colspan="2">
             <table width="100%">
@@ -219,7 +219,7 @@ setTimeout('Eventum.close_and_refresh()', 2000);
                   <span>(<a class="js_link display_fixed_width">{t}display in fixed width font{/t}</a>)</span>
                 </td>
                 <td align="right">
-                  <a href="get_attachment.php?sup_id={$email.sup_id}&raw=1">{t}Download Raw Email{/t}</a>
+                  <a href="get_attachment.php?sup_id={{ email.sup_id }}&raw=1">{t}Download Raw Email{/t}</a>
                   <a href="javascript:void(null);" onClick="openRawHeaders();">{t}Raw Headers{/t}</a>
                 </td>
               </tr>
@@ -228,39 +228,39 @@ setTimeout('Eventum.close_and_refresh()', 2000);
         </tr>
         <tr>
           <td colspan="2" id="email_message">
-{$email.seb_body|format_email}
+{{ email.seb_body|format_email }}
           </td>
         </tr>
         <tr class="buttons">
           <td colspan="2">
-            <input type="button" value="{t}Reply{/t}" onClick="reply({$smarty.get.ema_id}, {$smarty.get.id|intval});">
-            {if $core.current_role > $core.roles.customer}
-                <input type="button" value="Reply as Note" onClick="replyAsNote({$smarty.get.ema_id}, {$smarty.get.id});">
-            {/if}
+            <input type="button" value="{t}Reply{/t}" onClick="reply({{ smarty.get.ema_id }}, {{ smarty.get.id|intval }});">
+            {% if core.current_role > core.roles.customer %}
+                <input type="button" value="Reply as Note" onClick="replyAsNote({{ smarty.get.ema_id }}, {{ smarty.get.id }});">
+            {% endif %}
             <input type="button" value="{t}Close{/t}" onClick="window.close();">
           </td>
         </tr>
-        {if $next.sup_id != "" || $previous.sup_id != ""}
+        {% if next.sup_id != "" || previous.sup_id != "" %}
         <tr class="buttons">
           <td colspan="2" align="center">
             <table border="0" width="100%" cellspacing="0" cellpadding="1">
               <tr>
                 <td>
-                  {if $previous.sup_id != ""}
-                  <input type="button" value="&lt;&lt; {t}Previous Message{/t}" onClick="viewEmail({$previous.ema_id}, {$previous.sup_id});">
-                  {/if}
+                  {% if previous.sup_id != "" %}
+                  <input type="button" value="&lt;&lt; {t}Previous Message{/t}" onClick="viewEmail({{ previous.ema_id }}, {{ previous.sup_id }});">
+                  {% endif %}
                 </td>
                 <td align="right">
-                  {if $next.sup_id != ""}
-                  <input type="button" value="{t}Next Message{/t} &gt;&gt;" onClick="viewEmail({$next.ema_id}, {$next.sup_id});">
-                  {/if}
+                  {% if next.sup_id != "" %}
+                  <input type="button" value="{t}Next Message{/t} &gt;&gt;" onClick="viewEmail({{ next.ema_id }}, {{ next.sup_id }});">
+                  {% endif %}
                 </td>
               </tr>
             </table>
           </td>
         </tr>
-        {/if}
-        {if $core.current_role > $core.roles.standard_user && $email.sup_iss_id == 0 && $email_accounts|@count > 1}
+        {% endif %}
+        {% if core.current_role > core.roles.standard_user && email.sup_iss_id == 0 && email_accounts|@count > 1 %}
         <tr>
           <td colspan="2" align="center">
             <input type="button" name="move_message" value="{t}Move Message To{/t}" onClick="moveMessage()">
@@ -269,8 +269,8 @@ setTimeout('Eventum.close_and_refresh()', 2000);
             </select>
           </td>
         </tr>
-        {/if}
+        {% endif %}
       </table>
 </form>
-{/if}
+{% endif %}
 {/block}

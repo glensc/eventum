@@ -1,9 +1,9 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 {block title}{t 1=$issue_id 2=$escalation_id}Escalate #%1 on Issue #%1{/t}{/block}
 
 {block "content"}
 
-{if $show_temp_form == 'yes'}
+{% if show_temp_form == 'yes' %}
 <br /><br />&nbsp;
 <br /><br />&nbsp;
 <br /><br />&nbsp;
@@ -37,18 +37,18 @@
 <br /><br />&nbsp;
 <br /><br />&nbsp;
 <form method="post">
-<input type="hidden" name="form_name" value="{$smarty.get.form_name}">
-<input type="hidden" name="field_name" value="{$smarty.get.field_name}">
+<input type="hidden" name="form_name" value="{{ smarty.get.form_name }}">
+<input type="hidden" name="field_name" value="{{ smarty.get.field_name }}">
 <textarea rows="0" cols="0" name="textarea"></textarea>
 </form>
 <script type="text/javascript">
 <!--
-var textarea = window.opener.document.{$smarty.get.form_name}.{$smarty.get.field_name};
+var textarea = window.opener.document.{{ smarty.get.form_name }}.{{ smarty.get.field_name }};
 document.forms[0].textarea.value = textarea.value;
 document.forms[0].submit();
 //-->
 </script>
-{else}
+{% else %}
 
 <script type="text/javascript">
 <!--
@@ -63,7 +63,7 @@ function fixSpelling()
         return;
     }
 
-    var textarea = window.opener.document.{$smarty.post.form_name}.{$smarty.post.field_name};
+    var textarea = window.opener.document.{{ smarty.post.form_name }}.{{ smarty.post.field_name }};
     textarea.value = replaceWords(textarea.value, old_value, new_value);
 
 }
@@ -71,9 +71,9 @@ function buildSuggestionBox()
 {
 
     var suggestions = [];
-    {foreach key=word item=suggestions from=$spell_check.suggestions}
-    suggestions.push(new Option("{$word}", "{section name=i loop=$suggestions}{$suggestions[i]}{if not $smarty.section.i.last},{/if}{/section}"));
-    {/foreach}
+    {% for word, suggestions in spell_check.suggestions %}
+    suggestions.push(new Option("{{ word }}", "{section name=i loop=$suggestions}{{ suggestions[i] }}{% if not smarty.section.i.last %},{% endif %}{/section}"));
+    {% endfor %}
 
     var f = document.forms[0];
     var word = f.misspelled_words.options[f.misspelled_words.selectedIndex].text;
@@ -103,13 +103,13 @@ function buildSuggestionBox()
             <b>{t}Spell Check{/t}</b>
           </td>
         </tr>
-        {if $spell_check.total_words == 0}
+        {% if spell_check.total_words == 0 %}
         <tr>
           <td align="center">
             <b>{t}No spelling mistakes could be found.{/t}</b>
           </td>
         </tr>
-        {else}
+        {% else %}
         <tr>
           <td width="130">
             <b>{t}Misspelled Words{/t}:</b>
@@ -130,10 +130,10 @@ function buildSuggestionBox()
             </select>
           </td>
         </tr>
-        {/if}
+        {% endif %}
         <tr>
           <td colspan="2" align="center">
-            {if $spell_check.total_words > 0}<input type="button" value="{t}Fix Spelling{/t}" onClick="fixSpelling();">&nbsp;&nbsp;{/if}
+            {% if spell_check.total_words > 0 %}<input type="button" value="{t}Fix Spelling{/t}" onClick="fixSpelling();">&nbsp;&nbsp;{% endif %}
             <input type="button" value="Close" onClick="window.close();">
           </td>
         </tr>
@@ -142,12 +142,12 @@ function buildSuggestionBox()
   </tr>
 </table>
 </form>
-{if $spell_check.total_words > 0}
+{% if spell_check.total_words > 0 %}
 <script type="text/javascript">
 <!--
 buildSuggestionBox();
 //-->
 </script>
-{/if}
-{/if}
+{% endif %}
+{% endif %}
 {/block}

@@ -1,4 +1,4 @@
-{extends "reports/reports_base.tpl.html"}
+{extends "reports/reports_base.html.twig.html"}
 {block "title"}Custom Fields{/block}
 
 {block "report_content"}
@@ -36,7 +36,7 @@ function validateForm(f)
                 <option value="-1"></option>
                 {html_options options=$custom_fields selected=$custom_field}
             </select>
-            {include file="error_icon.tpl.html" field="custom_field"}
+            {% include "error_icon.html.twig.html" with {'field' : 'custom_field'} %}
           </td>
           <td align="center" valign="top" rowspan="5">
             <select name="custom_options[]" size="8" multiple>
@@ -45,23 +45,23 @@ function validateForm(f)
         </tr>
         <tr>
           <td width="30%" align="center" height="10">
-            {if $core.has_crm}
+            {% if core.has_crm %}
               <b>{t}Group By{/t}</b>
-            {/if}
+            {% endif %}
           </td>
         </tr>
         <tr>
           <td align="left" valign="top">
-            {if $core.has_crm}
-            &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="group_by" value="issue" {if $group_by != 'customer'}CHECKED{/if}>
+            {% if core.has_crm %}
+            &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="group_by" value="issue" {% if group_by != 'customer' %}CHECKED{% endif %}>
                 <a id="link" href="javascript:void(null)"
                             onClick="checkRadio('custom_fields_report', 'group_by', 0);">{t}Issue{/t}</a><br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="group_by" value="customer" {if $group_by == 'customer'}CHECKED{/if}>
+            &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="group_by" value="customer" {% if group_by == 'customer' %}CHECKED{% endif %}>
                 <a id="link" href="javascript:void(null)"
                             onClick="checkRadio('custom_fields_report', 'group_by', 1);">{t}Customer{/t}</a><br />
-            {else}
+            {% else %}
               <input type="hidden" name="group_by" value="issue">
-            {/if}
+            {% endif %}
           </td>
         </tr>
     <tr>
@@ -73,10 +73,10 @@ function validateForm(f)
       <td align="center" valign="top">
         <select name="interval">
             <option value=""></option>
-            <option value="day"{if $smarty.request.interval|default:'' == 'day'} selected{/if}>Day</option>
-            <option value="week"{if $smarty.request.interval|default:'' == 'week'} selected{/if}>Week</option>
-            <option value="month"{if $smarty.request.interval|default:'' == 'month'} selected{/if}>Month</option>
-            <option value="year"{if $smarty.request.interval|default:'' == 'year'} selected{/if}>Year</option>
+            <option value="day"{% if smarty.request.interval|default('') == 'day' %} selected{% endif %}>Day</option>
+            <option value="week"{% if smarty.request.interval|default('') == 'week' %} selected{% endif %}>Week</option>
+            <option value="month"{% if smarty.request.interval|default('') == 'month' %} selected{% endif %}>Month</option>
+            <option value="year"{% if smarty.request.interval|default('') == 'year' %} selected{% endif %}>Year</option>
         </select>
       </td>
     </tr>
@@ -127,13 +127,13 @@ function validateForm(f)
 <script type="text/javascript">
 var options = [];
 var option_to_fld_id = [];
-{foreach from=$options key=fld_id item=option_list name=option_list}
-    option_to_fld_id[{$smarty.foreach.option_list.iteration-1}] = {$fld_id};
-    options[{$smarty.foreach.option_list.iteration-1}] = [];
-    {foreach from=$option_list key=cfo_id item=cfo_value name=option}
-        options[{$smarty.foreach.option_list.iteration-1}][{$smarty.foreach.option.iteration-1}] = new Option('{$cfo_value|escape:javascript}', '{$cfo_id|escape:javascript}');
-    {/foreach}
-{/foreach}
+{% for fld_id, option_list in options %}
+    option_to_fld_id[{{ loop.index-1 }}] = {{ fld_id }};
+    options[{{ loop.index-1 }}] = [];
+    {% for cfo_id, cfo_value in option_list %}
+        options[{{ loop.index-1 }}] = new Option('{$cfo_value|escape:javascript}', '{$cfo_id|escape:javascript}');
+    {% endfor %}
+{% endfor %}
 
 var options_field = document.forms['custom_fields_report'].elements['custom_options[]'];
 function setOptions(fld_id, auto_select)
@@ -156,69 +156,69 @@ function setOptions(fld_id, auto_select)
 }
 
 
-setOptions('{$custom_field}', false);
-{if $custom_options|@count > 0}
-    {foreach from=$custom_options key=option_index item=option}
+setOptions('{{ custom_field }}', false);
+{% if custom_options|@count > 0 %}
+    {% for option_index, option in custom_options %}
 
       for (var i = 0; i < options_field.options.length; i++) {
-        if (options_field.options[i].value == '{$option}') {
+        if (options_field.options[i].value == '{{ option }}') {
           options_field.options[i].selected = true;
         }
       }
 
-    {/foreach}
-{/if}
+    {% endfor %}
+{% endif %}
 </script>
 
-{if $custom_options|@count > 0}
+{% if custom_options|@count > 0 %}
 <div align="center">
-    <img src="graph.php?graph=custom_fields&{$smarty.server.QUERY_STRING}"><br /><br />
-    <img src="graph.php?graph=custom_fields&{$smarty.server.QUERY_STRING}&type=pie"><br />
+    <img src="graph.php?graph=custom_fields&{{ smarty.server.QUERY_STRING }}"><br /><br />
+    <img src="graph.php?graph=custom_fields&{{ smarty.server.QUERY_STRING }}&type=pie"><br />
     {t}Percentages may not add up to exactly 100% due to rounding.{/t}<br /><br />
 </div>
-{/if}
+{% endif %}
 
-{if $data|@count > 0}
-{assign var="colspan" value=3}
+{% if data|@count > 0 %}
+{% set colspan = '3' %}
   <br />
   <table class="bordered grid medium">
     <tr class="title">
-      <th colspan="{$colspan}">
+      <th colspan="{{ colspan }}">
         {t}Issues/Customers matching criteria{/t}
       </th>
     </tr>
     <tr>
-      {if $core.has_crm}
+      {% if core.has_crm %}
       <th>{t}Customer{/t}</th>
-      {/if}
-      {if $smarty.request.group_by == 'customer'}
+      {% endif %}
+      {% if smarty.request.group_by == 'customer' %}
       <th>{t}Issue Count{/t}</th>
-      {else}
+      {% else %}
       <th>{t}Issue ID{/t}</th>
       <th>{t}Summary{/t}</th>
-      <th>{$field_info.fld_title}</th>
-      {/if}
+      <th>{{ field_info.fld_title }}</th>
+      {% endif %}
     </tr>
-    {foreach from=$data item=row}
+    {% for row in data %}
     <tr class="{cycle values='odd,even'}">
-      {if $core.has_crm}
-      <td>{$row.customer_title}</td>
-      {/if}
-      {if $smarty.request.group_by == 'customer'}
-      <td align="center">{$row.row_count}</td>
-      {else}
+      {% if core.has_crm %}
+      <td>{{ row.customer_title }}</td>
+      {% endif %}
+      {% if smarty.request.group_by == 'customer' %}
+      <td align="center">{{ row.row_count }}</td>
+      {% else %}
       <td align="right">
-        <a href="{$core.base_url}view.php?id={$row.iss_id}">{$row.iss_id}</a>
+        <a href="{{ core.base_url }}view.php?id={{ row.iss_id }}">{{ row.iss_id }}</a>
       </td>
-      <td>{$row.iss_summary}</td>
-      <td>{$row.field_value}</td>
-      {/if}
+      <td>{{ row.iss_summary }}</td>
+      <td>{{ row.field_value }}</td>
+      {% endif %}
     </tr>
-    {foreachelse}
+    {% else %}
     <tr>
         <td colspan="8" align="center"><i>{t}No data found{/t}</i></td>
     </tr>
-    {/foreach}
+    {% endfor %}
   </table>
-{/if}
+{% endif %}
 {/block}

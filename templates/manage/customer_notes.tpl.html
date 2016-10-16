@@ -1,9 +1,9 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 <script type="text/javascript">
 <!--
-var url = '{$core.current_url}';
+var url = '{{ core.current_url }}';
 var cno_id = {$smarty.get.id|intval|default:''};
 
 function populateCustomerComboBox()
@@ -48,12 +48,12 @@ function checkDelete()
 </script>
 
 <form name="release_form" onSubmit="return validateForm(this);" method="post">
-{if $smarty.get.cat|default:'' == 'edit'}
+{% if smarty.get.cat|default('') == 'edit' %}
 <input type="hidden" name="cat" value="update">
 <input type="hidden" name="id" value="{$smarty.get.id|intval|default:''}">
-{else}
+{% else %}
 <input type="hidden" name="cat" value="new">
-{/if}
+{% endif %}
         <table class="bordered">
           <tr class="title">
             <th colspan="2">
@@ -69,7 +69,7 @@ function checkDelete()
                 <option value="-1">{t}Please choose an option{/t}</option>
                 {html_options options=$project_list selected=$info.cno_prj_id|default:''}
               </select>
-              {include file="error_icon.tpl.html" field="project"}
+              {% include "error_icon.html.twig.html" with {'field' : 'project'} %}
             </td>
           </tr>
           <tr>
@@ -79,11 +79,11 @@ function checkDelete()
             <td>
             <select name="customer">
                 <option value="">{t}Please choose a customer{/t}</option>
-                {if $customers|default:'' != ''}
+                {% if customers|default('') != '' %}
                     {html_options options=$customers selected=$info.cno_customer_id|default:''}
-                {/if}
+                {% endif %}
             </select>
-            {include file="error_icon.tpl.html" field="customer"}
+            {% include "error_icon.html.twig.html" with {'field' : 'customer'} %}
             </td>
           </tr>
           <tr>
@@ -96,11 +96,11 @@ function checkDelete()
           </tr>
           <tr class="buttons">
             <td colspan="2">
-              {if $smarty.get.cat|default:'' == 'edit'}
+              {% if smarty.get.cat|default('') == 'edit' %}
               <input type="submit" value="{t}Update Note{/t}">
-              {else}
+              {% else %}
               <input type="submit" value="{t}Create Note{/t}">
-              {/if}
+              {% endif %}
               <input type="reset" value="{t}Reset{/t}">
             </td>
           </tr>
@@ -122,9 +122,9 @@ function checkDelete()
         </tr>
         {section name="i" loop=$list}
         <tr class="{cycle values='odd,even'}">
-          <td nowrap align="center"><input type="checkbox" name="items[]" value="{$list[i].cno_id}"></td>
+          <td nowrap align="center"><input type="checkbox" name="items[]" value="{{ list[i].cno_id }}"></td>
           <td>
-            <a href="{$core.current_url}?cat=edit&id={$list[i].cno_id}">{$list[i].customer_title|default:''|escape:"html"}</a>
+            <a href="{{ core.current_url }}?cat=edit&id={{ list[i].cno_id }}">{$list[i].customer_title|default:''|escape:"html"}</a>
           </td>
           <td>
             {$list[i].cno_note|escape:"html"|nl2br}

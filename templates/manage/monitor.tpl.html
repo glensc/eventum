@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -53,12 +53,12 @@ function disableDiskcheckFields()
       <table>
       <tr>
         <td colspan="2">
-        <input type="radio" name="diskcheck[status]" value="enabled" id="diskcheck[status].enabled" {if $setup.monitor.diskcheck.status|default:'' == 'enabled'}checked{/if}>
+        <input type="radio" name="diskcheck[status]" value="enabled" id="diskcheck[status].enabled" {% if setup.monitor.diskcheck.status|default('') == 'enabled' %}checked{% endif %}>
         <label for="diskcheck[status].enabled">
           {t}Enabled{/t}
         </label>
         &nbsp;&nbsp;
-        <input type="radio" name="diskcheck[status]" value="disabled" id="diskcheck[status].disabled" {if $setup.monitor.diskcheck.status|default:'' != 'enabled'}checked{/if}>
+        <input type="radio" name="diskcheck[status]" value="disabled" id="diskcheck[status].disabled" {% if setup.monitor.diskcheck.status|default('') != 'enabled' %}checked{% endif %}>
         <label for="diskcheck[status].disabled">
           {t}Disabled{/t}
         </label>
@@ -70,7 +70,7 @@ function disableDiskcheckFields()
         </td>
         <td width="80%">
         <input type="text" name="diskcheck[partition]" value="{$setup.monitor.diskcheck.partition|default:''}">
-        {include file="error_icon.tpl.html" field="diskcheck[partition]"}
+        {% include "error_icon.html.twig.html" with {'field' : 'diskcheck[partition]'} %}
         <span>{t escape=no 1="/"}(default %1){/t}</span>
         </td>
       </tr>

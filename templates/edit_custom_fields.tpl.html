@@ -1,82 +1,82 @@
-{* Should be included and past the variables 'custom_fields' (an array of custom fields) and
-'form_type' which should be either 'anonymous' or 'report' *}
+{# Should be included and past the variables 'custom_fields' (an array of custom fields) and
+'form_type' which should be either 'anonymous' or 'report' #}
 
 {section name="i" loop=$custom_fields}
-{assign var='fld_id' value=$custom_fields[i].fld_id}
-{assign var="custom_field_id" value=$custom_fields[i].fld_id}
-{if $form_type|default:'' == 'report'}
-  {assign var="cf_required" value=$custom_fields[i].fld_report_form_required}
-{elseif $form_type|default:'' == 'anonymous'}
-  {assign var="cf_required" value=$custom_fields[i].fld_anonymous_form_required}
-{elseif $form_type|default:'' == 'close'}
-  {assign var="cf_required" value=$custom_fields[i].fld_close_form_required}
-{elseif $form_type|default:'' == 'edit'}
-  {assign var="cf_required" value=$custom_fields[i].fld_edit_form_required}
-{else}
-  {assign var="cf_required" value=""}
-{/if}
+{% set fld_id = custom_fields %}
+{% set custom_field_id = custom_fields %}
+{% if form_type|default('') == 'report' %}
+  {% set cf_required = custom_fields %}
+{% elseif form_type|default('') == 'anonymous' %}
+  {% set cf_required = custom_fields %}
+{% elseif form_type|default('') == 'close' %}
+  {% set cf_required = custom_fields %}
+{% elseif form_type|default('') == 'edit' %}
+  {% set cf_required = custom_fields %}
+{% else %}
+  {% set cf_required = '' %}
+{% endif %}
 <tr class="custom_field"
-    data-custom-id="{$custom_fields[i].fld_id}"
-    data-custom-type="{$custom_fields[i].fld_type}"
-    data-custom-title="{$custom_fields[i].fld_title}"
-    data-custom-required="{$cf_required}"
+    data-custom-id="{{ custom_fields[i].fld_id }}"
+    data-custom-type="{{ custom_fields[i].fld_type }}"
+    data-custom-title="{{ custom_fields[i].fld_title }}"
+    data-custom-required="{{ cf_required }}"
     data-custom-validation-js="{$custom_fields[i].validation_js|default:''}">
-  <th class="{if $custom_fields[i].fld_min_role > $core.roles.customer}internal{/if}">
-    {$custom_fields[i].fld_title}{if $cf_required} *{/if}
+  <th class="{% if custom_fields[i].fld_min_role > core.roles.customer %}internal{% endif %}">
+    {{ custom_fields[i].fld_title }}{% if cf_required %} *{% endif %}
   </th>
   <td>
-    {if $custom_fields[i].fld_type == 'text'}
-    <input id="custom_field_{$custom_fields[i].fld_id}" type="text" name="custom_fields[{$custom_fields[i].fld_id}]" maxlength="255" size="50"
-           {if $tab_index|default:'' != ''}tabindex="{$tabindex++}"{/if}
+    {% if custom_fields[i].fld_type == 'text' %}
+    <input id="custom_field_{{ custom_fields[i].fld_id }}" type="text" name="custom_fields[{{ custom_fields[i].fld_id }}]" maxlength="255" size="50"
+           {% if tab_index|default('') != '' %}tabindex="{$tabindex++}"{% endif %}
            value="{$defaults.custom_fields[$fld_id]|default:$custom_fields[i].value|default:$custom_fields[i].default_value|default:''}">
-    {elseif $custom_fields[i].fld_type == 'integer'}
-    <input id="custom_field_{$custom_fields[i].fld_id}" type="text" name="custom_fields[{$custom_fields[i].fld_id}]" maxlength="255" size="10"
-           {if $tab_index|default:'' != ''}tabindex="{$tabindex++}"{/if}
+    {% elseif custom_fields[i].fld_type == 'integer' %}
+    <input id="custom_field_{{ custom_fields[i].fld_id }}" type="text" name="custom_fields[{{ custom_fields[i].fld_id }}]" maxlength="255" size="10"
+           {% if tab_index|default('') != '' %}tabindex="{$tabindex++}"{% endif %}
            value="{$defaults.custom_fields[$fld_id]|default:$custom_fields[i].value|default:$custom_fields[i].default_value|default:''}">
-    {elseif $custom_fields[i].fld_type == 'textarea'}
-    <textarea id="custom_field_{$custom_fields[i].fld_id}" name="custom_fields[{$custom_fields[i].fld_id}]" rows="10" cols="60"
-              {if $tab_index|default:'' != ''}tabindex="{$tabindex++}"{/if}>{$defaults.custom_fields[$fld_id]|default:$custom_fields[i].value|default:$custom_fields[i].default_value|default:''}</textarea>
-    {elseif $custom_fields[i].fld_type == 'date'}
-    <input type="text" id="custom_field_{$custom_fields[i].fld_id}" name="custom_fields[{$custom_field_id}]" size="12" class="date_picker"
+    {% elseif custom_fields[i].fld_type == 'textarea' %}
+    <textarea id="custom_field_{{ custom_fields[i].fld_id }}" name="custom_fields[{{ custom_fields[i].fld_id }}]" rows="10" cols="60"
+              {% if tab_index|default('') != '' %}tabindex="{$tabindex++}"{% endif %}>{$defaults.custom_fields[$fld_id]|default:$custom_fields[i].value|default:$custom_fields[i].default_value|default:''}</textarea>
+    {% elseif custom_fields[i].fld_type == 'date' %}
+    <input type="text" id="custom_field_{{ custom_fields[i].fld_id }}" name="custom_fields[{{ custom_field_id }}]" size="12" class="date_picker"
            value="{$defaults.custom_fields[$fld_id]|default:$custom_fields[i].value|default:$custom_fields[i].default_value|default:''}">
-    {include file="error_icon.tpl.html" field="custom_fields[$custom_field_id]"}
-    {elseif $custom_fields[i].fld_type == 'checkbox'}
-      {if $defaults.custom_fields[$fld_id]|default:'' != ''}
-        {assign var="selected_cfo_ids" value=$defaults.custom_fields[$fld_id]}
-      {else}
-        {assign var="selected_cfo_ids" value=$custom_fields[i].selected_cfo_id|default:''}
-      {/if}
-      <ul class="custom_field_checkbox" id="custom_field_{$custom_fields[i].fld_id}">
-          <input type="hidden" name="custom_fields[{$custom_field_id}][]" value="" />
-      {foreach $custom_fields[i].field_options as $key => $display}
-          <li><label><input type="checkbox" name="custom_fields[{$custom_field_id}][]" value="{$key}"
-                  {if is_array($selected_cfo_ids) and in_array($key, $selected_cfo_ids)}checked{/if} />{$display}</label></li>
-      {/foreach}
+    {% include "error_icon.html.twig.html" with {'field' : 'custom_fields[$custom_field_id]'} %}
+    {% elseif custom_fields[i].fld_type == 'checkbox' %}
+      {% if defaults.custom_fields[fld_id]|default('') != '' %}
+        {% set selected_cfo_ids = defaults.custom_fields %}
+      {% else %}
+        {% set selected_cfo_ids = custom_fields %}
+      {% endif %}
+      <ul class="custom_field_checkbox" id="custom_field_{{ custom_fields[i].fld_id }}">
+          <input type="hidden" name="custom_fields[{{ custom_field_id }}][]" value="" />
+      {% for key, display in custom_fields[i].field_options %}
+          <li><label><input type="checkbox" name="custom_fields[{{ custom_field_id }}][]" value="{{ key }}"
+                  {% if is_array(selected_cfo_ids) and in_array(key, selected_cfo_ids) %}checked{% endif %} />{{ display }}</label></li>
+      {% endfor %}
       </ul>
-    {else}
-    <select id="custom_field_{$custom_fields[i].fld_id}"
-        {if $custom_fields[i].fld_type == 'multiple'}
+    {% else %}
+    <select id="custom_field_{{ custom_fields[i].fld_id }}"
+        {% if custom_fields[i].fld_type == 'multiple' %}
             multiple class="chosen-select"
-        {/if}
-      name="custom_fields[{$custom_fields[i].fld_id}]{if $custom_fields[i].fld_type == 'multiple'}[]{/if}"
-      {if $tab_index|default:'' != ''}tabindex="{$tabindex++}"{/if}>
+        {% endif %}
+      name="custom_fields[{{ custom_fields[i].fld_id }}]{% if custom_fields[i].fld_type == 'multiple' %}[]{% endif %}"
+      {% if tab_index|default('') != '' %}tabindex="{$tabindex++}"{% endif %}>
 
-      {if $custom_fields[i].fld_type != 'multiple'}<option value="">{t}Please choose an option{/t}</option>{/if}
+      {% if custom_fields[i].fld_type != 'multiple' %}<option value="">{t}Please choose an option{/t}</option>{% endif %}
       {html_options options=$custom_fields[i].field_options selected=$defaults.custom_fields[$fld_id]|default:$custom_fields[i].selected_cfo_id|default:$custom_fields[i].default_value|default:''}
     </select><br/>
-    {/if}
-    {if $custom_fields[i].lookup_method|default:'' != ''}
-    <script type="text/javascript">custom_field_init_dynamic_options({$custom_fields[i].fld_id});</script>
-    {/if}
-    {if $custom_fields[i].fld_type == 'multiple'}
-      {assign var="custom_field_sufix" value="[]"}
-    {else}
-      {assign var="custom_field_sufix" value=""}
-    {/if}
-    {include file="error_icon.tpl.html" field="custom_fields[$custom_field_id]$custom_field_sufix"}
-    {if $custom_fields[i].fld_description|default:'' != ""}
+    {% endif %}
+    {% if custom_fields[i].lookup_method|default('') != '' %}
+    <script type="text/javascript">custom_field_init_dynamic_options({{ custom_fields[i].fld_id }});</script>
+    {% endif %}
+    {% if custom_fields[i].fld_type == 'multiple' %}
+      {% set custom_field_sufix = '[]' %}
+    {% else %}
+      {% set custom_field_sufix = '' %}
+    {% endif %}
+    {% include "error_icon.tpl.html" with {'field' : 'custom_fields[$custom_field_id]$custom_field_sufix'} %}
+    {% if custom_fields[i].fld_description|default('') != "" %}
     <span>({$custom_fields[i].fld_description|escape:"html"})</span>
-    {/if}
+    {% endif %}
   </td>
 </tr>
 {/section}

@@ -65,7 +65,7 @@ function replyAsEmail(el)
     <div class="content" {get_display_style element_name='internal_notes' total=$notes|@count}>
         <table class="grid internal">
           <tr>
-            <th nowrap>{include file="expandable_cell/buttons.tpl.html" ec_id="note"}</th>
+            <th nowrap>{% include "expandable_cell/buttons.html.twig.html" with {'ec_id' : 'note'} %}</th>
             <th align="center">#</th>
             <th>{t}Reply{/t}</th>
             <th width="20%">{t}Posted Date{/t}</th>
@@ -74,27 +74,27 @@ function replyAsEmail(el)
           </tr>
           {section name="i" loop=$notes}
           {cycle values='odd,even' assign="row_class"}
-          <tr class="{$row_class}">
-            <td nowrap>{include file="expandable_cell/buttons.tpl.html" ec_id="note" list_id=$notes[i].not_id}</td>
-            <td align="center">{$smarty.section.i.iteration}</td>
+          <tr class="{{ row_class }}">
+            <td nowrap>{% include "expandable_cell/buttons.html.twig.html" with {'ec_id' : 'note', 'list_id' : notes, 'i' : 'i', '.not_id' : '.not_id'} %}</td>
+            <td align="center">{{ smarty.section.i.iteration }}</td>
             <td align="center" nowrap>
-              <a title="{t}reply to this note{/t}" href="post_note.php?cat=reply&id={$notes[i].not_id}&issue_id={$smarty.get.id|intval}" onClick="return replyNote(this);"><img src="{$core.rel_url}images/icons/reply-internal.gif" border="0"></a>
-              <a title="{t}reply as email{/t}" href="send.php?cat=reply_to_note&note_id={$notes[i].not_id}&issue_id={$smarty.get.id|intval}" onClick="return replyAsEmail(this);"><img src="{$core.rel_url}images/icons/reply.gif" border="0"></a>
+              <a title="{t}reply to this note{/t}" href="post_note.php?cat=reply&id={{ notes[i].not_id }}&issue_id={{ smarty.get.id|intval }}" onClick="return replyNote(this);"><img src="{{ core.rel_url }}images/icons/reply-internal.gif" border="0"></a>
+              <a title="{t}reply as email{/t}" href="send.php?cat=reply_to_note&note_id={{ notes[i].not_id }}&issue_id={{ smarty.get.id|intval }}" onClick="return replyAsEmail(this);"><img src="{{ core.rel_url }}images/icons/reply.gif" border="0"></a>
             </td>
-            <td>{$notes[i].not_created_date|timeago}</td>
+            <td>{{ notes[i].not_created_date|timeago }}</td>
             <td>
               {$notes[i].usr_full_name|escape:"html"}
-              {if $core.user.usr_id == $notes[i].not_usr_id OR $core.current_role >= $core.roles.manager}[ <a href="popup.php?cat=delete_note&id={$notes[i].not_id}" onClick="return deleteNote(this)">{t}delete{/t}</a> ]{/if}
+              {% if core.user.usr_id == notes[i].not_usr_id OR core.current_role >= core.roles.manager %}[ <a href="popup.php?cat=delete_note&id={{ notes[i].not_id }}" onClick="return deleteNote(this)">{t}delete{/t}</a> ]{% endif %}
             </td>
             <td>
-              <a title="{t}view note details{/t}" href="view_note.php?id={$notes[i].not_id}" onClick="return viewNote(this)">{$notes[i].not_title|default:"<Empty Title>"|escape:"html"}</a>
-              {if $notes[i].not_has_attachment}
-              <a title="{t}view note details{/t}" href="view_note.php?id={$notes[i].not_id}" onClick="return viewNote(this)"><img src="{$core.rel_url}images/attachment.gif" border="0"></a>
-              {/if}
-              {if $notes[i].has_blocked_message} (<a href="convert_note.php?id={$notes[i].not_id}" onClick="return convertNote(this)">{t}convert note{/t}</a>){/if}
+              <a title="{t}view note details{/t}" href="view_note.php?id={{ notes[i].not_id }}" onClick="return viewNote(this)">{$notes[i].not_title|default:"<Empty Title>"|escape:"html"}</a>
+              {% if notes[i].not_has_attachment %}
+              <a title="{t}view note details{/t}" href="view_note.php?id={{ notes[i].not_id }}" onClick="return viewNote(this)"><img src="{{ core.rel_url }}images/attachment.gif" border="0"></a>
+              {% endif %}
+              {% if notes[i].has_blocked_message %} (<a href="convert_note.php?id={{ notes[i].not_id }}" onClick="return convertNote(this)">{t}convert note{/t}</a>){% endif %}
             </td>
           </tr>
-          {include file="expandable_cell/body.tpl.html" ec_id="note" list_id=$notes[i].not_id colspan="6" class=$row_class}
+          {% include "expandable_cell/body.html.twig.html" with {'ec_id' : 'note', 'list_id' : notes, 'i' : 'i', '.not_id' : '.not_id', 'colspan' : '6', 'class' : row_class} %}
           {sectionelse}
           <tr class="no_results">
             <td colspan="6">
@@ -104,10 +104,10 @@ function replyAsEmail(el)
           {/section}
         </table>
     </div>
-    {if $core.current_role > $core.roles.reporter}
+    {% if core.current_role > core.roles.reporter %}
     <div class="buttons">
-      <input type="button" value="{t}Post Internal Note{/t}" onClick="postInternalNote({$smarty.get.id|intval});">
+      <input type="button" value="{t}Post Internal Note{/t}" onClick="postInternalNote({{ smarty.get.id|intval }});">
     </div>
-    {/if}
+    {% endif %}
 </div>
 </form>

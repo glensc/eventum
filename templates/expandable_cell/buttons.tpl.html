@@ -1,17 +1,17 @@
 {strip}
-{if $list_id|default:'' == ''}
+{% if list_id|default('') == '' %}
     {capture assign="expand_all"}{t}Expand all collapsed cells{/t}{/capture}
-    {assign var="expand_tip" value=$expand_all}
+    {% set expand_tip = expand_all %}
     {capture assign="collapse_all"}{t}Collapse all expanded cells{/t}{/capture}
-    {assign var="collapse_tip" value=$collapse_all}
-{else}
+    {% set collapse_tip = collapse_all %}
+{% else %}
     {capture assign="expand"}{t}Expand collapsed cell{/t}{/capture}
-    {assign var="expand_tip" value=$expand}
+    {% set expand_tip = expand %}
     {capture assign="collapse"}{t}Collapse expanded cell{/t}{/capture}
-    {assign var="collapse_tip" value=$collapse}
-{/if}
-<div class="expandable_buttons {$ec_id}" data-expand-type="{$ec_id}" data-list-id="{$list_id|default:''}">
-    &nbsp;<img class="expand" src="{$core.rel_url}images/icons/plus.gif" border="0" alt="{$expand_tip}">
-    &nbsp;<img class="collapse" src="{$core.rel_url}images/icons/minus.gif" border="0" alt="{$collapse_tip}">
+    {% set collapse_tip = collapse %}
+{% endif %}
+<div class="expandable_buttons {{ ec_id }}" data-expand-type="{{ ec_id }}" data-list-id="{$list_id|default:''}">
+    &nbsp;<img class="expand" src="{{ core.rel_url }}images/icons/plus.gif" border="0" alt="{{ expand_tip }}">
+    &nbsp;<img class="collapse" src="{{ core.rel_url }}images/icons/minus.gif" border="0" alt="{{ collapse_tip }}">
 </div>
 {/strip}

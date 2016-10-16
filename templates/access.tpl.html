@@ -1,11 +1,11 @@
-{extends "base.tpl.html"}
-{block title}#{$issue_id} - Access List{/block}
+{extends "base.html.twig.html"}
+{block title}#{{ issue_id }} - Access List{/block}
 
 {block "content"}
 <form name="access" method="post">
     <table class="bordered">
         <input type="hidden" name="cat" value="set_level">
-        <input type="hidden" name="issue_id" value="{$issue_id}">
+        <input type="hidden" name="issue_id" value="{{ issue_id }}">
         <tr class="title">
             <th colspan="2">
                 {t issue_id=$issue_id}Access Level for Issue #%1{/t}
@@ -16,7 +16,7 @@
                 <select name="level">
                     {html_options options=$levels selected=$level}
                 </select>
-                {include file="error_icon.tpl.html" field="level"}
+                {% include "error_icon.html.twig.html" with {'field' : 'level'} %}
             </td>
         </tr>
         <tr class="buttons">
@@ -29,7 +29,7 @@
 
 <form method="post">
     <input type="hidden" name="cat" value="update_users">
-    <input type="hidden" name="issue_id" value="{$issue_id}">
+    <input type="hidden" name="issue_id" value="{{ issue_id }}">
     <table class="bordered grid">
         <tr class="title">
             <th colspan="2">

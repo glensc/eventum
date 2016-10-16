@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "javascripts"}
 <script type="text/javascript">
@@ -47,17 +47,17 @@ $(function() {
 
     <tr>
       <th width="120">
-        {t escape=no}SCM <br />Integration{/t}: {include file="help_link.tpl.html" topic="scm_integration"}
+        {t escape=no}SCM <br />Integration{/t}: {% include "help_link.html.twig.html" with {'topic' : 'scm_integration'} %}
       </th>
       <td>
         <table>
           <tr>
             <td colspan="2">
               <label>
-                <input type="radio" name="scm_integration" value="enabled" {if $setup.scm_integration|default:'' == 'enabled'}checked{/if}>
+                <input type="radio" name="scm_integration" value="enabled" {% if setup.scm_integration|default('') == 'enabled' %}checked{% endif %}>
                 {t}Enabled{/t}</label>&nbsp;&nbsp;
               <label>
-                <input type="radio" name="scm_integration" value="disabled" {if $setup.scm_integration|default:'' != 'enabled'}checked{/if}>
+                <input type="radio" name="scm_integration" value="disabled" {% if setup.scm_integration|default('') != 'enabled' %}checked{% endif %}>
                 {t}Disabled{/t}
               </label>
             </td>
@@ -72,7 +72,7 @@ $(function() {
         {t escape=no 1=$scm_ping_url}The SCM ping endpoint url is: <b>%1</b>{/t}
         </p>
         {t escape=no}To add scm backends, add to your <b>setup.php</b> like{/t}:
-        {literal}<pre>
+        {# literal #}<pre>
   'scm' => array(
     'cvs' => array(
       // viewvc urls
@@ -120,7 +120,7 @@ $(function() {
       ),
     ),
   )
-</pre>{/literal}
+</pre>{# /literal #}
       </td>
     </tr>
 

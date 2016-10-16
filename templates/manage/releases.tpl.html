@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -35,19 +35,19 @@
       </script>
 
       <form name="release_form" method="post">
-      <input type="hidden" name="prj_id" value="{$project.prj_id}">
-      {if $smarty.get.cat|default:'' == 'edit'}
+      <input type="hidden" name="prj_id" value="{{ project.prj_id }}">
+      {% if smarty.get.cat|default('') == 'edit' %}
       <input type="hidden" name="cat" value="update">
-      <input type="hidden" name="id" value="{$smarty.get.id|intval}">
-      {else}
+      <input type="hidden" name="id" value="{{ smarty.get.id|intval }}">
+      {% else %}
       <input type="hidden" name="cat" value="new">
-      {/if}
+      {% endif %}
         <table class="bordered">
           <tr class="title">
             <th colspan="2">
               {t}Manage Releases{/t}
                 <div class="right">
-                    ({t}Current Project{/t}: {$project.prj_title})
+                    ({t}Current Project{/t}: {{ project.prj_title }})
                 </div>
             </th>
           </tr>
@@ -57,7 +57,7 @@
             </th>
             <td>
               <input type="text" name="title" size="40" value="{$info.pre_title|default:''}">
-              {include file="error_icon.tpl.html" field="title"}
+              {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
             </td>
           </tr>
           <tr>
@@ -74,18 +74,18 @@
             </th>
             <td>
               <select name="status">
-                <option value="available" {if $info.pre_status|default:'' == 'available'}selected{/if}>{t}Available - Users may use this release{/t}</option>
-                <option value="unavailable" {if $info.pre_status|default:'' == 'unavailable'}selected{/if}>{t}Unavailable - Users may NOT use this release{/t}</option>
+                <option value="available" {% if info.pre_status|default('') == 'available' %}selected{% endif %}>{t}Available - Users may use this release{/t}</option>
+                <option value="unavailable" {% if info.pre_status|default('') == 'unavailable' %}selected{% endif %}>{t}Unavailable - Users may NOT use this release{/t}</option>
               </select>
             </td>
           </tr>
           <tr class="buttons">
             <td colspan="2">
-              {if $smarty.get.cat|default:'' == 'edit'}
+              {% if smarty.get.cat|default('') == 'edit' %}
               <input type="submit" value="{t}Update Release{/t}">
-              {else}
+              {% else %}
               <input type="submit" value="{t}Create Release{/t}">
-              {/if}
+              {% endif %}
               <input type="reset" value="{t}Reset{/t}">
             </td>
           </tr>
@@ -93,7 +93,7 @@
         </form>
 
         <form id="delete_form" method="post">
-        <input type="hidden" name="prj_id" value="{$project.prj_id}">
+        <input type="hidden" name="prj_id" value="{{ project.prj_id }}">
         <input type="hidden" name="cat" value="delete">
         <table class="bordered">
           <tr class="title">
@@ -109,12 +109,12 @@
             </tr>
             {section name="i" loop=$list}
             <tr class="{cycle values='odd,even'}">
-              <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{$list[i].pre_id}"></td>
+              <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{{ list[i].pre_id }}"></td>
               <td width="40%">
-                &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].pre_id}&prj_id={$project.prj_id}" title="{t}update this entry{/t}">{$list[i].pre_title}</a>
+                &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].pre_id }}&prj_id={{ project.prj_id }}" title="{t}update this entry{/t}">{{ list[i].pre_title }}</a>
               </td>
-              <td>&nbsp;{$list[i].pre_scheduled_date}</td>
-              <td>&nbsp;{$list[i].pre_status}</td>
+              <td>&nbsp;{{ list[i].pre_scheduled_date }}</td>
+              <td>&nbsp;{{ list[i].pre_status }}</td>
             </tr>
             {sectionelse}
             <tr class="no_results">

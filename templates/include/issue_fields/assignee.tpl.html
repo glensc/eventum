@@ -12,6 +12,6 @@
     <select id="issue_field_assignee" size="4" multiple name="issue_field[assignee][]">
       {html_options options=$issue_field.options selected=$issue_field.value}
     </select><input type="button" value="{t}Clear Selections{/t}" id="clear_selected"><br />
-    <div id="selection_issue_field_assignee">{if $issue.assignments|default:'' != ''}{t}Current Selections{/t}: {$issue.assignments}{/if}</div>
+    <div id="selection_issue_field_assignee">{% if issue.assignments|default('') != '' %}{t}Current Selections{/t}: {{ issue.assignments }}{% endif %}</div>
   </td>
 </tr>

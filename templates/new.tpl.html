@@ -1,13 +1,13 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 {block "page_classes"}new_issue CustomField GrowingFileField{/block}
 
 {block "javascripts" append}
-  <script type="text/javascript" src="{$core.rel_url}ajax/dynamic_custom_field.js.php?form_type=report_form"></script>
-  <script type="text/javascript" src="{$core.rel_url}js/dynamic_custom_field.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}ajax/dynamic_custom_field.js.php?form_type=report_form"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}js/dynamic_custom_field.js"></script>
 
-  {include file="include/dropzone.tpl.html" form="reportForm" param="dropfile"}
+  {% include "include/dropzone.html.twig.html" with {'form' : 'reportForm', 'param' : 'dropfile'} %}
 {/block}
 
 {block name="content"}
-{include file="new_form.tpl.html"}
+{% include "new_form.html.twig.html" %}
 {/block}

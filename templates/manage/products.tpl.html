@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -40,12 +40,12 @@
 </script>
 
 <form id="product_form" method="post">
-    {if $smarty.get.cat|default:'' == 'edit'}
+    {% if smarty.get.cat|default('') == 'edit' %}
     <input type="hidden" name="cat" value="update">
     <input type="hidden" name="id" value="{$smarty.get.id|intval|default:''}">
-    {else}
+    {% else %}
     <input type="hidden" name="cat" value="new">
-    {/if}
+    {% endif %}
     <table class="bordered">
         <tr class="title">
             <th colspan="2">
@@ -58,7 +58,7 @@
             </th>
             <td>
                 <input type="text" name="title" size="40" value="{$info.pro_title|default:''}">
-                {include file="error_icon.tpl.html" field="title"}
+                {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
             </td>
         </tr>
         <tr>
@@ -67,7 +67,7 @@
             </th>
             <td>
                 <input type="text" name="version_howto" size="100" value="{$info.pro_version_howto|default:''|escape}">
-                {include file="error_icon.tpl.html" field="version_howto"}
+                {% include "error_icon.html.twig.html" with {'field' : 'version_howto'} %}
             </td>
         </tr>
         <tr>
@@ -76,7 +76,7 @@
             </th>
             <td>
                 <input type="text" name="email" size="100" value="{$info.pro_email|default:''|escape}">
-                {include file="error_icon.tpl.html" field="email"}
+                {% include "error_icon.html.twig.html" with {'field' : 'email'} %}
                 <br />This address will be notified when issues are created with this product.
             </td>
         </tr>
@@ -86,7 +86,7 @@
             </th>
             <td>
                 <input type="text" name="rank" size="3" value="{$info.pro_rank|default:''}" />
-                {include file="error_icon.tpl.html" field="rank"}
+                {% include "error_icon.html.twig.html" with {'field' : 'rank'} %}
             </td>
         </tr>
         <tr>
@@ -94,16 +94,16 @@
                 {t}Removed{/t}
             </th>
             <td width="80%">
-                <input type="checkbox" name="removed" value="1" {if $info.pro_removed|default:'' == 1}checked{/if} />
+                <input type="checkbox" name="removed" value="1" {% if info.pro_removed|default('') == 1 %}checked{% endif %} />
             </td>
         </tr>
         <tr class="buttons">
             <th colspan="2">
-                {if $smarty.get.cat|default:'' == 'edit'}
+                {% if smarty.get.cat|default('') == 'edit' %}
                 <input type="submit" value="{t}Update Product{/t}">
-                {else}
+                {% else %}
                 <input type="submit" value="{t}Create Product{/t}">
-                {/if}
+                {% endif %}
                 <input type="reset" value="{t}Reset{/t}">
             </th>
         </tr>
@@ -128,22 +128,22 @@
         {section name="i" loop=$list}
         <tr class="{cycle values='odd,even'}">
             <td width="4" nowrap align="center">
-                <input type="checkbox" name="items[]" value="{$list[i].pro_id}" {if $smarty.section.i.total == 0}disabled{/if}>
+                <input type="checkbox" name="items[]" value="{{ list[i].pro_id }}" {% if smarty.section.i.total == 0 %}disabled{% endif %}>
             </td>
             <td width="20%">
-                &nbsp;<a class="link" href="{$core.current_url}?cat=edit&id={$list[i].pro_id}" title="{t}update this entry{/t}">{$list[i].pro_title|escape}</a>
+                &nbsp;<a class="link" href="{{ core.current_url }}?cat=edit&id={{ list[i].pro_id }}" title="{t}update this entry{/t}">{{ list[i].pro_title|escape }}</a>
             </td>
             <td width="20%">
-                &nbsp;{$list[i].pro_version_howto|escape}
+                &nbsp;{{ list[i].pro_version_howto|escape }}
             </td>
             <td width="40%">
-                &nbsp;{$list[i].pro_email|escape}
+                &nbsp;{{ list[i].pro_email|escape }}
             </td>
             <td width="10%">
-                &nbsp;{$list[i].pro_rank}
+                &nbsp;{{ list[i].pro_rank }}
             </td>
             <td width="10%">
-                &nbsp;{if $list[i].pro_removed == 1}Yes{/if}
+                &nbsp;{% if list[i].pro_removed == 1 %}Yes{% endif %}
             </td>
         </tr>
         {sectionelse}

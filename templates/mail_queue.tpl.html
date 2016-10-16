@@ -1,20 +1,20 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 {block title}{t 1=$smarty.get.iss_id|intval}Issue #%1 - Mail Queue{/t}{/block}
 
 {block "content"}
-{if $denied|default:'' == 1}
+{% if denied|default('') == 1 %}
 <div align="center">{t}Sorry, you do not have permission to view this page{/t}</div>
-{else}
+{% else %}
 <form>
     <table class="bordered grid">
         <tr class="title">
             <th colspan="5">
-                {capture assign="link"}<a href="{$core.rel_url}view.php?id={$issue_id}" title="{t}view issue details{/t}">{t 1=$issue_id}Issue #%1{/t}</a>{/capture}
+                {capture assign="link"}<a href="{{ core.rel_url }}view.php?id={{ issue_id }}" title="{t}view issue details{/t}">{t 1=$issue_id}Issue #%1{/t}</a>{/capture}
                 {t 1=$link escape=no}Mail Queue for %1){/t}
             </th>
         </tr>
         <tr>
-            <th NOWRAP>{include file="expandable_cell/buttons.tpl.html" ec_id="mailqueue"}</th>
+            <th NOWRAP>{% include "expandable_cell/buttons.html.twig.html" with {'ec_id' : 'mailqueue'} %}</th>
             <th width="20%">{t}Recipient{/t}</th>
             <th width="20%" nowrap>{t}Queued Date{/t}</th>
             <th width="10%">{t}Status{/t}</th>
@@ -22,13 +22,13 @@
         </tr>
         {section name="i" loop=$data}
         <tr class="{cycle values='odd,even'}">
-            <td NOWRAP>{include file="expandable_cell/buttons.tpl.html" ec_id="mailqueue" list_id=$data[i].maq_id}</td>
+            <td NOWRAP>{% include "expandable_cell/buttons.html.twig.html" with {'ec_id' : 'mailqueue', 'list_id' : data, 'i' : 'i', '.maq_id' : '.maq_id'} %}</td>
             <td width="20%">{$data[i].maq_recipient|escape:"html"}</td>
-            <td width="20%" nowrap>{$data[i].maq_queued_date|timeago}</td>
-            <td width="10%">{$data[i].maq_status}</td>
+            <td width="20%" nowrap>{{ data[i].maq_queued_date|timeago }}</td>
+            <td width="10%">{{ data[i].maq_status }}</td>
             <td width="50%">{$data[i].maq_subject|escape:"html"}</td>
         </tr>
-        {include file="expandable_cell/body.tpl.html" ec_id="mailqueue" list_id=$data[i].maq_id colspan="5"}
+        {% include "expandable_cell/body.html.twig.html" with {'ec_id' : 'mailqueue', 'list_id' : data, 'i' : 'i', '.maq_id' : '.maq_id', 'colspan' : '5'} %}
         {sectionelse}
         <tr>
             <td colspan="5" align="center">
@@ -38,10 +38,10 @@
         {/section}
         <tr>
             <td colspan="5">
-                <input type="button" value="&lt;&lt; Back" onClick="location.href='{$core.rel_url}view.php?id={$issue_id}';">
+                <input type="button" value="&lt;&lt; Back" onClick="location.href='{{ core.rel_url }}view.php?id={{ issue_id }}';">
             </td>
         </tr>
     </table>
 </form>
-{/if}
+{% endif %}
 {/block}

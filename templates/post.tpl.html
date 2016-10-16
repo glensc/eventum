@@ -1,25 +1,25 @@
-{extends "base.tpl.html"}
+{extends "base.html.twig.html"}
 {block "page_classes"}anon_post CustomField GrowingFileField{/block}
 
 {block name="content"}
 <div class="note_box">
-    <a href="{$core.rel_url}">{t}Back to Login Form{/t}</a>
+    <a href="{{ core.rel_url }}">{t}Back to Login Form{/t}</a>
 </div>
 
 
-{if $no_projects|default:''}
+{% if no_projects|default('') %}
 <div class="note_box">
     {t}Sorry, but there are no projects currently setup as allowing anonymous posting.{/t}
 </div>
-{else}
-{if $new_issue_id|default:'' != "" and $smarty.post.report_stays|default:'' != "yes"}
+{% else %}
+{% if new_issue_id|default('') != "" and smarty.post.report_stays|default('') != "yes" %}
 <div class="note_box">
     {t escape=no 1=$new_issue_id}Thank you, the new issue was created successfully. For your records, the new issue ID is <font color="red">%1</font>{/t}
     <br /><br />
     {t 1=$core.current_url escape=no}You may <a href="%1">submit another issue</a> if you so wish.{/t}
 </div>
-{else}
-{if $smarty.get.post_form|default:'' != 'yes'}
+{% else %}
+{% if smarty.get.post_form|default('') != 'yes' %}
 <form id="project_form" method="get" onSubmit="return validateForm(this);">
     <input type="hidden" name="post_form" value="yes">
     <table class="bordered two_column narrow">
@@ -37,7 +37,7 @@
                     <option value="-1">{t}Please choose a project{/t}</option>
                     {html_options options=$projects}
                 </select>
-                {include file="error_icon.tpl.html" field="project"}
+                {% include "error_icon.html.twig.html" with {'field' : 'project'} %}
             </td>
         </tr>
         <tr class="buttons">
@@ -47,10 +47,10 @@
         </tr>
     </table>
 </form>
-{else}
+{% else %}
 <form id="report_form" method="post" enctype="multipart/form-data">
     <input type="hidden" name="cat" value="report">
-    {assign var="tabindex" value=1}
+    {% set tabindex = '1' %}
     <table class="bordered two_column">
         <tr class="title">
             <th colspan="2">
@@ -62,8 +62,8 @@
                 {t}Project{/t}:
             </th>
             <td>
-                {$project_name}
-                <input type="hidden" name="project" value="{$smarty.get.project}">
+                {{ project_name }}
+                <input type="hidden" name="project" value="{{ smarty.get.project }}">
             </td>
         </tr>
         <tr>
@@ -72,7 +72,7 @@
             </th>
             <td>
                 <input type="text" name="summary" size="60" tabindex="{$tabindex++}">
-                {include file="error_icon.tpl.html" field="summary"}
+                {% include "error_icon.html.twig.html" with {'field' : 'summary'} %}
             </td>
         </tr>
         <tr>
@@ -81,11 +81,11 @@
             </th>
             <td>
                 <textarea name="description" style="width: 97%" rows="10" tabindex="{$tabindex++}"></textarea>
-                {include file="error_icon.tpl.html" field="description"}
+                {% include "error_icon.html.twig.html" with {'field' : 'description'} %}
             </td>
         </tr>
-        {include file="edit_custom_fields.tpl.html" custom_fields=$custom_fields|default:'' form_type='anonymous'}
-        {assign var=tabindex value=$tabindex+50}
+        {% include "edit_custom_fields.html.twig.html" with {'custom_fields' : custom_fields, 'default:' : 'default:', '' : ', 'form_type' : 'anonymous'} %}
+        {% set tabindex = tabindex %}
         <tr>
             <th width="150">
                 {t}Attach Files{/t}:
@@ -113,8 +113,8 @@
         </tr>
     </table>
 </form>
-{/if}
-{/if}
-{/if}
+{% endif %}
+{% endif %}
+{% endif %}
 
 {/block}

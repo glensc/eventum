@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -74,19 +74,19 @@
   </script>
 
   <form id="reminder_form" method="post">
-  <input type="hidden" name="rem_id" value="{$rem_id}">
-  {if $smarty.get.cat|default:'' == 'edit'}
+  <input type="hidden" name="rem_id" value="{{ rem_id }}">
+  {% if smarty.get.cat|default('') == 'edit' %}
   <input type="hidden" name="cat" value="update">
   <input type="hidden" name="id" value="{$smarty.get.id|intval|default:''}">
-  {else}
+  {% else %}
   <input type="hidden" name="cat" value="new">
-  {/if}
+  {% endif %}
             <table class="bordered">
               <tr class="title">
                 <th colspan="2">
                     {t}Manage Reminder Actions{/t}
                   <div class="right">
-                    <a href="reminders.php?cat=edit&id={$rem_id}" title="{t}view reminder details{/t}">{t}Reminder{/t} #{$rem_id}: {$rem_title}</a>
+                    <a href="reminders.php?cat=edit&id={{ rem_id }}" title="{t}view reminder details{/t}">{t}Reminder{/t} #{{ rem_id }}: {{ rem_title }}</a>
                   </div>
                 </th>
               </tr>
@@ -96,7 +96,7 @@
                 </th>
                 <td>
                   <input type="text" size="50" name="title" value="{$info.rma_title|escape:"html"|default:''}">
-                  {include file="error_icon.tpl.html" field="title"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
                 </td>
               </tr>
               <tr>
@@ -108,7 +108,7 @@
                     <option value="-1">{t}Please choose an option{/t}</option>
                     {html_options options=$action_types selected=$info.rma_rmt_id|default:''}
                   </select>
-                  {include file="error_icon.tpl.html" field="type"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'type'} %}
                   <div id="action_user_list" style="display: none;">
                   <table bgcolor="#666666" style="margin-left: 30px; margin-top: 5px;">
                     <tr>
@@ -129,9 +129,9 @@
                       </td>
                       <td>
                         <select name="user_list[]" multiple size="4">
-                          {if $info.user_list|default:'' != ''}
+                          {% if info.user_list|default('') != '' %}
                             {html_options options=$info.user_list}
-                          {/if}
+                          {% endif %}
                         </select>
                       </td>
                     </tr>
@@ -145,7 +145,7 @@
                 </th>
                 <td>
                   <input type="text" size="5" name="rank" value="{$info.rma_rank|default:''}">
-                  {include file="error_icon.tpl.html" field="rank"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'rank'} %}
                   <span><i>({t}this will determine the order in which actions are triggered{/t})</i></span>
                 </td>
               </tr>
@@ -155,10 +155,10 @@
                 </th>
                 <td>
                   <label>
-                    <input type="radio" name="alert_group_leader" value="1" {if $info.rma_alert_group_leader|default:''}checked{/if}>
+                    <input type="radio" name="alert_group_leader" value="1" {% if info.rma_alert_group_leader|default('') %}checked{% endif %}>
                     {t}Yes{/t}</label>&nbsp;&nbsp;
                   <label>
-                    <input type="radio" name="alert_group_leader" value="0" {if not $info.rma_alert_group_leader|default:''}checked{/if}>
+                    <input type="radio" name="alert_group_leader" value="0" {% if not info.rma_alert_group_leader|default('') %}checked{% endif %}>
                     {t}No{/t}</label>
                 </td>
               </tr>
@@ -168,10 +168,10 @@
                 </th>
                 <td>
                   <label>
-                    <input type="radio" name="alert_irc" value="1" {if $info.rma_alert_irc|default:''}checked{/if}>
+                    <input type="radio" name="alert_irc" value="1" {% if info.rma_alert_irc|default('') %}checked{% endif %}>
                     {t}Yes{/t}</label>&nbsp;&nbsp;
                   <label>
-                    <input type="radio" name="alert_irc" value="0" {if not $info.rma_alert_irc|default:''}checked{/if}>
+                    <input type="radio" name="alert_irc" value="0" {% if not info.rma_alert_irc|default('') %}checked{% endif %}>
                     {t}No{/t}</label>
                 </td>
               </tr>
@@ -181,17 +181,17 @@
                 </th>
                 <td>
                   <input type="text" size="40" name="boilerplate" value="{$info.rma_boilerplate|default:''}">
-                  {include file="error_icon.tpl.html" field="boilerplate"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'boilerplate'} %}
                   <span><i>({t}this will show up on the bottom of the reminder messages{/t})</i></span>
                 </td>
               </tr>
               <tr class="buttons">
                 <td colspan="2">
-                  {if $smarty.get.cat|default:'' == 'edit'}
+                  {% if smarty.get.cat|default('') == 'edit' %}
                   <input type="submit" value="{t}Update Action{/t}">
-                  {else}
+                  {% else %}
                   <input type="submit" value="{t}Add Action{/t}">
-                  {/if}
+                  {% endif %}
                   <input type="reset" value="{t}Reset{/t}">
                 </td>
               </tr>
@@ -199,14 +199,14 @@
             </form>
 
             <form id="delete_form" method="post">
-            <input type="hidden" name="rem_id" value="{$rem_id}">
+            <input type="hidden" name="rem_id" value="{{ rem_id }}">
             <input type="hidden" name="cat" value="delete">
             <table class="bordered grid">
               <tr class="title">
                 <th colspan="5">
                   {t}Existing Actions{/t}
                   <div class="right">
-                    <a href="reminders.php?cat=edit&id={$rem_id}">{t}Back to Reminder List{/t}</a>
+                    <a href="reminders.php?cat=edit&id={{ rem_id }}">{t}Back to Reminder List{/t}</a>
                   </div>
                 </th>
               </tr>
@@ -219,22 +219,22 @@
                     </tr>
                     {section name="i" loop=$list}
                     <tr class="{cycle values='odd,even'}">
-                      <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{$list[i].rma_id}"></td>
+                      <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{{ list[i].rma_id }}"></td>
                       <td align="center" nowrap>
-                        <a href="{$core.current_url}?cat=change_rank&id={$list[i].rma_id}&rem_id={$rem_id}&rank=desc"><img src="{$core.rel_url}images/desc.gif" border="0"></a> {$list[i].rma_rank}
-                        <a href="{$core.current_url}?cat=change_rank&id={$list[i].rma_id}&rem_id={$rem_id}&rank=asc"><img src="{$core.rel_url}images/asc.gif" border="0"></a>
+                        <a href="{{ core.current_url }}?cat=change_rank&id={{ list[i].rma_id }}&rem_id={{ rem_id }}&rank=desc"><img src="{{ core.rel_url }}images/desc.gif" border="0"></a> {{ list[i].rma_rank }}
+                        <a href="{{ core.current_url }}?cat=change_rank&id={{ list[i].rma_id }}&rem_id={{ rem_id }}&rank=asc"><img src="{{ core.rel_url }}images/asc.gif" border="0"></a>
                       </td>
                       <td width="20%">
-                        &nbsp;<a href="{$core.current_url}?cat=edit&rem_id={$rem_id}&id={$list[i].rma_id}" title="{t}update this entry{/t}">{$list[i].rma_title|escape:"html"}</a>
+                        &nbsp;<a href="{{ core.current_url }}?cat=edit&rem_id={{ rem_id }}&id={{ list[i].rma_id }}" title="{t}update this entry{/t}">{$list[i].rma_title|escape:"html"}</a>
                       </td>
                       <td width="50%">
-                        &nbsp;{$list[i].rmt_title}
-                        {if $list[i].rma_alert_irc} [Alert IRC]{/if}
-                        {if $list[i].rma_alert_group_leader} [Alert Group Leader]{/if}
+                        &nbsp;{{ list[i].rmt_title }}
+                        {% if list[i].rma_alert_irc %} [Alert IRC]{% endif %}
+                        {% if list[i].rma_alert_group_leader %} [Alert Group Leader]{% endif %}
                       </td>
                       <td>
-                        &nbsp;<a href="reminder_conditions.php?rem_id={$list[i].rma_rem_id}&rma_id={$list[i].rma_id}">{$list[i].total_conditions} Condition{if $list[i].total_conditions != 1}s{/if}</a><br />
-                        {if $list[i].status|default:'' != ''}&nbsp;Status: {$list[i].status}{/if}
+                        &nbsp;<a href="reminder_conditions.php?rem_id={{ list[i].rma_rem_id }}&rma_id={{ list[i].rma_id }}">{{ list[i].total_conditions }} Condition{% if list[i].total_conditions != 1 %}s{% endif %}</a><br />
+                        {% if list[i].status|default('') != '' %}&nbsp;Status: {{ list[i].status }}{% endif %}
                       </td>
                     </tr>
                     {sectionelse}

@@ -1,4 +1,4 @@
-{extends "base.tpl.html"}
+{extends "base.html.twig.html"}
 {block "title"}Select Customer{/block}
 
 {block "content"}
@@ -14,14 +14,14 @@
         <tr>
             <td>
                 <ul>
-                    {foreach from=$customers item=customer}
+                    {% for customer in customers %}
                     <li>
-                        <label><input type="radio" name="customer_id" value="{$customer.customer_id}"
-                                {if $core.current_customer.customer_id|default:'' == $customer.customer_id ||
-                            ($core.current_customer|default:'' == '' && $customer@first)}checked="checked"{/if}
-                                >{$customer.name}</label>
+                        <label><input type="radio" name="customer_id" value="{{ customer.customer_id }}"
+                                {% if core.current_customer.customer_id|default('') == customer.customer_id ||
+                            (core.current_customer|default('') == '' && customer@first) %}checked="checked"{% endif %}
+                                >{{ customer.name }}</label>
                     </li>
-                    {/foreach}
+                    {% endfor %}
                 </ul></td>
         </tr>
         <tr class="buttons">

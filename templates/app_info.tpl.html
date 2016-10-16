@@ -1,9 +1,9 @@
-<a href="https://wiki.github.com/eventum/eventum/" title="Eventum Issue Tracking System">{$core.app_title}</a>
-{if $core.application_version_link|default:'' != ''}
-<a href="{$core.application_version_link}" target="_blank">{$core.app_version}</a>
-{else}
-{$core.app_version}
-{/if}
+<a href="https://wiki.github.com/eventum/eventum/" title="Eventum Issue Tracking System">{{ core.app_title }}</a>
+{% if core.application_version_link|default('') != '' %}
+<a href="{{ core.application_version_link }}" target="_blank">{{ core.app_version }}</a>
+{% else %}
+{{ core.app_version }}
+{% endif %}
 <br />
 Copyright &copy; 2003 - 2008 MySQL AB,
 2008 - 2010 Sun Microsystem Inc,

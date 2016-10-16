@@ -12,6 +12,7 @@
  */
 
 use Eventum\DebugBar;
+use Eventum\Templating\TwigTemplate;
 
 /**
  * Class used to abstract the backend template system used by the site. This
@@ -26,10 +27,15 @@ class Template_Helper
     /** @var string */
     private $tpl_name;
 
+    public function __construct()
+    {
+        $twig = new TwigTemplate();
+    }
+
     /**
      * Constructor of the class
      */
-    public function __construct($tpl_name = null)
+    public function __construct1($tpl_name = null)
     {
         $smarty = new Smarty();
         $smarty->setTemplateDir([APP_LOCAL_PATH . '/templates', APP_TPL_PATH]);

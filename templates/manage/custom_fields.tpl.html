@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -182,20 +182,20 @@
   });
 
   var selected_projects = [];
-  {if $info.project|default:'' != '' && $info.project|@count > 0}
-  {foreach from=$info.projects item=prj_id}
-  selected_projects[selected_projects.length] = new Option("{$project_list[$prj_id]}", {$prj_id});
-  {/foreach}
-  {/if}
+  {% if info.project|default('') != '' && info.project|@count > 0 %}
+  {% for prj_id in info.projects %}
+  selected_projects[selected_projects.length] = new Option("{$project_list[$prj_id]}", {{ prj_id }});
+  {% endfor %}
+  {% endif %}
   //-->
   </script>
   <form id="custom_field_form" method="post">
-  {if $smarty.get.cat|default:'' == 'edit'}
+  {% if smarty.get.cat|default('') == 'edit' %}
   <input type="hidden" name="cat" value="update">
-  <input type="hidden" name="id" value="{$smarty.get.id|intval}">
-  {else}
+  <input type="hidden" name="id" value="{{ smarty.get.id|intval }}">
+  {% else %}
   <input type="hidden" name="cat" value="new">
-  {/if}
+  {% endif %}
             <table class="bordered">
               <tr class="title">
                 <th colspan="2">
@@ -208,7 +208,7 @@
                 </th>
                 <td>
                   <input type="text" name="title" size="40" value="{$info.fld_title|default:''}">
-                  {include file="error_icon.tpl.html" field="title"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
                 </td>
               </tr>
               <tr>
@@ -228,7 +228,7 @@
                   <select name="projects[]" multiple size="3">
                   {html_options options=$project_list selected=$info.projects|default:''}
                   </select>
-                  {include file="error_icon.tpl.html" field="projects[]"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'projects[]'} %}
                 </td>
               </tr>
               <tr>
@@ -237,14 +237,14 @@
                 </th>
                 <td>
                   <span>
-                    <label><input type="checkbox" name="report_form" value="1" class="target_form" {if $info.fld_report_form|default:'' == 1}checked{/if}>{t}Report Form{/t}</label><br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="report_form_required" value="1" {if $info.fld_report_form_required|default:'' == 1}checked{/if}>{t}Required Field{/t}</label><br />
-                    <label><input type="checkbox" name="anon_form" value="1" class="target_form" {if $info.fld_anonymous_form|default:'' == 1}checked{/if}>{t}Anonymous Form{/t}</label><br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="anon_form_required" value="1" {if $info.fld_anonymous_form_required|default:'' == 1}checked{/if}>{t}Required Field{/t}</label><br />
-                    <label><input type="checkbox" name="close_form" value="1" class="target_form" {if $info.fld_close_form|default:'' == 1}checked{/if}>{t}Close Form{/t}</label><br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="close_form_required" value="1" {if $info.fld_close_form_required|default:'' == 1}checked{/if}>{t}Required Field{/t}</label><br />
+                    <label><input type="checkbox" name="report_form" value="1" class="target_form" {% if info.fld_report_form|default('') == 1 %}checked{% endif %}>{t}Report Form{/t}</label><br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="report_form_required" value="1" {% if info.fld_report_form_required|default('') == 1 %}checked{% endif %}>{t}Required Field{/t}</label><br />
+                    <label><input type="checkbox" name="anon_form" value="1" class="target_form" {% if info.fld_anonymous_form|default('') == 1 %}checked{% endif %}>{t}Anonymous Form{/t}</label><br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="anon_form_required" value="1" {% if info.fld_anonymous_form_required|default('') == 1 %}checked{% endif %}>{t}Required Field{/t}</label><br />
+                    <label><input type="checkbox" name="close_form" value="1" class="target_form" {% if info.fld_close_form|default('') == 1 %}checked{% endif %}>{t}Close Form{/t}</label><br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="close_form_required" value="1" {% if info.fld_close_form_required|default('') == 1 %}checked{% endif %}>{t}Required Field{/t}</label><br />
                     <label><input type="checkbox" disabled checked/>Edit Form</label> (<em>Cannot be removed</em>)</em><br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="edit_form_required" value="1" {if $info.fld_edit_form_required|default:'' == 1}checked{/if}>{t}Required Field{/t}</label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="edit_form_required" value="1" {% if info.fld_edit_form_required|default('') == 1 %}checked{% endif %}>{t}Required Field{/t}</label>
                   </span>
                 </td>
               </tr>
@@ -254,11 +254,11 @@
                 </th>
                 <td>
                   <label>
-                      <input type="radio" name="list_display" value="1" {if $info.fld_list_display|default:'' == 1}checked{/if}>
+                      <input type="radio" name="list_display" value="1" {% if info.fld_list_display|default('') == 1 %}checked{% endif %}>
                        {t}Yes{/t}
                   </label>
                   <label>
-                    <input type="radio" name="list_display" value="0" {if $info.fld_list_display|default:'' != 1}checked{/if}>
+                    <input type="radio" name="list_display" value="0" {% if info.fld_list_display|default('') != 1 %}checked{% endif %}>
                     {t}No{/t}
                   </label>
                 </td>
@@ -269,31 +269,31 @@
                 </th>
                 <td>
                   <label>
-                    <input type="radio" name="field_type" value="text" {if $info.fld_type|default:'' == 'text'}checked{/if}/>
+                    <input type="radio" name="field_type" value="text" {% if info.fld_type|default('') == 'text' %}checked{% endif %}/>
                     {t}Text Input{/t}
                   </label><br />
                   <label>
-                    <input type="radio" name="field_type" value="textarea" {if $info.fld_type|default:'' == 'textarea'}checked{/if}/>
+                    <input type="radio" name="field_type" value="textarea" {% if info.fld_type|default('') == 'textarea' %}checked{% endif %}/>
                     {t}Textarea{/t}
                   </label><br />
                   <label>
-                    <input type="radio" name="field_type" class="enable_custom_options" value="combo" {if $info.fld_type|default:'' == 'combo'}checked{/if}/>
+                    <input type="radio" name="field_type" class="enable_custom_options" value="combo" {% if info.fld_type|default('') == 'combo' %}checked{% endif %}/>
                     {t}Combo Box{/t}
                   </label><br />
                   <label>
-                    <input type="radio" name="field_type" class="enable_custom_options" value="multiple" {if $info.fld_type|default:'' == 'multiple'}checked{/if}/>
+                    <input type="radio" name="field_type" class="enable_custom_options" value="multiple" {% if info.fld_type|default('') == 'multiple' %}checked{% endif %}/>
                     {t}Multiple Combo Box{/t}
                   </label><br />
                   <label>
-                    <input type="radio" name="field_type" value="date" {if $info.fld_type|default:'' == 'date'}checked{/if}/>
+                    <input type="radio" name="field_type" value="date" {% if info.fld_type|default('') == 'date' %}checked{% endif %}/>
                     {t}Date{/t}
                   </label><br />
                   <label>
-                    <input type="radio" name="field_type" value="integer" {if $info.fld_type|default:'' == 'integer'}checked{/if} />
+                    <input type="radio" name="field_type" value="integer" {% if info.fld_type|default('') == 'integer' %}checked{% endif %} />
                     {t}Integer{/t}
                   </label><br />
                   <label>
-                    <input type="radio" name="field_type" class="enable_custom_options" value="checkbox" {if $info.fld_type|default:'' == 'checkbox'}checked{/if} />
+                    <input type="radio" name="field_type" class="enable_custom_options" value="checkbox" {% if info.fld_type|default('') == 'checkbox' %}checked{% endif %} />
                     {t}Checkbox{/t}
                   </label><br />
 
@@ -310,7 +310,7 @@
                     <tr>
                       <td valign="top">
                         <span>{t}Set available options{/t}</span><br />
-                        <input type="text" name="new_value" size="26" class="custom_option"><input name="add_button" type="button" value="{t}Add{/t}" class="custom_option">{if $smarty.get.cat|default:'' == 'edit'}<input name="update_button" type="button" value="{t}Update Value{/t}" disabled>{/if}<br />
+                        <input type="text" name="new_value" size="26" class="custom_option"><input name="add_button" type="button" value="{t}Add{/t}" class="custom_option">{% if smarty.get.cat|default('') == 'edit' %}<input name="update_button" type="button" value="{t}Update Value{/t}" disabled>{% endif %}<br />
                       </td>
                       <td rowspan="3">
                         &nbsp;&nbsp;&nbsp;&nbsp;<strong>{t}AND / OR{/t}</strong>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -329,17 +329,17 @@
                           <tr>
                             <td>
                               <select name="field_options[]" multiple size="3">
-                              {if $info.field_options|default:'' == ""}
+                              {% if info.field_options|default('') == "" %}
                                 <option value="-1">{t}enter a new option above{/t}</option>
-                              {else}
+                              {% else %}
                                 {html_options options=$info.field_options|default:''}
-                              {/if}
+                              {% endif %}
                               </select>
                             </td>
                             <td valign="top">
-                              {if $smarty.get.cat|default:'' == 'edit'}
+                              {% if smarty.get.cat|default('') == 'edit' %}
                               <input type="button" name="edit_button" value="{t}Edit Option{/t}" class="custom_option"><br />
-                              {/if}
+                              {% endif %}
                               <input type="button" name="remove_button" value="{t}Remove{/t}" class="custom_option">
                             </td>
                           </tr>
@@ -367,7 +367,7 @@
                   <select name="min_role_edit">
                     {html_options options=$user_roles selected=$info.fld_min_role_edit|default:''}
                   </select>
-                  {include file="error_icon.tpl.html" field="min_role_edit"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'min_role_edit'} %}
                 </td>
               </tr>
               <tr>
@@ -380,11 +380,11 @@
               </tr>
               <tr class="buttons">
                 <td colspan="2">
-                  {if $smarty.get.cat|default:'' == 'edit'}
+                  {% if smarty.get.cat|default('') == 'edit' %}
                   <input type="submit" value="{t}Update Custom Field{/t}">
-                  {else}
+                  {% else %}
                   <input type="submit" value="{t}Create Custom Field{/t}">
-                  {/if}
+                  {% endif %}
                   <input type="reset" value="{t}Reset{/t}">
                 </td>
               </tr>
@@ -413,26 +413,26 @@
             {section name="i" loop=$list}
             <tr class="{cycle values='odd,even'}">
               <td width="4" nowrap align="center">
-                <input type="checkbox" name="items[]" value="{$list[i].fld_id}" {if $smarty.section.i.total == 0}disabled{/if}>
+                <input type="checkbox" name="items[]" value="{{ list[i].fld_id }}" {% if smarty.section.i.total == 0 %}disabled{% endif %}>
               </td>
               <td nowrap>
-                &nbsp;<a href="{$core.current_url}?cat=change_rank&id={$list[i].fld_id}&direction=1" title="{t}move field down{/t}"><img src="{$core.rel_url}images/desc.gif" border="0"></a> {$list[i].fld_rank}
-                <a href="{$core.current_url}?cat=change_rank&id={$list[i].fld_id}&direction=-1" title="{t}move field up{/t}"><img src="{$core.rel_url}images/asc.gif" border="0"></a>
+                &nbsp;<a href="{{ core.current_url }}?cat=change_rank&id={{ list[i].fld_id }}&direction=1" title="{t}move field down{/t}"><img src="{{ core.rel_url }}images/desc.gif" border="0"></a> {{ list[i].fld_rank }}
+                <a href="{{ core.current_url }}?cat=change_rank&id={{ list[i].fld_id }}&direction=-1" title="{t}move field up{/t}"><img src="{{ core.rel_url }}images/asc.gif" border="0"></a>
               </td>
               <td width="15%">
-                &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].fld_id}" title="{t}update this entry{/t}">{$list[i].fld_title}</a>
+                &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].fld_id }}" title="{t}update this entry{/t}">{{ list[i].fld_title }}</a>
               </td>
               <td width="20%">
-                &nbsp;{$list[i].projects}
+                &nbsp;{{ list[i].projects }}
               </td>
               <td width="10%">
-                &nbsp;{$list[i].min_role_name}
+                &nbsp;{{ list[i].min_role_name }}
               </td>
               <td width="10%">
-                &nbsp;{$list[i].min_role_edit_name}
+                &nbsp;{{ list[i].min_role_edit_name }}
               </td>
               <td width="5%">
-                <nobr>&nbsp;{if $list[i].fld_type == 'combo'}{t}Combo Box{/t}{elseif $list[i].fld_type == 'multiple'}{t}Multiple Combo Box{/t}{elseif $list[i].fld_type == 'textarea'}{t}Textarea{/t}{elseif $list[i].fld_type == 'date'}{t}Date{/t}{elseif $list[i].fld_type == 'integer'}{t}Integer{/t}{elseif $list[i].fld_type == 'checkbox'}Checkbox{else}{t}Text Input{/t}{/if}</nobr>
+                <nobr>&nbsp;{% if list[i].fld_type == 'combo' %}{t}Combo Box{/t}{% elseif list[i].fld_type == 'multiple' %}{t}Multiple Combo Box{/t}{% elseif list[i].fld_type == 'textarea' %}{t}Textarea{/t}{% elseif list[i].fld_type == 'date' %}{t}Date{/t}{% elseif list[i].fld_type == 'integer' %}{t}Integer{/t}{% elseif list[i].fld_type == 'checkbox' %}Checkbox{% else %}{t}Text Input{/t}{% endif %}</nobr>
               </td>
               <td width="50%">
                 &nbsp;{$list[i].field_options|default:''}

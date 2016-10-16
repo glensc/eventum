@@ -1,8 +1,8 @@
-{extends "reports/reports_base.tpl.html"}
+{extends "reports/reports_base.html.twig.html"}
 {block "title"}Issues By User{/block}
 
 {block "report_content"}
-{foreach key=user_full_name item=assigned_issues from=$users}
+{% for signed_issues from=users in key=user_full_name item= %}
 <h4>{$user_full_name|escape:"html"}</h4>
       <table class="bordered">
         <tr>
@@ -12,15 +12,15 @@
           <th>{t}Time Spent{/t}</th>
           <th>{t}Created{/t}</th>
         </tr>
-        {foreach key=issue_id item=issue from=$assigned_issues}
+        {% for signed_issues in key=issue_id item=issue from= %}
         <tr>
-          <td bgcolor="{$issue.status_color}" align="center"><a target="_top" href="{$core.rel_url}view.php?id={$issue_id}" title="{t}view issue details{/t}">{$issue_id}</a></td>
-          <td bgcolor="{$issue.status_color}"><a target="_top" href="{$core.rel_url}view.php?id={$issue_id}" title="{t}view issue details{/t}">{$issue.iss_summary|escape:"html"}</a></td>
-          <td bgcolor="{$issue.status_color}" align="center">{$issue.sta_title|escape:"html"}</td>
-          <td bgcolor="{$issue.status_color}" align="center">{$issue.time_spent}</td>
-          <td bgcolor="{$issue.status_color}" align="center">{$issue.iss_created_date|timeago}</td>
+          <td bgcolor="{{ issue.status_color }}" align="center"><a target="_top" href="{{ core.rel_url }}view.php?id={{ issue_id }}" title="{t}view issue details{/t}">{{ issue_id }}</a></td>
+          <td bgcolor="{{ issue.status_color }}"><a target="_top" href="{{ core.rel_url }}view.php?id={{ issue_id }}" title="{t}view issue details{/t}">{$issue.iss_summary|escape:"html"}</a></td>
+          <td bgcolor="{{ issue.status_color }}" align="center">{$issue.sta_title|escape:"html"}</td>
+          <td bgcolor="{{ issue.status_color }}" align="center">{{ issue.time_spent }}</td>
+          <td bgcolor="{{ issue.status_color }}" align="center">{{ issue.iss_created_date|timeago }}</td>
         </tr>
-        {/foreach}
+        {% endfor %}
       </table>
-{/foreach}
+{% endfor %}
 {/block}

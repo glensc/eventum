@@ -1,23 +1,24 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 {block page_classes}CustomField close_issue{/block}
-{block "title"}#{$issue_id} - Close{/block}
+
+{block "title"}#{{ issue_id }} - Close{/block}
 
 {block "content"}
-{if $no_issue|default:''}
+{% if no_issue|default('') %}
 <div class="note_box">
     {t 1=$smarty.get.id|intval}Error: The issue #%1 could not be found{/t}.
 </div>
-{else}
+{% else %}
 <div id="signature" style="display: none;">
-{$core.current_user_prefs.email_signature}
+{{ core.current_user_prefs.email_signature }}
 </div>
 <form name="close_form" method="post" action="close.php">
 <input type="hidden" name="cat" value="close">
-<input type="hidden" name="issue_id" value="{$issue_id}">
+<input type="hidden" name="issue_id" value="{{ issue_id }}">
       <table class="bordered">
         <tr class="title">
           <th colspan="2" nowrap>
-            {t}Close Issue{/t} (ID: <a href="{$core.rel_url}view.php?id={$issue_id}" title="{t}view issue details{/t}">{$issue_id}</a>)
+            {t}Close Issue{/t} (ID: <a href="{{ core.rel_url }}view.php?id={{ issue_id }}" title="{t}view issue details{/t}">{{ issue_id }}</a>)
           </th>
         </tr>
         <tr>
@@ -29,10 +30,10 @@
               <option value="-1">{t}Please choose a status{/t}</option>
               {html_options options=$statuses}
             </select>
-            {include file="error_icon.tpl.html" field="status"}
+            {% include "error_icon.tpl.html" with {'field' : 'status'} %}
           </td>
         </tr>
-        {if $resolutions|@count > 0}
+        {% if resolutions %}
         <tr>
           <th width="160">
             {t}Resolution{/t}
@@ -43,10 +44,10 @@
             </select>
           </td>
         </tr>
-        {else}
+        {% else %}
             <input type="hidden" name="resolution" value="">
-        {/if}
-        {include file="edit_custom_fields.tpl.html" custom_fields=$custom_fields form_type='close'}
+        {% endif %}
+        {% include "edit_custom_fields.tpl.html" with {'custom_fields' : custom_fields, 'form_type' : 'close'} %}
         <tr>
           <th width="160">
             {t}Send Notification About Issue Being Closed?{/t}
@@ -69,7 +70,7 @@
           <td>
             <input id="notification_internal" type="radio" name="notification_list" checked value="internal">
             <label for="notification_internal">{t}Internal Users{/t} ({$notification_list_internal|default:"<em>None</em>"})
-                ({t}Will save as a note{/t}{if $core.has_crm}; {t}Customer may still receive generic issue closure email{/t}{/if})</label><br />
+                ({t}Will save as a note{/t}{% if core.has_crm %}; {t}Customer may still receive generic issue closure email{/t}{% endif %})</label><br />
             <input id="notification_all" type="radio" name="notification_list" value="all">
             <label for="notification_all">{t}All{/t} ({$notification_list_all|default:"<i>None</i>"}) ({t}Will save as email{/t})</label>
           </td>
@@ -79,32 +80,32 @@
             {t}Reason for closing issue{/t} *
           </th>
           <td>
-            <textarea name="reason" rows="8" style="width: 97%">{if $core.current_user_prefs.auto_append_email_sig == 1}
+            <textarea name="reason" rows="8" style="width: 97%">{% if core.current_user_prefs.auto_append_email_sig == 1 %}
 
 
-{$core.current_user_prefs.email_signature|escape:"html"}{/if}</textarea>
-            {include file="error_icon.tpl.html" field="reason"}
+{$core.current_user_prefs.email_signature|escape:"html"}{% endif %}</textarea>
+            {% include "error_icon.tpl.html" with {'field' : 'reason'} %}
           </td>
         </tr>
-        {if $incident_details|default:'' != '' and $incident_details|@count > 0}
+        {% if incident_details %}
         <tr class="per_incident">
           <th width="160">
             {t}Incident Types to Redeem{/t}
           </th>
           <td>
-            {foreach from=$incident_details item=type_details key=type_id}
-              <label><input type="checkbox" name="redeem[{$type_id}]" value="1" {if $redeemed[$type_id]|default:'' != '' and $redeemed[$type_id].is_redeemed == 1}checked{/if}>
-              {$type_details.title} (Total: {$type_details.total}; Left: {$type_details.total-$type_details.redeemed})</label><br />
-            {/foreach}
+            {% for type_id, type_details in incident_details %}
+              <label><input type="checkbox" name="redeem[{{ type_id }}]" value="1" {% if redeemed[type_id]|default('') != '' and redeemed[type_id].is_redeemed == 1 %}checked{% endif %}>
+              {{ type_details.title }} (Total: {{ type_details.total }}; Left: {$type_details.total-$type_details.redeemed})</label><br />
+            {% endfor %}
           </td>
         </tr>
-        {/if}
+        {% endif %}
         <tr>
           <th width="160">
             {t}Time Spent{/t}
           </th>
           <td>
-            <input type="text" size="5" name="time_spent"> <span>({t}in minutes{/t})</span>{include file="error_icon.tpl.html" field="time_spent"}
+            <input type="text" size="5" name="time_spent"> <span>({t}in minutes{/t})</span>{% include "error_icon.tpl.html" with {'field' : 'time_spent'} %}
           </td>
         </tr>
         <tr>
@@ -116,25 +117,25 @@
               <option value="">{t}Please choose a category{/t}</option>
               {html_options options=$time_categories}
             </select>
-            {include file="error_icon.tpl.html" field="category"}
+            {% include "error_icon.tpl.html" with {'field' : 'category'} %}
           </td>
         </tr>
         <tr class="buttons">
           <td colspan="2">
                 <input type="submit" value="{t}Close Issue{/t}">
-                {if $core.current_user_prefs.email_signature != "" and $core.current_user_prefs.auto_append_email_sig != 1}
+                {% if core.current_user_prefs.email_signature != "" and core.current_user_prefs.auto_append_email_sig != 1 %}
                 <div class="right">
                   <label>
                       <input type="checkbox" name="add_email_signature" value="yes">
                       Add Email Signature
                   </label>
                 </div>
-                {/if}
+                {% endif %}
             </tr>
             </table>
           </td>
         </tr>
       </table>
 </form>
-{/if}
+{% endif %}
 {/block}

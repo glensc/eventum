@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -40,12 +40,12 @@
       </script>
 
       <form id="resolution_form" method="post">
-      {if $smarty.get.cat|default:'' == 'edit'}
+      {% if smarty.get.cat|default('') == 'edit' %}
       <input type="hidden" name="cat" value="update">
       <input type="hidden" name="id" value="{$smarty.get.id|default:''|intval}">
-      {else}
+      {% else %}
       <input type="hidden" name="cat" value="new">
-      {/if}
+      {% endif %}
     <table class="bordered">
       <tr class="title">
         <th colspan="2">
@@ -58,7 +58,7 @@
         </th>
         <td>
           <input type="text" name="title" size="40" value="{$info.res_title|default:''}">
-          {include file="error_icon.tpl.html" field="title"}
+          {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
         </td>
       </tr>
         <tr>
@@ -67,16 +67,16 @@
           </th>
           <td>
             <input type="text" name="rank" size="5" class="default" value="{$info.res_rank|default:''}">
-            {include file="error_icon.tpl.html" field="rank"}
+            {% include "error_icon.html.twig.html" with {'field' : 'rank'} %}
           </td>
         </tr>
       <tr class="buttons">
         <td colspan="2" >
-          {if $smarty.get.cat|default:'' == 'edit'}
+          {% if smarty.get.cat|default('') == 'edit' %}
           <input type="submit" value="{t}Update Resolution{/t}">
-          {else}
+          {% else %}
           <input type="submit" value="{t}Create Resolution{/t}">
-          {/if}
+          {% endif %}
           <input type="reset" value="{t}Reset{/t}">
         </td>
       </tr>
@@ -98,10 +98,10 @@
         </tr>
         {section name="i" loop=$list}
         <tr class="{cycle values='odd,even'}">
-          <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{$list[i].res_id}"></td>
-          <td align="center">{$list[i].res_rank}</td>
+          <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{{ list[i].res_id }}"></td>
+          <td align="center">{{ list[i].res_rank }}</td>
           <td width="100%">
-            &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].res_id}" title="{t}update this entry{/t}">{$list[i].res_title}</a>
+            &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].res_id }}" title="{t}update this entry{/t}">{{ list[i].res_title }}</a>
           </td>
         </tr>
         {sectionelse}

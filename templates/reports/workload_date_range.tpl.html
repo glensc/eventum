@@ -1,4 +1,4 @@
-{extends "reports/reports_base.tpl.html"}
+{extends "reports/reports_base.html.twig.html"}
 {block "title"}Workload Date Range{/block}
 
 {block "report_content"}
@@ -7,7 +7,7 @@
 </h3>
 <form name="workload_report" method="post">
     <table class="bordered filters">
-        {if $categories|@count > 0}
+        {% if categories|@count > 0 %}
         <tr>
             <th align="right">
                 {t}Category{/t}:
@@ -20,7 +20,7 @@
                 </select>
             </td>
         </tr>
-        {/if}
+        {% endif %}
         <tr>
             <th align="right">
                 {t}Type{/t}:
@@ -96,11 +96,11 @@
         }
     }
 
-        setIntervals('{$interval}');
+        setIntervals('{{ interval }}');
 </script>
-{if $data|default:'' != ''}
+{% if data|default('') != '' %}
 <center>
-    <h3>Project: {$core.project_name}</h3>
+    <h3>Project: {{ core.project_name }}</h3>
 </center>
 <table class="bordered">
     <tr>
@@ -120,35 +120,35 @@
             Max
         </th>
     </tr>
-    {foreach name="workload" from=$data key=loop_name item=row}
+    {% for loop_name, row in data %}
     <tr class="{cycle values='odd,even'}">
-        <td align="center">{$loop_name}</td>
-        <td align="center">{$row.stats.total}</td>
+        <td align="center">{{ loop_name }}</td>
+        <td align="center">{{ row.stats.total }}</td>
         <td align="center">{$row.stats.avg|round:2}</td>
-        <td align="center">{$row.stats.median}</td>
-        <td align="center">{$row.stats.max}</td>
+        <td align="center">{{ row.stats.median }}</td>
+        <td align="center">{{ row.stats.max }}</td>
     </tr>
-    {/foreach}
+    {% endfor %}
 </table>
 <div align="center">
     {t}Avg/Med/Max Issues/Emails{/t}
-    {if $interval == 'day'}
+    {% if interval == 'day' %}
     per day
-    {elseif $interval == 'week'}
+    {% elseif interval == 'week' %}
     per week
-    {elseif $interval == 'month'}
+    {% elseif interval == 'month' %}
     per month
-    {elseif $interval == 'dow'}
+    {% elseif interval == 'dow' %}
     per day of week
-    {/if}
-    for {$start_date} through {$end_date}.
+    {% endif %}
+    for {{ start_date }} through {{ end_date }}.
 </div>
 <br />
 <div align="center">
-    <img src="graph.php?graph=workload_date_range&subgraph=issue&interval={$interval}&start_date={$start_date}&end_date={$end_date}&category={$category}"><br /><br />
-    <img src="graph.php?graph=workload_date_range&subgraph=issue&type=pie&interval={$interval}&start_date={$start_date}&end_date={$end_date}&category={$category}"><br /><br />
-    <img src="graph.php?graph=workload_date_range&subgraph=email&interval={$interval}&start_date={$start_date}&end_date={$end_date}&category={$category}"><br /><br />
-    <img src="graph.php?graph=workload_date_range&subgraph=email&type=pie&interval={$interval}&start_date={$start_date}&end_date={$end_date}&category={$category}">
+    <img src="graph.php?graph=workload_date_range&subgraph=issue&interval={{ interval }}&start_date={{ start_date }}&end_date={{ end_date }}&category={{ category }}"><br /><br />
+    <img src="graph.php?graph=workload_date_range&subgraph=issue&type=pie&interval={{ interval }}&start_date={{ start_date }}&end_date={{ end_date }}&category={{ category }}"><br /><br />
+    <img src="graph.php?graph=workload_date_range&subgraph=email&interval={{ interval }}&start_date={{ start_date }}&end_date={{ end_date }}&category={{ category }}"><br /><br />
+    <img src="graph.php?graph=workload_date_range&subgraph=email&type=pie&interval={{ interval }}&start_date={{ start_date }}&end_date={{ end_date }}&category={{ category }}">
 </div>
-{/if}
+{% endif %}
 {/block}

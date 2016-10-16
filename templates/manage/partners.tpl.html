@@ -1,24 +1,24 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 <form name="partner_form"  method="post">
-    {if $smarty.get.cat|default:'' == 'edit'}
+    {% if smarty.get.cat|default('') == 'edit' %}
     <input type="hidden" name="cat" value="update">
-    <input type="hidden" name="code" value="{$smarty.get.code|escape}">
-    {/if}
+    <input type="hidden" name="code" value="{{ smarty.get.code|escape }}">
+    {% endif %}
     <table class="bordered">
         <tr class="title">
             <th colspan="2">
                 {t}Manage Partners{/t}
             </th>
         </tr>
-        {if $smarty.get.cat|default:'' == 'edit'}
+        {% if smarty.get.cat|default('') == 'edit' %}
         <tr>
             <th width="120">
                 {t}Code{/t}
             </th>
             <td>
-                {$info.code}
+                {{ info.code }}
             </td>
         </tr>
         <tr>
@@ -26,7 +26,7 @@
                 {t}Name{/t}
             </th>
             <td>
-                {$info.name}
+                {{ info.name }}
             </td>
         </tr>
         <tr>
@@ -37,7 +37,7 @@
                 <select name="projects[]" multiple="multiple">
                     {html_options options=$project_list selected=$info.projects|@array_keys}
                 </select>
-                {include file="error_icon.tpl.html" field="rank"}
+                {% include "error_icon.html.twig.html" with {'field' : 'rank'} %}
             </td>
         </tr>
         <tr class="buttons">
@@ -45,7 +45,7 @@
                 <input type="submit" name="submit" value="Update" class="button" />
             </td>
         </tr>
-        {/if}
+        {% endif %}
     </table>
 </form>
 
@@ -55,24 +55,24 @@
         <th>{t}Name{/t}</th>
         <th>{t}Projects{/t}</th>
     </tr>
-    {foreach from=$list item=partner}
+    {% for partner in list %}
     <tr class="{cycle values='odd,even'}">
         <td width="20%">
-            &nbsp;<a href="partners.php?cat=edit&code={$partner.code}">{$partner.code}</a>
+            &nbsp;<a href="partners.php?cat=edit&code={{ partner.code }}">{{ partner.code }}</a>
         </td>
         <td width="40%">
-            &nbsp;{$partner.name}
+            &nbsp;{{ partner.name }}
         </td>
         <td width="20%">
             &nbsp;{","|join:$partner.projects}
         </td>
     </tr>
-    {foreachelse}
+    {% else %}
     <tr>
         <td colspan="5" align="center">
             <i>{t}No partners found.{/t}</i>
         </td>
     </tr>
-    {/foreach}
+    {% endfor %}
 </table>
 {/block}

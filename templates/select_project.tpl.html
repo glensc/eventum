@@ -1,18 +1,18 @@
-{extends "base.tpl.html"}
+{extends "base.html.twig.html"}
 {block "title"}Select Project{/block}
 
 {block "content"}
 <br />
-{if $active_projects|@count < 1}
+{% if active_projects|@count < 1 %}
     <div class="note_box">
         <p>
         {t}Sorry, you do not have access to any projects currently. Please contact the administrator for more information.{/t}
         </p>
         <p>
-            <a href="{$core.rel_url}logout.php">{t}Logout{/t}</a>
+            <a href="{{ core.rel_url }}logout.php">{t}Logout{/t}</a>
         </p>
     </div>
-{else}
+{% else %}
     <form id="project_select_form" name="login_form" method="post" action="">
         <input type="hidden" name="cat" value="select">
         <input type="hidden" name="url" value="{$smarty.get.url|default:''}">
@@ -22,28 +22,28 @@
                     {t}Select Project{/t}
                 </th>
             </tr>
-            {if $err|default:0 != 0 || $smarty.get.err|default:0 != 0}
+            {% if err|default(0) != 0 || smarty.get.err|default(0) != 0 %}
             <tr>
                 <td colspan="2" align="center" class="error">
                     <b>
-                        {if $err == 1 || $smarty.get.err == 1}
+                        {% if err == 1 || smarty.get.err == 1 %}
                         {t}You are not allowed to use the selected project.{/t}
-                        {/if}
+                        {% endif %}
                     </b>
                 </td>
             </tr>
-            {/if}
-            {foreach from=$active_projects key=prj_id item=project}
+            {% endif %}
+            {% for prj_id, project in active_projects %}
             <tr>
                 <td width="10">
-                    <input type="radio" name="project" value="{$prj_id}" id="project_{$prj_id}"
-                    {if $project@first}checked="checked"{/if}>
+                    <input type="radio" name="project" value="{{ prj_id }}" id="project_{{ prj_id }}"
+                    {% if project@first %}checked="checked"{% endif %}>
                 </td>
                 <td>
-                    <label class="project_label" for="project_{$prj_id}">{$project}</label>
+                    <label class="project_label" for="project_{{ prj_id }}">{{ project }}</label>
                 </td>
             </tr>
-            {/foreach}
+            {% endfor %}
             <tr class="buttons">
                 <td colspan="2">
                     <input type="submit" name="Submit" value="{t}Continue{/t} &gt;&gt;">
@@ -53,5 +53,5 @@
             </tr>
         </table>
     </form>
-{/if}
+{% endif %}
 {/block}

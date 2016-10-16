@@ -1,8 +1,8 @@
-{extends "base.tpl.html"}
+{extends "base.html.twig.html"}
 {block title}{t}Account Signup{/t}{/block}
 
 {block "content"}
-{if $core.app_setup.open_signup != 'enabled'}
+{% if core.app_setup.open_signup != 'enabled' %}
 <center>
 <span>
 {t}Sorry, but this feature has been disabled by the administrator.{/t}
@@ -10,7 +10,7 @@
 <a href="javascript:history.go(-1);">{t}Go Back{/t}</a>
 </span>
 </center>
-{else}
+{% else %}
 
 <script type="text/javascript">
 <!--
@@ -52,26 +52,26 @@ $().ready(function() {
             {t}Account Signup{/t}
           </th>
         </tr>
-        {if $signup_result|default:'' != 1}
+        {% if signup_result|default('') != 1 %}
         <tr>
           <th>{t}Full Name{/t}</th>
           <td width="75%">
             <input type="text" name="full_name" size="50" maxlength="255">
-            {include file="error_icon.tpl.html" field="full_name"}
+            {% include "error_icon.html.twig.html" with {'field' : 'full_name'} %}
           </td>
         </tr>
         <tr>
           <th>{t}Email Address{/t}</th>
           <td width="75%">
             <input type="text" name="email" size="50" maxlength="255">
-            {include file="error_icon.tpl.html" field="email"}
+            {% include "error_icon.html.twig.html" with {'field' : 'email'} %}
           </td>
         </tr>
         <tr>
           <th>{t}Password{/t}</th>
           <td width="75%">
             <input type="password" name="passwd" size="20" maxlength="32" autocomplete="off">
-            {include file="error_icon.tpl.html" field="passwd"}
+            {% include "error_icon.html.twig.html" with {'field' : 'passwd'} %}
           </td>
         </tr>
         <tr class="buttons">
@@ -80,8 +80,8 @@ $().ready(function() {
               <div class="right"><a href="index.php">{t}Back to Login Form{/t}</a></div>
           </td>
         </tr>
-        {/if}
+        {% endif %}
       </table>
 </form>
-{/if}
+{% endif %}
 {/block}

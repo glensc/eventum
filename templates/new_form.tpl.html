@@ -1,11 +1,11 @@
-{if $message|default:'' != ''}
+{% if message|default('') != '' %}
 <table align="center" border="0" cellspacing="0" cellpadding="1" bgcolor="red">
   <tr>
     <td>
         <table align="center" width="500" bgcolor="#FFFFFF">
             <tr>
                 <td class="default" align="center">
-                    {$message}
+                    {{ message }}
                 </td>
             </tr>
         </table>
@@ -13,190 +13,190 @@
   </tr>
 </table>
 <br />
-{/if}
+{% endif %}
 
 <form id="report_form" name="report_form" class="dropzone" action="new.php" method="post" enctype="multipart/form-data">
 <input type="hidden" name="cat" value="report">
-<input type="hidden" name="prj_id" value="{$core.project_id}">
+<input type="hidden" name="prj_id" value="{{ core.project_id }}">
 <input type="hidden" name="customer" value="{$customer_id|default:''}" id="customer_id">
 <input type="hidden" name="contact" value="{$contact_id|default:''}">
 <input type="hidden" name="attached_emails" value="{$attached_emails|default:''}">
 <input type="hidden" name="iaf_ids" id="iaf_ids" value="">
-{if $defaults.clone_iss_id|default:'' != ''}
-    <input type="hidden" name="clone_iss_id" value="{$defaults.clone_iss_id}" />
-{/if}
+{% if defaults.clone_iss_id|default('') != '' %}
+    <input type="hidden" name="clone_iss_id" value="{{ defaults.clone_iss_id }}" />
+{% endif %}
 
-{if $core.current_role < $field_display_settings.assignment.min_role}
+{% if core.current_role < field_display_settings.assignment.min_role %}
     <input type="hidden" name="assignment[]" value="">
-{/if}
-{if $releases|@count < 1 || $core.current_role < $field_display_settings.release.min_role}
-    {* Hidden field if there are no scheduled releases *}
+{% endif %}
+{% if releases|@count < 1 || core.current_role < field_display_settings.release.min_role %}
+    {# Hidden field if there are no scheduled releases #}
     <input type="hidden" name="release" value="">
-{/if}
-{if $cats|@count < 1 || $core.current_role < $field_display_settings.category.min_role}
+{% endif %}
+{% if cats|@count < 1 || core.current_role < field_display_settings.category.min_role %}
     <input type="hidden" name="category" value="">
-{/if}
-{if $core.current_role < $field_display_settings.priority.min_role}
+{% endif %}
+{% if core.current_role < field_display_settings.priority.min_role %}
     <input type="hidden" name="priority" value="">
-{/if}
-{if $core.current_role < $field_display_settings.estimated_dev_time.min_role}
+{% endif %}
+{% if core.current_role < field_display_settings.estimated_dev_time.min_role %}
     <input type="hidden" name="estimated_dev_time" value="">
-{/if}
+{% endif %}
 <table class="bordered two_column" id="create_issue">
-{assign var="tabindex" value=1}
+{% set tabindex = '1' %}
     <tr class="title">
       <th colspan="2">
         {t}Create New Issue{/t}
-        <span class="menu">({t}Current Project{/t}: {$core.project_name})</span>
+        <span class="menu">({t}Current Project{/t}: {{ core.project_name }})</span>
       </th>
     </tr>
-    {if $cats|@count > 0 && $core.current_role >= $field_display_settings.category.min_role}
+    {% if cats|@count > 0 && core.current_role >= field_display_settings.category.min_role %}
     <tr>
-      <th{if $field_display_settings.category.min_role > $core.roles.customer} class="internal"{/if}>
-        {t}Category{/t} {if $field_display_settings.category.required}*{/if}
-            {include file="help_link.tpl.html" topic="report_category"}
+      <th{% if field_display_settings.category.min_role > core.roles.customer %} class="internal"{% endif %}>
+        {t}Category{/t} {% if field_display_settings.category.required %}*{% endif %}
+            {% include "help_link.html.twig.html" with {'topic' : 'report_category'} %}
       </th>
       <td>
         <select id="category" name="category" tabindex="{$tabindex++}"
-          {if $field_display_settings.category.required}data-required="true"{/if}>
+          {% if field_display_settings.category.required %}data-required="true"{% endif %}>
           <option value="-1">{t}Please choose a category{/t}</option>
           {html_options options=$cats selected=$defaults.category|default:''}
         </select>
-        {include file="error_icon.tpl.html" field="category"}
+        {% include "error_icon.html.twig.html" with {'field' : 'category'} %}
       </td>
     </tr>
-    {/if}
-    {if $severities|@count > 0 && $core.current_role >= $field_display_settings.severity.min_role}
+    {% endif %}
+    {% if severities|@count > 0 && core.current_role >= field_display_settings.severity.min_role %}
     <tr>
-      <th width="150"{if $field_display_settings.severity.min_role > $core.roles.customer} class="internal"{/if}>
-        {t}Severity{/t} {if $field_display_settings.severity.required}*{/if}
+      <th width="150"{% if field_display_settings.severity.min_role > core.roles.customer %} class="internal"{% endif %}>
+        {t}Severity{/t} {% if field_display_settings.severity.required %}*{% endif %}
       </th>
       <td>
         <select id="severity" name="severity" tabindex="{$tabindex++}"
-                {if $field_display_settings.severity.required}data-required="true"{/if}>
+                {% if field_display_settings.severity.required %}data-required="true"{% endif %}>
           <option value="-1">{t}Please choose a severity{/t}</option>
-          {foreach from=$severities item=severity}
-          <option value="{$severity.sev_id}" {if $severity.sev_id == $defaults.severity|default:''}selected{/if}
-            data-desc="{$severity.sev_description|escape}">{$severity.sev_title|escape}</option>
-          {/foreach}
+          {% for severity in severities %}
+          <option value="{{ severity.sev_id }}" {% if severity.sev_id == defaults.severity|default('') %}selected{% endif %}
+            data-desc="{{ severity.sev_description|escape }}">{{ severity.sev_title|escape }}</option>
+          {% endfor %}
         </select>
         <span id="severity_desc" class="alerts"></span>
-        {include file="error_icon.tpl.html" field="severity"}
+        {% include "error_icon.html.twig.html" with {'field' : 'severity'} %}
       </td>
     </tr>
-    {/if}
-    {if $core.current_role >= $field_display_settings.priority.min_role}
+    {% endif %}
+    {% if core.current_role >= field_display_settings.priority.min_role %}
     <tr>
       <th>
-        {t}Priority{/t} {if $field_display_settings.priority.required}*{/if}
-        {include file="help_link.tpl.html" topic="report_priority"}
+        {t}Priority{/t} {% if field_display_settings.priority.required %}*{% endif %}
+        {% include "help_link.html.twig.html" with {'topic' : 'report_priority'} %}
       </th>
       <td>
-        {* Figure out default priority *}
-        {if $defaults.priority|default:'' != '' && $new_issue_id == ''}
-          {assign var="priority" value=$defaults.priority}
-        {else}
-          {assign var="priority" value=3}
-        {/if}
+        {# Figure out default priority #}
+        {% if defaults.priority|default('') != '' && new_issue_id == '' %}
+          {% set priority = defaults.priority %}
+        {% else %}
+          {% set priority = '3' %}
+        {% endif %}
         <select id="priority" name="priority" tabindex="{$tabindex++}"
-                {if $field_display_settings.priority.required}data-required="true"{/if}>
+                {% if field_display_settings.priority.required %}data-required="true"{% endif %}>
           <option value="-1">{t}Please choose a priority{/t}</option>
           {html_options options=$priorities selected=$priority}
         </select>
-        {include file="error_icon.tpl.html" field="priority"}
+        {% include "error_icon.html.twig.html" with {'field' : 'priority'} %}
       </td>
     </tr>
-    {/if}
-    {if $core.current_role >= $field_display_settings.assignment.min_role}
+    {% endif %}
+    {% if core.current_role >= field_display_settings.assignment.min_role %}
     <tr>
-      <th{if $field_display_settings.assignment.min_role > $core.roles.customer} class="internal"{/if}>
-        {t}Assignment{/t} {if $field_display_settings.assignment.required}*{/if}
-        {include file="help_link.tpl.html" topic="report_assignment"}
+      <th{% if field_display_settings.assignment.min_role > core.roles.customer %} class="internal"{% endif %}>
+        {t}Assignment{/t} {% if field_display_settings.assignment.required %}*{% endif %}
+        {% include "help_link.html.twig.html" with {'topic' : 'report_assignment'} %}
       </th>
       <td>
-        {if $new_issue_id == ''}
-            {assign var='selected_users' value=$defaults.users|default:''}
-        {/if}
+        {% if new_issue_id == '' %}
+            {% set selected_users = defaults.users %}
+        {% endif %}
         <select id="assignment" name="users[]" multiple size="3" tabindex="{$tabindex++}"
                 data-placeholder="{t}Choose Assignees...{/t}" class="chosen-select"
-                {if $field_display_settings.assignment.required}data-required="true"{/if}>
+                {% if field_display_settings.assignment.required %}data-required="true"{% endif %}>
         {html_options options=$users selected=$selected_users}
         </select>
-        {include file="error_icon.tpl.html" field="users[]"}
+        {% include "error_icon.html.twig.html" with {'field' : 'users[]'} %}
       </td>
     </tr>
-    {/if}
+    {% endif %}
 
-  {if $groups|@count > 0 && $core.current_role >= $field_display_settings.group.min_role}
+  {% if groups|@count > 0 && core.current_role >= field_display_settings.group.min_role %}
     <tr>
-      <th{if $field_display_settings.group.min_role > $core.roles.customer} class="internal"{/if}>
-        {t}Group{/t} {if $field_display_settings.group.required}*{/if}
+      <th{% if field_display_settings.group.min_role > core.roles.customer %} class="internal"{% endif %}>
+        {t}Group{/t} {% if field_display_settings.group.required %}*{% endif %}
       </th>
       <td>
-        {if $new_issue_id == ''}
-            {assign var='selected_group' value=$defaults.group|default:''}
-        {/if}
+        {% if new_issue_id == '' %}
+            {% set selected_group = defaults.group %}
+        {% endif %}
         <select name="group" tabindex="{$tabindex++}"
-                {if $field_display_settings.group.required}data-required="true"{/if}>
+                {% if field_display_settings.group.required %}data-required="true"{% endif %}>
             <option value=""></option>
             {html_options options=$groups selected=$selected_group}
         </select>
-        {include file="error_icon.tpl.html" field="group"}
+        {% include "error_icon.html.twig.html" with {'field' : 'group'} %}
       </td>
     </tr>
-    {/if}
+    {% endif %}
 
-    {if $releases|@count > 0 && $core.current_role >= $field_display_settings.release.min_role}
+    {% if releases|@count > 0 && core.current_role >= field_display_settings.release.min_role %}
     <tr>
-      <th{if $field_display_settings.release.min_role > $core.roles.customer} class="internal"{/if}>
-        {t}Scheduled Release{/t} {if $field_display_settings.release.required}*{/if}
-        {include file="help_link.tpl.html" topic="report_release"}
+      <th{% if field_display_settings.release.min_role > core.roles.customer %} class="internal"{% endif %}>
+        {t}Scheduled Release{/t} {% if field_display_settings.release.required %}*{% endif %}
+        {% include "help_link.html.twig.html" with {'topic' : 'report_release'} %}
       </th>
       <td>
-        {if $new_issue_id == ''}
-            {assign var='selected_release' value=$defaults.release|default:''}
-        {/if}
+        {% if new_issue_id == '' %}
+            {% set selected_release = defaults.release %}
+        {% endif %}
         <select name="release" tabindex="{$tabindex++}"
-                {if $field_display_settings.release.required}data-required="true"{/if}>
+                {% if field_display_settings.release.required %}data-required="true"{% endif %}>
           <option value="0">{t}un-scheduled{/t}</option>
           {html_options options=$releases selected=$selected_release}
         </select>
       </td>
     </tr>
-    {/if}
+    {% endif %}
 
     <tr>
       <th>
-        {t}Summary{/t} * {include file="help_link.tpl.html" topic="report_summary"}
+        {t}Summary{/t} * {% include "help_link.html.twig.html" with {'topic' : 'report_summary'} %}
       </th>
       <td>
-        {if $new_issue_id != ''}
-            {assign var='issue_summary' value=''}
-        {elseif $issue_summary|default:'' == ''}
-            {assign var='issue_summary' value=$defaults.summary|default:''}
-        {/if}
+        {% if new_issue_id != '' %}
+            {% set issue_summary = ' %}
+        {% elseif issue_summary|default('') == '' %}
+            {% set issue_summary = defaults.summary %}
+        {% endif %}
         <input type="text" name="summary" size="50" tabindex="{$tabindex++}" value="{$issue_summary|default:''|escape:"html"}">
-        {include file="error_icon.tpl.html" field="summary"}
+        {% include "error_icon.html.twig.html" with {'field' : 'summary'} %}
       </td>
     </tr>
 
     <tr>
       <th class="initial_description">
-        {t}Description{/t} * {include file="help_link.tpl.html" topic="report_description"}
+        {t}Description{/t} * {% include "help_link.html.twig.html" with {'topic' : 'report_description'} %}
       </th>
       <td>
-        {if $new_issue_id != ''}
-            {assign var='issue_description' value=''}
-        {elseif $issue_description|default:'' == ''}
-            {assign var='issue_description' value=$defaults.description|default:''}
-        {/if}
+        {% if new_issue_id != '' %}
+            {% set issue_description = ' %}
+        {% elseif issue_description|default('') == '' %}
+            {% set issue_description = defaults.description %}
+        {% endif %}
         <textarea name="description" rows="10" tabindex="{$tabindex++}" style="width: 97%">{$issue_description|default:''}</textarea>
-        {include file="error_icon.tpl.html" field="description"}
+        {% include "error_icon.html.twig.html" with {'field' : 'description'} %}
       </td>
     </tr>
 
-    {* associated issue field *}
-    {if $core.current_role >= $field_display_settings.associated_issues.min_role}
+    {# associated issue field #}
+    {% if core.current_role >= field_display_settings.associated_issues.min_role %}
     <tr>
       <th>
         {t}Associated Issues{/t}
@@ -204,84 +204,84 @@
       <td>
         <input type="text" name="associated_issues" size="20" tabindex="{$tabindex++}"
                value="{$associated_issues|default:''|escape:"html"}"
-               {if $field_display_settings.associated_issues.required}data-required="true"{/if}>
+               {% if field_display_settings.associated_issues.required %}data-required="true"{% endif %}>
       </td>
     </tr>
-    {/if}
+    {% endif %}
 
-  {if $core.current_role > $core.roles.customer && $core.current_role >= $field_display_settings.expected_res_date.min_role}
+  {% if core.current_role > core.roles.customer && core.current_role >= field_display_settings.expected_res_date.min_role %}
       <tr>
 
-        <th{if $field_display_settings.expected_res_date.min_role > $core.roles.customer} class="internal"{/if}>
-          {t}Expected Resolution Date{/t} {if $field_display_settings.expected_res_date.required}*{/if}
+        <th{% if field_display_settings.expected_res_date.min_role > core.roles.customer %} class="internal"{% endif %}>
+          {t}Expected Resolution Date{/t} {% if field_display_settings.expected_res_date.required %}*{% endif %}
         </th>
 
         <td>
           <input type="text" name="expected_resolution_date" id="expected_resolution"
                  value="{$defaults.expected_res_date|default:''}" class="date_picker"
-                  {if $field_display_settings.expected_res_date.required}data-required="true"{/if}>
+                  {% if field_display_settings.expected_res_date.required %}data-required="true"{% endif %}>
         </td>
       </tr>
-    {/if}
+    {% endif %}
 
-    {if $core.current_role >= $field_display_settings.estimated_dev_time.min_role}
+    {% if core.current_role >= field_display_settings.estimated_dev_time.min_role %}
     <tr>
-      <th{if $field_display_settings.estimated_dev_time.min_role > $core.roles.customer} class="internal"{/if}>
-        <nobr>{t}Estimated Dev. Time{/t} {if $field_display_settings.estimated_dev_time.required}*{/if}
-            {include file="help_link.tpl.html" topic="report_estimated_dev_time"}&nbsp;</nobr>
+      <th{% if field_display_settings.estimated_dev_time.min_role > core.roles.customer %} class="internal"{% endif %}>
+        <nobr>{t}Estimated Dev. Time{/t} {% if field_display_settings.estimated_dev_time.required %}*{% endif %}
+            {% include "help_link.html.twig.html" with {'topic' : 'report_estimated_dev_time'} %}&nbsp;</nobr>
       </th>
       <td>
-        {if $new_issue_id == ''}
-            {assign var='estimated_dev_time' value=$defaults.estimated_dev_time|default:''}
-        {/if}
-        <input type="text" name="estimated_dev_time" size="10" tabindex="{$tabindex++}" value="{$estimated_dev_time}"
-                {if $field_display_settings.estimated_dev_time.required}data-required="true"{/if}>
-        {include file="error_icon.tpl.html" field="estimated_dev_time"} <span>({t}in hours{/t})</span>
+        {% if new_issue_id == '' %}
+            {% set estimated_dev_time = defaults.estimated_dev_time %}
+        {% endif %}
+        <input type="text" name="estimated_dev_time" size="10" tabindex="{$tabindex++}" value="{{ estimated_dev_time }}"
+                {% if field_display_settings.estimated_dev_time.required %}data-required="true"{% endif %}>
+        {% include "error_icon.html.twig.html" with {'field' : 'estimated_dev_time'} %} <span>({t}in hours{/t})</span>
       </td>
     </tr>
-    {/if}
+    {% endif %}
 
-    {if $products|@count > 0 && $core.current_role >= $field_display_settings.product.min_role}
+    {% if products|@count > 0 && core.current_role >= field_display_settings.product.min_role %}
     <tr>
-      <th width="150"{if $field_display_settings.product.min_role > $core.roles.customer} class="internal"{/if}>
-        {t}Product{/t} {if $field_display_settings.product.required}*{/if}
+      <th width="150"{% if field_display_settings.product.min_role > core.roles.customer %} class="internal"{% endif %}>
+        {t}Product{/t} {% if field_display_settings.product.required %}*{% endif %}
       </th>
       <td>
         <select class="default" id="product" name="product" tabindex="{$tabindex++}"
-                {if $field_display_settings.product.required}data-required="true"{/if}>
+                {% if field_display_settings.product.required %}data-required="true"{% endif %}>
             <option value="-1"></option>
-          {foreach from=$products item=product}
-          <option value="{$product.pro_id}" {if $product.pro_id == $defaults.product|default:''}selected{/if}
-            data-desc="{$product.pro_version_howto|escape}">{$product.pro_title|escape}</option>
-          {/foreach}
+          {% for product in products %}
+          <option value="{{ product.pro_id }}" {% if product.pro_id == defaults.product|default('') %}selected{% endif %}
+            data-desc="{{ product.pro_version_howto|escape }}">{{ product.pro_title|escape }}</option>
+          {% endfor %}
         </select>
-        {include file="error_icon.tpl.html" field="product"}
+        {% include "error_icon.html.twig.html" with {'field' : 'product'} %}
       </td>
     </tr>
     <tr>
-      <th width="150"{if $field_display_settings.product.min_role > $core.roles.customer} class="internal"{/if}>
+      <th width="150"{% if field_display_settings.product.min_role > core.roles.customer %} class="internal"{% endif %}>
         {t}Product Version{/t}
       </th>
       <td>
         <input type="text" name="product_version" value="{$defaults.product_version|default:''}" size="40" />
         <span id="product_version_howto"></span>
-        {include file="error_icon.tpl.html" field="product_version"}
+        {% include "error_icon.html.twig.html" with {'field' : 'product_version'} %}
       </td>
     </tr>
-    {/if}
-    {if $core.current_role >= $field_display_settings.access_level.min_role}
-        {include file="fields/access_level.tpl.html"}
-    {/if}
-    {include file="edit_custom_fields.tpl.html" custom_fields=$custom_fields form_type='report'}
-    {assign var=tabindex value=$tabindex+50}
-    {if $core.has_crm}
-    {include file="`$core.crm_template_path`/report_form_fields.tpl.html"}
+    {% endif %}
+    {% if core.current_role >= field_display_settings.access_level.min_role %}
+        {% include "fields/access_level.html.twig.html" %}
+    {% endif %}
+    {% include "edit_custom_fields.html.twig.html" with {'custom_fields' : custom_fields, 'form_type' : 'report'} %}
+    {% set tabindex = tabindex %}
+    {% if core.has_crm %}
+    {% include "`$core.crm_template_path`/report_form_fields.html.twig.html" %}
 
-    {* set tab index very high now to account for inputs in customer file *}
-    {assign var="tabindex" value=$tabindex+30}
-    {/if}
+    {# set tab index very high now to account for inputs in customer file #}
+    {% set tabindex = tabindex %}
+    {% endif %}
 
-    {if $core.current_role >= $field_display_settings.file.min_role}
+    {% if core.current_role >= field_display_settings.file.min_role %}
     <tr class="title">
       <th colspan="2">
         {t}Add Files{/t}
@@ -313,7 +313,7 @@
         </div>
       </td>
     </tr>
-    {/if}
+    {% endif %}
 
     <tr>
       <td colspan="2" class="footer">
@@ -328,7 +328,7 @@
     </tr>
 </table>
 
-{if $emails|default:'' != ""}
-    {include file="attached_emails.tpl.html"}
-{/if}
+{% if emails|default('') != "" %}
+    {% include "attached_emails.html.twig.html" %}
+{% endif %}
 </form>

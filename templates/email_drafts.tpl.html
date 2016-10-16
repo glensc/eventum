@@ -29,11 +29,11 @@ function showAllDrafts(thisBox)
 //-->
 </script>
 
-{if $smarty.request.show_all_drafts|default:0 == 1}
-  {assign var="draft_col_count" value="7"}
-{else}
-  {assign var="draft_col_count" value="6"}
-{/if}
+{% if smarty.request.show_all_drafts|default(0) == 1 %}
+  {% set draft_col_count = '7' %}
+{% else %}
+  {% set draft_col_count = '6' %}
+{% endif %}
 <div class="issue_section bordered internal" id="drafts">
     <div class="title">
         {t}Drafts{/t} ({$drafts|@count})
@@ -45,11 +45,11 @@ function showAllDrafts(thisBox)
     <div class="content" {get_display_style element_name='drafts' total=$drafts|@count}>
         <table class="grid internal">
           <tr>
-            <th nowrap>{include file="expandable_cell/buttons.tpl.html" ec_id="draft"}</th>
+            <th nowrap>{% include "expandable_cell/buttons.html.twig.html" with {'ec_id' : 'draft'} %}</th>
             <th width="5" align="center">#</th>
-            {if $smarty.request.show_all_drafts|default:0 == 1}
+            {% if smarty.request.show_all_drafts|default(0) == 1 %}
             <th width="5%">{t}Status{/t}</th>
-            {/if}
+            {% endif %}
             <th width="20%">{t}From{/t}</th>
             <th width="20%">{t}To{/t}</th>
             <th width="20%" nowrap>{t}Last Updated Date{/t}</th>
@@ -57,37 +57,37 @@ function showAllDrafts(thisBox)
           </tr>
           {section name="i" loop=$drafts}
           {cycle values='odd,even' assign="row_class"}
-          <tr class="{$row_class}{if $drafts[i].emd_status != 'pending'} deleted{/if}">
-            <td NOWRAP>{include file="expandable_cell/buttons.tpl.html" ec_id="draft" list_id=$drafts[i].emd_id}</td>
-            <td width="5">{$smarty.section.i.iteration}</td>
-            {if $smarty.request.show_all_drafts|default:0 == 1}
-            <td width="5%">{$drafts[i].emd_status}</td>
-            {/if}
+          <tr class="{{ row_class }}{% if drafts[i].emd_status != 'pending' %} deleted{% endif %}">
+            <td NOWRAP>{% include "expandable_cell/buttons.html.twig.html" with {'ec_id' : 'draft', 'list_id' : drafts, 'i' : 'i', '.emd_id' : '.emd_id'} %}</td>
+            <td width="5">{{ smarty.section.i.iteration }}</td>
+            {% if smarty.request.show_all_drafts|default(0) == 1 %}
+            <td width="5%">{{ drafts[i].emd_status }}</td>
+            {% endif %}
             <td width="20%">{$drafts[i].from|escape:"html"}</td>
             <td width="20%">{$drafts[i].to|escape:"html"}</td>
-            <td width="20%" nowrap>{$drafts[i].emd_updated_date|timeago}</td>
+            <td width="20%" nowrap>{{ drafts[i].emd_updated_date|timeago }}</td>
             <td width="40%">
-              <a title="{t}view email details{/t}" href="javascript:void(null);" onClick="viewDraft({$drafts[i].emd_id}, {$smarty.get.id|intval});">{$drafts[i].emd_subject|default:"<Empty Subject Header>"|escape:"html"}</a>
+              <a title="{t}view email details{/t}" href="javascript:void(null);" onClick="viewDraft({{ drafts[i].emd_id }}, {{ smarty.get.id|intval }});">{$drafts[i].emd_subject|default:"<Empty Subject Header>"|escape:"html"}</a>
             </td>
           </tr>
-          {include file="expandable_cell/body.tpl.html" ec_id="draft" list_id=$drafts[i].emd_id colspan=$draft_col_count class=$row_class}
+          {% include "expandable_cell/body.html.twig.html" with {'ec_id' : 'draft', 'list_id' : drafts, 'i' : 'i', '.emd_id' : '.emd_id', 'colspan' : draft_col_count, 'class' : row_class} %}
           {sectionelse}
           <tr class="no_results">
-            <td colspan="{$draft_col_count}">
+            <td colspan="{{ draft_col_count }}">
               {t}No email drafts could be found.{/t}
             </td>
           </tr>
           {/section}
         </table>
     </div>
-    {if $core.current_role > $core.roles.reporter}
+    {% if core.current_role > core.roles.reporter %}
     <div class="buttons">
       <div class="left buttons_div">&nbsp;</div>
-      <input type="button" value="{t}Create Draft{/t}" onClick="createDraft({$smarty.get.id|intval});">
+      <input type="button" value="{t}Create Draft{/t}" onClick="createDraft({{ smarty.get.id|intval }});">
       <div class="right buttons_div">
-        <input type="checkbox" name="show_all_drafts" id="show_all_drafts" value="1" {if $smarty.cookies.show_all_drafts|default:0 == 1}checked{/if} onClick="showAllDrafts(this)"><label for="show_all_drafts">{t}Show All Drafts{/t}</label>
+        <input type="checkbox" name="show_all_drafts" id="show_all_drafts" value="1" {% if smarty.cookies.show_all_drafts|default(0) == 1 %}checked{% endif %} onClick="showAllDrafts(this)"><label for="show_all_drafts">{t}Show All Drafts{/t}</label>
       </div>
     </div>
-    {/if}
+    {% endif %}
 </div>
 

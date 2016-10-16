@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -40,12 +40,12 @@
       </script>
 
       <form id="response_form" method="post">
-      {if $smarty.get.cat|default:'' == 'edit'}
+      {% if smarty.get.cat|default('') == 'edit' %}
       <input type="hidden" name="cat" value="update">
       <input type="hidden" name="id" value="{$smarty.get.id|default:''|intval}">
-      {else}
+      {% else %}
       <input type="hidden" name="cat" value="new">
-      {/if}
+      {% endif %}
         <table class="bordered">
           <tr class="title">
             <th colspan="2">
@@ -60,7 +60,7 @@
               <select name="projects[]" multiple size="4">
                 {html_options options=$project_list selected=$info.projects|default:''}
               </select>
-              {include file="error_icon.tpl.html" field="projects[]"}
+              {% include "error_icon.html.twig.html" with {'field' : 'projects[]'} %}
             </td>
           </tr>
           <tr>
@@ -69,7 +69,7 @@
             </th>
             <td>
               <input type="text" name="title" size="40" value="{$info.ere_title|default:''|escape:"html"}">
-              {include file="error_icon.tpl.html" field="title"}
+              {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
             </td>
           </tr>
           <tr>
@@ -78,16 +78,16 @@
             </th>
             <td>
               <textarea name="response_body" cols="50" rows="10">{$info.ere_response_body|default:''|escape:"html"}</textarea>
-              {include file="error_icon.tpl.html" field="response_body"}
+              {% include "error_icon.html.twig.html" with {'field' : 'response_body'} %}
             </td>
           </tr>
           <tr class="buttons">
             <td colspan="2">
-              {if $smarty.get.cat|default:'' == 'edit'}
+              {% if smarty.get.cat|default('') == 'edit' %}
               <input type="submit" value="{t}Update Email Response{/t}">
-              {else}
+              {% else %}
               <input type="submit" value="{t}Create Email Response{/t}">
-              {/if}
+              {% endif %}
               <input type="reset" value="{t}Reset{/t}">
             </td>
           </tr>
@@ -109,9 +109,9 @@
             </tr>
             {section name="i" loop=$list}
             <tr class="{cycle values='odd,even'}">
-              <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{$list[i].ere_id}"></td>
+              <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{{ list[i].ere_id }}"></td>
               <td width="60%">
-                &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].ere_id}" title="{t}update this entry{/t}">{$list[i].ere_title}</a>
+                &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].ere_id }}" title="{t}update this entry{/t}">{{ list[i].ere_title }}</a>
               </td>
               <td width="40%">
                 &nbsp;{$list[i].projects|escape:"html"}

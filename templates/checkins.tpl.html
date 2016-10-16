@@ -67,9 +67,9 @@ $(function() {
         </span>
     </div>
 
-    {if $checkins}
-      {include file="checkins_list.tpl.html" checkins=$checkins}
-    {/if}
+    {% if checkins %}
+      {% include "checkins_list.html.twig.html" with {'checkins' : checkins} %}
+    {% endif %}
 
     <div class="buttons">
       <input type="button" value="{t}All{/t}" onClick="toggleSelectAll(this.form, 'item[]');">

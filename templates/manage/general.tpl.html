@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -249,7 +249,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="smtp[from]" size="30" value="{$setup.smtp.from|default:''|escape:"html"}">
-                    {include file="error_icon.tpl.html" field="smtp[from]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'smtp[from]'} %}
                     <span>{t 1="eventum@example.com" 2="Eventum <eventum@example.com>"}(This MUST contain a real email address, e.g. "%1" or "%2"){/t}</span>
                   </td>
                 </tr>
@@ -259,7 +259,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="smtp[host]" size="30" value="{$setup.smtp.host|default:''|escape:"html"}">
-                    {include file="error_icon.tpl.html" field="smtp[host]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'smtp[host]'} %}
                   </td>
                 </tr>
                 <tr>
@@ -268,7 +268,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="smtp[port]" size="5" value="{$setup.smtp.port|default:''}">
-                    {include file="error_icon.tpl.html" field="smtp[port]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'smtp[port]'} %}
                   </td>
                 </tr>
                 <tr>
@@ -277,11 +277,11 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <label>
-                        <input type="radio" name="smtp[auth]" value="1" {if $setup.smtp.auth|default:''}checked{/if}>
+                        <input type="radio" name="smtp[auth]" value="1" {% if setup.smtp.auth|default('') %}checked{% endif %}>
                         {t}Yes{/t}
                     </label>
                     <label>
-                        <input type="radio" name="smtp[auth]" value="0" {if not $setup.smtp.auth|default:''}checked{/if}>
+                        <input type="radio" name="smtp[auth]" value="0" {% if not setup.smtp.auth|default('') %}checked{% endif %}>
                         {t}No{/t}
                     </label>
                   </td>
@@ -292,7 +292,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="smtp[username]" size="20" value="{$setup.smtp.username|default:''|escape:"html"}">
-                    {include file="error_icon.tpl.html" field="smtp[username]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'smtp[username]'} %}
                   </td>
                 </tr>
                 <tr>
@@ -301,13 +301,13 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="password" name="smtp[password]" size="20" value="{$setup.smtp.password|default:''|escape:"html"}" autocomplete="off">
-                    {include file="error_icon.tpl.html" field="smtp[password]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'smtp[password]'} %}
                   </td>
                 </tr>
                 <tr>
                   <td colspan="2">
                     <label>
-                        <input type="checkbox" name="smtp[save_outgoing_email]" value="yes" {if $setup.smtp.save_outgoing_email|default:'' == 'yes'}checked{/if}>
+                        <input type="checkbox" name="smtp[save_outgoing_email]" value="yes" {% if setup.smtp.save_outgoing_email|default('') == 'yes' %}checked{% endif %}>
                         {t}Save a Copy of Every Outgoing Issue Notification Email{/t}
                     </label>
                   </td>
@@ -318,7 +318,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="smtp[save_address]" size="30" value="{$setup.smtp.save_address|default:''}">
-                    {include file="error_icon.tpl.html" field="smtp[save_address]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'smtp[save_address]'} %}
                   </td>
                 </tr>
               </table>
@@ -333,11 +333,11 @@ $().ready(function() {
                 <tr>
                   <td colspan="2">
                       <label>
-                        <input type="radio" name="open_signup" value="enabled" {if $setup.open_signup|default:'' == 'enabled'}checked{/if}>
+                        <input type="radio" name="open_signup" value="enabled" {% if setup.open_signup|default('') == 'enabled' %}checked{% endif %}>
                         {t}Enabled{/t}
                       </label>
                       <label>
-                        <input type="radio" name="open_signup" value="disabled" {if $setup.open_signup|default:'' != 'enabled'}checked{/if}>
+                        <input type="radio" name="open_signup" value="disabled" {% if setup.open_signup|default('') != 'enabled' %}checked{% endif %}>
                         {t}Disabled{/t}
                       </label>
                   </td>
@@ -350,7 +350,7 @@ $().ready(function() {
                     <select name="accounts_projects[]" multiple size="3">
                     {html_options options=$project_list selected=$setup.accounts_projects|default:''}
                     </select>
-                    {include file="error_icon.tpl.html" field="accounts_projects[]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'accounts_projects[]'} %}
                   </td>
                 </tr>
                 <tr>
@@ -361,7 +361,7 @@ $().ready(function() {
                     <select name="accounts_role">
                     {html_options options=$user_roles selected=$setup.accounts_role|default:''}
                     </select>
-                    {include file="error_icon.tpl.html" field="accounts_role"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'accounts_role'} %}
                   </td>
                 </tr>
               </table>
@@ -377,12 +377,12 @@ $().ready(function() {
                   <td>
                     <label>
                         <input id="subject_based_routing_enabled" type="radio" name="subject_based_routing[status]" value="enabled"
-                        {if $setup.subject_based_routing.status|default:'' == 'enabled'}checked{/if}>
+                        {% if setup.subject_based_routing.status|default('') == 'enabled' %}checked{% endif %}>
                         {t}Enabled{/t}
                     </label>
                     <label>
                         <input id="subject_based_routing_disabled" type="radio" name="subject_based_routing[status]" value="disabled"
-                        {if $setup.subject_based_routing.status|default:'' != 'enabled'}checked{/if}>
+                        {% if setup.subject_based_routing.status|default('') != 'enabled' %}checked{% endif %}>
                         {t}Disabled{/t}
                     </label>
                     <div>{t}If enabled, Eventum will look in the subject line of incoming notes/emails to determine which issue they should be associated with.{/t}</div>
@@ -407,12 +407,12 @@ $().ready(function() {
                     <div>
                     <label>
                         <input type="radio" name="email_routing[flag_location]" value="before"
-                            {if $setup.email_routing.flag_location|default:'' == 'before'}checked{/if}>
+                            {% if setup.email_routing.flag_location|default('') == 'before' %}checked{% endif %}>
                         {t}Before Sender Name{/t}
                     </label>
                     <label>
                         <input type="radio" name="email_routing[flag_location]" value="after"
-                            {if $setup.email_routing.flag_location|default:'' != 'before'}checked{/if}>
+                            {% if setup.email_routing.flag_location|default('') != 'before' %}checked{% endif %}>
                         {t}After Sender Name{/t}
                     </label>
                     </div>
@@ -431,12 +431,12 @@ $().ready(function() {
                   <td colspan="2">
                       <label>
                         <input type="radio" name="email_routing[status]" value="enabled"
-                          {if $setup.email_routing.status|default:'' == 'enabled'}checked{/if}>
+                          {% if setup.email_routing.status|default('') == 'enabled' %}checked{% endif %}>
                         {t}Enabled{/t}
                       </label>
                       <label>
                         <input type="radio" name="email_routing[status]" value="disabled"
-                          {if $setup.email_routing.status|default:'' != 'enabled'}checked{/if}>
+                          {% if setup.email_routing.status|default('') != 'enabled' %}checked{% endif %}>
                         {t}Disabled{/t}
                       </label>
                   </td>
@@ -446,8 +446,8 @@ $().ready(function() {
                     {t}Email Address Prefix{/t}
                   </td>
                   <td width="80%">
-                    <input type="text" name="email_routing[address_prefix]" value="{if $setup.email_routing.address_prefix|default:''}{$setup.email_routing.address_prefix}{else}issue-{/if}">
-                    {include file="error_icon.tpl.html" field="email_routing[address_prefix]"}
+                    <input type="text" name="email_routing[address_prefix]" value="{% if setup.email_routing.address_prefix|default('') %}{{ setup.email_routing.address_prefix }}{% else %}issue-{% endif %}">
+                    {% include "error_icon.html.twig.html" with {'field' : 'email_routing[address_prefix]'} %}
                     <span>{t escape=no 1="<strong>issue-42</strong>@example.com"}(e.g. %1){/t}</span>
                   </td>
                 </tr>
@@ -457,7 +457,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="email_routing[address_host]" value="{$setup.email_routing.address_host|default:''}">
-                    {include file="error_icon.tpl.html" field="email_routing[address_host]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'email_routing[address_host]'} %}
                     <span>{t escape=no 1="issue-51@<strong>example.com</strong>"}(e.g. %1){/t}</span>
                   </td>
                 </tr>
@@ -467,7 +467,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="email_routing[host_alias]" value="{$setup.email_routing.host_alias|default:''}">
-                    {include file="error_icon.tpl.html" field="email_routing[host_alias]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'email_routing[host_alias]'} %}
                     <span>{t}(Alternate domains separated by space that point to 'Address Hostname'){/t}</span>
                   </td>
                 </tr>
@@ -478,12 +478,12 @@ $().ready(function() {
                   <td width="80%">
                     <label>
                         <input type="radio" name="email_routing[warning][status]" value="enabled"
-                            {if $setup.email_routing.warning.status|default:'' == 'enabled'}checked{/if}>
+                            {% if setup.email_routing.warning.status|default('') == 'enabled' %}checked{% endif %}>
                         {t}Yes{/t}
                     </label>
                     <label>
                         <input type="radio" name="email_routing[warning][status]" value="disabled"
-                            {if $setup.email_routing.warning.status|default:'' != 'enabled'}checked{/if}>
+                            {% if setup.email_routing.warning.status|default('') != 'enabled' %}checked{% endif %}>
                         {t}No{/t}
                     </label>
                   </td>
@@ -507,12 +507,12 @@ $().ready(function() {
                     <div>
                         <label>
                             <input type="radio" name="note_routing[flag_location]" value="before"
-                            {if $setup.note_routing.flag_location|default:'' == 'before'}checked{/if}>
+                            {% if setup.note_routing.flag_location|default('') == 'before' %}checked{% endif %}>
                             {t}Before Sender Name{/t}
                         </label>
                         <label>
                             <input type="radio" name="note_routing[flag_location]" value="after"
-                            {if $setup.note_routing.flag_location|default:'' != 'before'}checked{/if}>
+                            {% if setup.note_routing.flag_location|default('') != 'before' %}checked{% endif %}>
                             {t}After Sender Name{/t}
                         </label>
                     </div>
@@ -531,12 +531,12 @@ $().ready(function() {
                   <td colspan="2">
                       <label>
                         <input type="radio" name="note_routing[status]" value="enabled"
-                          {if $setup.note_routing.status|default:'' == 'enabled'}checked{/if}>
+                          {% if setup.note_routing.status|default('') == 'enabled' %}checked{% endif %}>
                         {t}Enabled{/t}
                       </label>
                       <label>
                         <input type="radio" name="note_routing[status]" value="disabled"
-                          {if $setup.note_routing.status|default:'' != 'enabled'}checked{/if}>
+                          {% if setup.note_routing.status|default('') != 'enabled' %}checked{% endif %}>
                         {t}Disabled{/t}
                       </label>
                   </td>
@@ -546,8 +546,8 @@ $().ready(function() {
                     {t}Note Address Prefix{/t}
                   </td>
                   <td width="80%">
-                    <input type="text" name="note_routing[address_prefix]" value="{if $setup.note_routing.address_prefix|default:''}{$setup.note_routing.address_prefix}{else}note-{/if}">
-                    {include file="error_icon.tpl.html" field="note_routing[address_prefix]"}
+                    <input type="text" name="note_routing[address_prefix]" value="{% if setup.note_routing.address_prefix|default('') %}{{ setup.note_routing.address_prefix }}{% else %}note-{% endif %}">
+                    {% include "error_icon.html.twig.html" with {'field' : 'note_routing[address_prefix]'} %}
                     <span>{t escape=no 1="<strong>note-51</strong>@example.com"}(e.g. %1){/t}</span>
                   </td>
                 </tr>
@@ -557,7 +557,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="note_routing[address_host]" value="{$setup.note_routing.address_host|default:''}">
-                    {include file="error_icon.tpl.html" field="note_routing[address_host]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'note_routing[address_host]'} %}
                     <span>{t escape=no 1="note-51@<strong>example.com</strong>"}(e.g. %1){/t}</span>
                   </td>
                 </tr>
@@ -567,7 +567,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="note_routing[host_alias]" value="{$setup.note_routing.host_alias|default:''}">
-                    {include file="error_icon.tpl.html" field="note_routing[host_alias]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'note_routing[host_alias]'} %}
                     <span>{t}(Alternate domains separated by space that point to 'Address Hostname'){/t}</span>
                   </td>
                 </tr>
@@ -584,12 +584,12 @@ $().ready(function() {
                   <td colspan="2">
                       <label>
                         <input type="radio" name="draft_routing[status]" value="enabled"
-                          {if $setup.draft_routing.status|default:'' == 'enabled'}checked{/if}>
+                          {% if setup.draft_routing.status|default('') == 'enabled' %}checked{% endif %}>
                         {t}Enabled{/t}
                       </label>
                       <label>
                         <input type="radio" name="draft_routing[status]" value="disabled"
-                          {if $setup.draft_routing.status|default:'' != 'enabled'}checked{/if}>
+                          {% if setup.draft_routing.status|default('') != 'enabled' %}checked{% endif %}>
                         {t}Disabled{/t}
                       </label>
                   </td>
@@ -599,8 +599,8 @@ $().ready(function() {
                     {t}Draft Address Prefix{/t}
                   </td>
                   <td width="80%">
-                    <input type="text" name="draft_routing[address_prefix]" value="{if $setup.draft_routing.address_prefix|default:''}{$setup.draft_routing.address_prefix}{else}draft-{/if}">
-                    {include file="error_icon.tpl.html" field="draft_routing[address_prefix]"}
+                    <input type="text" name="draft_routing[address_prefix]" value="{% if setup.draft_routing.address_prefix|default('') %}{{ setup.draft_routing.address_prefix }}{% else %}draft-{% endif %}">
+                    {% include "error_icon.html.twig.html" with {'field' : 'draft_routing[address_prefix]'} %}
                     <span>{t escape=no 1="<strong>draft-51</strong>@example.com"}(e.g. %1){/t}</span>
                   </td>
                 </tr>
@@ -610,7 +610,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="draft_routing[address_host]" value="{$setup.draft_routing.address_host|default:''}">
-                    {include file="error_icon.tpl.html" field="draft_routing[address_host]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'draft_routing[address_host]'} %}
                     <span>{t escape=no 1="draft-51@<strong>example.com</strong>"}(e.g. %1){/t}</span>
                   </td>
                 </tr>
@@ -620,7 +620,7 @@ $().ready(function() {
                   </td>
                   <td width="80%">
                     <input type="text" name="draft_routing[host_alias]" value="{$setup.draft_routing.host_alias|default:''}">
-                    {include file="error_icon.tpl.html" field="draft_routing[host_alias]"}
+                    {% include "error_icon.html.twig.html" with {'field' : 'draft_routing[host_alias]'} %}
                     <span>{t}(Alternate domains separated by space that point to 'Address Hostname'){/t}</span>
                   </td>
                 </tr>
@@ -633,11 +633,11 @@ $().ready(function() {
             </th>
             <td>
               <label>
-                <input type="radio" name="support_email" value="enabled" {if $setup.support_email|default:'' == 'enabled'}checked{/if}>
+                <input type="radio" name="support_email" value="enabled" {% if setup.support_email|default('') == 'enabled' %}checked{% endif %}>
                 {t}Enabled{/t}
               </label>
               <label>
-                <input type="radio" name="support_email" value="disabled" {if $setup.support_email|default:'' != 'enabled'}checked{/if}>
+                <input type="radio" name="support_email" value="disabled" {% if setup.support_email|default('') != 'enabled' %}checked{% endif %}>
                 {t}Disabled{/t}
               </label>
             </td>
@@ -648,11 +648,11 @@ $().ready(function() {
             </th>
             <td>
               <label>
-                <input type="radio" name="description_email_0" value="enabled" {if $setup.description_email_0|default:'' == 'enabled'}checked{/if}>
+                <input type="radio" name="description_email_0" value="enabled" {% if setup.description_email_0|default('') == 'enabled' %}checked{% endif %}>
                 {t}Enabled{/t}
               </label>
               <label>
-                <input type="radio" name="description_email_0" value="disabled" {if $setup.description_email_0|default:'' != 'enabled'}checked{/if}>
+                <input type="radio" name="description_email_0" value="disabled" {% if setup.description_email_0|default('') != 'enabled' %}checked{% endif %}>
                 {t}Disabled{/t}
               </label>
             </td>
@@ -663,11 +663,11 @@ $().ready(function() {
             </th>
             <td>
                 <label>
-                    <input type="radio" name="spell_checker" value="enabled" {if $setup.spell_checker|default:'' == 'enabled'}checked{/if}>
+                    <input type="radio" name="spell_checker" value="enabled" {% if setup.spell_checker|default('') == 'enabled' %}checked{% endif %}>
                     {t}Enabled{/t}
                 </label>
                 <label>
-                    <input type="radio" name="spell_checker" value="disabled" {if $setup.spell_checker|default:'' != 'enabled'}checked{/if}>
+                    <input type="radio" name="spell_checker" value="disabled" {% if setup.spell_checker|default('') != 'enabled' %}checked{% endif %}>
                     {t}Disabled{/t}
                 </label>
 
@@ -680,11 +680,11 @@ $().ready(function() {
             </th>
             <td>
                 <label>
-                    <input type="radio" name="irc_notification" value="enabled" {if $setup.irc_notification|default:'' == 'enabled'}checked{/if}>
+                    <input type="radio" name="irc_notification" value="enabled" {% if setup.irc_notification|default('') == 'enabled' %}checked{% endif %}>
                     {t}Enabled{/t}
                 </label>
                 <label>
-                    <input type="radio" name="irc_notification" value="disabled" {if $setup.irc_notification|default:'' != 'enabled'}checked{/if}>
+                    <input type="radio" name="irc_notification" value="disabled" {% if setup.irc_notification|default('') != 'enabled' %}checked{% endif %}>
                     {t}Disabled{/t}
                 </label>
             </td>
@@ -695,11 +695,11 @@ $().ready(function() {
             </th>
             <td>
                 <label>
-                  <input type="radio" name="handle_clock_in" value="enabled" {if $setup.handle_clock_in == 'enabled'}checked{/if}>
+                  <input type="radio" name="handle_clock_in" value="enabled" {% if setup.handle_clock_in == 'enabled' %}checked{% endif %}>
                   {t}Enabled{/t}
                 </label>
                 <label>
-                  <input type="radio" name="handle_clock_in" value="disabled" {if $setup.handle_clock_in != 'enabled'}checked{/if}>
+                  <input type="radio" name="handle_clock_in" value="disabled" {% if setup.handle_clock_in != 'enabled' %}checked{% endif %}>
                   {t}Disabled{/t}
                 </label>
             </td>
@@ -710,11 +710,11 @@ $().ready(function() {
             </th>
             <td>
                 <label>
-                  <input type="radio" name="relative_date" value="enabled" {if $setup.relative_date == 'enabled'}checked{/if}>
+                  <input type="radio" name="relative_date" value="enabled" {% if setup.relative_date == 'enabled' %}checked{% endif %}>
                   {t}Enabled{/t}
                 </label>
                 <label>
-                  <input type="radio" name="relative_date" value="disabled" {if $setup.relative_date != 'enabled'}checked{/if}>
+                  <input type="radio" name="relative_date" value="disabled" {% if setup.relative_date != 'enabled' %}checked{% endif %}>
                   {t}Disabled{/t}
                 </label>
                 <div>
@@ -728,11 +728,11 @@ $().ready(function() {
             </th>
             <td>
                 <label>
-                  <input type="radio" name="audit_trail" value="enabled" {if $setup.audit_trail == 'enabled'}checked{/if}>
+                  <input type="radio" name="audit_trail" value="enabled" {% if setup.audit_trail == 'enabled' %}checked{% endif %}>
                   {t}Enabled{/t}
                 </label>
                 <label>
-                  <input type="radio" name="audit_trail" value="disabled" {if $setup.audit_trail != 'enabled'}checked{/if}>
+                  <input type="radio" name="audit_trail" value="disabled" {% if setup.audit_trail != 'enabled' %}checked{% endif %}>
                   {t}Disabled{/t}
                 </label>
                 <div>
@@ -747,10 +747,10 @@ $().ready(function() {
               {t}Default Options for Notifications{/t}
             </th>
             <td>
-              <label><input type="checkbox" name="update" {if $setup.update|default:''}checked{/if} value="1"> {t}Issues are Updated{/t}</label><br />
-              <label><input type="checkbox" name="closed" {if $setup.closed|default:''}checked{/if} value="1"> {t}Issues are Closed{/t}</label><br />
-              <label><input type="checkbox" name="emails" {if $setup.emails|default:''}checked{/if} value="1"> {t}Emails are Associated{/t}</label><br />
-              <label><input type="checkbox" name="files" {if $setup.files|default:''}checked{/if} value="1"> {t}Files are Attached{/t}</label>
+              <label><input type="checkbox" name="update" {% if setup.update|default('') %}checked{% endif %} value="1"> {t}Issues are Updated{/t}</label><br />
+              <label><input type="checkbox" name="closed" {% if setup.closed|default('') %}checked{% endif %} value="1"> {t}Issues are Closed{/t}</label><br />
+              <label><input type="checkbox" name="emails" {% if setup.emails|default('') %}checked{% endif %} value="1"> {t}Emails are Associated{/t}</label><br />
+              <label><input type="checkbox" name="files" {% if setup.files|default('') %}checked{% endif %} value="1"> {t}Files are Attached{/t}</label>
             </td>
           </tr>
           <tr>
@@ -763,12 +763,12 @@ $().ready(function() {
                   <td colspan="2">
                       <label>
                         <input type="radio" name="email_reminder[status]" value="enabled"
-                          {if $setup.email_reminder.status|default:'' == 'enabled'}checked{/if}>
+                          {% if setup.email_reminder.status|default('') == 'enabled' %}checked{% endif %}>
                         {t}Enabled{/t}
                       </label>
                       <label>
                         <input type="radio" name="email_reminder[status]" value="disabled"
-                          {if $setup.email_reminder.status|default:'' != 'enabled'}checked{/if}>
+                          {% if setup.email_reminder.status|default('') != 'enabled' %}checked{% endif %}>
                         {t}Disabled{/t}
                       </label>
                   </td>
@@ -795,12 +795,12 @@ $().ready(function() {
                   <td colspan="2">
                       <label>
                         <input type="radio" name="email_error[status]" value="enabled"
-                            {if $setup.email_error.status|default:'' == 'enabled'}checked{/if}>
+                            {% if setup.email_error.status|default('') == 'enabled' %}checked{% endif %}>
                         {t}Enabled{/t}
                       </label>
                       <label>
                         <input type="radio" name="email_error[status]" value="disabled"
-                            {if $setup.email_error.status|default:'' != 'enabled'}checked{/if}>
+                            {% if setup.email_error.status|default('') != 'enabled' %}checked{% endif %}>
                         {t}Disabled{/t}
                       </label>
                   </td>

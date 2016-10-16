@@ -1,9 +1,9 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
   <script type="text/javascript">
   <!--
-  var url = '{$core.current_url}';
+  var url = '{{ core.current_url }}';
   var rem_id = {$smarty.get.id|intval|default:''};
 
   function populateIssueComboBox()
@@ -126,18 +126,18 @@
   </script>
 
   <form id="reminder_form" method="post">
-  {if $smarty.get.cat|default:'' == 'edit'}
+  {% if smarty.get.cat|default('') == 'edit' %}
   <input type="hidden" name="cat" value="update">
-  <input type="hidden" name="id" value="{$smarty.get.id|intval}">
-  {else}
+  <input type="hidden" name="id" value="{{ smarty.get.id|intval }}">
+  {% else %}
   <input type="hidden" name="cat" value="new">
-  {/if}
+  {% endif %}
 <table class="bordered">
   <tr class="title">
     <th colspan="2">
       {t}Manage Issue Reminders{/t}
       <div class="right">
-        {if $smarty.get.cat|default:'' == 'edit'}{t}Updating Reminder{/t} #{$smarty.get.id|intval}{else}{t}Creating New Reminder{/t}{/if}
+        {% if smarty.get.cat|default('') == 'edit' %}{t}Updating Reminder{/t} #{{ smarty.get.id|intval }}{% else %}{t}Creating New Reminder{/t}{% endif %}
       </div>
     </th>
   </tr>
@@ -150,7 +150,7 @@
         <option value="">{t}Please choose an option{/t}</option>
         {html_options options=$project_list selected=$info.rem_prj_id|default:''}
       </select>
-      {include file="error_icon.tpl.html" field="project"}
+      {% include "error_icon.html.twig.html" with {'field' : 'project'} %}
     </td>
   </tr>
   <tr>
@@ -159,7 +159,7 @@
     </th>
     <td>
       <input type="text" size="50" name="title" value="{$info.rem_title|escape:"html"|default:''}">
-      {include file="error_icon.tpl.html" field="title"}
+      {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
     </td>
   </tr>
   <tr>
@@ -168,7 +168,7 @@
     </th>
     <td>
       <input type="text" size="10" name="rank" value="{$info.rem_rank|default:''}">
-      {include file="error_icon.tpl.html" field="rank"}
+      {% include "error_icon.html.twig.html" with {'field' : 'rank'} %}
     </td>
   </tr>
   <tr>
@@ -179,31 +179,31 @@
       <table cellpadding="1" border="0">
         <tr>
           {counter start=0 assign="next_field"}
-          {if $project_has_customer_integration}
+          {% if project_has_customer_integration %}
           <td>
             <label>
-            <input type="radio" name="reminder_type" value="support_level" {if $info.type|default:'' == 'support_level'}checked{/if} onClick="toggleReminderTypeFields();">
+            <input type="radio" name="reminder_type" value="support_level" {% if info.type|default('') == 'support_level' %}checked{% endif %} onClick="toggleReminderTypeFields();">
             {t}By Support Level{/t}</label>
           </td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             {counter}
           <td>
             <label>
-            <input type="radio" name="reminder_type" value="customer" {if $info.type|default:'' == 'customer'}checked{/if} onClick="toggleReminderTypeFields();">
+            <input type="radio" name="reminder_type" value="customer" {% if info.type|default('') == 'customer' %}checked{% endif %} onClick="toggleReminderTypeFields();">
             {t}By Customer{/t}</label>
           </td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             {counter}
-          {/if}
+          {% endif %}
           <td>
             <label>
-            <input type="radio" name="reminder_type" value="issue" {if $info.type|default:'' == 'issue'}checked{/if} onClick="toggleReminderTypeFields();">
+            <input type="radio" name="reminder_type" value="issue" {% if info.type|default('') == 'issue' %}checked{% endif %} onClick="toggleReminderTypeFields();">
             {t}By Issue ID{/t}</label>
           </td>
           {counter}
         </tr>
         <tr>
-          {if $project_has_customer_integration}
+          {% if project_has_customer_integration %}
           <td>
             <select class="type_filter" name="support_levels[]" size="4" multiple>
               {html_options options=$support_levels selected=$info.rer_support_level_id|default:''}
@@ -216,7 +216,7 @@
             </select>
           </td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-          {/if}
+          {% endif %}
           <td>
             <select class="type_filter" name="issues[]" size="4" multiple>
               {html_options options=$issues|default:'' selected=$info.rer_iss_id|default:''}
@@ -226,21 +226,21 @@
         <tr>
           <td>
             <label>
-            <input type="radio" name="reminder_type" value="all_issues" {if $info.type|default:'' == 'ALL'}checked{/if} onClick="toggleReminderTypeFields();"
-              {if $smarty.get.cat|default:'' != 'edit'}checked{/if}>
+            <input type="radio" name="reminder_type" value="all_issues" {% if info.type|default('') == 'ALL' %}checked{% endif %} onClick="toggleReminderTypeFields();"
+              {% if smarty.get.cat|default('') != 'edit' %}checked{% endif %}>
                 {t}All Issues{/t}</label>
           </td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>
             <label>
-            <input type="checkbox" name="check_priority" value="yes" {if $info.check_priority|default:'' == 'yes'}checked{/if}
+            <input type="checkbox" name="check_priority" value="yes" {% if info.check_priority|default('') == 'yes' %}checked{% endif %}
               onClick="toggleReminderTypeFields();">
                 {t}Also Filter By Issue Priorities{/t}</label>
           </td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>
             <label>
-            <input type="checkbox" name="check_product" value="yes" {if $info.check_product|default:'' == 'yes'}checked{/if}
+            <input type="checkbox" name="check_product" value="yes" {% if info.check_product|default('') == 'yes' %}checked{% endif %}
                 onClick="toggleReminderTypeFields();">
             {t}Also Filter By Issue Product{/t}</label>
           </td>
@@ -268,7 +268,7 @@
           <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>
             <label>
-            <input type="checkbox" name="check_severity" value="yes" {if $info.check_severity|default:'' == 'yes'}checked{/if}
+            <input type="checkbox" name="check_severity" value="yes" {% if info.check_severity|default('') == 'yes' %}checked{% endif %}
                 onClick="javascript:toggleReminderTypeFields();">
             {t}Also Filter By Issue Severities{/t}</label>
           </td>
@@ -294,18 +294,18 @@
       {t}Skip Weekends{/t}:
     </th>
     <td>
-      <input type="radio" name="skip_weekend" value="1" {if $info.rem_skip_weekend|default:'' == 1}CHECKED{/if}>{t}Yes{/t}
-      <input type="radio" name="skip_weekend" value="0" {if $info.rem_skip_weekend|default:'' != 1}CHECKED{/if}>{t}No{/t}<br />
+      <input type="radio" name="skip_weekend" value="1" {% if info.rem_skip_weekend|default('') == 1 %}CHECKED{% endif %}>{t}Yes{/t}
+      <input type="radio" name="skip_weekend" value="0" {% if info.rem_skip_weekend|default('') != 1 %}CHECKED{% endif %}>{t}No{/t}<br />
       &nbsp;{t}If yes, this reminder will not activate on weekends and time will not accumulate on the weekends.{/t}
     </td>
   </tr>
   <tr class="buttons">
     <td colspan="2">
-      {if $smarty.get.cat|default:'' == 'edit'}
+      {% if smarty.get.cat|default('') == 'edit' %}
       <input type="submit" value="{t}Update Reminder{/t}">
-      {else}
+      {% else %}
       <input type="submit" value="{t}Create Reminder{/t}">
-      {/if}
+      {% endif %}
       <input type="reset" value="{t}Reset{/t}">
     </td>
   </tr>
@@ -332,26 +332,26 @@
         </tr>
         {section name="i" loop=$list}
         <tr class="{cycle values='odd,even'}">
-          <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{$list[i].rem_id}"></td>
-          <td align="center">{$list[i].rem_id}</td>
+          <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{{ list[i].rem_id }}"></td>
+          <td align="center">{{ list[i].rem_id }}</td>
           <td align="center">
-            <a href="{$core.current_url}?cat=change_rank&id={$list[i].rem_id}&rank=desc"><img src="{$core.rel_url}images/desc.gif" border="0"></a> {$list[i].rem_rank}
-            <a href="{$core.current_url}?cat=change_rank&id={$list[i].rem_id}&rank=asc"><img src="{$core.rel_url}images/asc.gif" border="0"></a>
+            <a href="{{ core.current_url }}?cat=change_rank&id={{ list[i].rem_id }}&rank=desc"><img src="{{ core.rel_url }}images/desc.gif" border="0"></a> {{ list[i].rem_rank }}
+            <a href="{{ core.current_url }}?cat=change_rank&id={{ list[i].rem_id }}&rank=asc"><img src="{{ core.rel_url }}images/asc.gif" border="0"></a>
           </td>
           <td>
-            &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].rem_id}" title="{t}update this entry{/t}">{$list[i].rem_title|escape:"html"}</a>
+            &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].rem_id }}" title="{t}update this entry{/t}">{$list[i].rem_title|escape:"html"}</a>
           </td>
           <td width="25%">
             &nbsp;{$list[i].prj_title|escape:"html"}
           </td>
           <td width="20%">
-            &nbsp;{if $list[i].type == 'ALL'}{t}All Issues{/t}{elseif $list[i].type == 'support_level'}{t}By Support Level{/t}{elseif $list[i].type == 'customer'}{t}By Customer{/t}{elseif $list[i].type == 'issue'}{t}By Issue ID{/t}{/if}
+            &nbsp;{% if list[i].type == 'ALL' %}{t}All Issues{/t}{% elseif list[i].type == 'support_level' %}{t}By Support Level{/t}{% elseif list[i].type == 'customer' %}{t}By Customer{/t}{% elseif list[i].type == 'issue' %}{t}By Issue ID{/t}{% endif %}
           </td>
           <td width="15%">
-            &nbsp;{section name="y" loop=$list[i].priorities}{$list[i].priorities[y]|escape:"html"}{if not $smarty.section.y.last}, {/if}{/section}
+            &nbsp;{section name="y" loop=$list[i].priorities}{$list[i].priorities[y]|escape:"html"}{% if not smarty.section.y.last %}, {% endif %}{/section}
           </td>
           <td>
-            &nbsp;<a href="reminder_actions.php?rem_id={$list[i].rem_id}">{$list[i].total_actions} Action{if $list[i].total_actions != 1}s{/if}</a>
+            &nbsp;<a href="reminder_actions.php?rem_id={{ list[i].rem_id }}">{{ list[i].total_actions }} Action{% if list[i].total_actions != 1 %}s{% endif %}</a>
           </td>
         </tr>
         {sectionelse}

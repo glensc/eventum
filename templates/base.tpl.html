@@ -1,76 +1,76 @@
-{*
+{#
     blocks:
         title
         sidebar
         content
     variables:
         extra_title: If set, this will override the contents of the title block
-*}
+#}
 {capture assign="title"}{block name="title"}{$extra_title|default:""}{/block}{/capture}
 <!DOCTYPE html>
 <html>
-<head data-rel-url="{$core.rel_url}">
+<head data-rel-url="{{ core.rel_url }}">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=8" />
-  <link rel="shortcut icon" href="{$core.rel_url}favicon.ico" type="image/x-icon" />
-  <link rel="search" type="application/opensearchdescription+xml" href="{$core.rel_url}opensearch.php" title="{t}Eventum Issues search{/t}" />
-  <title>{if $title != '' or isset($extra_title)}{$extra_title|default:$title} - {/if}{$core.app_setup.tool_caption|default:$core.app_title}</title>
+  <link rel="shortcut icon" href="{{ core.rel_url }}favicon.ico" type="image/x-icon" />
+  <link rel="search" type="application/opensearchdescription+xml" href="{{ core.rel_url }}opensearch.php" title="{t}Eventum Issues search{/t}" />
+  <title>{% if title != '' or isset(extra_title) %}{$extra_title|default:$title} - {% endif %}{$core.app_setup.tool_caption|default:$core.app_title}</title>
   <script type="text/javascript">
   <!--
   var user_prefs = {
-{if isset($core.user)}
-    relative_date: {$core.current_user_prefs.relative_date},
-    week_firstday: {$core.current_user_prefs.week_firstday}
-{/if}
+{% if isset(core.user) %}
+    relative_date: {{ core.current_user_prefs.relative_date }},
+    week_firstday: {{ core.current_user_prefs.week_firstday }}
+{% endif %}
   };
   //-->
   </script>
 
-  {* libraries setup with component installer *}
-  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}components/jquery-ui/themes/base/all.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}components/jquery-chosen/chosen.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}components/dropzone/dist/basic.css">
-  {* allow pages to inject to <head> block *}
+  {# libraries setup with component installer #}
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ core.rel_url }}components/jquery-ui/themes/base/all.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ core.rel_url }}components/jquery-chosen/chosen.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ core.rel_url }}components/dropzone/dist/basic.css">
+  {# allow pages to inject to <head> block #}
   {block "stylesheets"}{/block}
 
-  <script type="text/javascript" src="{$core.rel_url}components/jquery/jquery.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/jquery-blockui/jquery.blockUI.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/form/jquery.form.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/jquery-cookie/jquery.cookie.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/jquery-ui/ui/core.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/jquery-ui/ui/datepicker.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/jquery-ui/ui/widget.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/jquery-ui/ui/progressbar.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/jquery-chosen/chosen.jquery.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/dropzone/dist/dropzone.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/autosize/dist/autosize.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/jquery-timeago/jquery.timeago.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/filereader.js/filereader.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}components/garlicjs/js/garlic.min.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/jquery/jquery.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/jquery-blockui/jquery.blockUI.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/form/jquery.form.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/jquery-cookie/jquery.cookie.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/jquery-ui/ui/core.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/jquery-ui/ui/datepicker.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/jquery-ui/ui/widget.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/jquery-ui/ui/progressbar.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/jquery-chosen/chosen.jquery.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/dropzone/dist/dropzone.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/autosize/dist/autosize.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/jquery-timeago/jquery.timeago.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/filereader.js/filereader.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}components/garlicjs/js/garlic.min.js"></script>
 
-  {* our css/js after remote assets to allow overrides *}
-  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}css/main.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}css/page.css">
-  <script type="text/javascript" src="{$core.rel_url}js/main.js"></script>
-  <script type="text/javascript" src="{$core.rel_url}js/page.js"></script>
+  {# our css/js after remote assets to allow overrides #}
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ core.rel_url }}css/main.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ core.rel_url }}css/page.css">
+  <script type="text/javascript" src="{{ core.rel_url }}js/main.js"></script>
+  <script type="text/javascript" src="{{ core.rel_url }}js/page.js"></script>
 
-  {* allow pages to inject to <head> block *}
+  {# allow pages to inject to <head> block #}
   {block "javascripts"}{/block}
   {$debugbar_head|default:''}
 
-  {* local directory can add overrides *}
-  {include file="extra_header.tpl.html"}
+  {# local directory can add overrides #}
+  {% include "extra_header.html.twig.html" %}
 </head>
-<!--[if lt IE 7 ]> <body class="ie6 {block page_classes}{/block}" id="{$core.template_id}"> <![endif]-->
-<!--[if IE 7 ]> <body class="ie7 {block page_classes}{/block}" id="{$core.template_id}"> <![endif]-->
-<!--[if IE 8 ]> <body class="ie8 {block page_classes}{/block}" id="{$core.template_id}"> <![endif]-->
-<!--[if !IE]>--> <body class="{block page_classes}{/block}" id="{$core.template_id}"><!--<![endif]-->
+<!--[if lt IE 7 ]> <body class="ie6 {block page_classes}{/block}" id="{{ core.template_id }}"> <![endif]-->
+<!--[if IE 7 ]> <body class="ie7 {block page_classes}{/block}" id="{{ core.template_id }}"> <![endif]-->
+<!--[if IE 8 ]> <body class="ie8 {block page_classes}{/block}" id="{{ core.template_id }}"> <![endif]-->
+<!--[if !IE]>--> <body class="{block page_classes}{/block}" id="{{ core.template_id }}"><!--<![endif]-->
 <div id="container">
     {block "header"}{/block}
 
     <div id="full_width_messages">
     {block "messages"}
-        {include "app_messages.tpl.html"}
+        {% include %}
     {/block}
     </div>
 

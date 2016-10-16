@@ -15,6 +15,12 @@ use Eventum\Templating\TwigTemplate;
 
 class TwigTemplateTest extends TestCase
 {
+    public function testClose()
+    {
+        $twig = $this->getTwig();
+        $twig->render('close.tpl.html');
+    }
+
     /**
      * test that explressions like this:
      * {% if resolutions|@count > 0 %}
@@ -89,5 +95,21 @@ class TwigTemplateTest extends TestCase
         TwigTemplate::addFunctions($twig);
 
         return $twig->render($filename, $params);
+    }
+
+    /**
+     * Get Eventum TwigTemplate
+     *
+     * @return TwigTemplate
+     */
+    private function getTwig()
+    {
+        $twig = new TwigTemplate();
+
+        /** @var Twig_Loader_Filesystem $loader */
+        $loader = $twig->getLoader();
+        $loader->prependPath(APP_PATH . '/tests/data/templates/twig');
+
+        return $twig;
     }
 }

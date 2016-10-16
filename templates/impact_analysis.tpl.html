@@ -34,48 +34,48 @@
 
         <form name="set_initial_impact_form" onSubmit="return validateImpactAnalysis(this);" target="_impact" method="post" action="popup.php">
         <input type="hidden" name="cat" value="set_initial_impact">
-        <input type="hidden" name="issue_id" value="{$smarty.get.id|intval}">
+        <input type="hidden" name="issue_id" value="{{ smarty.get.id|intval }}">
         <tr>
           <td nowrap>
             <b>{t}Impact Analysis{/t}</b>
           </td>
           <td align="right">
-            {if $browser.ie5up or $browser.ns6up or $browser.gecko or $browser.safari or $browser.opera5up}
+            {% if browser.ie5up or browser.ns6up or browser.gecko or browser.safari or browser.opera5up %}
             [ <a id="impact_analysis_link" href="javascript:void(null);" onClick="toggleVisibility('impact_analysis');">{get_display_label element_name="impact_analysis"}</a> ]
-            {/if}
+            {% endif %}
           </td>
         </tr>
-        {if $core.current_role > $core.roles.reporter}
+        {% if core.current_role > core.roles.reporter %}
         <tr id="impact_analysis1" {get_display_style element_name="impact_analysis"}>
           <td width="190" nowrap><b>{t}Total Estimated Dev. Time{/t}:</b></td>
           <td width="100%">
-            {if $issue.iss_developer_est_time == ""}
+            {% if issue.iss_developer_est_time == "" %}
             <input type="text" name="dev_time"> <span>({t}in hours{/t})</span>
-            {include file="error_icon.tpl.html" field="dev_time"}
-            {else}
-            <span>{$issue.iss_developer_est_time} {t}hours{/t}</span>
-            {/if}
+            {% include "error_icon.html.twig.html" with {'field' : 'dev_time'} %}
+            {% else %}
+            <span>{{ issue.iss_developer_est_time }} {t}hours{/t}</span>
+            {% endif %}
           </td>
         </tr>
         <tr id="impact_analysis2" {get_display_style element_name="impact_analysis"}>
           <td width="190" nowrap><b>{t}Initial Impact Analysis{/t}:</b></td>
           <td width="100%">
-            {if $issue.iss_impact_analysis == ""}
+            {% if issue.iss_impact_analysis == "" %}
             <textarea name="impact_analysis" rows="8" style="width: 97%"></textarea>
-            {include file="error_icon.tpl.html" field="impact_analysis"}
-            {else}
-            <span>{$issue.iss_impact_analysis}</span>
-            {/if}
+            {% include "error_icon.html.twig.html" with {'field' : 'impact_analysis'} %}
+            {% else %}
+            <span>{{ issue.iss_impact_analysis }}</span>
+            {% endif %}
           </td>
         </tr>
         <tr id="impact_analysis3" {get_display_style element_name="impact_analysis"}>
           <td colspan="2" align="center" width="100%" nowrap>
-            {if $issue.iss_impact_analysis == ""}
+            {% if issue.iss_impact_analysis == "" %}
             <input type="submit" value="{t}Update{/t}">
-            {/if}
+            {% endif %}
           </td>
         </tr>
-        {/if}
+        {% endif %}
         </form>
 
         <script type="text/javascript">
@@ -104,7 +104,7 @@
         //-->
         </script>
 
-        <tr id="{if $core.current_role > $core.roles.reporter}impact_analysis4{else}impact_analysis1{/if}" {get_display_style element_name="impact_analysis"}>
+        <tr id="{% if core.current_role > core.roles.reporter %}impact_analysis4{% else %}impact_analysis1{% endif %}" {get_display_style element_name="impact_analysis"}>
           <td colspan="2" width="100%">
             <b>{t}Further Requirements{/t}:</b>
             <table width="100%" cellpadding="2" cellspacing="1">
@@ -112,9 +112,9 @@
               <input type="hidden" name="cat" value="delete_requirement">
               <tr>
                 <td width="5">
-                  {if $impacts != "" and $core.current_role > $core.roles.reporter}
+                  {% if impacts != "" and core.current_role > core.roles.reporter %}
                   <input type="button" value="{t}All{/t}" class="shortcut" onClick="toggleSelectAll(this.form, 'item[]');">
-                  {/if}
+                  {% endif %}
                 </td>
                 <td>{t}Handler{/t}</td>
                 <td width="35%">{t}Requirement{/t}</td>
@@ -123,33 +123,33 @@
               </tr>
               {section name="i" loop=$impacts}
               {cycle values=$cycle assign="row_color"}
-              <tr bgcolor="{$row_color}">
-                <td valign="top"><input type="checkbox" name="item[]" value="{$impacts[i].isr_id}"></td>
-                <td valign="top">{$impacts[i].handler_name}</td>
-                <td valign="top">{$impacts[i].isr_requirement} [submitted by {$impacts[i].submitter_name}]</td>
+              <tr bgcolor="{{ row_color }}">
+                <td valign="top"><input type="checkbox" name="item[]" value="{{ impacts[i].isr_id }}"></td>
+                <td valign="top">{{ impacts[i].handler_name }}</td>
+                <td valign="top">{{ impacts[i].isr_requirement }} [submitted by {{ impacts[i].submitter_name }}]</td>
                 <td valign="top">
-                  {if $impacts[i].formatted_dev_time == "00:00"}
-                  <a href="javascript:void(null);" onClick="openReqDetails({$impacts[i].isr_id});">{t}update entry{/t}</a>
-                  {else}
-                  {$impacts[i].formatted_dev_time}
-                  {/if}
+                  {% if impacts[i].formatted_dev_time == "00(00") %}
+                  <a href="javascript:void(null);" onClick="openReqDetails({{ impacts[i].isr_id }});">{t}update entry{/t}</a>
+                  {% else %}
+                  {{ impacts[i].formatted_dev_time }}
+                  {% endif %}
                 </td>
                 <td valign="top">
-                  {if $impacts[i].isr_impact_analysis == ""}
-                  <a href="javascript:void(null);" onClick="openReqDetails({$impacts[i].isr_id});">{t}update entry{/t}</a>
-                  {else}
-                  {$impacts[i].isr_impact_analysis}
-                  {/if}
+                  {% if impacts[i].isr_impact_analysis == "" %}
+                  <a href="javascript:void(null);" onClick="openReqDetails({{ impacts[i].isr_id }});">{t}update entry{/t}</a>
+                  {% else %}
+                  {{ impacts[i].isr_impact_analysis }}
+                  {% endif %}
                 </td>
               </tr>
-              {if %i.last% && %i.total% > 0}
+              {% if %i.last% && %i.total% > 0 %}
               <tr>
                 <td colspan="5">
                   <input type="button" value="{t}All{/t}" class="shortcut" onClick="toggleSelectAll(this.form, 'item[]');">
                   <input type="submit" value="{t}Remove Selected{/t}">
                 </td>
               </tr>
-              {/if}
+              {% endif %}
               {sectionelse}
               <tr>
                 <td colspan="5" align="center">
@@ -161,7 +161,7 @@
             </table>
           </td>
         </tr>
-        {if $core.current_role > $core.roles.reporter}
+        {% if core.current_role > core.roles.reporter %}
         <tr id="impact_analysis5" {get_display_style element_name="impact_analysis"}>
           <td colspan="2" width="100%">
             <table width="100%" border="0" cellpadding="2" cellspacing="1">
@@ -185,11 +185,11 @@
 
               <form name="add_requirement_form" onSubmit="return validateNewRequirement(this);" target="_requirement" method="post" action="popup.php">
               <input type="hidden" name="cat" value="add_requirement">
-              <input type="hidden" name="issue_id" value="{$smarty.get.id|intval}">
+              <input type="hidden" name="issue_id" value="{{ smarty.get.id|intval }}">
               <tr>
                 <td align="center" width="100%">
                   <textarea name="new_requirement" rows="4" style="width: 97%"></textarea>
-                  {include file="error_icon.tpl.html" field="new_requirement"}
+                  {% include "error_icon.html.twig.html" with {'field' : 'new_requirement'} %}
                 </td>
               </tr>
               <tr>
@@ -201,7 +201,7 @@
             </table>
           </td>
         </tr>
-        {/if}
+        {% endif %}
       </table>
     </td>
   </tr>

@@ -5,7 +5,7 @@
     {
         var features = 'width=550,height=250,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
 
-            var issue_id = {$smarty.get.id|intval};
+            var issue_id = {{ smarty.get.id|intval }};
         var popupWin = window.open('partners.php?iss_id=' + issue_id, 'partners_' + issue_id, features);
 
         popupWin.focus();
@@ -27,25 +27,25 @@
             <th class="default_white" width="20%">{t}Name{/t}</th>
             <th width="50%" class="default_white">&nbsp;</th>
         </tr>
-        {foreach from=$partners item=partner}
+        {% for partner in partners %}
         <tr class="{cycle values='odd,even'}">
-            <td nowrap>{$partner.name|escape}</td>
-            <td nowrap>{$partner.message|escape}</td>
+            <td nowrap>{{ partner.name|escape }}</td>
+            <td nowrap>{{ partner.message|escape }}</td>
         </tr>
-        {foreachelse}
+        {% else %}
         <tr class="no_results">
             <td colspan="2">
                 {t}No partners for this issue.{/t}
             </td>
         </tr>
-        {/foreach}
-        {if $core.current_role >= $core.roles.developer}
+        {% endfor %}
+        {% if core.current_role >= core.roles.developer %}
         <tr class="buttons">
             <td colspan="6" >
                 <input type="button" value="{t}Select Partners{/t}" onClick="selectPartners()">
             </td>
         </tr>
-        {/if}
+        {% endif %}
     </table>
 </div>
 </div>

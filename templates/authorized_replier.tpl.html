@@ -1,5 +1,5 @@
-{extends "base.tpl.html"}
-{block title}#{$issue_id} - Authorized Replier List{/block}
+{extends "base.html.twig.html"}
+{block title}#{{ issue_id }} - Authorized Replier List{/block}
 
 {block "javascripts" append}
 <script type="text/javascript">
@@ -46,15 +46,15 @@ $(function ($) {
 {/block}
 
 {block "content"}
-  {if $core.current_role > $core.roles.reporter}
+  {% if core.current_role > core.roles.reporter %}
 <form name="replier_form" onSubmit="return validate(this);" method="post">
-{if $smarty.get.cat|default:'' == 'edit'}
+{% if smarty.get.cat|default('') == 'edit' %}
 <input type="hidden" name="cat" value="update">
-<input type="hidden" name="id" value="{$issue_id}">
-{else}
+<input type="hidden" name="id" value="{{ issue_id }}">
+{% else %}
 <input type="hidden" name="cat" value="insert">
-{/if}
-<input type="hidden" name="issue_id" value="{$issue_id}">
+{% endif %}
+<input type="hidden" name="issue_id" value="{{ issue_id }}">
 <table class="bordered">
     <tr class="title">
       <th colspan="2">
@@ -71,7 +71,7 @@ $(function ($) {
           {html_options options=$users}
         </select><br/>
         <input type="text" name="email" size="40" value="{$info.sub_email|default:''}">
-        {include file="error_icon.tpl.html" field="email"}
+        {% include "error_icon.html.twig.html" with {'field' : 'email'} %}
       </td>
     </tr>
     <tr class="buttons">
@@ -82,11 +82,11 @@ $(function ($) {
     </tr>
 </table>
 </form>
-{/if}
+{% endif %}
 
 <form onSubmit="return checkDelete(this);" method="post">
 <input type="hidden" name="cat" value="delete">
-<input type="hidden" name="issue_id" value="{$issue_id}">
+<input type="hidden" name="issue_id" value="{{ issue_id }}">
 <table class="bordered grid">
     <tr class="title">
       <th colspan="2">
@@ -99,10 +99,10 @@ $(function ($) {
       </tr>
       {section name="i" loop=$list.all}
       <tr class="{cycle values='odd,even'}">
-        <td width="4" nowrap><input type="checkbox" name="items[]" value="{$list.all[i].iur_id}"></td>
+        <td width="4" nowrap><input type="checkbox" name="items[]" value="{{ list.all[i].iur_id }}"></td>
         <td width="100%">
           {$list.all[i].replier|escape:"html"}
-          {if $list.all[i].replier_type == 'user'}&lt;{$list.all[i].usr_email|escape:"html"}&gt;{/if}
+          {% if list.all[i].replier_type == 'user' %}&lt;{$list.all[i].usr_email|escape:"html"}&gt;{% endif %}
         </td>
       </tr>
       {sectionelse}
@@ -112,14 +112,14 @@ $(function ($) {
         </td>
       </tr>
       {/section}
-      {if $core.current_role > $core.roles.reporter}
+      {% if core.current_role > core.roles.reporter %}
       <tr class="buttons">
         <td colspan="3">
           <input type="submit" value="{t}Remove Selected{/t}">
           <input type="button" value="{t}Close{/t}" onClick="Eventum.close_and_refresh();">
         </td>
       </tr>
-      {/if}
+      {% endif %}
   </table>
 </form>
 {/block}

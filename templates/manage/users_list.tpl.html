@@ -1,12 +1,12 @@
 {block "stylesheets" append}
-  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}components/jquery-datatables/media/css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ core.rel_url }}components/jquery-datatables/media/css/jquery.dataTables.css">
 {/block}
 
 {block "javascripts" append}
-<script type="text/javascript" src="{$core.rel_url}components/jquery-datatables/media/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="{{ core.rel_url }}components/jquery-datatables/media/js/jquery.dataTables.js"></script>
 <script type="text/javascript">
-  var active_users_count = {$active_user_count};
-  var page_url = '{$core.current_url}';
+  var active_users_count = {{ active_user_count }};
+  var page_url = '{{ core.current_url }}';
 
   function checkDelete()
   {
@@ -87,20 +87,20 @@
   </div>
 
   {$colspan=5}
-  {if $list_options.groups}
+  {% if list_options.groups %}
     {$colspan=$colspan+1}
-  {/if}
-  {if $list_options.partners}
+  {% endif %}
+  {% if list_options.partners %}
     {$colspan=$colspan+1}
-  {/if}
-  {if $list_options.inactive}
+  {% endif %}
+  {% if list_options.inactive %}
     {$colspan=$colspan+1}
-  {/if}
+  {% endif %}
 
   <table class="bordered datatable grid hidden">
     <thead>
     <tr class="title">
-      <th colspan="{$colspan}">
+      <th colspan="{{ colspan }}">
         {t}Existing Users{/t}
       </th>
     </tr>
@@ -110,15 +110,15 @@
       <td>{t}Role{/t}</td>
       <td>{t}Email Address{/t}</td>
       <td>{t}Email Aliases{/t}</td>
-      {if $list_options.inactive}
+      {% if list_options.inactive %}
       <td>{t}Status{/t}</td>
-      {/if}
-      {if $list_options.groups}
+      {% endif %}
+      {% if list_options.groups %}
         <td>{t}Groups{/t}</td>
-      {/if}
-      {if $list_options.partners}
+      {% endif %}
+      {% if list_options.partners %}
       <td>{t}Partner{/t}</td>
-      {/if}
+      {% endif %}
     </tr>
     </thead>
 
@@ -126,50 +126,50 @@
     {section name="i" loop=$list}
       <tr class="{cycle values='odd,even'}">
         <td width="2%" nowrap align="center">
-          <input type="checkbox" name="items[]" value="{$list[i].usr_id}"
-                 {if $smarty.section.i.total == 0}disabled{/if}>
+          <input type="checkbox" name="items[]" value="{{ list[i].usr_id }}"
+                 {% if smarty.section.i.total == 0 %}disabled{% endif %}>
         </td>
         <td width="20%">
-          <a href="{$core.rel_url}manage/users.php?cat=edit&id={$list[i].usr_id}"
+          <a href="{{ core.rel_url }}manage/users.php?cat=edit&id={{ list[i].usr_id }}"
                    title="{t}update this entry{/t}">{$list[i].usr_full_name|default:$list[i].usr_email}</a>
         </td>
         <td width="20%" nowrap>
-          {foreach from=$list[i].roles item=role_data}
-            {$role_data.prj_title}: {$role_data.role}
+          {% for role_data in list %}
+            {{ role_data.prj_title }}: {{ role_data.role }}
             <br/>
-          {/foreach}
+          {% endfor %}
         </td>
         <td width="20%">
-          <a href="mailto:{$list[i].usr_email}"
-                   title="{t}send email to{/t} {$list[i].usr_email}">{$list[i].usr_email}</a>
+          <a href="mailto:{{ list[i].usr_email }}"
+                   title="{t}send email to{/t} {{ list[i].usr_email }}">{{ list[i].usr_email }}</a>
 
-          {foreach from=$list[i].aliases item=email}
-            <br>{$email}
-          {/foreach}
+          {% for es item=email in from=list[i].ali %}
+            <br>{{ email }}
+          {% endfor %}
         </td>
         <td width="10%">
-          <a href="email_alias.php?id={$list[i].usr_id}" class="manage_alias"
-                   data-usr-id="{$list[i].usr_id}">{t}manage aliases{/t}</a>
+          <a href="email_alias.php?id={{ list[i].usr_id }}" class="manage_alias"
+                   data-usr-id="{{ list[i].usr_id }}">{t}manage aliases{/t}</a>
         </td>
-        {if $list_options.inactive}
+        {% if list_options.inactive %}
         <td width="10%">
-          {$list[i].usr_status|capitalize}
+          {{ list[i].usr_status|capitalize }}
         </td>
-        {/if}
-        {if $list_options.groups}
+        {% endif %}
+        {% if list_options.groups %}
         <td>
           {', '|join:$list[i].group_names|default:''}
         </td>
-        {/if}
-        {if $list_options.partners}
+        {% endif %}
+        {% if list_options.partners %}
         <td>
           {$list[i].partner_name|default:''}
         </td>
-        {/if}
+        {% endif %}
       </tr>
       {sectionelse}
       <tr class="no_results">
-        <td colspan="{$colspan}">
+        <td colspan="{{ colspan }}">
           {t}No users could be found.{/t}
         </td>
       </tr>
@@ -178,7 +178,7 @@
 
     <tfoot>
     <tr class="buttons">
-      <td colspan="{$colspan}">
+      <td colspan="{{ colspan }}">
         <input type="button" value="{t}All{/t}" class="select_all">
         <input type="submit" value="{t}Update Status{/t} &gt;&gt;">
         <select name="status">
@@ -187,15 +187,15 @@
         </select>
         <div class="right">
           <input type="checkbox" id="show_customers" name="show_customers" value="yes"
-                 {if $list_options.customers}checked{/if}>
+                 {% if list_options.customers %}checked{% endif %}>
           <label for="show_customers">{t}Show Customers{/t}</label>
 
           <input type="checkbox" id="show_inactive" name="show_inactive" value="yes"
-                 {if $list_options.inactive}checked{/if}>
+                 {% if list_options.inactive %}checked{% endif %}>
           <label for="show_inactive">{t}Show Inactive Users{/t}</label>
 
           <input type="checkbox" id="show_groups" name="show_groups" value="yes"
-                 {if $list_options.groups}checked{/if}>
+                 {% if list_options.groups %}checked{% endif %}>
           <label for="show_groups">{t}Show Groups{/t}</label>
         </div>
       </td>

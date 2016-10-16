@@ -1,176 +1,176 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 {block page_classes}list_issues{/block}
 
 {block "content"}
-{if $core.current_role != $core.roles.customer}
-{include file="quick_filter_form.tpl.html"}
-{/if}
-{include file="current_filters.tpl.html"}
-{* Figure out how many columns there are *}
-{assign var="col_count" value=$columns|@count}
-{if $list_info.custom_fields|@count > 1}
+{% if core.current_role != core.roles.customer %}
+{% include "quick_filter_form.html.twig.html" %}
+{% endif %}
+{% include "current_filters.html.twig.html" %}
+{# Figure out how many columns there are #}
+{% set col_count = columns %}
+{% if list_info.custom_fields|@count > 1 %}
 {math assign="col_count" equation="x+y-1" x=$col_count y=$list_info.custom_fields|@count}
-{/if}
-{if $core.current_role > $core.roles.developer}
+{% endif %}
+{% if core.current_role > core.roles.developer %}
     {math assign="col_count" equation="x+1" x=$col_count}
-{/if}
+{% endif %}
   <form id="list_form" method="post"
         data-current-page="{$list_info.current_page|default:0}"
-        data-last-page="{$list_info.last_page|default:0}" data-refresh-rate="{$refresh_rate}">
+        data-last-page="{$list_info.last_page|default:0}" data-refresh-rate="{{ refresh_rate }}">
   <input type="hidden" name="cat" value="bulk_update">
       <table class="bordered grid">
         <tr class="title">
-            <th colspan="{$col_count}">
-                  {* TRANSLATORS: %1: total rows, 2: range start, 3: range end *}
-                  {if $list_info.end_offset > 0}
+            <th colspan="{{ col_count }}">
+                  {# TRANSLATORS: %1: total rows, 2: range start, 3: range end #}
+                  {% if list_info.end_offset > 0 %}
                   {t 1=$list_info.total_rows 2=$list_info.start_offset+1 3=$list_info.end_offset}Search Results (%1 issues found, %2 - %3 shown){/t}
-                  {else}
-                  {* TRANSLATORS: %1: total rows *}
+                  {% else %}
+                  {# TRANSLATORS: %1: total rows #}
                   {t 1=$list_info.total_rows}Search Results (%1 issues found){/t}
-                  {/if}
-                  {include file="help_link.tpl.html" topic="list"}
-                {if $core.current_role != $core.roles.customer}
+                  {% endif %}
+                  {% include "help_link.html.twig.html" with {'topic' : 'list'} %}
+                {% if core.current_role != core.roles.customer %}
                 <span class="menu">
                   {t}hide/show{/t}:
                   [ <span class="js_link" title="{t}hide / show the quick search form{/t}" id="toggle_quick_filter">{t}quick search{/t}</span> ]
-                  {if $core.current_role > $core.roles.reporter}[ <span class="js_link" id="toggle_current_filters"> {t}current filters{/t}</span> ]{/if}
-                  {if $core.current_role > $core.roles.developer}[ <span class="js_link" id="toggle_bulk_update"> {t}bulk update tool{/t}</span> ]{/if}
+                  {% if core.current_role > core.roles.reporter %}[ <span class="js_link" id="toggle_current_filters"> {t}current filters{/t}</span> ]{% endif %}
+                  {% if core.current_role > core.roles.developer %}[ <span class="js_link" id="toggle_bulk_update"> {t}bulk update tool{/t}</span> ]{% endif %}
                 </span>
-                {/if}
+                {% endif %}
               </tr>
           </th>
         </tr>
         <tr>
-          {if $core.current_role > $core.roles.developer}
+          {% if core.current_role > core.roles.developer %}
           <th width="1%">
             <input type="button" value="{t}All{/t}" class="select_all">
           </th>
-          {/if}
-          {foreach from=$columns item=column key=field_name}
-          {if $field_name == 'custom_fields'}
-            {foreach from=$list_info.custom_fields key=fld_id item=fld_title}
-              {assign var="fld_name_id" value="custom_field_`$fld_id`"}
-                <th align="{$column.align|default:'center'}" nowrap class="cstm_{$fld_id}">
+          {% endif %}
+          {% for field_name, column in columns %}
+          {% if field_name == 'custom_fields' %}
+            {% for fld_id, fld_title in list_info.custom_fields %}
+              {% set fld_name_id = 'custom_field_`$fld_id`' %}
+                <th align="{$column.align|default:'center'}" nowrap class="cstm_{{ fld_id }}">
                   <a title="{t}sort by{/t} {$fld_title|escape:"html"}" href="{$sorting.links[$fld_name_id]}">{$fld_title|escape:"html"}</a>
-                  {if $sorting.images[$fld_name_id]|default:'' != ""}<a title="{t}sort by{/t} {$fld_title|escape:"html"}" href="{$sorting.links[$fld_name_id]}"><img border="0" src="{$sorting.images[$fld_name_id]}"></a>{/if}
+                  {% if sorting.images[fld_name_id]|default('') != "" %}<a title="{t}sort by{/t} {$fld_title|escape:"html"}" href="{$sorting.links[$fld_name_id]}"><img border="0" src="{$sorting.images[$fld_name_id]}"></a>{% endif %}
                 </th>
-              {/foreach}
-          {else}
-          <th align="{$column.align|default:'center'}" nowrap {if $column.width != ''}width="{$column.width}"{/if}
-            class="{$field_name}">
-            {if $field_name == 'iss_summary'}
-              <a title="{t}sort by summary{/t}" href="{$sorting.links.iss_summary}">{t}Summary{/t}</a>
-              {if $sorting.images.iss_summary|default:'' != ""}<a title="{t}sort by summary{/t}" href="{$sorting.links.iss_summary}"><img border="0" src="{$sorting.images.iss_summary}"></a>{/if}
-              <span id="export_csv" class="right">{t}Export Data{/t}: <input alt="{t}generate excel-friendly report{/t}" type="image" src="{$core.rel_url}images/excel.jpg" value="{t}Export to Excel{/t}"></span>
-            {elseif $sorting.links[$field_name]|default:'' != ''}
-              <a title="{t}sort by{/t} {$column.title}" href="{$sorting.links[$field_name]}">{$column.title}</a>
-              {if $sorting.images[$field_name]|default:'' != ""}<a title="{t}sort by{/t} {$column.title}" href="{$sorting.links[$field_name]}"><img border="0" src="{$sorting.images[$field_name]}"></a>{/if}
-            {else}
+              {% endfor %}
+          {% else %}
+          <th align="{$column.align|default:'center'}" nowrap {% if column.width != '' %}width="{{ column.width }}"{% endif %}
+            class="{{ field_name }}">
+            {% if field_name == 'iss_summary' %}
+              <a title="{t}sort by summary{/t}" href="{{ sorting.links.iss_summary }}">{t}Summary{/t}</a>
+              {% if sorting.images.iss_summary|default('') != "" %}<a title="{t}sort by summary{/t}" href="{{ sorting.links.iss_summary }}"><img border="0" src="{{ sorting.images.iss_summary }}"></a>{% endif %}
+              <span id="export_csv" class="right">{t}Export Data{/t}: <input alt="{t}generate excel-friendly report{/t}" type="image" src="{{ core.rel_url }}images/excel.jpg" value="{t}Export to Excel{/t}"></span>
+            {% elseif sorting.links[field_name]|default('') != '' %}
+              <a title="{t}sort by{/t} {{ column.title }}" href="{$sorting.links[$field_name]}">{{ column.title }}</a>
+              {% if sorting.images[field_name]|default('') != "" %}<a title="{t}sort by{/t} {{ column.title }}" href="{$sorting.links[$field_name]}"><img border="0" src="{$sorting.images[$field_name]}"></a>{% endif %}
+            {% else %}
               {$column.title|default:''}
-            {/if}
+            {% endif %}
           </th>
-          {/if}
-          {/foreach}
+          {% endif %}
+          {% endfor %}
         </tr>
         {section name="i" loop=$list}
-        <tr {if $core.current_role >= $core.roles.developer AND $list[i].iqu_status > 0}style="text-decoration: line-through;"{/if} data-issue-id="{$list[i].iss_id}">
-          {if $core.current_role > $core.roles.developer}
-          <td style="background: {$list[i].status_color}" width="1%" align="center"><input type="checkbox" name="item[]" value="{$list[i].iss_id}"></td>
-          {/if}
-          {foreach from=$columns item=column key=field_name}
-          {if $field_name == 'custom_fields'}
-            {foreach from=$list[i].custom_field key=fld_id item=fld_value}
-                <td style="background: {$list[i].status_color}" align="{$column.align|default:'center'}" class="custom_field cstm_{$fld_id}">
+        <tr {% if core.current_role >= core.roles.developer AND list[i].iqu_status > 0 %}style="text-decoration: line-through;"{% endif %} data-issue-id="{{ list[i].iss_id }}">
+          {% if core.current_role > core.roles.developer %}
+          <td style="background: {{ list[i].status_color }}" width="1%" align="center"><input type="checkbox" name="item[]" value="{{ list[i].iss_id }}"></td>
+          {% endif %}
+          {% for field_name, column in columns %}
+          {% if field_name == 'custom_fields' %}
+            {% for fld_id, fld_value in list %}
+                <td style="background: {{ list[i].status_color }}" align="{$column.align|default:'center'}" class="custom_field cstm_{{ fld_id }}">
                   {$fld_value|formatCustomValue:$fld_id:$list[i].iss_id}
                 </td>
-              {/foreach}
-          {else}
-          <td style="background: {$list[i].status_color}" align="{$column.align|default:'center'}" class="{$field_name}">
-            {if $field_name == 'iss_id'}
-              <a href="view.php?id={$list[i].iss_id}" title="{t}view issue details{/t}">{$list[i].iss_id}</a>
-            {elseif $field_name == 'pri_rank'}
+              {% endfor %}
+          {% else %}
+          <td style="background: {{ list[i].status_color }}" align="{$column.align|default:'center'}" class="{{ field_name }}">
+            {% if field_name == 'iss_id' %}
+              <a href="view.php?id={{ list[i].iss_id }}" title="{t}view issue details{/t}">{{ list[i].iss_id }}</a>
+            {% elseif field_name == 'pri_rank' %}
               {$list[i].pri_title|escape:"html"}
-            {elseif $field_name == 'sev_rank'}
+            {% elseif field_name == 'sev_rank' %}
               {$list[i].sev_title|escape:"html"}
-            {elseif $field_name == 'grp_name'}
-              {$list[i].grp_name}
-            {elseif $field_name == 'assigned'}
-              {$list[i].assigned_users}
-            {elseif $field_name == 'time_spent'}
-              {$list[i].time_spent}
-            {elseif $field_name == 'prc_title'}
-              {$list[i].prc_title}
-            {elseif $field_name == 'pre_title'}
+            {% elseif field_name == 'grp_name' %}
+              {{ list[i].grp_name }}
+            {% elseif field_name == 'assigned' %}
+              {{ list[i].assigned_users }}
+            {% elseif field_name == 'time_spent' %}
+              {{ list[i].time_spent }}
+            {% elseif field_name == 'prc_title' %}
+              {{ list[i].prc_title }}
+            {% elseif field_name == 'pre_title' %}
               {$list[i].pre_title|escape:"html"}
-            {elseif $field_name == 'iss_customer_id'}
-              <a href="list.php?view=customer&customer_id={$list[i].iss_customer_id}"
+            {% elseif field_name == 'iss_customer_id' %}
+              <a href="list.php?view=customer&customer_id={{ list[i].iss_customer_id }}"
               title="View other issues from this customer">
               {$list[i].customer_title|default:''|escape:"html"}</a>
-            {elseif $field_name == 'support_level'}
+            {% elseif field_name == 'support_level' %}
               {$list[i].support_level|escape:"html"|default:''}
-            {elseif $field_name == 'sta_rank'}
+            {% elseif field_name == 'sta_rank' %}
               {$list[i].sta_title|escape:"html"}
-            {elseif $field_name == 'iss_created_date'}
-              {$list[i].iss_created_date|timeago}
-            {elseif $field_name == 'iss_dev_time'}
+            {% elseif field_name == 'iss_created_date' %}
+              {{ list[i].iss_created_date|timeago }}
+            {% elseif field_name == 'iss_dev_time' %}
               {$list[i].iss_dev_time|escape:"html"}
-            {elseif $field_name == 'sta_change_date'}
+            {% elseif field_name == 'sta_change_date' %}
               {$list[i].status_change_date|escape:"html"}
-            {elseif $field_name == 'last_action_date'}
-              {* TRANSLATORS: %1: last action data label, %2: last action date diff *}
+            {% elseif field_name == 'last_action_date' %}
+              {# TRANSLATORS: %1: last action data label, %2: last action date diff #}
               {t 1=$list[i].last_action_date_label 2=$list[i].last_action_date_diff}%1:
 %2 ago{/t}
-            {elseif $field_name == 'usr_full_name'}
-              <a href="list.php?view=reporter&reporter_id={$list[i].iss_usr_id}"
+            {% elseif field_name == 'usr_full_name' %}
+              <a href="list.php?view=reporter&reporter_id={{ list[i].iss_usr_id }}"
               title="View other issues from this reporter">
               {$list[i].usr_full_name|escape:"html"}</a>
-            {elseif $field_name == 'iss_percent_complete'}
-              <div class="iss_percent_complete ui-progressbar" data-percent="{$list[i].iss_percent_complete}"><div class="progress-label">&nbsp;{$list[i].iss_percent_complete|escape:"html"} %</div></div>
-            {elseif $field_name == 'iss_expected_resolution_date'}
-              <div class="inline_date_pick" id="expected_resolution_date|{$list[i].iss_id}">{$list[i].iss_expected_resolution_date|escape:"html"}&nbsp;</div>
-            {elseif $field_name == 'iss_summary'}
-              <a href="view.php?id={$list[i].iss_id}" title="{t}view issue details{/t}">{$list[i].iss_summary|escape:"html"}</a>
-              {if $list[i].redeemed|default:0}
+            {% elseif field_name == 'iss_percent_complete' %}
+              <div class="iss_percent_complete ui-progressbar" data-percent="{{ list[i].iss_percent_complete }}"><div class="progress-label">&nbsp;{$list[i].iss_percent_complete|escape:"html"} %</div></div>
+            {% elseif field_name == 'iss_expected_resolution_date' %}
+              <div class="inline_date_pick" id="expected_resolution_date|{{ list[i].iss_id }}">{$list[i].iss_expected_resolution_date|escape:"html"}&nbsp;</div>
+            {% elseif field_name == 'iss_summary' %}
+              <a href="view.php?id={{ list[i].iss_id }}" title="{t}view issue details{/t}">{$list[i].iss_summary|escape:"html"}</a>
+              {% if list[i].redeemed|default(0) %}
                   {t}[Redeemed]{/t}
-              {/if}
-              {if $list[i].iss_access_level != 'normal'}
-                  <b>{t}[{$list[i].access_level_name}]{/t}</b>
-              {/if}
-            {/if}
+              {% endif %}
+              {% if list[i].iss_access_level != 'normal' %}
+                  <b>{t}[{{ list[i].access_level_name }}]{/t}</b>
+              {% endif %}
+            {% endif %}
           </td>
-          {/if}
-          {/foreach}
+          {% endif %}
+          {% endfor %}
         </tr>
-        {if $list[i].excerpts != ''}
+        {% if list[i].excerpts != '' %}
         <tr>
-          <td colspan="{$col_count}" style="background: {$list[i].status_color}">
-            {if $list[i].excerpts|@count > 0}
-              {include file="list_excerpts.tpl.html"}
-            {/if}
+          <td colspan="{{ col_count }}" style="background: {{ list[i].status_color }}">
+            {% if list[i].excerpts|@count > 0 %}
+              {% include "list_excerpts.html.twig.html" %}
+            {% endif %}
           </td>
         </tr>
-        {/if}
+        {% endif %}
         {sectionelse}
         <tr class="no_results">
-          <td colspan="{$col_count}">
+          <td colspan="{{ col_count }}">
             {t}No issues could be found.{/t}
           </td>
         </tr>
         {/section}
         <tr class="buttons">
-          <td colspan="{$col_count}">
+          <td colspan="{{ col_count }}">
             <table width="100%">
               <tr>
                 <td width="30%" nowrap>
-                  {if $core.current_role > $core.roles.developer}
+                  {% if core.current_role > core.roles.developer %}
                   <input type="button" value="{t}All{/t}" class="select_all">
-                  {/if}
+                  {% endif %}
                 </td>
                 <td width="40%" align="center" nowrap>
                   <nobr>
                   <input name="first" type="button" value="|&lt;">
                   <input name="previous" type="button" value="&lt;&lt;"">
-                  <input type="text" name="page" size="3" maxlength="3" value="{if $list_info.current_page == ''}1{else}{math equation="x + 1" x=$list_info.current_page}{/if}"  class="paging_input" onKeyPress="return checkPageField(event);">
+                  <input type="text" name="page" size="3" maxlength="3" value="{% if list_info.current_page == '' %}1{% else %}{math equation="x + 1" x=$list_info.current_page}{% endif %}"  class="paging_input" onKeyPress="return checkPageField(event);">
                   <input name="go" type="button" value="{t}Go{/t}">
                   <input name="next" type="button" value="&gt;&gt;">
                   <input name="last" type="button" value="&gt;|">
@@ -179,28 +179,28 @@
                 <td nowrap>
                   <span>{t}Rows per Page{/t}:</span>
                   <select name="page_size" id="page_size">
-                    <option value="5" {if $options.rows == 5}selected{/if}>5</option>
-                    <option value="10" {if $options.rows == 10}selected{/if}>10</option>
-                    <option value="25" {if $options.rows == 25}selected{/if}>25</option>
-                    <option value="50" {if $options.rows == 50}selected{/if}>50</option>
-                    <option value="100" {if $options.rows == 100}selected{/if}>100</option>
-                    <option value="ALL" {if $options.rows == "ALL"}selected{/if}>{t}ALL{/t}</option>
+                    <option value="5" {% if options.rows == 5 %}selected{% endif %}>5</option>
+                    <option value="10" {% if options.rows == 10 %}selected{% endif %}>10</option>
+                    <option value="25" {% if options.rows == 25 %}selected{% endif %}>25</option>
+                    <option value="50" {% if options.rows == 50 %}selected{% endif %}>50</option>
+                    <option value="100" {% if options.rows == 100 %}selected{% endif %}>100</option>
+                    <option value="ALL" {% if options.rows == "ALL" %}selected{% endif %}>{t}ALL{/t}</option>
                   </select>
                   <input type="button" value="{t}Set{/t}" id="resize_page">
                 </td>
                 <td width="30%" align="right">
-                  <input type="checkbox" id="hide_closed" name="hide_closed" {if $options.hide_closed}checked{/if}> <label for="hide_closed">{t}Hide Closed Issues{/t}</label>&nbsp;
+                  <input type="checkbox" id="hide_closed" name="hide_closed" {% if options.hide_closed %}checked{% endif %}> <label for="hide_closed">{t}Hide Closed Issues{/t}</label>&nbsp;
                 </td>
               </tr>
             </table>
           </td>
         </tr>
       </table>
-  {if $core.current_role > $core.roles.developer}
-      {include file="bulk_update.tpl.html"}
-  {/if}
+  {% if core.current_role > core.roles.developer %}
+      {% include "bulk_update.html.twig.html" %}
+  {% endif %}
   </form>
   <form target="_csvWindow" method="post" action="csv.php" name="csv_form" id="csv_form">
-  <input type="hidden" name="csv_data" value="{$csv_data}">
+  <input type="hidden" name="csv_data" value="{{ csv_data }}">
   </form>
 {/block}

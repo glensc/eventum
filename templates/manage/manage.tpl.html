@@ -1,4 +1,4 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 
 {block "content"}
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -8,7 +8,7 @@
         <tr>
           <td width="100%">
             <table bgcolor="#FFFFFF" width="100%" border="0" cellspacing="0" cellpadding="4">
-              {if $core.current_role > $core.roles.manager}
+              {% if core.current_role > core.roles.manager %}
               <tr>
                 <td>
                   <span><b>{t}Configuration{/t}:</b></span>
@@ -17,21 +17,21 @@
               <tr>
                 <td nowrap>
                   <ul>
-                    <li><a href="{$core.rel_url}manage/general.php">{t}General Setup{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/private_key.php">{t}Private Key{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/encryption.php">{t}Encryption{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/email_accounts.php">{t}Manage Email Accounts{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/custom_fields.php">{t}Manage Custom Fields{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/customize_listing.php">{t}Customize Issue Listing Screen{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/monitor.php">{t}Customize Monitoring Parameters{/t}</a></li>
-                    {if $auth_backend == 'ldap_auth_backend'}
-                    <li><a href="{$core.rel_url}manage/ldap.php" class="link">{t}Customize LDAP Config{/t}</a></li>
-                    {/if}
-                    <li><a href="{$core.rel_url}manage/scm.php" class="link">{t}Customize SCM Integration{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/general.php">{t}General Setup{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/private_key.php">{t}Private Key{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/encryption.php">{t}Encryption{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/email_accounts.php">{t}Manage Email Accounts{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/custom_fields.php">{t}Manage Custom Fields{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/customize_listing.php">{t}Customize Issue Listing Screen{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/monitor.php">{t}Customize Monitoring Parameters{/t}</a></li>
+                    {% if auth_backend == 'ldap_auth_backend' %}
+                    <li><a href="{{ core.rel_url }}manage/ldap.php" class="link">{t}Customize LDAP Config{/t}</a></li>
+                    {% endif %}
+                    <li><a href="{{ core.rel_url }}manage/scm.php" class="link">{t}Customize SCM Integration{/t}</a></li>
                   </ul>
                 </td>
               </tr>
-              {/if}
+              {% endif %}
               <tr>
                 <td>
                   <span><b>{t}Areas{/t}:</b></span>
@@ -40,15 +40,15 @@
               <tr>
                 <td nowrap>
                   <ul>
-                    <li><a href="{$core.rel_url}manage/faq.php">{t}Manage Internal FAQ{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/round_robin.php">{t}Manage Round Robin Assignments{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/news.php">{t}Manage News{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/reminders.php">{t}Manage Issue Reminders{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/account_managers.php">{t}Manage Customer Account Managers{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/customer_notes.php">{t}Manage Customer Quick Notes{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/statuses.php">{t}Manage Statuses{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/faq.php">{t}Manage Internal FAQ{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/round_robin.php">{t}Manage Round Robin Assignments{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/news.php">{t}Manage News{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/reminders.php">{t}Manage Issue Reminders{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/account_managers.php">{t}Manage Customer Account Managers{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/customer_notes.php">{t}Manage Customer Quick Notes{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/statuses.php">{t}Manage Statuses{/t}</a></li>
                     <li>
-                      <a href="{$core.rel_url}manage/projects.php">{t}Manage Projects{/t}</a>
+                      <a href="{{ core.rel_url }}manage/projects.php">{t}Manage Projects{/t}</a>
                       <ul>
                         <li>{t}Add / Edit Releases{/t}</li>
                         <li>{t}Add / Edit Categories{/t}</li>
@@ -61,13 +61,13 @@
                         <li>{t}Edit Columns to Display{/t}</li>
                       </ul>
                     </li>
-                    <li><a href="{$core.rel_url}manage/users.php" class="link">{t}Manage Users{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/groups.php" class="link">{t}Manage Groups{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/resolution.php" class="link">{t}Manage Issue Resolutions{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/email_responses.php" class="link">{t}Manage Canned Email Responses{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/link_filters.php" class="link">{t}Manage Link Filters{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/products.php" class="link">{t}Manage Products{/t}</a></li>
-                    <li><a href="{$core.rel_url}manage/partners.php" class="link">{t}Manage Partners{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/users.php" class="link">{t}Manage Users{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/groups.php" class="link">{t}Manage Groups{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/resolution.php" class="link">{t}Manage Issue Resolutions{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/email_responses.php" class="link">{t}Manage Canned Email Responses{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/link_filters.php" class="link">{t}Manage Link Filters{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/products.php" class="link">{t}Manage Products{/t}</a></li>
+                    <li><a href="{{ core.rel_url }}manage/partners.php" class="link">{t}Manage Partners{/t}</a></li>
                   </ul>
                 </td>
               </tr>

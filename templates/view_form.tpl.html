@@ -1,185 +1,185 @@
-{if $previous_issue or $next_issue}
+{% if previous_issue or next_issue %}
 <div id="issue_links">
-    {if $previous_issue}
-    <div><a id="prev_issue" title="{t}previous issue on your current active filter{/t}" href="view.php?id={$previous_issue}">&lt;&lt; {t}Previous Issue{/t}</a></div>
-    {/if}
-    {if $next_issue}
-    <div class="right"><a id="next_issue" title="{t}next issue on your current active filter{/t}" href="view.php?id={$next_issue}">{t}Next Issue{/t} &gt;&gt;</a></div>
-    {/if}
+    {% if previous_issue %}
+    <div><a id="prev_issue" title="{t}previous issue on your current active filter{/t}" href="view.php?id={{ previous_issue }}">&lt;&lt; {t}Previous Issue{/t}</a></div>
+    {% endif %}
+    {% if next_issue %}
+    <div class="right"><a id="next_issue" title="{t}next issue on your current active filter{/t}" href="view.php?id={{ next_issue }}">{t}Next Issue{/t} &gt;&gt;</a></div>
+    {% endif %}
     <div class="clear"></div>
 </div>
-{/if}
+{% endif %}
 
-{if $quarantine.iqu_status > 0}
+{% if quarantine.iqu_status > 0 %}
 <div class="note_box">
     {t}This Issue is Currently Quarantined{/t}
-    {include file="customer/$customer_backend_name/quarantine.tpl.html"}<br />
-    {if $core.current_role > $core.roles.customer && $quarantine.iqu_expiration != ''}
+    {% include "customer/$customer_backend_name/quarantine.html.twig.html" %}<br />
+    {% if core.current_role > core.roles.customer && quarantine.iqu_expiration != '' %}
     {t 1=$quarantine.time_till_expiration}Quarantine expires in %1{/t}<br />
-    {/if}
+    {% endif %}
     {t 1="faq.php" escape=no}Please see the <a href="%1">FAQ</a> for information regarding quarantined issues.{/t}
-    {if $core.current_role > $core.roles.developer}
+    {% if core.current_role > core.roles.developer %}
     <br /><br />
     <input type="button" name="remove_quarantine" value="{t}Remove Quarantine{/t}" class="remove_quarantine">
-    {/if}
+    {% endif %}
 </div>
-{/if}
+{% endif %}
 
-{if $project_auto_switched|default:0 == 1}
+{% if project_auto_switched|default(0) == 1 %}
 <div class="note_box">
-    {t}Note: Project automatically switched to '{$core.project_name}' from '{$old_project}'.{/t}
+    {t}Note: Project automatically switched to '{{ core.project_name }}' from '{{ old_project }}'.{/t}
 </div>
-{/if}
+{% endif %}
 
-{if $issue.iss_access_level != 'normal'}
+{% if issue.iss_access_level != 'normal' %}
 <div class="note_box">
     {t}Note{/t}: {t 1=$access_level_name}This issue has an access level of %1. Access to view this issue is restricted.{/t}
 </div>
-{/if}
+{% endif %}
 
 <form method="get" action="update.php" name="view_form">
-<input type="hidden" name="id" value="{$issue.iss_id}">
-<table id="issue_overview" class="bordered" data-issue-id="{$issue_id}" data-ema-id="{$ema_id}">
+<input type="hidden" name="id" value="{{ issue.iss_id }}">
+<table id="issue_overview" class="bordered" data-issue-id="{{ issue_id }}" data-ema-id="{{ ema_id }}">
     <tr class="title">
         <th colspan="2">
-            {t}Issue Overview{/t} (ID: <a href="{$core.rel_url}view.php?id={$issue.iss_id}" title="{t}view issue details{/t}">{$issue.iss_id}</a>)
+            {t}Issue Overview{/t} (ID: <a href="{{ core.rel_url }}view.php?id={{ issue.iss_id }}" title="{t}view issue details{/t}">{{ issue.iss_id }}</a>)
             <div id="issue_menu">
-                {if $issue_access.change_access}
-                [ <a title="{t}Change Access{/t}" href="access.php?iss_id={$issue_id}" class="change_access">{t}Change Access{/t}</a> ]
-                {/if}
-                {if $issue_access.clone_issue}
-                [ <a title="{t}Clone this issue{/t}" href="new.php?clone_iss_id={$issue_id}">{t}Clone Issue{/t}</a> ]
-                {/if}
-                {if $core.current_role > $core.roles.customer}
-                [ <a title="{t}Edit the Reporter for this issue{/t}" href="edit_reporter.php?iss_id={$issue_id}">{t}Edit Reporter{/t}</a> ]
-                [ <a title="{t}edit the authorized repliers list for this issue{/t}" href="authorized_replier.php?iss_id={$issue_id}" class="open_ar">{t}Edit Authorized Replier List{/t}</a> ]
-                [ <a title="{t}edit the notification list for this issue{/t}" href="notification.php?iss_id={$issue_id}" class="open_nl">{t}Edit Notification List{/t}</a> ]
-                {/if}
-                [ <a title="{t}view the full history of changes on this issue{/t}" class="open_history" href="history.php?iss_id={$issue_id}">{t}History of Changes{/t}</a> ]
+                {% if issue_access.change_access %}
+                [ <a title="{t}Change Access{/t}" href="access.php?iss_id={{ issue_id }}" class="change_access">{t}Change Access{/t}</a> ]
+                {% endif %}
+                {% if issue_access.clone_issue %}
+                [ <a title="{t}Clone this issue{/t}" href="new.php?clone_iss_id={{ issue_id }}">{t}Clone Issue{/t}</a> ]
+                {% endif %}
+                {% if core.current_role > core.roles.customer %}
+                [ <a title="{t}Edit the Reporter for this issue{/t}" href="edit_reporter.php?iss_id={{ issue_id }}">{t}Edit Reporter{/t}</a> ]
+                [ <a title="{t}edit the authorized repliers list for this issue{/t}" href="authorized_replier.php?iss_id={{ issue_id }}" class="open_ar">{t}Edit Authorized Replier List{/t}</a> ]
+                [ <a title="{t}edit the notification list for this issue{/t}" href="notification.php?iss_id={{ issue_id }}" class="open_nl">{t}Edit Notification List{/t}</a> ]
+                {% endif %}
+                [ <a title="{t}view the full history of changes on this issue{/t}" class="open_history" href="history.php?iss_id={{ issue_id }}">{t}History of Changes{/t}</a> ]
             </div>
         </th>
     </tr>
     <tr>
         <td class="grid_cell col0">
             <table class="grid">
-                {foreach $grid[0] as $row}
+                {% for row in grid[0] %}
                 <tr>
-                    <th {if isset($row.title_bgcolor)}style="background-color: {$row.title_bgcolor}"{/if}>{$row.title}</th>
-                    <td {if isset($row.data_bgcolor)}style="background-color: {$row.data_bgcolor}"{/if}>
-                        {if array_key_exists('data', $row)}
+                    <th {% if isset(row.title_bgcolor) %}style="background-color: {{ row.title_bgcolor }}"{% endif %}>{{ row.title }}</th>
+                    <td {% if isset(row.data_bgcolor) %}style="background-color: {{ row.data_bgcolor }}"{% endif %}>
+                        {% if array_key_exists('data', row) %}
                             {$row.data|escape:"html"}
-                        {elseif $row.field|default:'' == 'reporter'}
-                            <a href="list.php?reporter={$issue.iss_usr_id}&hide_closed=1">{$issue.reporter|escape:html}</a>
-                        {elseif $row.field|default:'' == 'product'}
-                            {if $issue.products|@count > 0}
-                                {$issue.products[0].product}
-                                {$issue.products[0].version}
-                            {/if}
-                        {elseif $row.field == 'customer_0'}
-                            {$issue.customer.name}
+                        {% elseif row.field|default('') == 'reporter' %}
+                            <a href="list.php?reporter={{ issue.iss_usr_id }}&hide_closed=1">{$issue.reporter|escape:html}</a>
+                        {% elseif row.field|default('') == 'product' %}
+                            {% if issue.products|@count > 0 %}
+                                {{ issue.products[0].product }}
+                                {{ issue.products[0].version }}
+                            {% endif %}
+                        {% elseif row.field == 'customer_0' %}
+                            {{ issue.customer.name }}
                             (<a href="#customer_details">{t}Complete Details{/t}</a>)
-                        {elseif $row.field == 'percentage_complete'}
-                            <div class="ui-progressbar iss_percent_complete" data-percent="{$row.percent}"><div class="progress-label">&nbsp;{$row.percent} %</div></div>
-                        {/if}
+                        {% elseif row.field == 'percentage_complete' %}
+                            <div class="ui-progressbar iss_percent_complete" data-percent="{{ row.percent }}"><div class="progress-label">&nbsp;{{ row.percent }} %</div></div>
+                        {% endif %}
                     </td>
                 </tr>
-                {/foreach}
+                {% endfor %}
             </table>
         </td>
         <td class="grid_cell col1">
             <table class="grid">
-                {foreach $grid[1] as $row}
+                {% for row in grid[1] %}
                 <tr>
-                    <th {if isset($row.title_bgcolor)}style="background-color: {$row.title_bgcolor}"{/if}>{$row.title}</th>
-                    <td {if isset($row.data_bgcolor)}style="background-color: {$row.data_bgcolor}"{/if}>
+                    <th {% if isset(row.title_bgcolor) %}style="background-color: {{ row.title_bgcolor }}"{% endif %}>{{ row.title }}</th>
+                    <td {% if isset(row.data_bgcolor) %}style="background-color: {{ row.data_bgcolor }}"{% endif %}>
 
-                    {if in_array($row.field|default:'', array('iss_created_date', 'iss_updated_date'))}
-                      {$row.data|timeago}
+                    {% if in_array(row.field|default('',) array('iss_created_date', 'iss_updated_date')) %}
+                      {{ row.data|timeago }}
 
-                    {elseif array_key_exists('data', $row)}
+                    {% elseif array_key_exists('data', row) %}
                         {$row.data|escape:"html"}
 
-                    {elseif $row.field|default:'' == 'notification_list'}
+                    {% elseif row.field|default('') == 'notification_list' %}
 
-                    {if $subscribers.staff != ''}{t}Staff{/t}: {$subscribers.staff|replace:"<":"&lt;"|replace:">":"&gt;"}{/if}
-                    {if $subscribers.staff != '' and $subscribers.customers != ''}<br />{/if}
-                    {if $subscribers.customers != ''}{t}Other{/t}: {$subscribers.customers|replace:"<":"&lt;"|replace:">":"&gt;"}{/if}
+                    {% if subscribers.staff != '' %}{t}Staff{/t}: {$subscribers.staff|replace:"<":"&lt;"|replace:">":"&gt;"}{% endif %}
+                    {% if subscribers.staff != '' and subscribers.customers != '' %}<br />{% endif %}
+                    {% if subscribers.customers != '' %}{t}Other{/t}: {$subscribers.customers|replace:"<":"&lt;"|replace:">":"&gt;"}{% endif %}
 
-                    {elseif $row.field|default:'' == 'associated_issues'}
+                    {% elseif row.field|default('') == 'associated_issues' %}
                     {section name="i" loop=$issue.associated_issues_details}
                     {strip}
-                    <a href="view.php?id={$issue.associated_issues_details[i].associated_issue}" title="{t}issue{/t} #{$issue.associated_issues_details[i].associated_issue} ({$issue.associated_issues_details[i].current_status}) - {$issue.associated_issues_details[i].associated_title|escape:"html"}" class="{if $issue.associated_issues_details[i].is_closed}closed{/if}">#{$issue.associated_issues_details[i].associated_issue}</a>
-                    {if not $smarty.section.i.last},{/if}
+                    <a href="view.php?id={{ issue.associated_issues_details[i].associated_issue }}" title="{t}issue{/t} #{{ issue.associated_issues_details[i].associated_issue }} ({{ issue.associated_issues_details[i].current_status }}) - {$issue.associated_issues_details[i].associated_title|escape:"html"}" class="{% if issue.associated_issues_details[i].is_closed %}closed{% endif %}">#{{ issue.associated_issues_details[i].associated_issue }}</a>
+                    {% if not smarty.section.i.last %},{% endif %}
                     {/strip}
                     {sectionelse}
                     <i>{t}No issues associated{/t}</i>
                     {/section}
-                    {elseif $row.field|default:'' == 'expected_resolution'}
-                        {if $issue.iss_expected_resolution_date == 0}
+                    {% elseif row.field|default('') == 'expected_resolution' %}
+                        {% if issue.iss_expected_resolution_date == 0 %}
                             <i>{t}No resolution date given{/t}</i>
-                        {else}
+                        {% else %}
                             {$issue.iss_expected_resolution_date|escape:"html"}
-                        {/if}
+                        {% endif %}
 
-                    {elseif $row.field|default:'' == 'duplicates'}
-                    {if $issue.iss_duplicated_iss_id}
-                    {t}Duplicate of{/t}: <a href="{$core.rel_url}view.php?id={$issue.iss_duplicated_iss_id}" title="{t}issue{/t} #{$issue.iss_duplicated_iss_id} ({$issue.duplicated_issue.current_status|escape:"html"}) - {$issue.duplicated_issue.title|escape:"html"}" class="{if $issue.duplicated_issue.is_closed}closed{/if}">#{$issue.iss_duplicated_iss_id}</a>
-                    {/if}
-                    {if $issue.duplicates_details|@count > 0}
-                    {if $issue.iss_duplicated_iss_id}<br />{/if}
+                    {% elseif row.field|default('') == 'duplicates' %}
+                    {% if issue.iss_duplicated_iss_id %}
+                    {t}Duplicate of{/t}: <a href="{{ core.rel_url }}view.php?id={{ issue.iss_duplicated_iss_id }}" title="{t}issue{/t} #{{ issue.iss_duplicated_iss_id }} ({$issue.duplicated_issue.current_status|escape:"html"}) - {$issue.duplicated_issue.title|escape:"html"}" class="{% if issue.duplicated_issue.is_closed %}closed{% endif %}">#{{ issue.iss_duplicated_iss_id }}</a>
+                    {% endif %}
+                    {% if issue.duplicates_details|@count > 0 %}
+                    {% if issue.iss_duplicated_iss_id %}<br />{% endif %}
                     {t}Duplicated by{/t}:
                     {section name="i" loop=$issue.duplicates_details}
                     {strip}
-                    <a href="{$core.rel_url}view.php?id={$issue.duplicates_details[i].issue_id}" title="{t}issue{/t} #{$issue.duplicates_details[i].issue_id} ({$issue.duplicates_details[i].current_status|escape:"html"}) - {$issue.duplicates_details[i].title|escape:"html"}" class="{if $issue.duplicates_details[i].is_closed}closed{/if}">#{$issue.duplicates_details[i].issue_id}</a>
-                    {if not $smarty.section.i.last}, {/if}
+                    <a href="{{ core.rel_url }}view.php?id={{ issue.duplicates_details[i].issue_id }}" title="{t}issue{/t} #{{ issue.duplicates_details[i].issue_id }} ({$issue.duplicates_details[i].current_status|escape:"html"}) - {$issue.duplicates_details[i].title|escape:"html"}" class="{% if issue.duplicates_details[i].is_closed %}closed{% endif %}">#{{ issue.duplicates_details[i].issue_id }}</a>
+                    {% if not smarty.section.i.last %}, {% endif %}
                     {/strip}
                     {/section}
-                    {/if}
+                    {% endif %}
 
-                    {elseif $row.field|default:'' == 'authorized_repliers'}
-                    {if $issue.authorized_repliers.users|@count > 0}
+                    {% elseif row.field|default('') == 'authorized_repliers' %}
+                    {% if issue.authorized_repliers.users|@count > 0 %}
                     {t}Staff{/t}:
                     {section name="replier" loop=$issue.authorized_repliers.users}
                     {strip}
                     {$issue.authorized_repliers.users[replier].replier|replace:"<":"&lt;"|replace:">":"&gt;"}
-                    {if $smarty.section.replier.last != 1},&nbsp;{/if}
+                    {% if smarty.section.replier.last != 1 %},&nbsp;{% endif %}
                     {/strip}
                     {/section}
                     <br />
-                    {/if}
-                    {if $issue.authorized_repliers.other|@count > 0}
+                    {% endif %}
+                    {% if issue.authorized_repliers.other|@count > 0 %}
                     {t}Other{/t}:
                     {section name="replier" loop=$issue.authorized_repliers.other}
                     {strip}
                     {$issue.authorized_repliers.other[replier].replier|replace:"<":"&lt;"|replace:">":"&gt;"}
-                    {if $smarty.section.replier.last != 1},&nbsp;{/if}
+                    {% if smarty.section.replier.last != 1 %},&nbsp;{% endif %}
                     {/strip}
                     {/section}
-                    {/if}
+                    {% endif %}
 
-                    {elseif $row.field|default:'' == 'customer_1'}
-                        {t}Support Level{/t}: {$issue.contract.support_level}
-                        {if $issue.contract.options_display|default:''}
+                    {% elseif row.field|default('') == 'customer_1' %}
+                        {t}Support Level{/t}: {{ issue.contract.support_level }}
+                        {% if issue.contract.options_display|default('') %}
                         <br />
                         {t}Support Options{/t}: {$issue.contract.options_display|default:''}
-                        {/if}
-                        {if $issue.customer.is_per_incident}
+                        {% endif %}
+                        {% if issue.customer.is_per_incident %}
                         <br />
                         {t}Redeemed Incident Types{/t}:
                         {strip}
-                        {foreach from=$issue.redeemed_incidents item=incident_details name=incident_loop}
-                        {if $incident_details.is_redeemed == 1}
-                        {if not $smarty.foreach.incident_loop.first}, {/if}{$incident_details.title}
-                        {assign var=has_redeemed_incident value=1}
-                        {/if}
-                        {/foreach}
+                        {% for incident_details in issue.redeemed_incidents %}
+                        {% if incident_details.is_redeemed == 1 %}
+                        {% if not smarty.foreach.incident_loop.first %}, {% endif %}{{ incident_details.title }}
+                        {% set has_redeemed_incident = '1' %}
+                        {% endif %}
+                        {% endfor %}
                         {/strip}
-                        {if $has_redeemed_incident != 1}<i>{t}None{/t}</i>{/if}
-                        {/if}
-                    {/if}
+                        {% if has_redeemed_incident != 1 %}<i>{t}None{/t}</i>{% endif %}
+                        {% endif %}
+                    {% endif %}
                     </td>
                 </tr>
-                {/foreach}
+                {% endfor %}
             </table>
         </td>
     </tr>
@@ -207,74 +207,74 @@
         </td>
     </tr>
 
-    {if $core.current_role > $core.roles.reporter}
+    {% if core.current_role > core.roles.reporter %}
     <tr class="buttons1">
         <td colspan="2">
-            {if $issue_access.update}
+            {% if issue_access.update %}
             <input type="submit" value="{t}Update Issue{/t}">
-            {/if}
-            {if $core.app_setup.support_email == 'enabled' and $ema_id != ''}
-            {if $core.current_role >= $core.roles.standard_user}
+            {% endif %}
+            {% if core.app_setup.support_email == 'enabled' and ema_id != '' %}
+            {% if core.current_role >= core.roles.standard_user %}
             <input type="button" value="{t}Reply{/t}" class="reply_issue">
             <input type="button" value="{t}Reply as Note{/t}" class="reply_issue_note">
-            {elseif $core.current_role == $core.roles.customer}
+            {% elseif core.current_role == core.roles.customer %}
             <input type="button" value="{t}Send Email{/t}" class="reply_issue">
-            {if $is_user_notified != 1}
+            {% if is_user_notified != 1 %}
             <input type="button" value="{t}Add Me To Notification List{/t}" class="self_notification">
-            {/if}
-            {/if}
-            {/if}
+            {% endif %}
+            {% endif %}
+            {% endif %}
 
-            {if $core.current_role > $core.roles.customer}
-                {if $issue_access.change_assignee}
-                    {if $is_user_assigned == 1}
+            {% if core.current_role > core.roles.customer %}
+                {% if issue_access.change_assignee %}
+                    {% if is_user_assigned == 1 %}
                     <input type="button" value="{t}Unassign Issue{/t}" class="unassign">
-                    {else}
+                    {% else %}
                     <input type="button" value="{t}Assign Issue To Myself{/t}" class="self_assign">
-                    {/if}
-                {/if}
+                    {% endif %}
+                {% endif %}
 
                 <div class="right">
-                    {if not $issue.sta_is_closed}
-                    {if $issue.duplicates == ''}
-                    {if $issue.iss_duplicated_iss_id}
+                    {% if not issue.sta_is_closed %}
+                    {% if issue.duplicates == '' %}
+                    {% if issue.iss_duplicated_iss_id %}
                     <input type="button" value="{t}Clear Duplicate Status{/t}" class="clear_duplicate">
-                    {else}
+                    {% else %}
                     <input type="button" value="{t}Mark as Duplicate{/t}" class="mark_duplicate">
-                    {/if}
-                    {/if}
+                    {% endif %}
+                    {% endif %}
                     <input type="button" value="{t}Close Issue{/t}" class="close_issue">
-                    {/if}
+                    {% endif %}
                 </div>
-            {/if}
+            {% endif %}
         </td>
     </tr>
-    {/if}
-    {if $core.current_role > $core.roles.customer}
+    {% endif %}
+    {% if core.current_role > core.roles.customer %}
     <tr class="buttons2">
         <td colspan="2">
-            {if $is_user_authorized != 1}
+            {% if is_user_authorized != 1 %}
             <input type="button" value="{t}Signup as Authorized Replier{/t}" class="self_authorized_replier">
-            {/if}
-            {if $is_user_notified != 1}
+            {% endif %}
+            {% if is_user_notified != 1 %}
             <input type="button" value="{t}Add Me To Notification List{/t}" class="self_notification">
-            {/if}
-            {if $core.has_crm|default:'' != '' && $issue.customer|default:'' != '' && $issue.contract.is_per_incident}
+            {% endif %}
+            {% if core.has_crm|default('') != '' && issue.customer|default('') != '' && issue.contract.is_per_incident %}
             <input type="button" value="{t}Edit Incident Redemption{/t}" class="edit_incident_redemption">
-            {/if}
+            {% endif %}
             &nbsp;
             <div class="right">
-                {if $statuses != ''}
-                <input type="button" value="{t}Change Status To{/t} &gt;" data-status-id="{$issue.iss_sta_id}" class="change_status">
+                {% if statuses != '' %}
+                <input type="button" value="{t}Change Status To{/t} &gt;" data-status-id="{{ issue.iss_sta_id }}" class="change_status">
                 <select name="new_status" id="new_status">
                     {html_options options=$statuses selected=$issue.iss_sta_id}
                 </select>
-                {include "error_icon.tpl.html" field="new_status"}
-                {/if}
+                {% include with {'error_icon.html.twig.html' : 'error_icon.html.twig.html', 'field' : 'new_status'} %}
+                {% endif %}
             </div>
         </td>
     </tr>
-    {/if}
+    {% endif %}
 </table>
 
 </form>

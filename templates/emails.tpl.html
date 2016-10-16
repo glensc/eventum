@@ -1,9 +1,9 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 {block "title"}{t}Associate Emails{/t}{/block}
 
 {block "content"}
 
-{if $core.app_setup.support_email != 'enabled'}
+{% if core.app_setup.support_email != 'enabled' %}
 <table width="300" align="center">
     <tr>
         <td>
@@ -14,7 +14,7 @@
         </td>
     </tr>
 </table>
-{elseif $no_access|default:'' == 1}
+{% elseif no_access|default('') == 1 %}
 <table width="300" align="center">
     <tr>
         <td>
@@ -25,13 +25,13 @@
         </td>
     </tr>
 </table>
-{else}
-{include file="email_filter_form.tpl.html"}
+{% else %}
+{% include "email_filter_form.html.twig.html" %}
 <script type="text/javascript">
     <!--
-    var page_url = '{$core.current_url}';
-    var current_page = {$list_info.current_page};
-    var last_page = {$list_info.last_page};
+    var page_url = '{{ core.current_url }}';
+    var current_page = {{ list_info.current_page }};
+    var last_page = {{ list_info.last_page }};
 
     function viewEmail(account_id, email_id)
     {
@@ -159,124 +159,124 @@
     <input type="hidden" name="cat" value="associate">
     <table class="bordered grid">
         <tr class="title">
-            <th colspan="{if $core.has_crm}7{else}6{/if}">
+            <th colspan="{% if core.has_crm %}7{% else %}6{% endif %}">
                 {math equation="x + 1" x=$list_info.start_offset assign="start_offset_plus_one"}
                 <b>{t count=$list_info.end_offset 1=$list_info.total_rows 2=$start_offset_plus_one 3=$list_info.end_offset plural="Viewing Emails (%1 emails found, %2 - %3 shown)"}Viewing Emails (%1 email found){/t}</b>
-                {include file="help_link.tpl.html" topic="support_emails"}
+                {% include "help_link.html.twig.html" with {'topic' : 'support_emails'} %}
             </th>
         </tr>
         <tr>
-            <th width="1%">{if $list}<input type="button" value="{t}All{/t}" class="select_all" >{/if}</th>
+            <th width="1%">{% if list %}<input type="button" value="{t}All{/t}" class="select_all" >{% endif %}</th>
             <th align="center">
-                <a title="{t}sort by sender{/t}" href="{$sorting.links.sup_from}" class="white_link">{t}Sender{/t}</a>
-                {if $sorting.images.sup_from|default:'' != ""}<a title="{t}sort by sender{/t}" href="{$sorting.links.sup_from}" class="white_link"><img border="0" src="{$sorting.images.sup_from}"></a>{/if}
+                <a title="{t}sort by sender{/t}" href="{{ sorting.links.sup_from }}" class="white_link">{t}Sender{/t}</a>
+                {% if sorting.images.sup_from|default('') != "" %}<a title="{t}sort by sender{/t}" href="{{ sorting.links.sup_from }}" class="white_link"><img border="0" src="{{ sorting.images.sup_from }}"></a>{% endif %}
             </th>
-            {if $core.has_crm}
+            {% if core.has_crm %}
             <th align="center" nowrap>
-                <a title="{t}sort by customer{/t}" href="{$sorting.links.sup_customer_id}" class="white_link">{t}Customer{/t}</a>
-                {if $sorting.images.sup_customer_id|default:'' != ""}<a title="{t}sort by customer{/t}" href="{$sorting.links.sup_customer_id}" class="white_link"><img border="0" src="{$sorting.images.sup_customer_id}"></a>{/if}
+                <a title="{t}sort by customer{/t}" href="{{ sorting.links.sup_customer_id }}" class="white_link">{t}Customer{/t}</a>
+                {% if sorting.images.sup_customer_id|default('') != "" %}<a title="{t}sort by customer{/t}" href="{{ sorting.links.sup_customer_id }}" class="white_link"><img border="0" src="{{ sorting.images.sup_customer_id }}"></a>{% endif %}
             </th>
-            {/if}
+            {% endif %}
             <th align="center">
-                <a title="{t}sort by date{/t}" href="{$sorting.links.sup_date}" class="white_link">{t}Date{/t}</a>
-                {if $sorting.images.sup_date|default:'' != ""}<a title="{t}sort by date{/t}" href="{$sorting.links.sup_date}" class="white_link"><img border="0" src="{$sorting.images.sup_date}"></a>{/if}
+                <a title="{t}sort by date{/t}" href="{{ sorting.links.sup_date }}" class="white_link">{t}Date{/t}</a>
+                {% if sorting.images.sup_date|default('') != "" %}<a title="{t}sort by date{/t}" href="{{ sorting.links.sup_date }}" class="white_link"><img border="0" src="{{ sorting.images.sup_date }}"></a>{% endif %}
             </th>
             <th align="center">
-                <a title="{t}sort by recipient{/t}" href="{$sorting.links.sup_to}" class="white_link">{t}To{/t}</a>
-                {if $sorting.images.sup_to|default:'' != ""}<a title="{t}sort by recipient{/t}" href="{$sorting.links.sup_to}" class="white_link"><img border="0" src="{$sorting.images.sup_to}"></a>{/if}
+                <a title="{t}sort by recipient{/t}" href="{{ sorting.links.sup_to }}" class="white_link">{t}To{/t}</a>
+                {% if sorting.images.sup_to|default('') != "" %}<a title="{t}sort by recipient{/t}" href="{{ sorting.links.sup_to }}" class="white_link"><img border="0" src="{{ sorting.images.sup_to }}"></a>{% endif %}
             </th>
             <th align="center" nowrap>
-                <a title="{t}sort by status{/t}" href="{$sorting.links.sup_iss_id}" class="white_link">{t}Status{/t}</a>
-                {if $sorting.images.sup_iss_id|default:'' != ""}<a title="{t}sort by status{/t}" href="{$sorting.links.sup_iss_id}" class="white_link"><img border="0" src="{$sorting.images.sup_iss_id}"></a>{/if}
+                <a title="{t}sort by status{/t}" href="{{ sorting.links.sup_iss_id }}" class="white_link">{t}Status{/t}</a>
+                {% if sorting.images.sup_iss_id|default('') != "" %}<a title="{t}sort by status{/t}" href="{{ sorting.links.sup_iss_id }}" class="white_link"><img border="0" src="{{ sorting.images.sup_iss_id }}"></a>{% endif %}
             </th>
             <th width="45%">
-                &nbsp;<a title="{t}sort by subject{/t}" href="{$sorting.links.sup_subject}" class="white_link">{t}Subject{/t}</a>
-                {if $sorting.images.sup_subject|default:'' != ""}<a title="{t}sort by subject{/t}" href="{$sorting.links.sup_subject}" class="white_link"><img border="0" src="{$sorting.images.sup_subject}"></a>{/if}
+                &nbsp;<a title="{t}sort by subject{/t}" href="{{ sorting.links.sup_subject }}" class="white_link">{t}Subject{/t}</a>
+                {% if sorting.images.sup_subject|default('') != "" %}<a title="{t}sort by subject{/t}" href="{{ sorting.links.sup_subject }}" class="white_link"><img border="0" src="{{ sorting.images.sup_subject }}"></a>{% endif %}
             </th>
         </tr>
 
         {capture assign="hidden_sender"}{t}Hidden Sender{/t}{/capture}
         {section name="i" loop=$list}
         <tr class="{cycle values='odd,even'}">
-            <td align="center" width="1%"><input type="checkbox" name="item[]" value="{$list[i].sup_id}" {if $list[i].sup_iss_id != 0}disabled{/if}></td>
+            <td align="center" width="1%"><input type="checkbox" name="item[]" value="{{ list[i].sup_id }}" {% if list[i].sup_iss_id != 0 %}disabled{% endif %}></td>
             <td>{$list[i].sup_from|default:$hidden_sender|escape:"html"}</td>
-            {if $core.has_crm}
+            {% if core.has_crm %}
             <td nowrap>{$list[i].customer_title|escape:"html"}</td>
-            {/if}
-            <td align="center" nowrap>{$list[i].sup_date|timeago}</td>
+            {% endif %}
+            <td align="center" nowrap>{{ list[i].sup_date|timeago }}</td>
             <td>{$list[i].sup_to|escape:"html"|replace:",":" "}</td>
             <td align="center" nowrap>
-                {if $list[i].sup_iss_id != 0}
-                {t}associated{/t} (<a title="{t}view issue details{/t}" href="view.php?id={$list[i].sup_iss_id}">{$list[i].sup_iss_id}</a>)
-                {else}
+                {% if list[i].sup_iss_id != 0 %}
+                {t}associated{/t} (<a title="{t}view issue details{/t}" href="view.php?id={{ list[i].sup_iss_id }}">{{ list[i].sup_iss_id }}</a>)
+                {% else %}
                 <b>{t}pending{/t}</b>
-                {/if}
+                {% endif %}
             </td>
             <td width="45%">
                 {capture assign="default_subject"}<{t}Empty Subject Header{/t}>{/capture}
-                &nbsp;<a href="javascript:void(null);" title="{t}view email details{/t}" onClick="viewEmail({$list[i].sup_ema_id}, {$list[i].sup_id});">{$list[i].sup_subject|default:$default_subject|escape:"html"}</a>
-                {if $list[i].sup_has_attachment}
-                <a href="javascript:void(null);" title="{t}view email details{/t}" onClick="viewEmail({$list[i].sup_ema_id}, {$list[i].sup_id});"><img src="{$core.rel_url}images/attachment.gif" border="0"></a
-                        {/if}
+                &nbsp;<a href="javascript:void(null);" title="{t}view email details{/t}" onClick="viewEmail({{ list[i].sup_ema_id }}, {{ list[i].sup_id }});">{$list[i].sup_subject|default:$default_subject|escape:"html"}</a>
+                {% if list[i].sup_has_attachment %}
+                <a href="javascript:void(null);" title="{t}view email details{/t}" onClick="viewEmail({{ list[i].sup_ema_id }}, {{ list[i].sup_id }});"><img src="{{ core.rel_url }}images/attachment.gif" border="0"></a
+                        {% endif %}
             </td>
         </tr>
         {sectionelse}
         <tr bgcolor="gray">
-            <td colspan="{if $core.has_crm}7{else}6{/if}" align="center">
+            <td colspan="{% if core.has_crm %}7{% else %}6{% endif %}" align="center">
                 <i>{t}No emails could be found.{/t}</i>
             </td>
         </tr>
         {/section}
         <tr class="buttons">
-            <td colspan="{if $core.has_crm}7{else}6{/if}">
+            <td colspan="{% if core.has_crm %}7{% else %}6{% endif %}">
                 <table width="100%" cellspacing="0" cellpadding="0">
                     <tr>
                         <td width="35%">
-                            {if $list}
+                            {% if list %}
                             <input type="button" value="{t}All{/t}" class="select_all">
                             <select name="issue" id="new_existing">
                                 <option value="new">{t}New Issue{/t}</option>
                                 <option value="existing">{t}Existing Issue{/t}</option>
                             </select>
-                            {include file="include/issue_field.tpl.html" field_name="issue_id" form_name='email_list_form' span_class="default_white"}
+                            {% include "include/issue_field.html.twig.html" with {'field_name' : 'issue_id', 'form_name' : 'email_list_form', 'span_class' : 'default_white'} %}
                             <input type="button" value="{t}Associate{/t} &gt;" class="shortcut" onClick="associateEmails(this.form);">
-                            {/if}
+                            {% endif %}
                         </td>
                         <td width="40%" align="center">
                             <input name="first" type="button" value="|&lt;" class="shortcut" onClick="setPage(0);">
-                            <input name="previous" type="button" value="&lt;&lt;" class="shortcut" onClick="setPage({$list_info.previous_page});">
+                            <input name="previous" type="button" value="&lt;&lt;" class="shortcut" onClick="setPage({{ list_info.previous_page }});">
                             <input type="text" name="page" size="3" maxlength="3" value="{math equation="x + 1" x=$list_info.current_page}" class="paging_input">
                             <input name="go" type="button" value="Go" class="shortcut" onClick="goPage(this.form.page.value);">
-                            <input name="next" type="button" value="&gt;&gt;" class="shortcut" onClick="setPage({$list_info.next_page});">
-                            <input name="last" type="button" value="&gt;|" class="shortcut" onClick="setPage({$list_info.last_page});">
+                            <input name="next" type="button" value="&gt;&gt;" class="shortcut" onClick="setPage({{ list_info.next_page }});">
+                            <input name="last" type="button" value="&gt;|" class="shortcut" onClick="setPage({{ list_info.last_page }});">
                         </td>
                         <td nowrap align="center">
                             <span>{t}Rows per Page{/t}:</span>
                             <select name="page_size" onChange="resizePager(this.form);">
-                                <option value="5" {if $options.rows == 5}selected{/if}>5</option>
-                                <option value="10" {if $options.rows == 10}selected{/if}>10</option>
-                                <option value="25" {if $options.rows == 25}selected{/if}>25</option>
-                                <option value="50" {if $options.rows == 50}selected{/if}>50</option>
-                                <option value="100" {if $options.rows == 100}selected{/if}>100</option>
-                                <option value="ALL" {if $options.rows == "ALL"}selected{/if}>{t}ALL{/t}</option>
+                                <option value="5" {% if options.rows == 5 %}selected{% endif %}>5</option>
+                                <option value="10" {% if options.rows == 10 %}selected{% endif %}>10</option>
+                                <option value="25" {% if options.rows == 25 %}selected{% endif %}>25</option>
+                                <option value="50" {% if options.rows == 50 %}selected{% endif %}>50</option>
+                                <option value="100" {% if options.rows == 100 %}selected{% endif %}>100</option>
+                                <option value="ALL" {% if options.rows == "ALL" %}selected{% endif %}>{t}ALL{/t}</option>
                             </select>
                             <input type="button" value="{t}Set{/t}" class="shortcut" onClick="resizePager(this.form);">
                         </td>
                         <td width="25%" align="right">
-                            <input type="checkbox" id="hide_associated" name="hide_associated" {if $options.hide_associated}checked{/if} onClick="hideAssociated(this.form);"> <label for="hide_associated">{t}Hide Associated Emails{/t}</label>&nbsp;
+                            <input type="checkbox" id="hide_associated" name="hide_associated" {% if options.hide_associated %}checked{% endif %} onClick="hideAssociated(this.form);"> <label for="hide_associated">{t}Hide Associated Emails{/t}</label>&nbsp;
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
         <tr class="buttons">
-            <td colspan="{if $core.has_crm}7{else}6{/if}">
+            <td colspan="{% if core.has_crm %}7{% else %}6{% endif %}">
                 <table width="100%" cellspacing="0" cellpadding="0">
                     <tr>
                         <td colspan="3">
-                            {if $list}
+                            {% if list %}
                             <input type="button" value="{t}Remove Selected Emails{/t}" id="remove_emails">
-                            {/if}
+                            {% endif %}
                         </td>
                         <td align="right">
                             <a title="{t}list all removed emails{/t}" href="javascript:void(null);" onClick="openRemovedList();">{t}List Removed Emails{/t}</a>&nbsp;
@@ -287,5 +287,5 @@
         </tr>
     </table>
 </form>
-{/if}
+{% endif %}
 {/block}

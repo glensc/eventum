@@ -1,30 +1,30 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 {block title}{t}Advanced Search{/t}{/block}
 
 {block "content"}
 <script type="text/javascript">
 <!--
 
-{if $options.cst_created_date_filter_type|default:'' != "" OR $options.cst_updated_date_filter_type|default:'' != "" OR
-    $options.cst_first_response_date_filter_type|default:'' != "" OR $options.cst_last_response_date_filter_type|default:'' != "" OR
-    $options.cst_closed_date_filter_type|default:'' != ""}
+{% if options.cst_created_date_filter_type|default('') != "" OR options.cst_updated_date_filter_type|default('') != "" OR
+    options.cst_first_response_date_filter_type|default('') != "" OR options.cst_last_response_date_filter_type|default('') != "" OR
+    options.cst_closed_date_filter_type|default('') != "" %}
     $('#show_date_fields_checkbox').attr('checked', true);
-{/if}
+{% endif %}
 
 // determine if the custom fields section should be displayed
-{assign var="custom_field_has_value" value="0"}
-{foreach from=$custom_fields item=field name=custom_fields}
-  {if $options.cst_custom_field[$field.fld_id]|default:'' != '' && $custom_field_has_value != 1}
+{% set custom_field_has_value = '0' %}
+{% for field in custom_fields %}
+  {% if options.cst_custom_field[field.fld_id]|default('') != '' && custom_field_has_value != 1 %}
     changeVisibility('custom_fields_row', true);
     getPageElement('show_custom_fields_checkbox').checked = true;
     disableCustomFields(false);
-    {assign var="custom_field_has_value" value="1"}
-  {/if}
-{/foreach}
+    {% set custom_field_has_value = '1' %}
+  {% endif %}
+{% endfor %}
 //-->
 </script>
 
-  {assign var="tabindex" value=1}
+  {% set tabindex = '1' %}
 
   <form name="custom_filter_form" method="get" action="list.php" class="validate" data-validation-function='adv_search.validateForm'>
     <input type="hidden" name="cat" value="search">
@@ -42,7 +42,7 @@
           <th colspan="5">
             {t}Advanced Search{/t}
               <div class="right">
-                  {include file="help_link.tpl.html" topic="adv_search"}
+                  {% include "help_link.html.twig.html" with {'topic' : 'adv_search'} %}
               </div>
           </th>
         </tr>
@@ -52,12 +52,12 @@
             <input type="text" name="keywords" value="{$options.cst_keywords|escape:'html'|default:''}" size="40"></label>
           </td>
           <td colspan="3">
-            {if $core.has_crm}
-            <input type="radio" name="search_type" value="customer" id="search_type_customer" {if $options.cst_search_type|default:'' != 'all_text'}checked{/if}> <label for="search_type_customer">{t}Customer Identity (e.g. "Example Inc.", "johndoe@example.com", 12345){/t}</label><br />
-            <input type="radio" name="search_type" value="all_text" id="search_type_all_text" {if $options.cst_search_type|default:'' == 'all_text'}checked{/if}> <label for="search_type_all_text">{t}All Text (emails, notes, etc){/t}</label>
-            {else}
+            {% if core.has_crm %}
+            <input type="radio" name="search_type" value="customer" id="search_type_customer" {% if options.cst_search_type|default('') != 'all_text' %}checked{% endif %}> <label for="search_type_customer">{t}Customer Identity (e.g. "Example Inc.", "johndoe@example.com", 12345){/t}</label><br />
+            <input type="radio" name="search_type" value="all_text" id="search_type_all_text" {% if options.cst_search_type|default('') == 'all_text' %}checked{% endif %}> <label for="search_type_all_text">{t}All Text (emails, notes, etc){/t}</label>
+            {% else %}
             <input type="hidden" name="search_type" value="all_text">
-            {/if}
+            {% endif %}
           </td>
         </tr>
         <tr>
@@ -68,48 +68,48 @@
             </select>
             </label>
           </td>
-          {if $cats|@count > 0}
+          {% if cats|@count > 0 %}
           <td>
             <label>{t}Category{/t}<br />
             <select name="category">
               <option value="">{t}any{/t}</option>
-              {foreach key=prc_id item=prc_title from=$cats}
-              <option value="{$prc_id}" {if $prc_id == $options.cst_iss_prc_id|default:''}selected{/if}>{$prc_title}</option>
-              {/foreach}
+              {% for prc_id, prc_title in cats %}
+              <option value="{{ prc_id }}" {% if prc_id == options.cst_iss_prc_id|default('') %}selected{% endif %}>{{ prc_title }}</option>
+              {% endfor %}
             </select>
             </label>
           </td>
-          {/if}
-          {if $priorities|@count > 0}
+          {% endif %}
+          {% if priorities|@count > 0 %}
           <td>
             <label>{t}Priority{/t}<br />
             <select name="priority">
               <option value="">{t}any{/t}</option>
               {section name="i" loop=$priorities}
-              <option value="{$priorities[i].pri_id}" {if $priorities[i].pri_id == $options.cst_iss_pri_id|default:''}selected{/if}>{$priorities[i].pri_title}</option>
+              <option value="{{ priorities[i].pri_id }}" {% if priorities[i].pri_id == options.cst_iss_pri_id|default('') %}selected{% endif %}>{{ priorities[i].pri_title }}</option>
               {/section}
             </select>
             </label>
           </td>
-          {/if}
-          {if $severities|@count > 0}
+          {% endif %}
+          {% if severities|@count > 0 %}
           <td>
             <span class="default">{t}Severity{/t}:</span><br />
             <select name="severity" class="default">
               <option value="">{t}any{/t}</option>
               {section name="i" loop=$severities}
-              <option value="{$severities[i].sev_id}" {if $severities[i].sev_id == $options.cst_iss_sev_id|default:''}selected{/if}>{$severities[i].sev_title}</option>
+              <option value="{{ severities[i].sev_id }}" {% if severities[i].sev_id == options.cst_iss_sev_id|default('') %}selected{% endif %}>{{ severities[i].sev_title }}</option>
               {/section}
             </select>
           </td>
-          {/if}
+          {% endif %}
           <td valign="top">
             <label>{t}Status{/t}<br />
             <select name="status">
               <option value="">{t}any{/t}</option>
-              {foreach key=sta_id item=sta_title from=$status}
-              <option value="{$sta_id}" {if $sta_id == $options.cst_iss_sta_id|default:''}selected{/if}>{$sta_title}</option>
-              {/foreach}
+              {% for sta_id, sta_title in status %}
+              <option value="{{ sta_id }}" {% if sta_id == options.cst_iss_sta_id|default('') %}selected{% endif %}>{{ sta_title }}</option>
+              {% endfor %}
             </select>
             </label>
           </td>
@@ -123,77 +123,77 @@
             </select>
             </label>
           </td>
-          {if $releases|@count > 0}
+          {% if releases|@count > 0 %}
           <td>
             <label>{t}Release{/t}<br />
             <select name="release">
               <option value="">{t}any{/t}</option>
-              {foreach key=pre_id item=pre_title from=$releases}
-              <option value="{$pre_id}" {if $pre_id == $options.cst_iss_pre_id|default:''}selected{/if}>{$pre_title}</option>
-              {/foreach}
+              {% for es in key=pre_id item=pre_title from=rele %}
+              <option value="{{ pre_id }}" {% if pre_id == options.cst_iss_pre_id|default('') %}selected{% endif %}>{{ pre_title }}</option>
+              {% endfor %}
             </select>
             </label>
           </td>
-          {/if}
-          {if $products|@count > 0}
+          {% endif %}
+          {% if products|@count > 0 %}
           <td>
             <span class="default">{t}Product{/t}:</span><br />
             <select name="product" class="default">
               <option value="">{t}any{/t}</option>
-              {foreach key=pro_id item=pro_title from=$products}
-              <option value="{$pro_id}" {if $pro_id == $options.cst_pro_id|default:''}selected{/if}>{$pro_title}</option>
-              {/foreach}
+              {% for pro_id, pro_title in products %}
+              <option value="{{ pro_id }}" {% if pro_id == options.cst_pro_id|default('') %}selected{% endif %}>{{ pro_title }}</option>
+              {% endfor %}
             </select>
           </td>
-          {/if}
+          {% endif %}
         </tr>
         <tr>
           <td>
-            <label><input type="checkbox" name="hide_closed" value="1" {if $options.cst_hide_closed|default:'' == 1}checked{/if}>{t}Hide Closed Issues{/t}</label>
+            <label><input type="checkbox" name="hide_closed" value="1" {% if options.cst_hide_closed|default('') == 1 %}checked{% endif %}>{t}Hide Closed Issues{/t}</label>
           </td>
           <td>
             <label>{t}Rows Per Page{/t}<br />
             <select name="rows">
-              <option value="100" {if $options.cst_rows == 100}selected{/if}>100</option>
-              <option value="50" {if $options.cst_rows == 50}selected{/if}>50</option>
-              <option value="25" {if $options.cst_rows == 25}selected{/if}>25</option>
-              <option value="10" {if $options.cst_rows == 10}selected{/if}>10</option>
-              <option value="5" {if $options.cst_rows == 5}selected{/if}>5</option>
-              <option value="ALL" {if $options.cst_rows == "ALL"}selected{/if}>{t}ALL{/t}</option>
+              <option value="100" {% if options.cst_rows == 100 %}selected{% endif %}>100</option>
+              <option value="50" {% if options.cst_rows == 50 %}selected{% endif %}>50</option>
+              <option value="25" {% if options.cst_rows == 25 %}selected{% endif %}>25</option>
+              <option value="10" {% if options.cst_rows == 10 %}selected{% endif %}>10</option>
+              <option value="5" {% if options.cst_rows == 5 %}selected{% endif %}>5</option>
+              <option value="ALL" {% if options.cst_rows == "ALL" %}selected{% endif %}>{t}ALL{/t}</option>
             </select>
             </label>
           </td>
           <td>
             <label>{t}Sort By{/t}<br />
             <select name="sort_by">
-              <option value="last_action_date" {if $options.cst_sort_by|default:'' == "last_action_date"}selected{/if}>{t}Last Action Date{/t}</option>
-              <option value="pri_rank" {if $options.cst_sort_by|default:'' == "pri_rank"}selected{/if}>{t}Priority{/t}</option>
-              <option value="iss_id" {if $options.cst_sort_by|default:'' == "iss_id"}selected{/if}>{t}Issue ID{/t}</option>
-              <option value="sta_rank" {if $options.cst_sort_by|default:'' == "sta_rank"}selected{/if}>{t}Status{/t}</option>
-              <option value="iss_summary" {if $options.cst_sort_by|default:'' == "iss_summary"}selected{/if}>{t}Summary{/t}</option>
+              <option value="last_action_date" {% if options.cst_sort_by|default('') == "last_action_date" %}selected{% endif %}>{t}Last Action Date{/t}</option>
+              <option value="pri_rank" {% if options.cst_sort_by|default('') == "pri_rank" %}selected{% endif %}>{t}Priority{/t}</option>
+              <option value="iss_id" {% if options.cst_sort_by|default('') == "iss_id" %}selected{% endif %}>{t}Issue ID{/t}</option>
+              <option value="sta_rank" {% if options.cst_sort_by|default('') == "sta_rank" %}selected{% endif %}>{t}Status{/t}</option>
+              <option value="iss_summary" {% if options.cst_sort_by|default('') == "iss_summary" %}selected{% endif %}>{t}Summary{/t}</option>
             </select>
             </label>
           </td>
           <td colspan="2">
             <label>{t}Sort Order{/t}<br />
             <select name="sort_order">
-              <option value="desc" {if $options.cst_sort_order|default:'' == "desc"}selected{/if}>{t}descending{/t}</option>
-              <option value="asc" {if $options.cst_sort_order|default:'' == "asc"}selected{/if}>{t}ascending{/t}</option>
+              <option value="desc" {% if options.cst_sort_order|default('') == "desc" %}selected{% endif %}>{t}descending{/t}</option>
+              <option value="asc" {% if options.cst_sort_order|default('') == "asc" %}selected{% endif %}>{t}ascending{/t}</option>
             </select>
             </label>
           </td>
         </tr>
-	{if !$is_anon_user|default:''}
+	{% if not is_anon_user|default('') %}
         <tr>
           <td colspan="5">
               {t}Show Issues in Which I Am{/t}:
-              <label><input type="checkbox" name="show_authorized_issues" value="yes" {if $options.cst_show_authorized|default:'' == 'yes'}checked{/if}>
+              <label><input type="checkbox" name="show_authorized_issues" value="yes" {% if options.cst_show_authorized|default('') == 'yes' %}checked{% endif %}>
               {t}Authorized to Send Emails{/t}</label>
-              <label><input type="checkbox" name="show_notification_list_issues" value="yes" {if $options.cst_show_notification_list|default:'' == 'yes'}checked{/if}>
+              <label><input type="checkbox" name="show_notification_list_issues" value="yes" {% if options.cst_show_notification_list|default('') == 'yes' %}checked{% endif %}>
               {t}In Notification List{/t}</label>
           </td>
         </tr>
-	{/if}
+	{% endif %}
         <tr>
           <td colspan="5">
           <hr>
@@ -206,13 +206,13 @@
             <table width="100%" cellspacing="0" border="0" cellpadding="0">
               <tr>
                 <td nowrap width="60%">
-                  <input {if $options.cst_created_date_filter_type|default:'' != ""}checked{/if} type="checkbox" id="filter[created_date]" name="filter[created_date]" value="yes" class="date_filter_checkbox">
+                  <input {% if options.cst_created_date_filter_type|default('') != "" %}checked{% endif %} type="checkbox" id="filter[created_date]" name="filter[created_date]" value="yes" class="date_filter_checkbox">
                   <span>{t}Created{/t}:</span><br />
                   <select name="created_date[filter_type]" class="date_filter_type">
-                    <option {if $options.cst_created_date_filter_type|default:'' == "greater"}selected{/if} value="greater">{t}Greater Than{/t}</option>
-                    <option {if $options.cst_created_date_filter_type|default:'' == "less"}selected{/if} value="less">{t}Less Than{/t}</option>
-                    <option {if $options.cst_created_date_filter_type|default:'' == "between"}selected{/if} value="between">{t}Between{/t}</option>
-                    <option {if $options.cst_created_date_filter_type|default:'' == "in_past"}selected{/if} value="in_past">{t}In Past{/t}</option>
+                    <option {% if options.cst_created_date_filter_type|default('') == "greater" %}selected{% endif %} value="greater">{t}Greater Than{/t}</option>
+                    <option {% if options.cst_created_date_filter_type|default('') == "less" %}selected{% endif %} value="less">{t}Less Than{/t}</option>
+                    <option {% if options.cst_created_date_filter_type|default('') == "between" %}selected{% endif %} value="between">{t}Between{/t}</option>
+                    <option {% if options.cst_created_date_filter_type|default('') == "in_past" %}selected{% endif %} value="in_past">{t}In Past{/t}</option>
                   </select>&nbsp;
                   <span id="created_date1">
                   {html_select_date field_array="created_date" prefix="" start_year="-10" end_year="+10" all_extra='class="default"'}
@@ -229,14 +229,14 @@
               </tr>
               <tr>
                 <td nowrap width="60%">
-                  <input {if $options.cst_updated_date_filter_type|default:'' != ""}checked{/if} type="checkbox" id="filter[updated_date]" name="filter[updated_date]" value="yes" class="date_filter_checkbox">
+                  <input {% if options.cst_updated_date_filter_type|default('') != "" %}checked{% endif %} type="checkbox" id="filter[updated_date]" name="filter[updated_date]" value="yes" class="date_filter_checkbox">
                   <span>{t}Last Updated{/t}:</span><br />
                   <select name="updated_date[filter_type]" class="date_filter_type">
-                    <option {if $options.cst_updated_date_filter_type|default:'' == "greater"}selected{/if} value="greater">{t}Greater Than{/t}</option>
-                    <option {if $options.cst_updated_date_filter_type|default:'' == "less"}selected{/if} value="less">{t}Less Than{/t}</option>
-                    <option {if $options.cst_updated_date_filter_type|default:'' == "between"}selected{/if} value="between">{t}Between{/t}</option>
-                    <option {if $options.cst_updated_date_filter_type|default:'' == "null"}selected{/if} value="null">{t}Is Null{/t}</option>
-                    <option {if $options.cst_updated_date_filter_type|default:'' == "in_past"}selected{/if} value="in_past">{t}In Past{/t}</option>
+                    <option {% if options.cst_updated_date_filter_type|default('') == "greater" %}selected{% endif %} value="greater">{t}Greater Than{/t}</option>
+                    <option {% if options.cst_updated_date_filter_type|default('') == "less" %}selected{% endif %} value="less">{t}Less Than{/t}</option>
+                    <option {% if options.cst_updated_date_filter_type|default('') == "between" %}selected{% endif %} value="between">{t}Between{/t}</option>
+                    <option {% if options.cst_updated_date_filter_type|default('') == "null" %}selected{% endif %} value="null">{t}Is Null{/t}</option>
+                    <option {% if options.cst_updated_date_filter_type|default('') == "in_past" %}selected{% endif %} value="in_past">{t}In Past{/t}</option>
                   </select>&nbsp;
                   <span id="updated_date1">
                   {html_select_date field_array="updated_date" prefix="" start_year="-10" end_year="+10" all_extra='class="default"'}
@@ -252,14 +252,14 @@
               </tr>
               <tr>
                 <td nowrap width="60%">
-                  <input {if $options.cst_first_response_date_filter_type|default:'' != ""}checked{/if} type="checkbox" id="filter[first_response_date]" name="filter[first_response_date]" value="yes" class="date_filter_checkbox">
+                  <input {% if options.cst_first_response_date_filter_type|default('') != "" %}checked{% endif %} type="checkbox" id="filter[first_response_date]" name="filter[first_response_date]" value="yes" class="date_filter_checkbox">
                   <span>{t}First Response by Staff{/t}:</span><br />
                   <select name="first_response_date[filter_type]" class="date_filter_type">
-                    <option {if $options.cst_first_response_date_filter_type|default:'' == "greater"}selected{/if} value="greater">{t}Greater Than{/t}</option>
-                    <option {if $options.cst_first_response_date_filter_type|default:'' == "less"}selected{/if} value="less">{t}Less Than{/t}</option>
-                    <option {if $options.cst_first_response_date_filter_type|default:'' == "between"}selected{/if} value="between">{t}Between{/t}</option>
-                    <option {if $options.cst_first_response_date_filter_type|default:'' == "null"}selected{/if} value="null">{t}Is Null{/t}</option>
-                    <option {if $options.cst_first_response_date_filter_type|default:'' == "in_past"}selected{/if} value="in_past">{t}In Past{/t}</option>
+                    <option {% if options.cst_first_response_date_filter_type|default('') == "greater" %}selected{% endif %} value="greater">{t}Greater Than{/t}</option>
+                    <option {% if options.cst_first_response_date_filter_type|default('') == "less" %}selected{% endif %} value="less">{t}Less Than{/t}</option>
+                    <option {% if options.cst_first_response_date_filter_type|default('') == "between" %}selected{% endif %} value="between">{t}Between{/t}</option>
+                    <option {% if options.cst_first_response_date_filter_type|default('') == "null" %}selected{% endif %} value="null">{t}Is Null{/t}</option>
+                    <option {% if options.cst_first_response_date_filter_type|default('') == "in_past" %}selected{% endif %} value="in_past">{t}In Past{/t}</option>
                   </select>&nbsp;
                   <span id="first_response_date1">
                   {html_select_date field_array="first_response_date" prefix="" start_year="-10" end_year="+10" all_extra='class="default"'}
@@ -276,14 +276,14 @@
               </tr>
               <tr>
                 <td nowrap width="60%">
-                  <input {if $options.cst_last_response_date_filter_type|default:'' != ""}checked{/if} type="checkbox" id="filter[last_response_date]" name="filter[last_response_date]" value="yes" class="date_filter_checkbox">
+                  <input {% if options.cst_last_response_date_filter_type|default('') != "" %}checked{% endif %} type="checkbox" id="filter[last_response_date]" name="filter[last_response_date]" value="yes" class="date_filter_checkbox">
                   <span>{t}Last Response by Staff{/t}:</span><br />
                   <select name="last_response_date[filter_type]" class="date_filter_type">
-                    <option {if $options.cst_last_response_date_filter_type|default:'' == "greater"}selected{/if} value="greater">{t}Greater Than{/t}</option>
-                    <option {if $options.cst_last_response_date_filter_type|default:'' == "less"}selected{/if} value="less">{t}Less Than{/t}</option>
-                    <option {if $options.cst_last_response_date_filter_type|default:'' == "between"}selected{/if} value="between">{t}Between{/t}</option>
-                    <option {if $options.cst_last_response_date_filter_type|default:'' == "null"}selected{/if} value="null">{t}Is Null{/t}</option>
-                    <option {if $options.cst_last_response_date_filter_type|default:'' == "in_past"}selected{/if} value="in_past">{t}In Past{/t}</option>
+                    <option {% if options.cst_last_response_date_filter_type|default('') == "greater" %}selected{% endif %} value="greater">{t}Greater Than{/t}</option>
+                    <option {% if options.cst_last_response_date_filter_type|default('') == "less" %}selected{% endif %} value="less">{t}Less Than{/t}</option>
+                    <option {% if options.cst_last_response_date_filter_type|default('') == "between" %}selected{% endif %} value="between">{t}Between{/t}</option>
+                    <option {% if options.cst_last_response_date_filter_type|default('') == "null" %}selected{% endif %} value="null">{t}Is Null{/t}</option>
+                    <option {% if options.cst_last_response_date_filter_type|default('') == "in_past" %}selected{% endif %} value="in_past">{t}In Past{/t}</option>
                   </select>&nbsp;
                   <span id="last_response_date1">
                   {html_select_date field_array="last_response_date" prefix="" start_year="-10" end_year="+10" all_extra='class="default"'}
@@ -300,14 +300,14 @@
               </tr>
               <tr>
                 <td nowrap width="60%">
-                  <input {if $options.cst_closed_date_filter_type|default:'' != ""}checked{/if} type="checkbox" id="filter[closed_date]" name="filter[closed_date]" value="yes" class="date_filter_checkbox">
+                  <input {% if options.cst_closed_date_filter_type|default('') != "" %}checked{% endif %} type="checkbox" id="filter[closed_date]" name="filter[closed_date]" value="yes" class="date_filter_checkbox">
                   <span>{t}Status Closed{/t}:</span><br />
                   <select name="closed_date[filter_type]" class="date_filter_type">
-                    <option {if $options.cst_closed_date_filter_type|default:'' == "greater"}selected{/if} value="greater">{t}Greater Than{/t}</option>
-                    <option {if $options.cst_closed_date_filter_type|default:'' == "less"}selected{/if} value="less">{t}Less Than{/t}</option>
-                    <option {if $options.cst_closed_date_filter_type|default:'' == "between"}selected{/if} value="between">{t}Between{/t}</option>
-                    <option {if $options.cst_closed_date_filter_type|default:'' == "null"}selected{/if} value="null">{t}Is Null{/t}</option>
-                    <option {if $options.cst_closed_date_filter_type|default:'' == "in_past"}selected{/if} value="in_past">{t}In Past{/t}</option>
+                    <option {% if options.cst_closed_date_filter_type|default('') == "greater" %}selected{% endif %} value="greater">{t}Greater Than{/t}</option>
+                    <option {% if options.cst_closed_date_filter_type|default('') == "less" %}selected{% endif %} value="less">{t}Less Than{/t}</option>
+                    <option {% if options.cst_closed_date_filter_type|default('') == "between" %}selected{% endif %} value="between">{t}Between{/t}</option>
+                    <option {% if options.cst_closed_date_filter_type|default('') == "null" %}selected{% endif %} value="null">{t}Is Null{/t}</option>
+                    <option {% if options.cst_closed_date_filter_type|default('') == "in_past" %}selected{% endif %} value="in_past">{t}In Past{/t}</option>
                   </select>&nbsp;
                   <span id="closed_date1">
                   {html_select_date field_array="closed_date" prefix="" start_year="-10" end_year="+10" all_extra='class="default"'}
@@ -326,25 +326,25 @@
             </table>
           </td>
         </tr>
-        {if $custom_fields != ''}
-			{include file="adv_search_custom_fields.tpl.html"}
-        {/if}
+        {% if custom_fields != '' %}
+			{% include "adv_search_custom_fields.html.twig.html" %}
+        {% endif %}
         <tr class="buttons">
           <td colspan="5">
             <input type="submit" value="{t}Run Search{/t}">
             <input type="reset" value="{t}Reset{/t}">
           </td>
         </tr>
-	{if !$is_anon_user|default:''}
+	{% if not is_anon_user|default('') %}
         <tr>
           <td colspan="5" align="center">
             <span>{t}Search Title{/t}:</span>
             <input type="text" name="title" value="{$options.cst_title|default:''}">
-            {include file="error_icon.tpl.html" field="title"}
-            {if $core.current_role >= $core.roles.manager}
-            <input type="checkbox" id="is_global" name="is_global" value="1" {if $options.cst_is_global|default:''}checked{/if}>
+            {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
+            {% if core.current_role >= core.roles.manager %}
+            <input type="checkbox" id="is_global" name="is_global" value="1" {% if options.cst_is_global|default('') %}checked{% endif %}>
             <span><label for="is_global">{t}Global Search{/t}</label></span>
-            {/if}
+            {% endif %}
           </td>
         </tr>
         <tr class="buttons">
@@ -352,11 +352,11 @@
             <input type="button" id="save_search" value="{t}Save Search{/t}">
           </td>
         </tr>
-	{/if}
+	{% endif %}
       </table>
         </form>
 
-{if !$is_anon_user|default:''}
+{% if not is_anon_user|default('') %}
 <br />
     <form id="remove_filter" method="post" action="popup.php" target="_removeFilter">
     <input type="hidden" name="cat" value="delete_filter">
@@ -369,23 +369,23 @@
         {section name="i" loop=$custom}
         <tr>
           <td width="2">
-            <input type="checkbox" name="item[]" value="{$custom[i].cst_id}" {if $core.current_role < $core.roles.manager and $custom[i].cst_is_global}disabled{/if}>
+            <input type="checkbox" name="item[]" value="{{ custom[i].cst_id }}" {% if core.current_role < core.roles.manager and custom[i].cst_is_global %}disabled{% endif %}>
           </td>
           <td width="100%">
             <span>
-            {if $core.current_role < $core.roles.manager and $custom[i].cst_is_global}
-            {$custom[i].cst_title}
-            {else}
-            <a href="adv_search.php?custom_id={$custom[i].cst_id}" title="{t}edit this custom search{/t}">{$custom[i].cst_title}</a>
-            {/if}
+            {% if core.current_role < core.roles.manager and custom[i].cst_is_global %}
+            {{ custom[i].cst_title }}
+            {% else %}
+            <a href="adv_search.php?custom_id={{ custom[i].cst_id }}" title="{t}edit this custom search{/t}">{{ custom[i].cst_title }}</a>
+            {% endif %}
             </span>
-            {if $custom[i].cst_is_global}<span><i>({t}global filter{/t})</i></span>{/if}
+            {% if custom[i].cst_is_global %}<span><i>({t}global filter{/t})</i></span>{% endif %}
           </td>
           <td>
-            <a title="{t}RSS feed for this custom search{/t}" href="rss.php?custom_id={$custom[i].cst_id}"><img src="images/icons/rss.gif" border="0"></a>
+            <a title="{t}RSS feed for this custom search{/t}" href="rss.php?custom_id={{ custom[i].cst_id }}"><img src="images/icons/rss.gif" border="0"></a>
           </td>
         </tr>
-        {if $smarty.section.i.last && $smarty.section.i.total > 0}
+        {% if smarty.section.i.last && smarty.section.i.total > 0 %}
         <tr class="buttons">
           <td colspan="3">
               <input type="button" value="{t}All{/t}" class="select_all">
@@ -394,7 +394,7 @@
               </div>
           </td>
         </tr>
-        {/if}
+        {% endif %}
         {sectionelse}
         <tr>
           <td colspan="3" align="center">
@@ -404,5 +404,5 @@
         {/section}
       </table>
     </form>
-{/if}
+{% endif %}
 {/block}

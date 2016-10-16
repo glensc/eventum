@@ -1,4 +1,4 @@
-{extends "reports/reports_base.tpl.html"}
+{extends "reports/reports_base.html.twig.html"}
 {block "title"}Estimated Development Time by Category{/block}
 
 {block "report_content"}
@@ -16,8 +16,8 @@
     </tr>
     {section name="issues" loop=$data}
     <tr class="{cycle values='odd,even'}">
-        <td align="center">{$data[issues].prc_title}</td>
-        <td align="center">{$data[issues].dev_time}</td>
+        <td align="center">{{ data[issues].prc_title }}</td>
+        <td align="center">{{ data[issues].dev_time }}</td>
     </tr>
     {/section}
 </table>

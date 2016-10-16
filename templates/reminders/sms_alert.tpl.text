@@ -1,1 +1,1 @@
-{textformat style="email"}{t}Reminder{/t}: {$reminder.rem_title} {t}for{/t} #{$data.iss_id}, {$action.rma_boilerplate}{/textformat}
+{textformat style="email"}{t}Reminder{/t}: {{ reminder.rem_title }} {t}for{/t} #{{ data.iss_id }}, {{ action.rma_boilerplate }}{/textformat}

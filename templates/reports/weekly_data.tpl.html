@@ -1,74 +1,70 @@
-{$data.user.usr_full_name|escape:html} {if $report_type == 'weekly'}{t}Weekly{/t} {/if}{t}Report{/t} {$data.start} - {$data.end}
+{$data.user.usr_full_name|escape:html} {% if report_type == 'weekly' %}{t}Weekly{/t} {% endif %}{t}Report{/t} {{ data.start }} - {{ data.end }}
 
-{$core.app_title} {t}issues worked on{/t}:
+{{ core.app_title }} {t}issues worked on{/t}:
 
 {section name=issue loop=$data.issues.other}
-<a href="{$core.rel_url}view.php?id={$data.issues.other[issue].iss_id}" style="text-decoration: none" target="_blank">{$data.issues.other[issue].iss_id|str_pad:5:" ":$smarty.const.STR_PAD_LEFT}</a> {$data.issues.other[issue].iss_summary|htmlspecialchars} {if
-$smarty.request.show_status|default:'' == 1} ({$data.issues.other[issue].sta_title}){/if}{if $smarty.request.show_priority|default:'' == 1} ({$data.issues.other[issue].pri_title}){/if} {if $smarty.request.show_per_issue|default:'' == 1}({$data.issues.other[issue].time_spent}){/if}
+<a href="{{ core.rel_url }}view.php?id={{ data.issues.other[issue].iss_id }}" style="text-decoration: none" target="_blank">{$data.issues.other[issue].iss_id|str_pad:5:" ":$smarty.const.STR_PAD_LEFT}</a> {{ data.issues.other[issue].iss_summary|htmlspecialchars }} {% if smarty.request.show_status|default('') == 1 %} ({{ data.issues.other[issue].sta_title }}){% endif %}{% if smarty.request.show_priority|default('') == 1 %} ({{ data.issues.other[issue].pri_title }}){% endif %} {% if smarty.request.show_per_issue|default('') == 1 %}({{ data.issues.other[issue].time_spent }}){% endif %}
 
 {sectionelse}
 {t}No issues touched this time period{/t}
 
 {/section}
 
-{if $smarty.request.separate_closed|default:'' == 1}
+{% if smarty.request.separate_closed|default('') == 1 %}
 {t}Issues Closed{/t}:
 
 {section name=issue loop=$data.issues.closed}
-<a href="{$core.rel_url}view.php?id={$data.issues.closed[issue].iss_id}" style="text-decoration: none" target="_blank">{$data.issues.closed[issue].iss_id|str_pad:5:" ":$smarty.const.STR_PAD_LEFT}</a> {$data.issues.closed[issue].iss_summary|htmlspecialchars} {if
-$smarty.request.show_status == 1} ({$data.issues.closed[issue].sta_title}){/if}{if $smarty.request.show_priority == 1} ({$data.issues.closed[issue].pri_title}){/if} {if $smarty.request.show_per_issue|default:'' == 1}({$data.issues.closed[issue].time_spent}){/if}
+<a href="{{ core.rel_url }}view.php?id={{ data.issues.closed[issue].iss_id }}" style="text-decoration: none" target="_blank">{$data.issues.closed[issue].iss_id|str_pad:5:" ":$smarty.const.STR_PAD_LEFT}</a> {{ data.issues.closed[issue].iss_summary|htmlspecialchars }} {% if smarty.request.show_status == 1 %} ({{ data.issues.closed[issue].sta_title }}){% endif %}{% if smarty.request.show_priority == 1 %} ({{ data.issues.closed[issue].pri_title }}){% endif %} {% if smarty.request.show_per_issue|default('') == 1 %}({{ data.issues.closed[issue].time_spent }}){% endif %}
 
 {sectionelse}
 {t}No issues closed this time period{/t}
 {/section}
 
-{/if}
+{% endif %}
 
-{if $smarty.request.separate_not_assigned_to_user|default:'' == 1}
+{% if smarty.request.separate_not_assigned_to_user|default('') == 1 %}
 {t}Not Assigned to User{/t}:
 
 {section name=issue loop=$data.issues.not_mine}
-<a href="{$core.rel_url}view.php?id={$data.issues.not_mine[issue].iss_id}" style="text-decoration: none" target="_blank">{$data.issues.not_mine[issue].iss_id|str_pad:5:" ":$smarty.const.STR_PAD_LEFT}</a> {$data.issues.not_mine[issue].iss_summary|htmlspecialchars} {if
-$smarty.request.show_status == 1} ({$data.issues.not_mine[issue].sta_title}){/if}{if $smarty.request.show_priority == 1} ({$data.issues.not_mine[issue].pri_title}){/if} {if $smarty.request.show_per_issue|default:'' == 1}({$data.issues.not_mine[issue].time_spent}){/if}
+<a href="{{ core.rel_url }}view.php?id={{ data.issues.not_mine[issue].iss_id }}" style="text-decoration: none" target="_blank">{$data.issues.not_mine[issue].iss_id|str_pad:5:" ":$smarty.const.STR_PAD_LEFT}</a> {{ data.issues.not_mine[issue].iss_summary|htmlspecialchars }} {% if smarty.request.show_status == 1 %} ({{ data.issues.not_mine[issue].sta_title }}){% endif %}{% if smarty.request.show_priority == 1 %} ({{ data.issues.not_mine[issue].pri_title }}){% endif %} {% if smarty.request.show_per_issue|default('') == 1 %}({{ data.issues.not_mine[issue].time_spent }}){% endif %}
 
 {sectionelse}
 {t}No issues that were not assigned to user at this time period{/t}
 {/section}
 
-{/if}
+{% endif %}
 
-{if $smarty.request.separate_no_time|default:'' == 1}
+{% if smarty.request.separate_no_time|default('') == 1 %}
 {t}Issues with no time spent{/t}:
 
 {section name=issue loop=$data.issues.no_time}
-<a href="{$core.rel_url}view.php?id={$data.issues.no_time[issue].iss_id}" style="text-decoration: none" target="_blank">{$data.issues.no_time[issue].iss_id|str_pad:5:" ":$smarty.const.STR_PAD_LEFT}</a> {$data.issues.no_time[issue].iss_summary|htmlspecialchars} {if
-$smarty.request.show_status == 1} ({$data.issues.no_time[issue].sta_title}){/if}{if $smarty.request.show_priority == 1} ({$data.issues.no_time[issue].pri_title}){/if} {if $smarty.request.show_per_issue|default:'' == 1}({$data.issues.no_time[issue].time_spent}){/if}
+<a href="{{ core.rel_url }}view.php?id={{ data.issues.no_time[issue].iss_id }}" style="text-decoration: none" target="_blank">{$data.issues.no_time[issue].iss_id|str_pad:5:" ":$smarty.const.STR_PAD_LEFT}</a> {{ data.issues.no_time[issue].iss_summary|htmlspecialchars }} {% if smarty.request.show_status == 1 %} ({{ data.issues.no_time[issue].sta_title }}){% endif %}{% if smarty.request.show_priority == 1 %} ({{ data.issues.no_time[issue].pri_title }}){% endif %} {% if smarty.request.show_per_issue|default('') == 1 %}({{ data.issues.no_time[issue].time_spent }}){% endif %}
 
 {sectionelse}
 {t}No issues where no time was spent on this time period{/t}
 {/section}
-{/if}
+{% endif %}
 
-{t}New Issues Assigned{/t}:  {$data.new_assigned_count}
+{t}New Issues Assigned{/t}:  {{ data.new_assigned_count }}
 
 {section name=status loop=$data.status_counts}
-{assign var="title" value="`$data.status_counts[status].sta_title`:"}
-{$title|str_pad:"22"}{$data.status_counts[status].total}
+{% set title = '`$data.status_counts[status].sta_title`:' %}
+{$title|str_pad:"22"}{{ data.status_counts[status].total }}
 {/section}
 {t}Total Issues{/t}:         {math equation="x+y" x=$data.issues.other|@count y=$data.issues.closed|@count}
 
 
-{t}Eventum Emails{/t}:       {$data.email_count.associated}
-{t}Other Emails{/t}:         {$data.email_count.other}
-{t}Total Phone Calls{/t}:    {$data.phone_count}
-{t}Total Notes{/t}:          {$data.note_count}
+{t}Eventum Emails{/t}:       {{ data.email_count.associated }}
+{t}Other Emails{/t}:         {{ data.email_count.other }}
+{t}Total Phone Calls{/t}:    {{ data.phone_count }}
+{t}Total Notes{/t}:          {{ data.note_count }}
 
-{t}Phone Time Spent{/t}:     {if $data.time_tracking.Telephone_Discussion.formatted_time|default:'' == ''}00h 00m{else}{$data.time_tracking.Telephone_Discussion.formatted_time}{/if}
+{t}Phone Time Spent{/t}:     {% if data.time_tracking.Telephone_Discussion.formatted_time|default('') == '' %}00h 00m{% else %}{{ data.time_tracking.Telephone_Discussion.formatted_time }}{% endif %}
 
-{t}Email Time Spent{/t}:     {if $data.time_tracking.Email_Discussion.formatted_time|default:'' == ''}00h 00m{else}{$data.time_tracking.Email_Discussion.formatted_time}{/if}
+{t}Email Time Spent{/t}:     {% if data.time_tracking.Email_Discussion.formatted_time|default('') == '' %}00h 00m{% else %}{{ data.time_tracking.Email_Discussion.formatted_time }}{% endif %}
 
-{t}Login Time Spent{/t}:     {if $data.time_tracking.Login_Work.formatted_time|default:'' == ''}00h 00m{else}{$data.time_tracking.Login_Work.formatted_time}{/if}
+{t}Login Time Spent{/t}:     {% if data.time_tracking.Login_Work.formatted_time|default('') == '' %}00h 00m{% else %}{{ data.time_tracking.Login_Work.formatted_time }}{% endif %}
 
 
-{t}Total Time Spent{/t}:     {$data.total_time}
+{t}Total Time Spent{/t}:     {{ data.total_time }}
 

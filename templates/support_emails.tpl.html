@@ -32,13 +32,13 @@
     {
 
         var features = 'width=740,height=580,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
-        var emailWin = window.open('send.php?issue_id={$smarty.get.id|intval}&ema_id=' + account_id + '&id=' + email_id, '_emailReply' + email_id, features);
+        var emailWin = window.open('send.php?issue_id={{ smarty.get.id|intval }}&ema_id=' + account_id + '&id=' + email_id, '_emailReply' + email_id, features);
         emailWin.focus();
     }
     function replyAsNote(account_id, email_id)
     {
         var features = 'width=740,height=740,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
-        var emailWin = window.open('post_note.php?cat=email_reply&issue_id={$smarty.get.id}&ema_id=' + account_id + '&id=' + email_id, '_noteReply' + email_id, features);
+        var emailWin = window.open('post_note.php?cat=email_reply&issue_id={{ smarty.get.id }}&ema_id=' + account_id + '&id=' + email_id, '_noteReply' + email_id, features);
         emailWin.focus();
     }
     function sendEmail(account_id, issue_id)
@@ -50,32 +50,32 @@
     //-->
 </script>
 
-{if $core.current_role > $core.roles.viewer}
-{assign var="email_col_count" value="8"}
-{else}
-{assign var="email_col_count" value="7"}
-{/if}
+{% if core.current_role > core.roles.viewer %}
+{% set email_col_count = '8' %}
+{% else %}
+{% set email_col_count = '7' %}
+{% endif %}
 
 <div class="issue_section bordered" id="support_emails">
     <form onSubmit="return removeEmails(this);" target="_removeEmails" action="popup.php" method="post">
         <input type="hidden" name="cat" value="remove_support_email">
         <div class="title">
-            {t}Associated Emails{/t} ({if $emails|@is_array}{$emails|@count}{else}0{/if})
+            {t}Associated Emails{/t} ({% if emails|@is_array %}{$emails|@count}{% else %}0{% endif %})
         <span class="menu">
             [ <a href="#top">{t}Back to Top{/t}</a> ]
-            {if $core.current_role > $core.roles.standard_user}
-            [ <a href="mail_queue.php?iss_id={$smarty.get.id|intval}" title="{t}view the history of sent emails{/t}">{t}Mail Queue Log{/t}</a> ]
-            {/if}
+            {% if core.current_role > core.roles.standard_user %}
+            [ <a href="mail_queue.php?iss_id={{ smarty.get.id|intval }}" title="{t}view the history of sent emails{/t}">{t}Mail Queue Log{/t}</a> ]
+            {% endif %}
             [ <span id="toggle_support_emails" class="js_link">{get_display_label element_name="support_emails" total=$emails|@count}</span> ]
         </span>
         </div>
         <div class="content" {get_display_style element_name='support_emails' total=$emails|@count}>
         <table class="grid">
             <tr>
-                {if $core.current_role > $core.roles.viewer && $core.current_role != $core.roles.customer}
+                {% if core.current_role > core.roles.viewer && core.current_role != core.roles.customer %}
                 <th width="5"><input type="button" value="{t}All{/t}" class="select_all"></th>
-                {/if}
-                <th align="center" NOWRAP>{include file="expandable_cell/buttons.tpl.html" ec_id="email,description"}</th>
+                {% endif %}
+                <th align="center" NOWRAP>{% include "expandable_cell/buttons.html.twig.html" with {'ec_id' : 'email,description'} %}</th>
                 <th width="5" align="center">#</th>
                 <th width="5">{t}Reply{/t}</th>
                 <th width="15%">{t}From{/t}</th>
@@ -83,89 +83,89 @@
                 <th width="15%" nowrap>{t}Received{/t}</th>
                 <th width="50%">{t}Subject{/t}</th>
             </tr>
-            {if $core.current_role > $core.roles.viewer && $core.current_role != $core.roles.customer &&
-                $core.app_setup.description_email_0|default:'' == 'enabled'}
+            {% if core.current_role > core.roles.viewer && core.current_role != core.roles.customer &&
+                core.app_setup.description_email_0|default('') == 'enabled' %}
             <tr class="even">
                 <td>&nbsp;</td>
                 <td align="center" nowrap align="center">
-                    {include file="expandable_cell/buttons.tpl.html" ec_id="description" list_id=$issue.iss_id}
+                    {% include "expandable_cell/buttons.html.twig.html" with {'ec_id' : 'description', 'list_id' : issue.iss_id} %}
                 </td>
                 <td align="center">0</td>
                 <td align="center">
-                    <a title="{t}reply to this email{/t}" href="javascript:void(null);" class="reply_issue"><img src="{$core.rel_url}images/icons/reply.gif" border="0"></a>
+                    <a title="{t}reply to this email{/t}" href="javascript:void(null);" class="reply_issue"><img src="{{ core.rel_url }}images/icons/reply.gif" border="0"></a>
                 </td>
-                <td>{$issue.reporter}</td>
+                <td>{{ issue.reporter }}</td>
                 <td>
                     <em>{t}sent to notification list{/t}</em>
                 </td>
-                <td nowrap>{$issue.iss_created_date|timeago}</td>
+                <td nowrap>{{ issue.iss_created_date|timeago }}</td>
                 <td>
                     {$issue.iss_summary|escape:"html"}
                 </td>
             </tr>
-            {include file="expandable_cell/body.tpl.html" ec_id="description" list_id=$issue.iss_id colspan=$email_col_count class='even'}
-            {/if}
+            {% include "expandable_cell/body.html.twig.html" with {'ec_id' : 'description', 'list_id' : issue.iss_id, 'colspan' : email_col_count, 'class' : 'even'} %}
+            {% endif %}
             {section name="i" loop=$emails}
             {cycle values='odd,even' assign="row_class"}
-            <tr class="{$row_class}">
-                {if $core.current_role > $core.roles.viewer && $core.current_role != $core.roles.customer}
+            <tr class="{{ row_class }}">
+                {% if core.current_role > core.roles.viewer && core.current_role != core.roles.customer %}
                 <td align="center">
-                    <input type="checkbox" name="item[]" value="{$emails[i].sup_id}">
+                    <input type="checkbox" name="item[]" value="{{ emails[i].sup_id }}">
                 </td>
-                {/if}
+                {% endif %}
                 <td align="center" nowrap align="center">
-                    {include file="expandable_cell/buttons.tpl.html" ec_id="email" list_id=$emails[i].composite_id}
+                    {% include "expandable_cell/buttons.html.twig.html" with {'ec_id' : 'email', 'list_id' : emails, 'i' : 'i', '.composite_id' : '.composite_id'} %}
                 </td>
-                <td align="center">{$smarty.section.i.iteration}</td>
+                <td align="center">{{ smarty.section.i.iteration }}</td>
                 <td align="center" nowrap>
-                    <a title="{t}reply to this email{/t}" href="javascript:void(null);" onClick="reply({$emails[i].sup_ema_id}, {$emails[i].sup_id});"><img src="{$core.rel_url}images/icons/reply.gif" border="0"></a>
-                    {if $core.current_role >= $core.roles.standard_user}
-                        <a title="{t}reply as note{/t}" href="javascript:void(null);" onClick="replyAsNote({$emails[i].sup_ema_id}, {$emails[i].sup_id});"><img src="{$core.rel_url}images/icons/reply-internal.gif" border="0"></a>
-                    {/if}
+                    <a title="{t}reply to this email{/t}" href="javascript:void(null);" onClick="reply({{ emails[i].sup_ema_id }}, {{ emails[i].sup_id }});"><img src="{{ core.rel_url }}images/icons/reply.gif" border="0"></a>
+                    {% if core.current_role >= core.roles.standard_user %}
+                        <a title="{t}reply as note{/t}" href="javascript:void(null);" onClick="replyAsNote({{ emails[i].sup_ema_id }}, {{ emails[i].sup_id }});"><img src="{{ core.rel_url }}images/icons/reply-internal.gif" border="0"></a>
+                    {% endif %}
                 </td>
                 <td>{$emails[i].sup_from|escape:"html"}</td>
                 <td>
-                    {if $emails[i].sup_to == ""}
+                    {% if emails[i].sup_to == "" %}
                     <i>{t}sent to notification list{/t}</i>
-                    {else}
+                    {% else %}
                     {$emails[i].sup_to|escape:"html"}
-                    {/if}
-                    {if $emails[i].sup_cc != ""}
+                    {% endif %}
+                    {% if emails[i].sup_cc != "" %}
                     <br/>
                     {$emails[i].sup_cc|escape:"html"}
-                    {/if}
+                    {% endif %}
                 </td>
-                <td nowrap>{$emails[i].sup_date|timeago}</td>
+                <td nowrap>{{ emails[i].sup_date|timeago }}</td>
                 <td>
-                    <a title="{t}view email details{/t}" href="javascript:void(null);" onClick="viewEmail({$emails[i].sup_ema_id}, {$emails[i].sup_id});">{$emails[i].sup_subject|default:"<Empty Subject Header>"|escape:"html"}</a>
-                    {if $emails[i].sup_has_attachment}
-                    <a title="{t}view email details{/t}" href="javascript:void(null);" onClick="viewEmail({$emails[i].sup_ema_id}, {$emails[i].sup_id});"><img src="{$core.rel_url}images/attachment.gif" border="0"></a>
-                    {/if}
+                    <a title="{t}view email details{/t}" href="javascript:void(null);" onClick="viewEmail({{ emails[i].sup_ema_id }}, {{ emails[i].sup_id }});">{$emails[i].sup_subject|default:"<Empty Subject Header>"|escape:"html"}</a>
+                    {% if emails[i].sup_has_attachment %}
+                    <a title="{t}view email details{/t}" href="javascript:void(null);" onClick="viewEmail({{ emails[i].sup_ema_id }}, {{ emails[i].sup_id }});"><img src="{{ core.rel_url }}images/attachment.gif" border="0"></a>
+                    {% endif %}
                 </td>
             </tr>
-            {include file="expandable_cell/body.tpl.html" ec_id="email" list_id=$emails[i].composite_id colspan=$email_col_count class=$row_class}
+            {% include "expandable_cell/body.html.twig.html" with {'ec_id' : 'email', 'list_id' : emails, 'i' : 'i', '.composite_id' : '.composite_id', 'colspan' : email_col_count, 'class' : row_class} %}
             {/section}
-            {if $emails|@count < 1 && $core.app_setup.description_email_0|default:'' != 'enabled'}
+            {% if emails|@count < 1 && core.app_setup.description_email_0|default('') != 'enabled' %}
             <tr class="no_results">
-                <td colspan="{$email_col_count}">
+                <td colspan="{{ email_col_count }}">
                     {t}No associated emails could be found.{/t}
                 </td>
             </tr>
-            {/if}
+            {% endif %}
         </table>
 </div>
-{if $core.current_role > $core.roles.viewer}
+{% if core.current_role > core.roles.viewer %}
 <div class="buttons">
-    {if $ema_id != ""}
-    <input type="button" value="{t}Send Email{/t}" onClick="sendEmail({$ema_id}, {$smarty.get.id|intval});">
-    {/if}
+    {% if ema_id != "" %}
+    <input type="button" value="{t}Send Email{/t}" onClick="sendEmail({{ ema_id }}, {{ smarty.get.id|intval }});">
+    {% endif %}
 
-    {if $emails|@count > 0 && $core.current_role != $core.roles.customer}
+    {% if emails|@count > 0 && core.current_role != core.roles.customer %}
     <div class="right">
         <input type="submit" value="{t}Disassociate Selected{/t}">
     </div>
-    {/if}
+    {% endif %}
 </div>
-{/if}
+{% endif %}
 </form>
 </div>

@@ -12,9 +12,9 @@
           <tr>
             <th>{t}Files{/t}</th>
             <th>{t}Owner{/t}</th>
-            {if $core.current_role > $core.roles.customer}
+            {% if core.current_role > core.roles.customer %}
             <th>{t}Status{/t}</th>
-            {/if}
+            {% endif %}
             <th>{t}Date{/t}</th>
             <th>{t}Description{/t}</th>
           </tr>
@@ -22,45 +22,45 @@
           <tr class="{cycle values='odd,even'}">
             <td>
               {section name="y" loop=$files[i].files}
-              <a title="{t}download file{/t} ({$files[i].files[y].iaf_filename|escape:"html"} - {$files[i].files[y].iaf_filesize})" href="download.php?cat=attachment&id={$files[i].files[y].iaf_id}"><img width="17" height="17" src="{$core.rel_url}images/file.gif" border="0"></a>
-              <a title="{t}download file{/t} ({$files[i].files[y].iaf_filename|escape:"html"} - {$files[i].files[y].iaf_filesize})" href="download.php?cat=attachment&id={$files[i].files[y].iaf_id}">{$files[i].files[y].iaf_filename|escape:"html"}</a> ({$files[i].files[y].iaf_filesize})
-              <a class="link" title="{t}view{/t} ({$files[i].files[y].iaf_filename|escape:"html"}" href="download.php?cat=attachment&id={$files[i].files[y].iaf_id}&force_inline=1">{t}view{/t}</a>
-              {if $core.user.usr_id == $files[i].iat_usr_id OR $core.current_role >= $core.roles.manager}
-              <span title="{t}delete file{/t}" data-iaf-id="{$files[i].files[y].iaf_id}" class="js_link delete_file">{t}delete{/t}</span>{/if}
+              <a title="{t}download file{/t} ({$files[i].files[y].iaf_filename|escape:"html"} - {{ files[i].files[y].iaf_filesize }})" href="download.php?cat=attachment&id={{ files[i].files[y].iaf_id }}"><img width="17" height="17" src="{{ core.rel_url }}images/file.gif" border="0"></a>
+              <a title="{t}download file{/t} ({$files[i].files[y].iaf_filename|escape:"html"} - {{ files[i].files[y].iaf_filesize }})" href="download.php?cat=attachment&id={{ files[i].files[y].iaf_id }}">{$files[i].files[y].iaf_filename|escape:"html"}</a> ({{ files[i].files[y].iaf_filesize }})
+              <a class="link" title="{t}view{/t} ({$files[i].files[y].iaf_filename|escape:"html"}" href="download.php?cat=attachment&id={{ files[i].files[y].iaf_id }}&force_inline=1">{t}view{/t}</a>
+              {% if core.user.usr_id == files[i].iat_usr_id OR core.current_role >= core.roles.manager %}
+              <span title="{t}delete file{/t}" data-iaf-id="{{ files[i].files[y].iaf_id }}" class="js_link delete_file">{t}delete{/t}</span>{% endif %}
               <br />
               {/section}
             </td>
             <td width="15%" nowrap>
               {$files[i].usr_full_name|escape:"html"}
-              {if $core.user.usr_id == $files[i].iat_usr_id OR $core.current_role >= $core.roles.manager}
-                [ <span title="{t}delete attachment{/t}" class="js_link delete_attachment" data-iat-id="{$files[i].iat_id}">{t}delete{/t}</span> ]{/if}
+              {% if core.user.usr_id == files[i].iat_usr_id OR core.current_role >= core.roles.manager %}
+                [ <span title="{t}delete attachment{/t}" class="js_link delete_attachment" data-iat-id="{{ files[i].iat_id }}">{t}delete{/t}</span> ]{% endif %}
             </td>
-            {if $core.current_role > $core.roles.customer}
+            {% if core.current_role > core.roles.customer %}
             <td width="5%" align="center">
-              {if $files[i].iat_status == 'internal'}
-                <span style="color: red;">{$files[i].iat_status|capitalize}</span>
-              {else}
-                {$files[i].iat_status|capitalize}
-              {/if}
+              {% if files[i].iat_status == 'internal' %}
+                <span style="color: red;">{{ files[i].iat_status|capitalize }}</span>
+              {% else %}
+                {{ files[i].iat_status|capitalize }}
+              {% endif %}
             </td>
-            {/if}
-            <td width="15%" nowrap>{$files[i].iat_created_date|timeago}</td>
-            <td width="45%">{$files[i].iat_description}</td>
+            {% endif %}
+            <td width="15%" nowrap>{{ files[i].iat_created_date|timeago }}</td>
+            <td width="45%">{{ files[i].iat_description }}</td>
           </tr>
           {sectionelse}
           <tr class="no_results">
-            <td colspan="{if $core.current_role > $core.roles.customer}5{else}4{/if}">
+            <td colspan="{% if core.current_role > core.roles.customer %}5{% else %}4{% endif %}">
               {t}No attachments could be found.{/t}
             </td>
           </tr>
           {/section}
         </table>
     </div>
-      {if $core.current_role > $core.roles.viewer}
+      {% if core.current_role > core.roles.viewer %}
       <form>
       <div class="buttons">
-          <input type="button" value="{t}Upload File{/t}" id='upload_file' data-issue-id="{$issue_id}">
+          <input type="button" value="{t}Upload File{/t}" id='upload_file' data-issue-id="{{ issue_id }}">
       </div>
       </form>
-      {/if}
+      {% endif %}
 </div>

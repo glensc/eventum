@@ -1,4 +1,4 @@
-{extends "reports/reports_base.tpl.html"}
+{extends "reports/reports_base.html.twig.html"}
 {block "title"}Categories and Statuses{/block}
 
 {block "report_content"}<br />
@@ -6,17 +6,17 @@
 <table class="bordered grid">
     <tr>
         <th>Category</th>
-        {foreach from=$statuses item=status}
-        <th>{$status}</th>
-        {/foreach}
+        {% for status in statuses %}
+        <th>{{ status }}</th>
+        {% endfor %}
     </tr>
-    {foreach from=$data item=row}
+    {% for row in data %}
     <tr class="{cycle values='odd,even'}">
-        <td>{$row.title}</td>
-        {foreach from=$row.statuses item=col}
-        <td align="right">{$col.count}</td>
-        {/foreach}
+        <td>{{ row.title }}</td>
+        {% for col in row.statuses %}
+        <td align="right">{{ col.count }}</td>
+        {% endfor %}
     </tr>
-    {/foreach}
+    {% endfor %}
 </table>
 {/block}

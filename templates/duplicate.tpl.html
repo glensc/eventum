@@ -1,4 +1,4 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 {block title}{t 1=$smarty.get.id|intval}Issue #%1 - Duplicate{/t}{/block}
 
 {block "content"}
@@ -21,11 +21,11 @@
 </script>
 <form name="duplicate_form" onSubmit="return validateDuplicate();" method="post" action="duplicate.php">
     <input type="hidden" name="cat" value="mark">
-    <input type="hidden" name="issue_id" value="{$smarty.get.id|intval}">
+    <input type="hidden" name="issue_id" value="{{ smarty.get.id|intval }}">
     <table class="bordered grid">
         <tr class="title">
             <th colspan="2" nowrap>
-                {t}Mark Issue as Duplicate{/t} ({t}Issue ID:{/t} <a href="{$core.rel_url}view.php?id={$smarty.get.id|intval}">{$smarty.get.id|intval}</a>)
+                {t}Mark Issue as Duplicate{/t} ({t}Issue ID:{/t} <a href="{{ core.rel_url }}view.php?id={{ smarty.get.id|intval }}">{{ smarty.get.id|intval }}</a>)
             </th>
         </tr>
         <tr>
@@ -33,7 +33,7 @@
                 {t}Duplicated Issue{/t}: *
             </th>
             <td>
-                {include file="include/issue_field.tpl.html" field_name="duplicated_issue" form_name='duplicate_form' exclude_issue=$smarty.get.id|intval error_message="You must enter the ID of an issue that does not have a duplicate status." exclude_duplicates=1}
+                {% include "include/issue_field.html.twig.html" with {'field_name' : 'duplicated_issue', 'form_name' : 'duplicate_form', 'exclude_issue' : smarty.get.id, 'intval' : 'intval', 'error_message' : 'You must enter the ID of an issue that does not have a duplicate status.', 'exclude_duplicates' : '1'} %}
             </td>
         </tr>
         <tr>

@@ -1,34 +1,34 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
-{if $prj_id == ''}
+{% if prj_id == '' %}
 <span>
     {t}This page can only be accessed in relation to a project. Please go to the project page and choose{/t}&nbsp;"{t}Edit Fields to Display{/t}"&nbsp;{t}to access this page.{/t}<br />
-    <a href="{$core.rel_url}manage/projects.php">{t}Manage Projects{/t}</a>
+    <a href="{{ core.rel_url }}manage/projects.php">{t}Manage Projects{/t}</a>
     </span>
-{else}
-<form name="display_form" method="post" action="{$core.current_url}?prj_id={$prj_id}">
+{% else %}
+<form name="display_form" method="post" action="{{ core.current_url }}?prj_id={{ prj_id }}">
     <table class="bordered grid">
         <tr class="title">
             <th colspan="2">
-                {t}Edit Fields to Display{/t} {include file="help_link.tpl.html" topic="field_display"}
+                {t}Edit Fields to Display{/t} {% include "help_link.html.twig.html" with {'topic' : 'field_display'} %}
             </th>
         </tr>
-        {foreach from=$fields item=field_info key=field_name}
+        {% for field_name, field_info in fields %}
         <tr class="{cycle values='odd,even'}">
             <th width="150">
                 {t 1=$field_info.title}%1 Field{/t}:
             </th>
             <td>
-                <select name="fields[{$field_name}][min_role]">
+                <select name="fields[{{ field_name }}][min_role]">
                     {html_options options=$user_roles selected=$display_settings[$field_name].min_role}
                 </select>
 
-                <label><input type="checkbox" name="fields[{$field_name}][required]" value="1"
-                    {if $display_settings[$field_name].required == 1}checked{/if}>Required</label>
+                <label><input type="checkbox" name="fields[{{ field_name }}][required]" value="1"
+                    {% if display_settings[field_name].required == 1 %}checked{% endif %}>Required</label>
             </td>
         </tr>
-        {/foreach}
+        {% endfor %}
         <tr class="buttons">
             <td colspan="2">
                 <input type="submit" value="{t}Set Display Preferences{/t}">
@@ -37,5 +37,5 @@
         </tr>
     </table>
 </form>
-{/if}
+{% endif %}
 {/block}

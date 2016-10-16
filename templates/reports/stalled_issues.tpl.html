@@ -1,4 +1,4 @@
-{extends "reports/reports_base.tpl.html"}
+{extends "reports/reports_base.html.twig.html"}
 {block "title"}Stalled Issues{/block}
 
 {block "report_content"}
@@ -46,8 +46,8 @@
             </th>
             <td>
                 <select name="sort_order" style="width: 100%">
-                    <option value="ASC" label="{t}Ascending{/t}" {if $sort_order != 'DESC'}selected{/if}>{t}Ascending{/t}</option>
-                    <option value="DESC" label="{t}Descending{/t}" {if $sort_order == 'DESC'}selected{/if}>{t}Descending{/t}</option>
+                    <option value="ASC" label="{t}Ascending{/t}" {% if sort_order != 'DESC' %}selected{% endif %}>{t}Ascending{/t}</option>
+                    <option value="DESC" label="{t}Descending{/t}" {% if sort_order == 'DESC' %}selected{% endif %}>{t}Descending{/t}</option>
                 </select>
             </td>
         </tr>
@@ -59,7 +59,7 @@
     </table>
 </form>
 
-{foreach key=user_full_name item=assigned_issues from=$data}
+{% for signed_issues from=data in key=user_full_name item= %}
 <h4>{$user_full_name|escape:"html"}</h4>
 <table class="bordered">
     <tr>
@@ -75,19 +75,19 @@
         <td align="center">{t}Last Update{/t}</td>
         <td align="center">{t}Last Outgoing Msg{/t}</td>
     </tr>
-    {foreach key=issue_id item=issue from=$assigned_issues}
+    {% for signed_issues in key=issue_id item=issue from= %}
     <tr>
-        <td bgcolor="{$issue.status_color}" align="center"><a target="_top" href="{$core.rel_url}view.php?id={$issue_id}" title="{t}view issue details{/t}">{$issue_id}</a></td>
-        <td bgcolor="{$issue.status_color}"><a target="_top" href="{$core.rel_url}view.php?id={$issue_id}" title="{t}view issue details{/t}">{$issue.iss_summary|escape:"html"}</a></td>
-        <td bgcolor="{$issue.status_color}" align="center">{$issue.sta_title|escape:"html"}</td>
-        <td bgcolor="{$issue.status_color}" align="center">{$issue.time_spent}</td>
-        <td bgcolor="{$issue.status_color}" align="center">{$issue.iss_created_date|timeago}</td>
-        <td bgcolor="{$issue.status_color}" align="center">{$issue.iss_last_response_date|timeago}</td>
-        <td bgcolor="{$issue.status_color}" align="center">{$issue.last_update}</td>
-        <td bgcolor="{$issue.status_color}" align="center">{$issue.last_email_response}</td>
+        <td bgcolor="{{ issue.status_color }}" align="center"><a target="_top" href="{{ core.rel_url }}view.php?id={{ issue_id }}" title="{t}view issue details{/t}">{{ issue_id }}</a></td>
+        <td bgcolor="{{ issue.status_color }}"><a target="_top" href="{{ core.rel_url }}view.php?id={{ issue_id }}" title="{t}view issue details{/t}">{$issue.iss_summary|escape:"html"}</a></td>
+        <td bgcolor="{{ issue.status_color }}" align="center">{$issue.sta_title|escape:"html"}</td>
+        <td bgcolor="{{ issue.status_color }}" align="center">{{ issue.time_spent }}</td>
+        <td bgcolor="{{ issue.status_color }}" align="center">{{ issue.iss_created_date|timeago }}</td>
+        <td bgcolor="{{ issue.status_color }}" align="center">{{ issue.iss_last_response_date|timeago }}</td>
+        <td bgcolor="{{ issue.status_color }}" align="center">{{ issue.last_update }}</td>
+        <td bgcolor="{{ issue.status_color }}" align="center">{{ issue.last_email_response }}</td>
     </tr>
-    {/foreach}
+    {% endfor %}
 </table>
 <br />
-{/foreach}
+{% endfor %}
 {/block}

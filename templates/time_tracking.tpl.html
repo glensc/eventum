@@ -19,39 +19,39 @@
           </tr>
           {section name="i" loop=$time_entries}
           <tr class="{cycle values='odd,even'}">
-            <td>{$smarty.section.i.iteration}</td>
-            <td nowrap>{$time_entries[i].ttr_created_date|timeago}</td>
+            <td>{{ smarty.section.i.iteration }}</td>
+            <td nowrap>{{ time_entries[i].ttr_created_date|timeago }}</td>
             <td nowrap>
               {$time_entries[i].usr_full_name|escape:html}
-              {if $core.user.usr_id == $time_entries[i].ttr_usr_id}[ <a class="delete_time_entry" data-ttr-id="{$time_entries[i].ttr_id}" href="popup.php?cat=delete_time&id={$time_entries[i].ttr_id}">{t}delete{/t}</a> ]{/if}
+              {% if core.user.usr_id == time_entries[i].ttr_usr_id %}[ <a class="delete_time_entry" data-ttr-id="{{ time_entries[i].ttr_id }}" href="popup.php?cat=delete_time&id={{ time_entries[i].ttr_id }}">{t}delete{/t}</a> ]{% endif %}
             </td>
-            <td>{$time_entries[i].formatted_time}</td>
-            <td nowrap>{$time_entries[i].ttc_title}</td>
+            <td>{{ time_entries[i].formatted_time }}</td>
+            <td nowrap>{{ time_entries[i].ttc_title }}</td>
             <td>
-                {if $time_entries[i].ttr_usr_id == $core.current_user_id or $core.current_role >= $core.roles.manager}
-                    {assign var="edit_entry" value=true}
-                {else}
-                    {assign var="edit_entry" value=false}
-                {/if}
-                {if $edit_entry}<a class="edit_time_entry" data-ttr-id="{$time_entries[i].ttr_id}" href="time_tracking.php?ttr_id={$time_entries[i].ttr_id}">{/if}
-                {$time_entries[i].ttr_summary}
-                {if $edit_entry}</a>{/if}
+                {% if time_entries[i].ttr_usr_id == core.current_user_id or core.current_role >= core.roles.manager %}
+                    {% set edit_entry = 'true' %}
+                {% else %}
+                    {% set edit_entry = 'false' %}
+                {% endif %}
+                {% if edit_entry %}<a class="edit_time_entry" data-ttr-id="{{ time_entries[i].ttr_id }}" href="time_tracking.php?ttr_id={{ time_entries[i].ttr_id }}">{% endif %}
+                {{ time_entries[i].ttr_summary }}
+                {% if edit_entry %}</a>{% endif %}
             </td>
           </tr>
-          {if $smarty.section.i.last}
-            {if count($total_time_by_user) > 1}
-              {foreach from=$total_time_by_user item=item}
+          {% if smarty.section.i.last %}
+            {% if count(total_time_by_user) > 1 %}
+              {% for item in total_time_by_user %}
               <tr class="total_time {cycle values='odd,even'}">
                 <td colspan="3" width="30%">{$item.usr_full_name|escape:html}</td>
-                <td colspan="3" width="70%">{$item.time_spent}</td>
+                <td colspan="3" width="70%">{{ item.time_spent }}</td>
               </tr>
-              {/foreach}
-            {/if}
+              {% endfor %}
+            {% endif %}
           <tr class="total_time {cycle values='odd,even'}">
             <td colspan="3" width="30%">{t}Total Time Spent{/t}</td>
-            <td colspan="3" width="70%">{$total_time_spent}</td>
+            <td colspan="3" width="70%">{{ total_time_spent }}</td>
           </tr>
-          {/if}
+          {% endif %}
           {sectionelse}
           <tr class="no_results">
             <td colspan="6">
@@ -61,11 +61,11 @@
           {/section}
         </table>
     </div>
-    {if $core.current_role > $core.roles.viewer}
+    {% if core.current_role > core.roles.viewer %}
     <div class="buttons">
         <input type="button" value="{t}Add Time Entry{/t}" class="add_time_entry">
     </div>
-    {/if}
+    {% endif %}
 </div>
 
 </form>

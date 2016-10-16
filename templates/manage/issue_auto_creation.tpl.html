@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -45,12 +45,12 @@
 
 <form id="auto_creation_form" method="post">
     <input type="hidden" name="cat" value="update">
-    <input type="hidden" name="ema_id" value="{$ema_id}">
+    <input type="hidden" name="ema_id" value="{{ ema_id }}">
     <table class="bordered">
         <tr class="title">
             <th colspan="2">
                 {t}Auto-Creation of Issues{/t}
-                <div class="right">({t}Associated Project{/t}: {$prj_title})</div>
+                <div class="right">({t}Associated Project{/t}: {{ prj_title }})</div>
             </th>
         </tr>
         <tr>
@@ -58,28 +58,28 @@
                 {t}Auto-Creation of Issues{/t} *
             </th>
             <td width="80%">
-                <label><input type="radio" name="issue_auto_creation" value="enabled" {if $info.ema_issue_auto_creation == 'enabled'}checked{/if}>
+                <label><input type="radio" name="issue_auto_creation" value="enabled" {% if info.ema_issue_auto_creation == 'enabled' %}checked{% endif %}>
                     {t}Enabled{/t}</label>&nbsp;&nbsp;
-                <label><input type="radio" name="issue_auto_creation" value="disabled" {if $info.ema_issue_auto_creation == 'disabled'}checked{/if}>
+                <label><input type="radio" name="issue_auto_creation" value="disabled" {% if info.ema_issue_auto_creation == 'disabled' %}checked{% endif %}>
                 {t}Disabled{/t}</label>
             </td>
         </tr>
-        {if $uses_customer_integration}
+        {% if uses_customer_integration %}
         <tr>
             <th width="130" nowrap>
                 {t}Only for Known Customers?{/t} *
             </th>
             <td width="80%">
-                <input type="radio" name="options[only_known_customers]" value="yes" {if $options.only_known_customers == 'yes'}checked{/if}>
+                <input type="radio" name="options[only_known_customers]" value="yes" {% if options.only_known_customers == 'yes' %}checked{% endif %}>
                 <label>{t}Yes{/t}</label>&nbsp;&nbsp;
-                <input type="radio" name="options[only_known_customers]" value="no" {if $options.only_known_customers == 'no'}checked{/if}>
+                <input type="radio" name="options[only_known_customers]" value="no" {% if options.only_known_customers == 'no' %}checked{% endif %}>
                 <label>{t}No{/t}</label>
             </td>
         </tr>
-        {else}
+        {% else %}
         <input type="hidden" name="options[only_known_customers]" value="no">
-        {/if}
-        {if $cats|@count > 0}
+        {% endif %}
+        {% if cats|@count > 0 %}
         <tr>
             <th width="130">
                 {t}Default Category{/t}: *
@@ -89,11 +89,11 @@
                     <option value="-1">{t}Please choose a category{/t}</option>
                     {html_options options=$cats selected=$options.category}
                 </select>
-                {include file="error_icon.tpl.html" field="options[category]"}
+                {% include "error_icon.html.twig.html" with {'field' : 'options[category]'} %}
             </td>
         </tr>
-        {/if}
-        {if $priorities|@count > 0}
+        {% endif %}
+        {% if priorities|@count > 0 %}
         <tr>
             <th width="130">
                 {t}Default Priority{/t}: *
@@ -102,13 +102,13 @@
                 <select name="options[priority]" tabindex="3">
                     <option value="-1">{t}Please choose a priority{/t}</option>
                     {section name="i" loop=$priorities}
-                    <option value="{$priorities[i].pri_id}" {if $priorities[i].pri_id == $options.priority}selected{/if}>{$priorities[i].pri_title}</option>
+                    <option value="{{ priorities[i].pri_id }}" {% if priorities[i].pri_id == options.priority %}selected{% endif %}>{{ priorities[i].pri_title }}</option>
                     {/section}
                 </select>
-                {include file="error_icon.tpl.html" field="options[priority]"}
+                {% include "error_icon.html.twig.html" with {'field' : 'options[priority]'} %}
             </td>
         </tr>
-        {/if}
+        {% endif %}
         <tr>
             <th width="150">
                 {t}Assignment{/t}:
@@ -117,7 +117,7 @@
                 <select name="options[users][]" multiple size="3" tabindex="4">
                     {html_options options=$users selected=$options.users|default:-1}
                 </select>
-                {include file="error_icon.tpl.html" field="options[users][]"}
+                {% include "error_icon.html.twig.html" with {'field' : 'options[users][]'} %}
             </td>
         </tr>
         <tr class="buttons">

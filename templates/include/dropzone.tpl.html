@@ -4,11 +4,11 @@
 Dropzone.autoDiscover = {empty($smarty.get.legacy)|intval};
 
 // "reportForm" is the camelized version of the HTML element's ID
-Dropzone.options.{$form} = {
+Dropzone.options.{{ form }} = {
   // The name that will be used to transfer the file
-  paramName: "{$param}[]",
+  paramName: "{{ param }}[]",
 
-  url: "{$core.rel_url}ajax/upload.php?file={$param}",
+  url: "{{ core.rel_url }}ajax/upload.php?file={{ param }}",
 
   // In MB
   maxFilesize: {$max_attachment_bytes / 1024 / 1024},
@@ -97,7 +97,7 @@ $(function () {
   FileReaderJS.setupClipboard(document.body, {
     on: {
       load: function (e, file) {
-        var dropzone = Dropzone.forElement("form#{$form}");
+        var dropzone = Dropzone.forElement("form#{{ form }}");
         dropzone.addFile(file);
       },
       error: function (e, file) {

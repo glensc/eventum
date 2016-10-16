@@ -9,17 +9,17 @@
     <div class="content" {get_display_style element_name='custom_fields'}>
         <table class="grid">
           {section name="i" loop=$custom_fields}
-          <tr class="{cycle values='odd,even'}" {if $custom_fields[i].hide_when_no_options|default:0 == 1 && $custom_fields[i].value == ''}style="display: none"{/if}>
-            <th class="{if $custom_fields[i].fld_min_role > $core.roles.customer}internal{/if}">
-                {$custom_fields[i].fld_title}
+          <tr class="{cycle values='odd,even'}" {% if custom_fields[i].hide_when_no_options|default(0) == 1 && custom_fields[i].value == '' %}style="display: none"{% endif %}>
+            <th class="{% if custom_fields[i].fld_min_role > core.roles.customer %}internal{% endif %}">
+                {{ custom_fields[i].fld_title }}
             </th>
             <td>
-              {if $custom_fields[i].fld_type == 'textarea'}
+              {% if custom_fields[i].fld_type == 'textarea' %}
                 {$custom_fields[i].value|escape:"html"|activateLinks:"link"|nl2br}
-              {else}
-                {assign var=issue_id value=$smarty.get.id|intval}
+              {% else %}
+                {% set issue_id = smarty.get.id %}
                 {$custom_fields[i].value|formatCustomValue:$custom_fields[i].fld_id:$issue_id}
-              {/if}
+              {% endif %}
             </td>
           </tr>
           {sectionelse}
@@ -31,12 +31,12 @@
           {/section}
         </table>
     </div>
-      {if $issue_access.update and $custom_fields != "" }
+      {% if issue_access.update and custom_fields != ""  %}
       <form method="get" action="update.php">
-      <input type="hidden" name="id" value="{$issue.iss_id}">
+      <input type="hidden" name="id" value="{{ issue.iss_id }}">
       <div class="buttons">
           <input type="submit" value="{t}Update Issue{/t}">
       </div>
       </form>
-      {/if}
+      {% endif %}
 </div>

@@ -101,13 +101,13 @@
                 <tr>
                     <td nowrap width="50%">
                         <label>
-                        <input {if $options.filter.arrival_date|default:'' == "yes"}checked{/if} type="checkbox" name="filter[arrival_date]" value="yes" id="arrival_date">
+                        <input {% if options.filter.arrival_date|default('') == "yes" %}checked{% endif %} type="checkbox" name="filter[arrival_date]" value="yes" id="arrival_date">
                             {t}Filter by Arrival Date{/t}:
                         </label><br />
                         <select name="arrival_date[filter_type]">
-                            <option {if $options.filter.arrival_date|default:'no' != 'no' && $options.arrival_date.filter_type == "greater"}selected{/if} value="greater">{t}Greater Than{/t}</option>
-                            <option {if $options.filter.arrival_date|default:'no' != 'no' && $options.arrival_date.filter_type == "less"}selected{/if} value="less">{t}Less Than{/t}</option>
-                            <option {if $options.filter.arrival_date|default:'no' != 'no' && $options.arrival_date.filter_type == "between"}selected{/if} value="between">{t}Between{/t}</option>
+                            <option {% if options.filter.arrival_date|default('no') != 'no' && options.arrival_date.filter_type == "greater" %}selected{% endif %} value="greater">{t}Greater Than{/t}</option>
+                            <option {% if options.filter.arrival_date|default('no') != 'no' && options.arrival_date.filter_type == "less" %}selected{% endif %} value="less">{t}Less Than{/t}</option>
+                            <option {% if options.filter.arrival_date|default('no') != 'no' && options.arrival_date.filter_type == "between" %}selected{% endif %} value="between">{t}Between{/t}</option>
                         </select>&nbsp;
                         {html_select_date field_array="arrival_date" prefix="" start_year="-10" end_year="+10" all_extra='class="default"'}
                     </td>

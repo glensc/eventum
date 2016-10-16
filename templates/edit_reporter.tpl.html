@@ -1,4 +1,4 @@
-{extends "base_full.tpl.html"}
+{extends "base_full.html.twig.html"}
 {block title}{t 1=$smarty.get.iss_id|intval}Issue #%1 - Edit Reporter{/t}{/block}
 
 {block "content"}
@@ -19,9 +19,9 @@
 
 <form name="reporter_form" onSubmit="return validate();" method="post">
     <input type="hidden" name="cat" value="update">
-    <input type="hidden" name="issue_id" value="{$issue_id|intval}">
+    <input type="hidden" name="issue_id" value="{{ issue_id|intval }}">
     <table class="bordered narrow">
-        {if $core.current_role > $core.roles.reporter}
+        {% if core.current_role > core.roles.reporter %}
         <tr class="title">
             <th colspan="2">
                 {t}Project Reporters{/t}
@@ -33,7 +33,7 @@
             </th>
             <td>
                 <input type="text" name="email" size="40" value="">
-                {include file="error_icon.tpl.html" field="email"}
+                {% include "error_icon.html.twig.html" with {'field' : 'email'} %}
             </td>
         </tr>
         <tr class="buttons">
@@ -42,7 +42,7 @@
                 <input type="button" value="{t}Cancel{/t}" class="button" onClick="history.go(-1);">
             </td>
         </tr>
-        {/if}
+        {% endif %}
     </table>
 </form>
 {/block}

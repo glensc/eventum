@@ -1,21 +1,21 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
-{if $prj_id == ''}
+{% if prj_id == '' %}
 <span>
     {t}This page can only be accessed in relation to a project. Please go to the project page and choose{/t}&nbsp;"{t}Edit Columns to Display{/t}"&nbsp;{t}to access this page.{/t}<br />
-    <a href="{$core.rel_url}manage/projects.php">{t}Manage Projects{/t}</a>
+    <a href="{{ core.rel_url }}manage/projects.php">{t}Manage Projects{/t}</a>
     </span>
-{else}
+{% else %}
 <form name="column_display_form" method="post">
     <input type="hidden" name="cat" value="save">
-    <input type="hidden" name="page" value="{$page}">
-    <input type="hidden" name="prj_id" value="{$prj_id}">
+    <input type="hidden" name="page" value="{{ page }}">
+    <input type="hidden" name="prj_id" value="{{ prj_id }}">
     <table class="bordered grid">
         <tr class="title">
             <th colspan="3">
-                {t}Manage Columns to Display{/t} {include file="help_link.tpl.html" topic="column_display"}
-                <div class="right">({t}Current Project{/t}: {$project_name})</div>
+                {t}Manage Columns to Display{/t} {% include "help_link.html.twig.html" with {'topic' : 'column_display'} %}
+                <div class="right">({t}Current Project{/t}: {{ project_name }})</div>
             </th>
         </tr>
         <tr>
@@ -29,43 +29,43 @@
                 {t}Order{/t}
             </th>
         </tr>
-        {assign var=default_rank value=1}
-        {foreach from=$available item=column key=field_name}
+        {% set default_rank = '1' %}
+        {% for field_name, column in available %}
         <tr class="{cycle values='odd,even'}">
             <td align="center" width="40%">
-                {$column.title}
+                {{ column.title }}
             </td>
             <td align="center" width="20%">
-                {assign var="selected_field" value=$selected[$field_name]|default:''}
-                {if $selected_field == '' or $selected_field.min_role == ''}
-                {assign var="selected_role" value=$column.default_role|default:''}
-                {else}
-                {assign var="selected_role" value=$selected[$field_name].min_role|default:''}
-                {/if}
-                <select name="min_role[{$field_name}]">
+                {% set selected_field = selected %}
+                {% if selected_field == '' or selected_field.min_role == '' %}
+                {% set selected_role = column.default_role %}
+                {% else %}
+                {% set selected_role = selected %}
+                {% endif %}
+                <select name="min_role[{{ field_name }}]">
                     {html_options options=$user_roles selected=$selected_role}
                 </select>
-                {if $field_name == 'sta_change_date'}
+                {% if field_name == 'sta_change_date' %}
                 <br />
                 <em>
-                    Note: You need to <a href="{$core.rel_url}manage/customize_listing.php?prj_id={$prj_id}">configure this field</a> before it can be used.
+                    Note: You need to <a href="{{ core.rel_url }}manage/customize_listing.php?prj_id={{ prj_id }}">configure this field</a> before it can be used.
                 </em>
-                {/if}
+                {% endif %}
             </td>
             <td align="center" width="40%">
-                {assign var="selected_field" value=$selected[$field_name]|default:''}
-                {if $selected_field == '' or $selected[$field_name].rank}
-                {assign var=selected_rank value=$default_rank}
-                {else}
-                {assign var=selected_rank value=$selected[$field_name].rank}
-                {/if}
-                <select name="rank[{$field_name}]">
+                {% set selected_field = selected %}
+                {% if selected_field == '' or selected[field_name].rank %}
+                {% set selected_rank = default_rank %}
+                {% else %}
+                {% set selected_rank = selected %}
+                {% endif %}
+                <select name="rank[{{ field_name }}]">
                     {html_options options=$ranks selected=$selected_rank}
                 </select>
             </td>
         </tr>
-        {assign var=default_rank value=$default_rank+1}
-        {/foreach}
+        {% set default_rank = default_rank %}
+        {% endfor %}
         <tr class="buttons">
             <td colspan="3">
                 <input type="submit" name="save" value="{t}Save{/t}">
@@ -73,5 +73,5 @@
         </tr>
     </table>
 </form>
-{/if}
+{% endif %}
 {/block}

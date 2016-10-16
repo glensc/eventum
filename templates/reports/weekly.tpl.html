@@ -1,4 +1,4 @@
-{extends "reports/reports_base.tpl.html"}
+{extends "reports/reports_base.html.twig.html"}
 {block "title"}Issues By User{/block}
 
 {block "report_content"}
@@ -31,9 +31,9 @@ $().ready(function() {
             {t}Report Type{/t}:
           </td>
           <td width="200" NOWRAP>
-            <label><input type="radio" name="report_type" value="weekly" {if $report_type!='range'}checked{/if}>
+            <label><input type="radio" name="report_type" value="weekly" {% if report_type!='range' %}checked{% endif %}>
                 {t}Weekly{/t}</label>&nbsp;
-            <label><input type="radio" name="report_type" value="range" {if $report_type=='range'}CHECKED{/if}>
+            <label><input type="radio" name="report_type" value="range" {% if report_type=='range' %}CHECKED{% endif %}>
                 {t}Date Range{/t}</label>&nbsp;
           </td>
         </tr>
@@ -52,9 +52,9 @@ $().ready(function() {
             {t}Start{/t}:
           </td>
           <td width="200">
-            {if empty($start_date)}
-              {assign var="start_date" value=time()}
-            {/if}
+            {% if start_date is empty %}
+              {% set start_date = 'time' %}
+            {% endif %}
             {html_select_date time=$start_date prefix="" field_array="start" start_year="-2" end_year="+1" field_order="YMD" month_format="%b" day_value_format="%02d" all_extra="class='default'"}
           </td>
         </tr>
@@ -63,9 +63,9 @@ $().ready(function() {
             {t}End{/t}:
           </td>
           <td width="200">
-            {if empty($end_date)}
-              {assign var="end_date" value=time()}
-            {/if}
+            {% if end_date is empty %}
+              {% set end_date = 'time' %}
+            {% endif %}
             {html_select_date time=$end_date prefix="" field_array="end" start_year="-2" end_year="+1" field_order="YMD" month_format="%b" day_value_format="%02d" all_extra="class='default'"}
           </td>
         </tr>
@@ -84,25 +84,25 @@ $().ready(function() {
             {t}Options{/t}:
           </td>
           <td width="200">
-            <label><input type="checkbox" name="separate_closed" value="1" {if $smarty.request.separate_closed|default:'' == 1}checked{/if}>
+            <label><input type="checkbox" name="separate_closed" value="1" {% if smarty.request.separate_closed|default('') == 1 %}checked{% endif %}>
             {t}Separate Closed Issues{/t}</label>&nbsp;
             <br />
-            <label><input type="checkbox" name="separate_not_assigned_to_user" value="1" {if $smarty.request.separate_not_assigned_to_user|default:'' == 1}checked{/if}>
+            <label><input type="checkbox" name="separate_not_assigned_to_user" value="1" {% if smarty.request.separate_not_assigned_to_user|default('') == 1 %}checked{% endif %}>
             {t}Separate Not Assigned to User{/t}</label>&nbsp;
             <br />
-            <label><input type="checkbox" name="ignore_statuses" value="1" {if $smarty.request.ignore_statuses|default:'' == 1}checked{/if}>
+            <label><input type="checkbox" name="ignore_statuses" value="1" {% if smarty.request.ignore_statuses|default('') == 1 %}checked{% endif %}>
             {t}Ignore Issue Status Changes{/t}</label>&nbsp;
             <br />
-            <label><input type="checkbox" name="show_per_issue" value="1" {if $smarty.request.show_per_issue|default:'' == 1}checked{/if}>
+            <label><input type="checkbox" name="show_per_issue" value="1" {% if smarty.request.show_per_issue|default('') == 1 %}checked{% endif %}>
             {t}Show Times spent on issue{/t}</label>&nbsp;
             <br />
-            <label>&nbsp;&nbsp;<input type="checkbox" name="separate_no_time" value="1" {if $smarty.request.separate_no_time|default:'' == 1}checked{/if}>
+            <label>&nbsp;&nbsp;<input type="checkbox" name="separate_no_time" value="1" {% if smarty.request.separate_no_time|default('') == 1 %}checked{% endif %}>
             {t}Separate No time spent{/t}</label>&nbsp;
             <br />
-            <label><input type="checkbox" name="show_status" value="1" {if $smarty.request.show_status|default:'' == 1}checked{/if}>
+            <label><input type="checkbox" name="show_status" value="1" {% if smarty.request.show_status|default('') == 1 %}checked{% endif %}>
             {t}Show Status{/t}</label>&nbsp;
             <br />
-            <label><input type="checkbox" name="show_priority" value="1" {if $smarty.request.show_priority|default:'' == 1}checked{/if}>
+            <label><input type="checkbox" name="show_priority" value="1" {% if smarty.request.show_priority|default('') == 1 %}checked{% endif %}>
             {t}Show Priority{/t}</label>&nbsp;
 
           </td>
@@ -115,9 +115,9 @@ $().ready(function() {
       </table>
 </form>
 
-{if $data|default:'' != ''}
+{% if data|default('') != '' %}
 <pre class="bordered">
-{include file="reports/weekly_data.tpl.html"}
+{% include "reports/weekly_data.html.twig.html" %}
 </pre>
-{/if}
+{% endif %}
 {/block}

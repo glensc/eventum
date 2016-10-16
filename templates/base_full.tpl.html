@@ -1,36 +1,36 @@
-{*
+{#
     blocks:
         title
         sidebar
         content
-*}
-{extends "base.tpl.html"}
+#}
+{extends "base.html.twig.html"}
 {block "header"}
     <div id="header">
         <div id="header_1">
-            <div id="app_title">{$core.app_title}</div>
+            <div id="app_title">{{ core.app_title }}</div>
 
             <ul id="main_menu">
-                {include file="navigation.tpl.html"}
+                {% include "navigation.html.twig.html" %}
             </ul>
 
             <div class="clear"></div>
         </div>
         <div id="header_2">
             <div id="project_chooser">
-                {if $core.active_projects|@count == 1}
+                {% if core.active_projects|@count == 1 %}
                     {t}Project{/t}: <b>{$core.project_name|escape:"html"}</b>
-                {else}
-                  <form method="post" action="{$core.rel_url}switch.php">
+                {% else %}
+                  <form method="post" action="{{ core.rel_url }}switch.php">
                     <select name="current_project">
                       {html_options options=$core.active_projects selected=$core.project_id}
                     </select>
                   </form>
-                {/if}
+                {% endif %}
             </div>
 
             <div id="go_issue_menu">
-              <form method="get" action="{$core.rel_url}view.php" id="shortcut_form">
+              <form method="get" action="{{ core.rel_url }}view.php" id="shortcut_form">
                 <label for="shortcut" accesskey="4">
                 <input type="text" id="shortcut" name="id" placeholder="id #" size="5">
                 </label>
@@ -39,7 +39,7 @@
             </div>
 
             <div id="search_menu">
-                <form method="get" action="{$core.rel_url}list.php">
+                <form method="get" action="{{ core.rel_url }}list.php">
                 <label for="search" accesskey="3"></label>
                 <input type="text" id="search" name="keywords" placeholder="{t}keywords{/t}" size="15" accesskey="s">
                 <input type="submit" value="{t}Search{/t}" class="shortcut">
@@ -47,29 +47,29 @@
             </div>
 
             <div id="user_menu">
-                {$core.current_role_name}: {$core.user.usr_full_name|escape:html}
-                {if $core.current_role == $core.roles.customer && $core.allowed_customers|@count > 1}
-                    [<a href="{$core.rel_url}select_customer.php" title="Change Customer">{$core.current_customer.name}</a>]
-                {/if}
-                {if $core.current_role > $core.roles.standard_user}
-                    [{if $core.is_current_user_clocked_in}{t}CLOCKED IN{/t}{else}{t}CLOCKED OUT{/t}{/if}]
-                {/if}
+                {{ core.current_role_name }}: {$core.user.usr_full_name|escape:html}
+                {% if core.current_role == core.roles.customer && core.allowed_customers|@count > 1 %}
+                    [<a href="{{ core.rel_url }}select_customer.php" title="Change Customer">{{ core.current_customer.name }}</a>]
+                {% endif %}
+                {% if core.current_role > core.roles.standard_user %}
+                    [{% if core.is_current_user_clocked_in %}{t}CLOCKED IN{/t}{% else %}{t}CLOCKED OUT{/t}{% endif %}]
+                {% endif %}
                 {strip}
                 (
-                {if $core.is_anon_user}
-                  <a href="{$core.rel_url}signup.php">{t}Register{/t}</a>
-                {else}
-                  <a title="{t}modify your account details and preferences{/t}" href="{$core.rel_url}preferences.php">{t}Preferences{/t}</a>&nbsp;
-                  {if $core.current_role > $core.roles.standard_user && $handle_clock_in}
+                {% if core.is_anon_user %}
+                  <a href="{{ core.rel_url }}signup.php">{t}Register{/t}</a>
+                {% else %}
+                  <a title="{t}modify your account details and preferences{/t}" href="{{ core.rel_url }}preferences.php">{t}Preferences{/t}</a>&nbsp;
+                  {% if core.current_role > core.roles.standard_user && handle_clock_in %}
                     <a id="change_clock_status" title="{t}change your account clocked-in status{/t}" href="">
-                    {if $core.is_current_user_clocked_in}{t}Clock Out{/t}{else}{t}Clock In{/t}{/if}</a>
-                  {/if}
-                {/if}
-                {if !$core.is_anon_user}
-                    &nbsp;<a title="{t}logout from{/t} {$core.app_title}" href="{$core.rel_url}logout.php">{t}Logout{/t}</a>
-                {else}
-                    <a href="{$core.rel_url}index.php">{t}Login{/t}</a>
-                {/if}
+                    {% if core.is_current_user_clocked_in %}{t}Clock Out{/t}{% else %}{t}Clock In{/t}{% endif %}</a>
+                  {% endif %}
+                {% endif %}
+                {% if not core.is_anon_user %}
+                    &nbsp;<a title="{t}logout from{/t} {{ core.app_title }}" href="{{ core.rel_url }}logout.php">{t}Logout{/t}</a>
+                {% else %}
+                    <a href="{{ core.rel_url }}index.php">{t}Login{/t}</a>
+                {% endif %}
                 )
                 {/strip}
             </div>
@@ -80,6 +80,6 @@
 
 {block "footer"}
   <div id="footer">
-      {include "app_info.tpl.html"}
+      {% include %}
   </div>
 {/block}

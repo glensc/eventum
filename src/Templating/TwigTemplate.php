@@ -49,6 +49,7 @@ class TwigTemplate extends Twig_Environment
         parent::__construct($loader, $options);
 
         self::addFilters($this);
+        self::addFunctions($this);
     }
 
     /**

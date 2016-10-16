@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -49,16 +49,16 @@ function checkDelete()
 </script>
 
 <form id="link_filter_form" method="post">
-{if $smarty.get.cat|default:'' == 'edit'}
+{% if smarty.get.cat|default('') == 'edit' %}
 <input type="hidden" name="cat" value="update">
 <input type="hidden" name="id" value="{$smarty.get.id|default:''|intval}">
-{else}
+{% else %}
 <input type="hidden" name="cat" value="new">
-{/if}
+{% endif %}
     <table class="bordered">
         <tr class="title">
             <th colspan="2">
-                {t}Manage Link Filters{/t} {include file="help_link.tpl.html" topic="link_filters"}
+                {t}Manage Link Filters{/t} {% include "help_link.html.twig.html" with {'topic' : 'link_filters'} %}
             </th>
         </tr>
         <tr>
@@ -67,7 +67,7 @@ function checkDelete()
             </th>
             <td>
                 <input type="text" name="pattern" size="40" value="{$info.lfi_pattern|default:''|escape:"html"}">
-                {include file="error_icon.tpl.html" field="pattern"}
+                {% include "error_icon.html.twig.html" with {'field' : 'pattern'} %}
             </td>
         </tr>
         <tr>
@@ -76,7 +76,7 @@ function checkDelete()
             </th>
             <td width="80%">
                 <input type="text" name="replacement" size="40" value="{$info.lfi_replacement|default:''|escape:"html"}">
-                {include file="error_icon.tpl.html" field="replacement"}
+                {% include "error_icon.html.twig.html" with {'field' : 'replacement'} %}
             </td>
         </tr>
         <tr>
@@ -85,7 +85,7 @@ function checkDelete()
             </th>
             <td>
                 <input type="text" name="description" size="50" value="{$info.lfi_description|default:''|escape:"html"}">
-                {include file="error_icon.tpl.html" field="description"}
+                {% include "error_icon.html.twig.html" with {'field' : 'description'} %}
             </td>
         </tr>
         <tr>
@@ -96,7 +96,7 @@ function checkDelete()
                 <select name="projects[]" multiple size="3">
                     {html_options options=$project_list selected=$info.projects|default:''}
                 </select>
-                {include file="error_icon.tpl.html" field="projects[]"}
+                {% include "error_icon.html.twig.html" with {'field' : 'projects[]'} %}
             </td>
         </tr>
         <tr>
@@ -107,16 +107,16 @@ function checkDelete()
                 <select name="usr_role">
                     {html_options options=$user_roles selected=$info.lfi_usr_role|default:''}
                 </select>
-                {include file="error_icon.tpl.html" field="usr_role"}
+                {% include "error_icon.html.twig.html" with {'field' : 'usr_role'} %}
             </td>
         </tr>
         <tr class="buttons">
             <td colspan="2">
-                {if $smarty.get.cat|default:'' == 'edit'}
+                {% if smarty.get.cat|default('') == 'edit' %}
                 <input type="submit" value="{t}Update Link Filter{/t}">
-                {else}
+                {% else %}
                 <input type="submit" value="{t}Create Link Filter{/t}">
-                {/if}
+                {% endif %}
                 <input type="reset" value="{t}Reset{/t}">
             </td>
         </tr>
@@ -141,19 +141,19 @@ function checkDelete()
             {section name="i" loop=$list}
             <tr class="{cycle values='odd,even'}">
                 <td width="4" nowrap align="center">
-                    <input type="checkbox" name="items[]" value="{$list[i].lfi_id}" {if $smarty.section.i.total == 0}disabled{/if}>
+                    <input type="checkbox" name="items[]" value="{{ list[i].lfi_id }}" {% if smarty.section.i.total == 0 %}disabled{% endif %}>
                 </td>
                 <td width="20%">
-                    &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].lfi_id}" title="{t}update this entry{/t}">{$list[i].lfi_pattern|escape:"html"}</a>
+                    &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].lfi_id }}" title="{t}update this entry{/t}">{$list[i].lfi_pattern|escape:"html"}</a>
                 </td>
                 <td width="20%">
                     &nbsp;{$list[i].lfi_replacement|escape:"html"}
                 </td>
                 <td width="20%">
-                    &nbsp;{$list[i].lfi_description}
+                    &nbsp;{{ list[i].lfi_description }}
                 </td>
                 <td width="20%">
-                    &nbsp;{$list[i].min_usr_role_name}
+                    &nbsp;{{ list[i].min_usr_role_name }}
                 </td>
                 <td width="20%">
                     &nbsp;{", "|join:$list[i].project_names}

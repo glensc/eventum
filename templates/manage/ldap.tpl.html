@@ -1,7 +1,7 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
-{if $auth_backend == 'ldap_auth_backend'}
+{% if auth_backend == 'ldap_auth_backend' %}
 
 <script type="text/javascript">
     <!--
@@ -52,7 +52,7 @@
             </th>
             <td>
                 <input type="text" name="host" size="50" value="{$setup.host|escape:"html"|default:''}">
-                {include file="error_icon.tpl.html" field="host"}
+                {% include "error_icon.html.twig.html" with {'field' : 'host'} %}
             </td>
         </tr>
         <tr>
@@ -62,7 +62,7 @@
             <td>
                 <input type="text" name="port" size="5" value="{$setup.port|escape:"html"|default:''}">
                 <span class="small_default">(default: 389)</span>
-                {include file="error_icon.tpl.html" field="port"}
+                {% include "error_icon.html.twig.html" with {'field' : 'port'} %}
             </td>
         </tr>
         <tr>
@@ -71,7 +71,7 @@
             </th>
             <td>
                 <input type="text" name="binddn" size="50" value="{$setup.binddn|escape:"html"|default:''}">
-                {include file="error_icon.tpl.html" field="binddn"}
+                {% include "error_icon.html.twig.html" with {'field' : 'binddn'} %}
             </td>
         </tr>
         <tr>
@@ -80,7 +80,7 @@
             </th>
             <td>
                 <input type="text" name="bindpw" size="50" value="{$setup.bindpw|escape:"html"|default:''}">
-                {include file="error_icon.tpl.html" field="bindpw"}
+                {% include "error_icon.html.twig.html" with {'field' : 'bindpw'} %}
             </td>
         </tr>
         <tr>
@@ -89,7 +89,7 @@
             </th>
             <td>
                 <input type="text" name="basedn" size="50" value="{$setup.basedn|escape:"html"|default:''}">
-                {include file="error_icon.tpl.html" field="basedn"}
+                {% include "error_icon.html.twig.html" with {'field' : 'basedn'} %}
             </td>
         </tr>
         <tr>
@@ -99,7 +99,7 @@
             <td>
                 <input type="text" name="userdn" size="50" value="{$setup.userdn|escape:"html"|default:''}">
                 <span>Use %UID% to specify where the UID should be substituted.</span>
-                {include file="error_icon.tpl.html" field="userdn"}
+                {% include "error_icon.html.twig.html" with {'field' : 'userdn'} %}
             </td>
         </tr>
         <tr>
@@ -109,7 +109,7 @@
             <td>
                 <input type="text" name="user_filter" size="50" value="{$setup.user_filter|escape:"html"|default:''}">
                 <span>Optional filter when binding the user</span>
-                {include file="error_icon.tpl.html" field="user_filter"}
+                {% include "error_icon.html.twig.html" with {'field' : 'user_filter'} %}
             </td>
         </tr>
         <tr>
@@ -118,7 +118,7 @@
             </th>
             <td>
                 <input type="text" name="customer_id_attribute" size="50" value="{$setup.customer_id_attribute|escape:"html"|default:''}">
-                {include file="error_icon.tpl.html" field="customer_id_attribute"}
+                {% include "error_icon.html.twig.html" with {'field' : 'customer_id_attribute'} %}
             </td>
         </tr>
         <tr>
@@ -127,7 +127,7 @@
             </th>
             <td>
                 <input type="text" name="contact_id_attribute" size="50" value="{$setup.contact_id_attribute|escape:"html"|default:''}">
-                {include file="error_icon.tpl.html" field="contact_id_attribute"}
+                {% include "error_icon.html.twig.html" with {'field' : 'contact_id_attribute'} %}
             </td>
         </tr>
         <tr>
@@ -135,9 +135,9 @@
                 {t}Create Users{/t}:
             </th>
             <td>
-                <label><input type="radio" name="create_users" value="1" {if $setup.create_users == 1}checked{/if} />Yes</label>
-                <label><input type="radio" name="create_users" value="0" {if $setup.create_users != 1}checked{/if} />No</label>
-                {include file="error_icon.tpl.html" field="create_users"}
+                <label><input type="radio" name="create_users" value="1" {% if setup.create_users == 1 %}checked{% endif %} />Yes</label>
+                <label><input type="radio" name="create_users" value="0" {% if setup.create_users != 1 %}checked{% endif %} />No</label>
+                {% include "error_icon.html.twig.html" with {'field' : 'create_users'} %}
             </td>
         </tr>
         <tr>
@@ -146,17 +146,17 @@
             </th>
             <td>
                 <table border="0">
-                    {foreach from=$project_list key=prj_id item=prj_name}
+                    {% for prj_id, prj_name in project_list %}
                     <tr>
-                        <td>{$prj_name}:</td>
+                        <td>{{ prj_name }}:</td>
                         <td>
-                            <select name="default_role[{$prj_id}]">
+                            <select name="default_role[{{ prj_id }}]">
                                 {html_options options=$project_roles selected=$setup.default_role.$prj_id}
                             </select>
-                            {include file="error_icon.tpl.html" field="default_role[$prj_id]"}
+                            {% include "error_icon.html.twig.html" with {'field' : 'default_role[$prj_id]'} %}
                         </td>
                     </tr>
-                    {/foreach}
+                    {% endfor %}
                 </table>
             </td>
         </tr>
@@ -168,9 +168,9 @@
         </tr>
     </table>
 </form>
-{else}
+{% else %}
 <div>
     This page is only used for the ldap backend.
 </div>
-{/if}
+{% endif %}
 {/block}

@@ -1,16 +1,16 @@
-{extends "base.tpl.html"}
+{extends "base.html.twig.html"}
 {block "title"}Removed Emails{/block}
 
 {block "content"}
-{if $result_msg|default:'' != ''}
+{% if result_msg|default('') != '' %}
 <br />
 <center>
   <span>
-{if $result_msg == -1}
+{% if result_msg == -1 %}
   {t}An error occurred while trying to run your query{/t}
-{elseif $result_msg == 1}
-  {t}Thank you, the emails were {if $smarty.post.cat == 'remove'}removed{else}restored{/if} successfully{/t}
-{/if}
+{% elseif result_msg == 1 %}
+  {t}Thank you, the emails were {% if smarty.post.cat == 'remove' %}removed{% else %}restored{% endif %} successfully{/t}
+{% endif %}
   </span>
 </center>
 <script type="text/javascript">
@@ -19,7 +19,7 @@
     setTimeout('window.close()', 2000);
     //-->
 </script>
-{else}
+{% else %}
 <br />
 
 <script type="text/javascript">
@@ -73,10 +73,10 @@
         {section name="i" loop=$list}
         <tr class="{cycle values='odd,even'}">
             <td width="1%" align="center">
-                <input type="checkbox" name="item[]" value="{$list[i].sup_id}">
+                <input type="checkbox" name="item[]" value="{{ list[i].sup_id }}">
             </td>
             <td align="center" nowrap>
-                {$list[i].sup_date|timeago}
+                {{ list[i].sup_date|timeago }}
             </td>
             <td width="20%">
                 {$list[i].sup_from|escape:"html"}
@@ -108,5 +108,5 @@
         </tr>
     </table>
 </form>
-{/if}
+{% endif %}
 {/block}

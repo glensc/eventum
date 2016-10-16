@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -56,12 +56,12 @@ function checkDelete()
 
 
 <form id="group_form"  method="post">
-{if $smarty.get.cat|default:'' == 'edit'}
+{% if smarty.get.cat|default('') == 'edit' %}
 <input type="hidden" name="cat" value="update">
-<input type="hidden" name="id" value="{$smarty.get.id|intval}">
-{else}
+<input type="hidden" name="id" value="{{ smarty.get.id|intval }}">
+{% else %}
 <input type="hidden" name="cat" value="new">
-{/if}
+{% endif %}
 <table class="bordered">
     <tr class="title">
         <th colspan="2">
@@ -74,7 +74,7 @@ function checkDelete()
         </th>
         <td>
             <input type="text" name="group_name" size="40" value="{$info.grp_name|default:''}">
-            {include file="error_icon.tpl.html" field="group_name"}
+            {% include "error_icon.html.twig.html" with {'field' : 'group_name'} %}
         </td>
     </tr>
     <tr>
@@ -83,7 +83,7 @@ function checkDelete()
         </th>
         <td>
             <input type="text" name="description" size="100" value="{$info.grp_description|default:''}">
-            {include file="error_icon.tpl.html" field="description"}
+            {% include "error_icon.html.twig.html" with {'field' : 'description'} %}
         </td>
     </tr>
     <tr>
@@ -94,7 +94,7 @@ function checkDelete()
             <select name="projects[]" multiple size="3">
                 {html_options options=$project_list selected=$info.project_ids|default:''}
             </select>
-            {include file="error_icon.tpl.html" field="projects[]"}
+            {% include "error_icon.html.twig.html" with {'field' : 'projects[]'} %}
         </td>
     </tr>
     <tr>
@@ -105,7 +105,7 @@ function checkDelete()
             <select id="users" name="users[]" multiple size="6">
                 {html_options options=$user_options selected=$info.users|default:''}
             </select>
-            {include file="error_icon.tpl.html" field="users[]"}
+            {% include "error_icon.html.twig.html" with {'field' : 'users[]'} %}
             <div id="selection_users" />
         </td>
     </tr>
@@ -118,17 +118,17 @@ function checkDelete()
                 <option value="">{t}-- Select One --{/t}</option>
                 {html_options options=$user_options selected=$info.grp_manager_usr_id|default:''}
             </select>
-            {include file="error_icon.tpl.html" field="manager"}
-            {include file="lookup_field.tpl.html" lookup_field_name="manager_search" lookup_field_target="manager"}
+            {% include "error_icon.html.twig.html" with {'field' : 'manager'} %}
+            {% include "lookup_field.html.twig.html" with {'lookup_field_name' : 'manager_search', 'lookup_field_target' : 'manager'} %}
         </td>
     </tr>
     <tr class="buttons">
         <td colspan="2">
-            {if $smarty.get.cat|default:'' == 'edit'}
+            {% if smarty.get.cat|default('') == 'edit' %}
             <input type="submit" value="{t}Update Group{/t}">
-            {else}
+            {% else %}
             <input type="submit" value="{t}Create Group{/t}">
-            {/if}
+            {% endif %}
             <input type="reset" value="{t}Reset{/t}">
         </td>
     </tr>
@@ -152,16 +152,16 @@ function checkDelete()
     {section name="i" loop=$list}
     <tr class="{cycle values='odd,even'}">
         <td width="4" nowrap align="center">
-            <input type="checkbox" name="items[]" value="{$list[i].grp_id}" {if $smarty.section.i.total == 0}disabled{/if}>
+            <input type="checkbox" name="items[]" value="{{ list[i].grp_id }}" {% if smarty.section.i.total == 0 %}disabled{% endif %}>
         </td>
         <td width="20%">
-            &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].grp_id}" title="{t}update this entry{/t}">{$list[i].grp_name}</a>
+            &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].grp_id }}" title="{t}update this entry{/t}">{{ list[i].grp_name }}</a>
         </td>
         <td width="20%">
-            &nbsp;{$list[i].grp_description}
+            &nbsp;{{ list[i].grp_description }}
         </td>
         <td width="40%">
-            &nbsp;{$list[i].manager}
+            &nbsp;{{ list[i].manager }}
         </td>
         <td width="20%">
             &nbsp;{", "|join:$list[i].projects}

@@ -1,8 +1,8 @@
-{if $notify_list|default:'' != '' and $notify_list|@count > 0}
+{% if notify_list|default('') != '' and notify_list|@count > 0 %}
     {t}E-mail about the change was sent to{/t}:
     <ul>
-    {foreach from=$notify_list item=email_address}
+    {% for email_address in notify_list %}
         <li>{$email_address|escape:"html"}</li>
-    {/foreach}
+    {% endfor %}
     </ul>
-{/if}
+{% endif %}

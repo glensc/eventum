@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -89,12 +89,12 @@ $().ready(function() {
 
     <form id="project_form"  method="post">
     <table class="bordered">
-      {if $smarty.get.cat|default:'' == 'edit'}
+      {% if smarty.get.cat|default('') == 'edit' %}
       <input type="hidden" name="cat" value="update">
-      <input type="hidden" name="id" value="{$smarty.get.id|intval}">
-      {else}
+      <input type="hidden" name="id" value="{{ smarty.get.id|intval }}">
+      {% else %}
       <input type="hidden" name="cat" value="new">
-      {/if}
+      {% endif %}
       <tr class="title">
         <th colspan="2">
           {t}Manage Projects{/t}
@@ -106,7 +106,7 @@ $().ready(function() {
         </th>
         <td width="80%">
           <input type="text" name="title" size="40" value="{$info.prj_title|default:''|escape:"html"}">
-          {include file="error_icon.tpl.html" field="title"}
+          {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
         </td>
       </tr>
       <tr>
@@ -115,8 +115,8 @@ $().ready(function() {
         </th>
         <td width="80%">
           <select name="status">
-            <option value="active" {if $info.prj_status|default:'' == 'active'}selected{/if}>{t}Active{/t}</option>
-            <option value="archived" {if $info.prj_status|default:'' == 'archived'}selected{/if}>{t}Archived{/t}</option>
+            <option value="active" {% if info.prj_status|default('') == 'active' %}selected{% endif %}>{t}Active{/t}</option>
+            <option value="archived" {% if info.prj_status|default('') == 'archived' %}selected{% endif %}>{t}Archived{/t}</option>
           </select>
         </td>
       </tr>
@@ -160,7 +160,7 @@ $().ready(function() {
           <select name="users[]" multiple size="3">
             {html_options options=$user_options selected=$info.prj_assigned_users|default:''}
           </select>
-          {include file="error_icon.tpl.html" field="users[]"}
+          {% include "error_icon.html.twig.html" with {'field' : 'users[]'} %}
         </td>
       </tr>
       <tr>
@@ -171,7 +171,7 @@ $().ready(function() {
           <select name="statuses[]" multiple size="3">
             {html_options options=$status_options selected=$info.assigned_statuses|default:''}
           </select>
-          {include file="error_icon.tpl.html" field="statuses[]"}
+          {% include "error_icon.html.twig.html" with {'field' : 'statuses[]'} %}
         </td>
       </tr>
       <tr>
@@ -182,7 +182,7 @@ $().ready(function() {
           <select name="initial_status">
             {html_options options=$status_options selected=$info.prj_initial_sta_id|default:''}
           </select>
-          {include file="error_icon.tpl.html" field="initial_status"}
+          {% include "error_icon.html.twig.html" with {'field' : 'initial_status'} %}
         </td>
       </tr>
       <tr>
@@ -199,7 +199,7 @@ $().ready(function() {
         </th>
         <td width="80%">
           <input type="text" name="outgoing_sender_email" size="40" value="{$info.prj_outgoing_sender_email|default:''|escape:"html"}">
-          {include file="error_icon.tpl.html" field="outgoing_sender_email"}
+          {% include "error_icon.html.twig.html" with {'field' : 'outgoing_sender_email'} %}
         </td>
       </tr>
       <tr>
@@ -208,7 +208,7 @@ $().ready(function() {
         </th>
         <td width="80%">
           <input type="text" name="mail_aliases" size="40" value="{$info.prj_mail_aliases|default:''|escape:"html"}">
-          {include file="error_icon.tpl.html" field="mail_aliases"}
+          {% include "error_icon.html.twig.html" with {'field' : 'mail_aliases'} %}
         </td>
       </tr>
       <tr>
@@ -217,37 +217,37 @@ $().ready(function() {
         </th>
         <td width="80%">
             <label>
-                <input type="radio" name="remote_invocation" value="enabled" {if $info.prj_remote_invocation|default:'' == 'enabled'}checked{/if}>
+                <input type="radio" name="remote_invocation" value="enabled" {% if info.prj_remote_invocation|default('') == 'enabled' %}checked{% endif %}>
                 {t}Enabled{/t}
             </label>
             <label>
-                <input type="radio" name="remote_invocation" value="disabled" {if $info.prj_remote_invocation|default:'' != 'enabled'}checked{/if}>
+                <input type="radio" name="remote_invocation" value="disabled" {% if info.prj_remote_invocation|default('') != 'enabled' %}checked{% endif %}>
                 {t}Disabled{/t}
             </label>
         </td>
       </tr>
       <tr>
         <th width="120" nowrap>
-          {t}Segregate Reporters{/t} {include file="help_link.tpl.html" topic="segregate_reporter"}
+          {t}Segregate Reporters{/t} {% include "help_link.html.twig.html" with {'topic' : 'segregate_reporter'} %}
         </th>
         <td width="80%">
             <label>
-                <input type="radio" name="segregate_reporter" value="1" {if $info.prj_segregate_reporter|default:'' == 1}checked{/if}>
+                <input type="radio" name="segregate_reporter" value="1" {% if info.prj_segregate_reporter|default('') == 1 %}checked{% endif %}>
                 {t}Yes{/t}
             </label>
             <label>
-                <input type="radio" name="segregate_reporter" value="0" {if $info.prj_segregate_reporter|default:'' != 1}checked{/if}>
+                <input type="radio" name="segregate_reporter" value="0" {% if info.prj_segregate_reporter|default('') != 1 %}checked{% endif %}>
                 {t}No{/t}
             </label>
         </td>
       </tr>
       <tr class="buttons">
         <td colspan="2">
-          {if $smarty.get.cat|default:'' == 'edit'}
+          {% if smarty.get.cat|default('') == 'edit' %}
           <input type="submit" value="{t}Update Project{/t}">
-          {else}
+          {% else %}
           <input type="submit" value="{t}Create Project{/t}">
-          {/if}
+          {% endif %}
           <input type="reset" value="{t}Reset{/t}">
         </td>
       </tr>
@@ -271,23 +271,23 @@ $().ready(function() {
         </tr>
         {section name="i" loop=$list}
         <tr class="{cycle values='odd,even'}">
-          <td width="4" align="center" nowrap "><input type="checkbox" name="items[]" value="{$list[i].prj_id}"></td>
+          <td width="4" align="center" nowrap "><input type="checkbox" name="items[]" value="{{ list[i].prj_id }}"></td>
           <td width="30%" >
-            &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].prj_id}" title="{t}update this entry{/t}">{$list[i].prj_title}</a>
+            &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].prj_id }}" title="{t}update this entry{/t}">{{ list[i].prj_title }}</a>
           </td>
           <td width="20%" >&nbsp;{$list[i].usr_full_name|escape:html}</td>
-          <td >&nbsp;{$list[i].prj_status|capitalize}</td>
+          <td >&nbsp;{{ list[i].prj_status|capitalize }}</td>
           <td width="30%"  nowrap>
             <ul>
-              <li><a href="{$core.rel_url}manage/releases.php?prj_id={$list[i].prj_id}">{t}Edit Releases{/t}</a></li>
-              <li><a href="{$core.rel_url}manage/categories.php?prj_id={$list[i].prj_id}">{t}Edit Categories{/t}</a></li>
-              <li><a href="{$core.rel_url}manage/priorities.php?prj_id={$list[i].prj_id}">{t}Edit Priorities{/t}</a></li>
-              <li><a href="{$core.rel_url}manage/severities.php?prj_id={$list[i].prj_id}">{t}Edit Severities{/t}</a></li>
-              <li><a href="{$core.rel_url}manage/phone_categories.php?prj_id={$list[i].prj_id}">{t}Edit Phone Support Categories{/t}</a></li>
-              <li><a href="{$core.rel_url}manage/time_tracking.php?prj_id={$list[i].prj_id}">{t}Manage Time Tracking Categories{/t}</a></li>
-              <li><a href="{$core.rel_url}manage/anonymous.php?prj_id={$list[i].prj_id}">{t}Anonymous Reporting{/t}</a></li>
-              <li><a href="{$core.rel_url}manage/field_display.php?prj_id={$list[i].prj_id}">{t}Edit Fields to Display{/t}</a></li>
-              <li><a href="{$core.rel_url}manage/column_display.php?prj_id={$list[i].prj_id}">{t}Edit Columns to Display{/t}</a></li>
+              <li><a href="{{ core.rel_url }}manage/releases.php?prj_id={{ list[i].prj_id }}">{t}Edit Releases{/t}</a></li>
+              <li><a href="{{ core.rel_url }}manage/categories.php?prj_id={{ list[i].prj_id }}">{t}Edit Categories{/t}</a></li>
+              <li><a href="{{ core.rel_url }}manage/priorities.php?prj_id={{ list[i].prj_id }}">{t}Edit Priorities{/t}</a></li>
+              <li><a href="{{ core.rel_url }}manage/severities.php?prj_id={{ list[i].prj_id }}">{t}Edit Severities{/t}</a></li>
+              <li><a href="{{ core.rel_url }}manage/phone_categories.php?prj_id={{ list[i].prj_id }}">{t}Edit Phone Support Categories{/t}</a></li>
+              <li><a href="{{ core.rel_url }}manage/time_tracking.php?prj_id={{ list[i].prj_id }}">{t}Manage Time Tracking Categories{/t}</a></li>
+              <li><a href="{{ core.rel_url }}manage/anonymous.php?prj_id={{ list[i].prj_id }}">{t}Anonymous Reporting{/t}</a></li>
+              <li><a href="{{ core.rel_url }}manage/field_display.php?prj_id={{ list[i].prj_id }}">{t}Edit Fields to Display{/t}</a></li>
+              <li><a href="{{ core.rel_url }}manage/column_display.php?prj_id={{ list[i].prj_id }}">{t}Edit Columns to Display{/t}</a></li>
             </ul>
           </td>
         </tr>

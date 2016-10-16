@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
 
@@ -41,19 +41,19 @@
 </script>
 
 <form id="priority_form" method="post">
-    <input type="hidden" name="prj_id" value="{$project.prj_id}">
-    {if $smarty.get.cat|default:'' == 'edit'}
+    <input type="hidden" name="prj_id" value="{{ project.prj_id }}">
+    {% if smarty.get.cat|default('') == 'edit' %}
     <input type="hidden" name="cat" value="update">
-    <input type="hidden" name="id" value="{$smarty.get.id|intval}">
-    {else}
+    <input type="hidden" name="id" value="{{ smarty.get.id|intval }}">
+    {% else %}
     <input type="hidden" name="cat" value="new">
-    {/if}
+    {% endif %}
     <table class="bordered">
         <tr class="title">
             <th colspan="2">
                 {t}Manage Priorities{/t}
                 <div class="right">
-                    ({t}Current Project{/t}: {$project.prj_title})
+                    ({t}Current Project{/t}: {{ project.prj_title }})
                 </div>
             </th>
         </tr>
@@ -63,7 +63,7 @@
             </th>
             <td>
                 <input type="text" name="title" size="40" value="{$info.pri_title|default:''}">
-                {include file="error_icon.tpl.html" field="title"}
+                {% include "error_icon.html.twig.html" with {'field' : 'title'} %}
             </td>
         </tr>
         <tr>
@@ -72,16 +72,16 @@
             </th>
             <td>
                 <input type="text" name="rank" size="5" value="{$info.pri_rank|default:''}">
-                {include file="error_icon.tpl.html" field="rank"}
+                {% include "error_icon.html.twig.html" with {'field' : 'rank'} %}
             </td>
         </tr>
         <tr class="buttons">
             <td colspan="2">
-                {if $smarty.get.cat|default:'' == 'edit'}
+                {% if smarty.get.cat|default('') == 'edit' %}
                 <input type="submit" value="{t}Update Priority{/t}">
-                {else}
+                {% else %}
                 <input type="submit" value="{t}Create Priority{/t}">
-                {/if}
+                {% endif %}
                 <input type="reset" value="{t}Reset{/t}">
             </td>
         </tr>
@@ -89,7 +89,7 @@
 </form>
 
 <form id="delete_form" method="post">
-    <input type="hidden" name="prj_id" value="{$project.prj_id}">
+    <input type="hidden" name="prj_id" value="{{ project.prj_id }}">
     <input type="hidden" name="cat" value="delete">
     <table class="bordered">
         <tr class="title">
@@ -104,13 +104,13 @@
         </tr>
         {section name="i" loop=$list}
         <tr class="{cycle values='odd,even'}">
-            <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{$list[i].pri_id}"></td>
+            <td width="4" nowrap align="center"><input type="checkbox" name="items[]" value="{{ list[i].pri_id }}"></td>
             <td align="center" nowrap>
-                <a href="{$core.current_url}?cat=change_rank&id={$list[i].pri_id}&prj_id={$project.prj_id}&rank=desc"><img src="{$core.rel_url}images/desc.gif" border="0"></a> {$list[i].pri_rank}
-                <a href="{$core.current_url}?cat=change_rank&id={$list[i].pri_id}&prj_id={$project.prj_id}&rank=asc"><img src="{$core.rel_url}images/asc.gif" border="0"></a>
+                <a href="{{ core.current_url }}?cat=change_rank&id={{ list[i].pri_id }}&prj_id={{ project.prj_id }}&rank=desc"><img src="{{ core.rel_url }}images/desc.gif" border="0"></a> {{ list[i].pri_rank }}
+                <a href="{{ core.current_url }}?cat=change_rank&id={{ list[i].pri_id }}&prj_id={{ project.prj_id }}&rank=asc"><img src="{{ core.rel_url }}images/asc.gif" border="0"></a>
             </td>
             <td width="100%">
-                &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].pri_id}&prj_id={$project.prj_id}" title="{t}update this entry{/t}">{$list[i].pri_title}</a>
+                &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].pri_id }}&prj_id={{ project.prj_id }}" title="{t}update this entry{/t}">{{ list[i].pri_title }}</a>
             </td>
         </tr>
         {sectionelse}

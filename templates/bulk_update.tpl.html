@@ -3,21 +3,21 @@
     <div>
       <table class="grid">
         <tr>
-          {assign var="colspan" value=3}
+          {% set colspan = '3' %}
           <th>{t}Assignment{/t}</th>
           <th>{t}Status{/t}</th>
-          {if $releases|@count > 0}
-          {assign var="colspan" value=$colspan+1}
+          {% if releases|@count > 0 %}
+          {% set colspan = colspan %}
           <th>{t}Release{/t}</th>
-          {/if}
-          {if $priorities|@count > 0}
-          {assign var="colspan" value=$colspan+1}
+          {% endif %}
+          {% if priorities|@count > 0 %}
+          {% set colspan = colspan %}
           <th>{t}Priority{/t}</th>
-          {/if}
-          {if $categories|@count > 0}
-          {assign var="colspan" value=$colspan+1}
+          {% endif %}
+          {% if categories|@count > 0 %}
+          {% set colspan = colspan %}
           <th>{t}Category{/t}</th>
-          {/if}
+          {% endif %}
           <th>{t}Close{/t}</th>
         </tr>
         <tr>
@@ -26,42 +26,42 @@
               <option></option>
               {html_options options=$users}
               </select>
-              {include file="error_icon.tpl.html" field="users[]"}
+              {% include "error_icon.html.twig.html" with {'field' : 'users[]'} %}
           </td>
           <td>
               <select name="status">
                 <option value=""></option>
                 {html_options options=$open_status}
               </select>
-              {include file="error_icon.tpl.html" field="status"}
+              {% include "error_icon.html.twig.html" with {'field' : 'status'} %}
           </td>
-          {if $releases|@count > 0}
+          {% if releases|@count > 0 %}
           <td>
               <select name="release">
                 <option value=""></option>
                 {html_options options=$available_releases}
               </select>
-              {include file="error_icon.tpl.html" field="release"}
+              {% include "error_icon.html.twig.html" with {'field' : 'release'} %}
           </td>
-          {/if}
-          {if $priorities|@count > 0}
+          {% endif %}
+          {% if priorities|@count > 0 %}
           <td>
               <select name="priority">
                 <option value=""></option>
                 {html_options options=$priorities}
               </select>
-              {include file="error_icon.tpl.html" field="priority"}
+              {% include "error_icon.html.twig.html" with {'field' : 'priority'} %}
           </td>
-          {/if}
-          {if $categories|@count > 0}
+          {% endif %}
+          {% if categories|@count > 0 %}
           <td>
               <select name="category">
                 <option value=""></option>
                 {html_options options=$categories}
               </select>
-              {include file="error_icon.tpl.html" field="category"}
+              {% include "error_icon.html.twig.html" with {'field' : 'category'} %}
           </td>
-          {/if}
+          {% endif %}
           <td>
               <span>{t}Select closed status to close issue{/t}</span><br />
               <select name="closed_status">
@@ -89,7 +89,7 @@
           </td>
         </tr>
         <tr class="buttons">
-          <td colspan="{$colspan}">
+          <td colspan="{{ colspan }}">
             <input type="button" value="{t}Bulk Update{/t}" id="bulk_update_button">
             <input type="button" value="{t}Reset{/t}" id="reset_bulk_update">
           </td>

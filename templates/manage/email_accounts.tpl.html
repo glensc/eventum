@@ -1,4 +1,4 @@
-{extends "manage/manage.tpl.html"}
+{extends "manage/manage.html.twig.html"}
 
 {block "manage_content"}
   <script type="text/javascript">
@@ -97,12 +97,12 @@
   </script>
 
   <form id="email_account_form"  method="post">
-  {if $smarty.get.cat|default:'' == 'edit'}
+  {% if smarty.get.cat|default('') == 'edit' %}
   <input type="hidden" name="cat" value="update">
-  <input type="hidden" name="id" value="{$smarty.get.id|intval}">
-  {else}
+  <input type="hidden" name="id" value="{{ smarty.get.id|intval }}">
+  {% else %}
   <input type="hidden" name="cat" value="new">
-  {/if}
+  {% endif %}
 <table class="bordered">
   <tr class="title">
     <th colspan="2">
@@ -118,7 +118,7 @@
         <option value="-1"></option>
         {html_options options=$all_projects selected=$info.ema_prj_id|default:''}
       </select>
-      {include file="error_icon.tpl.html" field="project"}
+      {% include "error_icon.html.twig.html" with {'field' : 'project'} %}
     </td>
   </tr>
   <tr>
@@ -128,18 +128,18 @@
     <td width="80%">
       <select name="type" onChange="toggleFolderField(this.form);">
         <option value="-1"></option>
-        <option value="imap" {if $info.ema_type|default:'' == 'imap'}selected{/if}>{t}IMAP{/t}</option>
-        <option value="imap/ssl" {if $info.ema_type|default:'' == 'imap/ssl'}selected{/if}>{t}IMAP over SSL{/t}</option>
-        <option value="imap/ssl/novalidate-cert" {if $info.ema_type|default:'' == 'imap/ssl/novalidate-cert'}selected{/if}>{t}IMAP over SSL (self-signed){/t}</option>
-        <option value="imap/notls" {if $info.ema_type|default:'' == 'imap/notls'}selected{/if}>{t}IMAP, no TLS{/t}</option>
-        <option value="imap/tls" {if $info.ema_type|default:'' == 'imap/tls'}selected{/if}>{t}IMAP, with TLS{/t}</option>
-        <option value="imap/tls/novalidate-cert" {if $info.ema_type|default:'' == 'imap/tls/novalidate-cert'}selected{/if}>{t}IMAP, with TLS (self-signed){/t}</option>
-        <option value="pop3" {if $info.ema_type|default:'' == 'pop3'}selected{/if}>{t}POP3{/t}</option>
-        <option value="pop3/ssl" {if $info.ema_type|default:'' == 'pop3/ssl'}selected{/if}>{t}POP3 over SSL{/t}</option>
-        <option value="pop3/ssl/novalidate-cert" {if $info.ema_type|default:'' == 'pop3/ssl/novalidate-cert'}selected{/if}>{t}POP3 over SSL (self-signed){/t}</option>
-        <option value="pop3/notls" {if $info.ema_type|default:'' == 'pop3/notls'}selected{/if}>{t}POP3, no TLS{/t}</option>
-        <option value="pop3/tls" {if $info.ema_type|default:'' == 'pop3/tls'}selected{/if}>{t}POP3, with TLS{/t}</option>
-        <option value="pop3/tls/novalidate-cert" {if $info.ema_type|default:'' == 'pop3/tls/novalidate-cert'}selected{/if}>{t}POP3, with TLS (self-signed){/t}</option>
+        <option value="imap" {% if info.ema_type|default('') == 'imap' %}selected{% endif %}>{t}IMAP{/t}</option>
+        <option value="imap/ssl" {% if info.ema_type|default('') == 'imap/ssl' %}selected{% endif %}>{t}IMAP over SSL{/t}</option>
+        <option value="imap/ssl/novalidate-cert" {% if info.ema_type|default('') == 'imap/ssl/novalidate-cert' %}selected{% endif %}>{t}IMAP over SSL (self-signed){/t}</option>
+        <option value="imap/notls" {% if info.ema_type|default('') == 'imap/notls' %}selected{% endif %}>{t}IMAP, no TLS{/t}</option>
+        <option value="imap/tls" {% if info.ema_type|default('') == 'imap/tls' %}selected{% endif %}>{t}IMAP, with TLS{/t}</option>
+        <option value="imap/tls/novalidate-cert" {% if info.ema_type|default('') == 'imap/tls/novalidate-cert' %}selected{% endif %}>{t}IMAP, with TLS (self-signed){/t}</option>
+        <option value="pop3" {% if info.ema_type|default('') == 'pop3' %}selected{% endif %}>{t}POP3{/t}</option>
+        <option value="pop3/ssl" {% if info.ema_type|default('') == 'pop3/ssl' %}selected{% endif %}>{t}POP3 over SSL{/t}</option>
+        <option value="pop3/ssl/novalidate-cert" {% if info.ema_type|default('') == 'pop3/ssl/novalidate-cert' %}selected{% endif %}>{t}POP3 over SSL (self-signed){/t}</option>
+        <option value="pop3/notls" {% if info.ema_type|default('') == 'pop3/notls' %}selected{% endif %}>{t}POP3, no TLS{/t}</option>
+        <option value="pop3/tls" {% if info.ema_type|default('') == 'pop3/tls' %}selected{% endif %}>{t}POP3, with TLS{/t}</option>
+        <option value="pop3/tls/novalidate-cert" {% if info.ema_type|default('') == 'pop3/tls/novalidate-cert' %}selected{% endif %}>{t}POP3, with TLS (self-signed){/t}</option>
       </select>
     </td>
   </tr>
@@ -149,7 +149,7 @@
     </th>
     <td width="80%">
       <input type="text" name="hostname" size="30" value="{$info.ema_hostname|default:''|escape:"html"}">
-      {include file="error_icon.tpl.html" field="hostname"}
+      {% include "error_icon.html.twig.html" with {'field' : 'hostname'} %}
     </td>
   </tr>
   <tr>
@@ -158,7 +158,7 @@
     </th>
     <td width="80%">
       <input type="text" name="port" size="10" value="{$info.ema_port|default:''}"> <span>{t}(Tip: port defaults are 110 for POP3 servers and 143 for IMAP ones){/t}</span>
-      {include file="error_icon.tpl.html" field="port"}
+      {% include "error_icon.html.twig.html" with {'field' : 'port'} %}
     </td>
   </tr>
   <tr id="imap_folder">
@@ -166,8 +166,8 @@
       {t}IMAP Folder{/t}
     </th>
     <td width="80%">
-      <input type="text" name="folder" size="20" value="{if $info.ema_folder|default:'' == ""}INBOX{else}{$info.ema_folder}{/if}"> <span>{t}(default folder is INBOX){/t}</span>
-      {include file="error_icon.tpl.html" field="folder"}
+      <input type="text" name="folder" size="20" value="{% if info.ema_folder|default('') == "" %}INBOX{% else %}{{ info.ema_folder }}{% endif %}"> <span>{t}(default folder is INBOX){/t}</span>
+      {% include "error_icon.html.twig.html" with {'field' : 'folder'} %}
     </td>
   </tr>
   <tr>
@@ -176,7 +176,7 @@
     </th>
     <td width="80%">
       <input type="text" name="username" size="20" value="{$info.ema_username|default:''|escape:"html"}">
-      {include file="error_icon.tpl.html" field="username"}
+      {% include "error_icon.html.twig.html" with {'field' : 'username'} %}
     </td>
   </tr>
   <tr>
@@ -186,7 +186,7 @@
     <td width="80%">
       <input type="password" name="password" size="20" value="" autocomplete="off">
         <span>({t}leave empty to keep the current password{/t})</span>
-      {include file="error_icon.tpl.html" field="password"}
+      {% include "error_icon.html.twig.html" with {'field' : 'password'} %}
     </td>
   </tr>
   <tr>
@@ -195,15 +195,15 @@
     </th>
     <td width="80%">
         <label>
-            <input type="checkbox" name="get_only_new" value="1" {if $info.ema_get_only_new|default:''}checked{/if}>
+            <input type="checkbox" name="get_only_new" value="1" {% if info.ema_get_only_new|default('') %}checked{% endif %}>
             {t}Only Download Unread Messages{/t}
         </label><br />
         <label>
-            <input type="checkbox" name="leave_copy" value="1" {if $smarty.get.cat|default:'' == 'edit'}{if $info.ema_leave_copy|default:''}checked{/if}{else}checked{/if}>
+            <input type="checkbox" name="leave_copy" value="1" {% if smarty.get.cat|default('') == 'edit' %}{% if info.ema_leave_copy|default('') %}checked{% endif %}{% else %}checked{% endif %}>
             {t}Leave Copy of Messages On Server{/t}
         </label><br />
         <label>
-            <input type="checkbox" name="use_routing" value="1" {if $info.ema_use_routing|default:''}checked{/if}>
+            <input type="checkbox" name="use_routing" value="1" {% if info.ema_use_routing|default('') %}checked{% endif %}>
             {t escape="none"}Use account for non-subject based email/note/draft routing.{/t}
         </label><br />
         {t}Note{/t}: {t}If you check this, you cannot leave a copy of messages on the server.{/t}
@@ -212,11 +212,11 @@
   <tr class="buttons">
     <td colspan="2">
       <input id="testSettings" type="button" value="{t}Test Settings{/t}">
-      {if $smarty.get.cat|default:'' == 'edit'}
+      {% if smarty.get.cat|default('') == 'edit' %}
       <input type="submit" value="{t}Update Account{/t}">
-      {else}
+      {% else %}
       <input type="submit" value="{t}Create Account{/t}">
-      {/if}
+      {% endif %}
       <input type="reset" value="{t}Reset{/t}">
     </td>
   </tr>
@@ -243,15 +243,15 @@
     </tr>
     {section name="i" loop=$list}
     <tr class="{cycle values='odd,even'}">
-      <td width="4" align="center" nowrap><input type="checkbox" name="items[]" value="{$list[i].ema_id}"></td>
-      <td>&nbsp;{$list[i].prj_title}</td>
+      <td width="4" align="center" nowrap><input type="checkbox" name="items[]" value="{{ list[i].ema_id }}"></td>
+      <td>&nbsp;{{ list[i].prj_title }}</td>
       <td width="30%">
-        &nbsp;<a href="{$core.current_url}?cat=edit&id={$list[i].ema_id}" title="{t}update this entry{/t}">{$list[i].ema_hostname|escape:"html"}</a></td>
-      <td>&nbsp;{$list[i].ema_type}</td>
-      <td>&nbsp;{$list[i].ema_port}</td>
+        &nbsp;<a href="{{ core.current_url }}?cat=edit&id={{ list[i].ema_id }}" title="{t}update this entry{/t}">{$list[i].ema_hostname|escape:"html"}</a></td>
+      <td>&nbsp;{{ list[i].ema_type }}</td>
+      <td>&nbsp;{{ list[i].ema_port }}</td>
       <td>&nbsp;{$list[i].ema_username|escape:"html"}</td>
-      <td>&nbsp;{$list[i].ema_folder}</td>
-      <td>&nbsp;<a href="issue_auto_creation.php?ema_id={$list[i].ema_id}">{$list[i].ema_issue_auto_creation|ucfirst}</a></td>
+      <td>&nbsp;{{ list[i].ema_folder }}</td>
+      <td>&nbsp;<a href="issue_auto_creation.php?ema_id={{ list[i].ema_id }}">{{ list[i].ema_issue_auto_creation|ucfirst }}</a></td>
     </tr>
     {sectionelse}
     <tr class="no_results">

@@ -1,4 +1,4 @@
-{extends "base.tpl.html"}
+{extends "base.html.twig.html"}
 
 {block "title"}{t}Email Aliases for {$username|escape:"html"}{/t}{/block}
 
@@ -39,7 +39,7 @@ function removeEmails()
 
         <form id="save_form" method="post">
         <input type="hidden" name="cat" value="save">
-        <input type="hidden" name="id" value="{$id}">
+        <input type="hidden" name="id" value="{{ id }}">
       <table class="bordered">
         <tr class="title"><th colspan="2">{t}New Alias{/t}</th></tr>
         <tr>
@@ -60,7 +60,7 @@ function removeEmails()
 
             <form method="post" id="delete_form">
             <input type="hidden" name="cat" value="remove">
-            <input type="hidden" name="id" value="{$id}">
+            <input type="hidden" name="id" value="{{ id }}">
       <table class="bordered grid">
           <tr class="title">
               <th colspan="2">Existing Aliases</th>
@@ -74,7 +74,7 @@ function removeEmails()
               {section name="i" loop=$list}
               <tr class="{cycle values='odd,even'}">
                 <td width="1%" align="center">
-                  <input type="checkbox" name="item[]" value="{$list[i]}">
+                  <input type="checkbox" name="item[]" value="{{ list[i] }}">
                 </td>
                 <td width="50%">
                   {$list[i]|escape:"html"}

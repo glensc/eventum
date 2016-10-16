@@ -1,7 +1,7 @@
-{foreach from=$issue_fields item='issue_field' key='field_name'}
-  {if $field_name == 'custom'}
-    {include file="edit_custom_fields.tpl.html" custom_fields=$issue_field.custom}
-  {else}
-    {include file="include/issue_fields/`$field_name`.tpl.html"}
-  {/if}
-{/foreach}
+{% for field_name, issue_field in issue_fields %}
+  {% if field_name == 'custom' %}
+    {% include "edit_custom_fields.html.twig.html" with {'custom_fields' : issue_field.custom} %}
+  {% else %}
+    {% include "include/issue_fields/`$field_name`.html.twig.html" %}
+  {% endif %}
+{% endfor %}
