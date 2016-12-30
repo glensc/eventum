@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Eventum (Issue Tracking System) package.
  *
@@ -11,6 +12,10 @@
  */
 
 if (!file_exists(__DIR__ . '/config/config.php') || !filesize(__DIR__ . '/config/config.php')) {
+    // redirect to setup
+    if (PHP_SAPI == 'cli') {
+        throw new RuntimeException('Eventum is not configured');
+    }
     header('Location: setup/');
     exit(0);
 }
@@ -22,7 +27,7 @@ ini_set('memory_limit', '512M');
 ini_set('session.cache_limiter', 'nocache');
 
 define('APP_URL', 'https://github.com/eventum/eventum');
-define('APP_VERSION', '3.0.11-dev');
+define('APP_VERSION', '3.1.9-dev');
 
 // define base path
 define('APP_PATH', __DIR__);
@@ -110,13 +115,6 @@ $define('APP_MAINTENANCE', false);
 
 require_once APP_PATH . '/autoload.php';
 
-// fix magic_quote_gpc'ed values
-if (get_magic_quotes_gpc()) {
-    $_GET = Misc::dispelMagicQuotes($_GET);
-    $_POST = Misc::dispelMagicQuotes($_POST);
-    $_REQUEST = Misc::dispelMagicQuotes($_REQUEST);
-}
-
 Misc::stripInput($_POST);
 
 // set default timezone
@@ -133,24 +131,14 @@ if (APP_MAINTENANCE) {
     $is_manage = (strpos($_SERVER['PHP_SELF'], '/manage/') !== false);
     if (APP_MAINTENANCE && !$is_manage) {
         $tpl = new Template_Helper();
-        $tpl->setTemplate("maintenance.tpl.html");
+        $tpl->setTemplate('maintenance.tpl.html');
         $tpl->displayTemplate();
         exit(0);
     }
 }
 
 // Default IRC category
-$define("APP_EVENTUM_IRC_CATEGORY_DEFAULT", "default");
-$define("APP_EVENTUM_IRC_CATEGORY_REMINDER", APP_EVENTUM_IRC_CATEGORY_DEFAULT);
-
-// legacy constants, enable this block if you need time to migrate custom workflow, custom_field, customer, etc classes
-/*
-if (!defined('APP_DEFAULT_DB') || !defined('APP_TABLE_PREFIX')) {
-    $dbconfig = DB_Helper::getConfig();
-    $define('APP_DEFAULT_DB', $dbconfig['database']);
-    $define('APP_TABLE_PREFIX', $dbconfig['table_prefix']);
-    unset($dbconfig);
-}
-*/
+$define('APP_EVENTUM_IRC_CATEGORY_DEFAULT', 'default');
+$define('APP_EVENTUM_IRC_CATEGORY_REMINDER', APP_EVENTUM_IRC_CATEGORY_DEFAULT);
 
 Eventum\DebugBar::initialize();

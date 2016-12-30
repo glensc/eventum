@@ -46,11 +46,11 @@ class CategoryStatusController extends ReportBaseController
         $data = Report::getCategoryStatusReport($this->prj_id, $categories, $statuses);
 
         $this->tpl->assign(
-            array(
+            [
                 'statuses' => $statuses,
                 'categories' => $categories,
                 'data' => $data,
-            )
+            ]
         );
     }
 }

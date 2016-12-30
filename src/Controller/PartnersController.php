@@ -93,11 +93,11 @@ class PartnersController extends BaseController
     protected function prepareTemplate()
     {
         $this->tpl->assign(
-            array(
+            [
                 'issue_id' => $this->issue_id,
                 'enabled_partners' => Partner::getPartnersByProject($this->prj_id),
                 'partners' => Partner::getPartnersByIssue($this->issue_id),
-            )
+            ]
         );
     }
 }

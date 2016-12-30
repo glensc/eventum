@@ -1,6 +1,5 @@
 {extends "base.tpl.html"}
-{block "page_id"}anon_post{/block}
-{block "page_classes"}CustomField GrowingFileField{/block}
+{block "page_classes"}anon_post CustomField GrowingFileField{/block}
 
 {block name="content"}
 <div class="note_box">
@@ -17,7 +16,7 @@
 <div class="note_box">
     {t escape=no 1=$new_issue_id}Thank you, the new issue was created successfully. For your records, the new issue ID is <font color="red">%1</font>{/t}
     <br /><br />
-    {t 1=$smarty.server.PHP_SELF escape=no}You may <a href="%1">submit another issue</a> if you so wish.{/t}
+    {t 1=$core.current_url escape=no}You may <a href="%1">submit another issue</a> if you so wish.{/t}
 </div>
 {else}
 {if $smarty.get.post_form|default:'' != 'yes'}

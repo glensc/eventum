@@ -82,7 +82,7 @@ class ListController extends BaseController
         $rows = Search::getParam('rows');
         $this->rows = ($rows == 'ALL' ? $rows : (int) $rows) ?: APP_DEFAULT_PAGER_SIZE;
 
-        $this->options_override = array();
+        $this->options_override = [];
         $this->viewAction();
     }
 
@@ -98,13 +98,13 @@ class ListController extends BaseController
                 $profile = Search_Profile::getProfile($this->usr_id, $this->prj_id, 'issue');
                 Search_Profile::remove($this->usr_id, $this->prj_id, 'issue');
                 $this->redirect(
-                    'list.php', array(
+                    'list.php', [
                         'users' => $this->usr_id,
                         'hide_closed' => 1,
                         'rows' => $this->rows,
                         'sort_by' => $profile['sort_by'],
                         'sort_order' => $profile['sort_order'],
-                    )
+                    ]
                 );
                 break;
 
@@ -113,10 +113,10 @@ class ListController extends BaseController
                 if (!$customer_id) {
                     return;
                 }
-                $this->options_override = array(
+                $this->options_override = [
                     'customer_id' => $customer_id,
                     'rows' => $this->rows,
-                );
+                ];
                 if (Search::getParam('hide_closed', true) === '') {
                     $this->options_override['hide_closed'] = 1;
                 }
@@ -129,10 +129,10 @@ class ListController extends BaseController
                     return;
                 }
 
-                $this->options_override = array(
+                $this->options_override = [
                     'customer_id' => $customer_id,
                     'rows' => $this->rows,
-                );
+                ];
                 if (Search::getParam('hide_closed', true) === '') {
                     $this->options_override['hide_closed'] = 0;
                 }
@@ -140,14 +140,14 @@ class ListController extends BaseController
                 $profile = Search_Profile::getProfile($this->usr_id, $this->prj_id, 'issue');
                 Search_Profile::remove($this->usr_id, $this->prj_id, 'issue');
                 $this->redirect(
-                    'list.php', array(
+                    'list.php', [
                         'customer_id' => $customer_id,
                         'hide_closed' => 1,
                         'rows' => $this->rows,
                         'sort_by' => $profile['sort_by'],
                         'sort_order' => $profile['sort_order'],
                         'nosave' => 1,
-                    )
+                    ]
                 );
                 break;
 
@@ -159,14 +159,14 @@ class ListController extends BaseController
 
                 $profile = Search_Profile::getProfile($this->usr_id, $this->prj_id, 'issue');
                 $this->redirect(
-                    'list.php', array(
+                    'list.php', [
                         'reporter' => $reporter_id,
                         'hide_closed' => 1,
                         'rows' => $this->rows,
                         'sort_by' => $profile['sort_by'],
                         'sort_order' => $profile['sort_order'],
                         'nosave' => 1,
-                    )
+                    ]
                 );
                 break;
 
@@ -204,7 +204,7 @@ class ListController extends BaseController
         $prefs = Prefs::get($this->usr_id);
         $list = Search::getListing($this->prj_id, $options, $this->pagerRow, $this->rows);
         $this->tpl->assign(
-            array(
+            [
                 'options' => $options,
                 'sorting' => Search::getSortingInfo($options),
                 'list' => $list['list'],
@@ -226,7 +226,7 @@ class ListController extends BaseController
                 'products' => Product::getAssocList(false),
                 'refresh_rate' => $prefs['list_refresh_rate'] * 60,
                 'refresh_page' => 'list.php',
-            )
+            ]
         );
 
         // items needed for bulk update tool
@@ -237,12 +237,12 @@ class ListController extends BaseController
                 $open_statuses = Status::getAssocStatusList($this->prj_id, false);
             }
             $this->tpl->assign(
-                array(
+                [
                     'users' => $users,
                     'open_status' => $open_statuses,
                     'closed_status' => Status::getClosedAssocList($this->prj_id),
                     'available_releases' => Release::getAssocList($this->prj_id),
-                )
+                ]
             );
         }
     }

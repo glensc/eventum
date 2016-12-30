@@ -29,12 +29,12 @@ class HtmlHelper
      */
     public function enableRadioButtons($value)
     {
-        return array(
-            'options' => array(
+        return [
+            'options' => [
                 1 => ev_gettext('Enabled'),
                 0 => ev_gettext('Disabled'),
-            ),
+            ],
             'selected' => (int)($value == 'enabled'),
-        );
+        ];
     }
 }

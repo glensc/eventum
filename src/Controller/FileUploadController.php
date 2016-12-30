@@ -93,11 +93,11 @@ class FileUploadController extends BaseController
     protected function prepareTemplate()
     {
         $this->tpl->assign(
-            array(
+            [
                 'issue_id' => $this->issue_id,
                 'max_attachment_size' => Attachment::getMaxAttachmentSize(),
                 'max_attachment_bytes' => Attachment::getMaxAttachmentSize(true),
-            )
+            ]
         );
     }
 }

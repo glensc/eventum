@@ -64,10 +64,10 @@ class HelpController extends BaseController
     {
         $topic = $this->getTopic();
         $this->tpl->assign(
-            array(
+            [
                 'topic' => $topic,
                 'links' => Help::getNavigationLinks($topic),
-            )
+            ]
         );
 
         if ($topic != 'main') {

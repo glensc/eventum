@@ -90,10 +90,10 @@ class CustomFieldsController extends BaseController
         $custom_fields = Custom_Field::getListByIssue($this->prj_id, $this->issue_id, null, false, true);
 
         $this->tpl->assign(
-            array(
+            [
                 'issue_id' => $this->issue_id,
                 'custom_fields' => $custom_fields,
-            )
+            ]
         );
     }
 }

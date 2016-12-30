@@ -78,7 +78,7 @@ abstract class Contract
      *
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Constructs the contract object and loads contract data.
@@ -325,7 +325,7 @@ abstract class Contract
      */
     public static function getAllDetails($contracts)
     {
-        $contracts_temp = array();
+        $contracts_temp = [];
         foreach ($contracts as $contract_id => $contract) {
             $contracts_temp[$contract_id] = $contract->getDetails();
         }
@@ -343,7 +343,7 @@ abstract class Contract
      *
      * @return Customer
      */
-    public function &getCustomer()
+    public function getCustomer()
     {
         return $this->customer;
     }
@@ -375,9 +375,6 @@ abstract class Contract
 
     public function __toString()
     {
-        // FIXME: $options unused
-        $options = $this->getOptions(true);
-
         return "Contract\nID: " . $this->contract_id . '
             Start: ' . $this->start_date . '
             End: ' . $this->end_date . "\n";

@@ -24,7 +24,7 @@ class Time_Tracking
      * These categories are required by Eventum and cannot be deleted.
      * @var array
      */
-    private static $default_categories = array('Note Discussion', 'Email Discussion', 'Telephone Discussion');
+    private static $default_categories = ['Note Discussion', 'Email Discussion', 'Telephone Discussion'];
 
     /**
      * Method used to get the ID of a given category.
@@ -43,7 +43,7 @@ class Time_Tracking
                     ttc_prj_id=? AND
                     ttc_title=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($prj_id, $ttc_title));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$prj_id, $ttc_title]);
         } catch (DatabaseException $e) {
             return 0;
         }
@@ -66,7 +66,7 @@ class Time_Tracking
                  WHERE
                     ttc_id=?';
         try {
-            $res = DB_Helper::getInstance()->getRow($stmt, array($ttc_id));
+            $res = DB_Helper::getInstance()->getRow($stmt, [$ttc_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -83,12 +83,13 @@ class Time_Tracking
     {
         $stmt = 'SELECT
                     ttr_ttc_id,
-                    COUNT(*)
+                    COUNT(ttr_ttc_id)
                  FROM
-                    {{%time_tracking}}
-                 WHERE
-                    ttr_ttc_id IN (' . DB_Helper::buildList($ttc_ids) . ')
-                 GROUP BY 1';
+                    {{%time_tracking}}';
+        if (count($ttc_ids) > 0) {
+            $stmt .= ' WHERE ttr_ttc_id IN (' . DB_Helper::buildList($ttc_ids) . ')';
+        }
+        $stmt .= ' GROUP BY 1';
         try {
             $res = DB_Helper::getInstance()->getPair($stmt, $ttc_ids);
         } catch (DatabaseException $e) {
@@ -148,7 +149,7 @@ class Time_Tracking
                     ttc_prj_id=? AND
                     ttc_id=?';
         try {
-            DB_Helper::getInstance()->query($stmt, array($title, $prj_id, $ttc_id));
+            DB_Helper::getInstance()->query($stmt, [$title, $prj_id, $ttc_id]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -179,7 +180,7 @@ class Time_Tracking
                     ?, ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($prj_id, $title, Date_Helper::getCurrentDateGMT()));
+            DB_Helper::getInstance()->query($stmt, [$prj_id, $title, Date_Helper::getCurrentDateGMT()]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -259,7 +260,7 @@ class Time_Tracking
                  ORDER BY
                     ttc_title ASC';
         try {
-            $res = DB_Helper::getInstance()->getPair($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getPair($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -274,7 +275,7 @@ class Time_Tracking
      */
     public static function fillTimeSpentByIssues(&$result)
     {
-        $ids = array();
+        $ids = [];
         foreach ($result as $res) {
             $ids[] = $res['iss_id'];
         }
@@ -309,8 +310,9 @@ class Time_Tracking
      *
      * @param   integer $issue_id The issue ID
      * @return  integer The total time spent
+     * @deprecated method not used
      */
-    public function getTimeSpentByIssue($issue_id)
+    public static function getTimeSpentByIssue($issue_id)
     {
         $stmt = 'SELECT
                     SUM(ttr_time_spent)
@@ -319,7 +321,7 @@ class Time_Tracking
                  WHERE
                     ttr_iss_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($issue_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$issue_id]);
         } catch (DatabaseException $e) {
             return 0;
         }
@@ -355,13 +357,13 @@ class Time_Tracking
                  ORDER BY
                     ttr_created_date ASC';
         try {
-            $res = DB_Helper::getInstance()->getAll($stmt, array($issue_id));
+            $res = DB_Helper::getInstance()->getAll($stmt, [$issue_id]);
         } catch (DatabaseException $e) {
             return 0;
         }
 
         $total_time_spent = 0;
-        $total_time_by_user = array();
+        $total_time_by_user = [];
 
         foreach ($res as &$row) {
             $row['ttr_summary'] = Link_Filter::processText(Issue::getProjectID($issue_id), nl2br(htmlspecialchars($row['ttr_summary'])));
@@ -370,10 +372,10 @@ class Time_Tracking
             if (isset($total_time_by_user[$row['ttr_usr_id']])) {
                 $total_time_by_user[$row['ttr_usr_id']]['time_spent'] += $row['ttr_time_spent'];
             } else {
-                $total_time_by_user[$row['ttr_usr_id']] = array(
+                $total_time_by_user[$row['ttr_usr_id']] = [
                     'usr_full_name' => $row['usr_full_name'],
                     'time_spent'    => $row['ttr_time_spent'],
-                );
+                ];
             }
             $total_time_spent += $row['ttr_time_spent'];
         }
@@ -388,33 +390,41 @@ class Time_Tracking
             $item['time_spent'] = Misc::getFormattedTime($item['time_spent']);
         }
 
-        return array(
+        return [
             'total_time_spent'   => Misc::getFormattedTime($total_time_spent),
             'total_time_by_user' => $total_time_by_user,
             'list'               => $res,
-        );
+        ];
     }
 
     /**
-     * Method used to remove all time entries associated with the specified list
-     * of issues.
+     * Method used to get the details of a specific entry
      *
-     * @param   array $ids The list of issues
-     * @return  boolean
+     * @param   integer $ttr_id The time tracking ID
+     * @return  array The time tracking details
      */
-    public static function removeTimeEntriesByIssues($ids)
+    public static function getTimeEntryDetails($ttr_id)
     {
-        $stmt = 'DELETE FROM
-                    {{%time_tracking}}
+        $stmt = 'SELECT
+                    ttr_id,
+                    ttr_iss_id,
+                    ttr_created_date,
+                    ttr_summary,
+                    ttr_time_spent,
+                    ttc_id,
+                    ttc_title,
+                    ttr_usr_id,
+                    usr_full_name
+                 FROM
+                    {{%time_tracking}},
+                    {{%time_tracking_category}},
+                    {{%user}}
                  WHERE
-                    ttr_iss_id IN (' . DB_Helper::buildList($ids) . ')';
-        try {
-            DB_Helper::getInstance()->query($stmt, $ids);
-        } catch (DatabaseException $e) {
-            return false;
-        }
+                    ttr_ttc_id=ttc_id AND
+                    ttr_usr_id=usr_id AND
+                    ttr_id=?';
 
-        return true;
+        return DB_Helper::getInstance()->getRow($stmt, [$ttr_id]);
     }
 
     /**
@@ -434,7 +444,7 @@ class Time_Tracking
                  WHERE
                     ttr_id=?';
 
-        $details = DB_Helper::getInstance()->getRow($stmt, array($time_id));
+        $details = DB_Helper::getInstance()->getRow($stmt, [$time_id]);
         // check if the owner is the one trying to remove this entry
         if (($details['owner_usr_id'] != $usr_id) || (!Issue::canAccess($details['issue_id'], $usr_id))) {
             return -1;
@@ -445,15 +455,15 @@ class Time_Tracking
                  WHERE
                     ttr_id=?';
         try {
-            DB_Helper::getInstance()->query($stmt, array($time_id));
+            DB_Helper::getInstance()->query($stmt, [$time_id]);
         } catch (DatabaseException $e) {
             return -1;
         }
 
         Issue::markAsUpdated($details['issue_id']);
-        History::add($details['issue_id'], $usr_id, 'time_removed', 'Time tracking entry removed by {user}', array(
+        History::add($details['issue_id'], $usr_id, 'time_removed', 'Time tracking entry removed by {user}', [
             'user' => User::getFullName($usr_id)
-        ));
+        ]);
 
         return 1;
     }
@@ -495,14 +505,14 @@ class Time_Tracking
                  ) VALUES (
                     ?, ?, ?, ?, ?, ?
                  )';
-        $params = array(
+        $params = [
             $ttc_id,
             $iss_id,
             $usr_id,
             $created_date,
             $time_spent,
             $summary,
-        );
+        ];
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
@@ -510,9 +520,63 @@ class Time_Tracking
         }
 
         Issue::markAsUpdated($iss_id, 'time added');
-        History::add($iss_id, $usr_id, 'time_added', 'Time tracking entry submitted by {user}', array(
+        History::add($iss_id, $usr_id, 'time_added', 'Time tracking entry submitted by {user}', [
             'user' => User::getFullName($usr_id)
-        ));
+        ]);
+
+        return 1;
+    }
+
+    /**
+     * Method used to update an existing time entry in the system.
+     *
+     * @param int $ttr_id The id the time entry is associated with
+     * @param int $ttc_id time tracking category id
+     * @param int $time_spent time spent in minutes
+     * @param array $date date structure
+     * @param string $summary summary about time tracking entry
+     * @return int 1 if the update worked, -1 otherwise
+     */
+    public static function updateTimeEntry($ttr_id, $ttc_id, $time_spent, $date, $summary)
+    {
+        if ($date) {
+            // format the date from the form
+            $created_date = sprintf('%04d-%02d-%02d %02d:%02d:%02d',
+                $date['Year'], $date['Month'],
+                $date['Day'], $date['Hour'],
+                $date['Minute'], 0);
+            // convert the date to GMT timezone
+            $created_date = Date_Helper::convertDateGMT($created_date . ' ' . Date_Helper::getPreferredTimezone());
+        } else {
+            $created_date = Date_Helper::getCurrentDateGMT();
+        }
+
+        $usr_id = Auth::getUserID();
+        $stmt = 'UPDATE
+                    {{%time_tracking}}
+                 SET
+                    ttr_ttc_id = ?,
+                    ttr_created_date = ?,
+                    ttr_time_spent = ?,
+                    ttr_summary = ?
+                  WHERE
+                    ttr_id = ?';
+        $params = [
+            $ttc_id,
+            $created_date,
+            $time_spent,
+            $summary,
+            $ttr_id
+        ];
+        DB_Helper::getInstance()->query($stmt, $params);
+
+        $details = self::getTimeEntryDetails($ttr_id);
+
+        History::add($details['ttr_iss_id'], $usr_id, 'time_update', "Time tracking entry '{summary}' updated by {user}", [
+            'user' => User::getFullName($usr_id),
+            'summary'   =>  $summary,
+            'ttr_id'    =>  $ttr_id,
+        ]);
 
         return 1;
     }
@@ -541,14 +605,14 @@ class Time_Tracking
                  ) VALUES (
                     ?, ?, ?, ?, ?, ?
                  )';
-        $params = array(
+        $params = [
             $cat_id,
             $issue_id,
             $usr_id,
             Date_Helper::getCurrentDateGMT(),
             $time_spent,
             $summary,
-        );
+        ];
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
@@ -556,9 +620,9 @@ class Time_Tracking
         }
 
         Issue::markAsUpdated($issue_id);
-        History::add($issue_id, $usr_id, 'remote_time_added', 'Time tracking entry submitted remotely by {user}', array(
+        History::add($issue_id, $usr_id, 'remote_time_added', 'Time tracking entry submitted remotely by {user}', [
             'user' => User::getFullName($usr_id),
-        ));
+        ]);
 
         return 1;
     }
@@ -591,12 +655,12 @@ class Time_Tracking
                  GROUP BY
                     ttc_title';
 
-        $params = array($prj_id, $usr_id, $start, $end);
+        $params = [$prj_id, $usr_id, $start, $end];
 
         try {
             $res = DB_Helper::getInstance()->fetchAssoc($stmt, $params, AdapterInterface::DB_FETCHMODE_ASSOC);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         if (count($res) > 0) {
@@ -609,6 +673,51 @@ class Time_Tracking
     }
 
     /**
+     * Returns a list of issues touched by the specified user in the specified time frame in specified project.
+     *
+     * @param integer $usr_id The id of the user
+     * @param int $prj_id The project id
+     * @param string $start The start date
+     * @param string $end The end date
+     * @return array An array of issues touched by the user.
+     */
+    public static function getTouchedIssuesByUser($usr_id, $prj_id, $start, $end)
+    {
+        $stmt = 'SELECT
+                    iss_id,
+                    iss_prj_id,
+                    iss_summary,
+                    iss_customer_id,
+                    iss_customer_contract_id,
+                    sta_title,
+                    pri_title,
+                    sta_is_closed
+                 FROM
+                    {{%time_tracking}},
+                    {{%issue}}
+                    LEFT JOIN
+                        {{%status}}
+                    ON
+                        iss_sta_id = sta_id
+                 LEFT JOIN
+                    {{%project_priority}}
+                 ON
+                    iss_pri_id = pri_id
+                 WHERE
+                    ttr_iss_id = iss_id AND
+                    ttr_usr_id = ? AND
+                    ttr_created_date BETWEEN ? AND ? AND
+                    iss_prj_id = ?
+                 GROUP BY
+                    iss_id
+                 ORDER BY
+                    iss_id ASC';
+        $params = [$usr_id, $start, $end, $prj_id];
+
+        return DB_Helper::getInstance()->getAll($stmt, $params);
+    }
+
+    /**
      * Method used to get the time spent for a specific issue
      * at a specific time.
      *
@@ -617,8 +726,9 @@ class Time_Tracking
      * @param   integer $start The timestamp of the beginning of the report.
      * @param   integer $end The timestamp of the end of this report.
      * @return  integer The time spent
+     * @deprecated method not used
      */
-    public function getTimeSpentByIssueAndTime($issue_id, $usr_id, $start, $end)
+    public static function getTimeSpentByIssueAndTime($issue_id, $usr_id, $start, $end)
     {
         $stmt = 'SELECT
                     SUM(ttr_time_spent)
@@ -629,7 +739,7 @@ class Time_Tracking
                     ttr_created_date BETWEEN ? AND ? AND
                     ttr_iss_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($usr_id, $start, $end, $issue_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$usr_id, $start, $end, $issue_id]);
         } catch (DatabaseException $e) {
             return 0;
         }
@@ -648,7 +758,7 @@ class Time_Tracking
      */
     public static function fillTimeSpentByIssueAndTime(&$res, $usr_id, $start, $end)
     {
-        $issue_ids = array();
+        $issue_ids = [];
         foreach ($res as $row) {
             $issue_ids[] = $row['iss_id'];
         }
@@ -662,7 +772,7 @@ class Time_Tracking
                     ttr_created_date BETWEEN ? AND ? AND
                     ttr_iss_id in (' . DB_Helper::buildList($issue_ids) . ')
                  GROUP BY ttr_iss_id';
-        $params = array($usr_id, $start, $end);
+        $params = [$usr_id, $start, $end];
         $params = array_merge($params, $issue_ids);
         try {
             $result = DB_Helper::getInstance()->getPair($stmt, $params);

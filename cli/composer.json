@@ -22,13 +22,13 @@
 	"repositories": [
 		{
 			"type": "composer",
-			"url": "https://raw.githubusercontent.com/eventum/composer/repo/"
+			"url": "https://eventum.github.io/composer/"
 		}
 	],
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"require": {
-		"eventum/rpc": "*",
+		"eventum/rpc": "~3.0.0",
 		"php": ">=5.1.2"
 	},
 	"autoload": {

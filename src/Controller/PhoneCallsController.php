@@ -84,10 +84,10 @@ class PhoneCallsController extends BaseController
     protected function prepareTemplate()
     {
         $this->tpl->assign(
-            array(
+            [
                 'issue_id' => $this->issue_id,
                 'phone_categories' => Phone_Support::getCategoryAssocList($this->prj_id),
-            )
+            ]
         );
     }
 }

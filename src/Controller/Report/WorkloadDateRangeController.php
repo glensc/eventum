@@ -15,8 +15,8 @@ namespace Eventum\Controller\Report;
 
 use Category;
 use Date_Helper;
+use Eventum\Session;
 use Report;
-use Session;
 
 class WorkloadDateRangeController extends ReportBaseController
 {
@@ -70,10 +70,10 @@ class WorkloadDateRangeController extends ReportBaseController
      */
     protected function prepareTemplate()
     {
-        $types = array(
-            'individual' => 'Individual',
-            'aggregate' => 'Aggregate',
-        );
+        $types = [
+            'individual' => ev_gettext('Individual'),
+            'aggregate' => ev_gettext('Aggregate'),
+        ];
 
         // if empty start date, set to be a month ago
         $start_date = $this->start_date ?: date('Y-m-d', time() - Date_Helper::MONTH);
@@ -91,7 +91,7 @@ class WorkloadDateRangeController extends ReportBaseController
         }
 
         $this->tpl->assign(
-            array(
+            [
                 'interval' => $this->interval,
                 'types' => $types,
                 'type' => $this->type,
@@ -99,7 +99,7 @@ class WorkloadDateRangeController extends ReportBaseController
                 'end_date' => $end_date,
                 'categories' => Category::getAssocList($this->prj_id),
                 'category' => $this->category,
-            )
+            ]
         );
     }
 }

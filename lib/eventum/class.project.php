@@ -29,10 +29,10 @@ class Project
      */
     public static function getOutgoingSenderAddress($prj_id)
     {
-        $default = array(
+        $default = [
             'name'  => '',
             'email' => '',
-        );
+        ];
         $stmt = 'SELECT
                     prj_outgoing_sender_name,
                     prj_outgoing_sender_email
@@ -41,16 +41,16 @@ class Project
                  WHERE
                     prj_id=?';
         try {
-            $res = DB_Helper::getInstance()->getRow($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getRow($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return $default;
         }
 
         if (!empty($res)) {
-            return array(
+            return [
                 'name'  => $res['prj_outgoing_sender_name'],
                 'email' => $res['prj_outgoing_sender_email'],
-            );
+            ];
         }
 
         return $default;
@@ -72,7 +72,7 @@ class Project
                  WHERE
                     prj_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -96,7 +96,7 @@ class Project
                  WHERE
                     prj_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -119,7 +119,7 @@ class Project
                     prj_anonymous_post_options=?
                  WHERE
                     prj_id=?';
-        $params = array($_POST['anonymous_post'], @serialize($_POST['options']), $prj_id);
+        $params = [$_POST['anonymous_post'], @serialize($_POST['options']), $prj_id];
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
@@ -170,7 +170,7 @@ class Project
                  WHERE
                     prj_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -197,7 +197,7 @@ class Project
                  WHERE
                     prj_title=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($prj_title));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$prj_title]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -226,7 +226,7 @@ class Project
                  WHERE
                     prj_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -257,7 +257,7 @@ class Project
                  WHERE
                     prj_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             // FIXME: why return true?
             return true;
@@ -289,53 +289,18 @@ class Project
                  WHERE
                     prj_id=?';
         try {
-            $res = DB_Helper::getInstance()->getRow($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getRow($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
         }
 
         if (empty($res)) {
-            return array();
+            return [];
         }
 
         $res['prj_assigned_users'] = self::getUserColList($res['prj_id']);
         $res['assigned_statuses'] = array_keys(Status::getAssocStatusList($res['prj_id']));
 
         return $res;
-    }
-
-    /**
-     * Method used to remove a given set of projects from the system.
-     *
-     * @return  boolean
-     */
-    public static function remove()
-    {
-        $items = $_POST['items'];
-        $stmt = 'DELETE FROM
-                    {{%project}}
-                 WHERE
-                    prj_id IN (' . DB_Helper::buildList($items) . ')';
-        try {
-            DB_Helper::getInstance()->query($stmt, $items);
-        } catch (DatabaseException $e) {
-            return -1;
-        }
-
-        self::removeUserByProjects($items);
-        Category::removeByProjects($items);
-        Release::removeByProjects($items);
-        Filter::removeByProjects($items);
-        Email_Account::removeAccountByProjects($items);
-        Issue::removeByProjects($items);
-        Custom_Field::removeByProjects($items);
-
-        $statuses = array_keys(Status::getAssocStatusList($items));
-        foreach ($items as $prj_id) {
-            Status::removeProjectAssociations($statuses, $prj_id);
-        }
-        Group::disassociateProjects($items);
-
-        return 1;
     }
 
     /**
@@ -395,7 +360,7 @@ class Project
                  WHERE
                     prj_id=?';
         try {
-            DB_Helper::getInstance()->query($stmt, array(
+            DB_Helper::getInstance()->query($stmt, [
                 $_POST['title'],
                 $_POST['status'],
                 $_POST['lead_usr_id'],
@@ -408,12 +373,12 @@ class Project
                 $_POST['customer_backend'],
                 $_POST['workflow_backend'],
                 $_POST['id'],
-            ));
+            ]);
         } catch (DatabaseException $e) {
             return -1;
         }
 
-        self::removeUserByProjects(array($_POST['id']), $_POST['users']);
+        self::removeUserByProjects([$_POST['id']], $_POST['users']);
         foreach ($_POST['users'] as $user) {
             if ($user == $_POST['lead_usr_id']) {
                 self::associateUser($_POST['id'], $user, User::ROLE_MANAGER);
@@ -454,7 +419,7 @@ class Project
                     pru_prj_id = ? AND
                     pru_usr_id = ?';
         try {
-            $res = DB_Helper::getInstance()->getOne($sql, array($prj_id, $usr_id));
+            $res = DB_Helper::getInstance()->getOne($sql, [$prj_id, $usr_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -470,7 +435,7 @@ class Project
                         ?, ?, ?
                      )';
             try {
-                DB_Helper::getInstance()->query($stmt, array($usr_id, $prj_id, $role));
+                DB_Helper::getInstance()->query($stmt, [$usr_id, $prj_id, $role]);
             } catch (DatabaseException $e) {
                 return false;
             }
@@ -483,7 +448,7 @@ class Project
                         pru_prj_id = ? AND
                         pru_usr_id = ?';
             try {
-                DB_Helper::getInstance()->query($stmt, array($role, $prj_id, $usr_id));
+                DB_Helper::getInstance()->query($stmt, [$role, $prj_id, $usr_id]);
             } catch (DatabaseException $e) {
                 return false;
             }
@@ -521,7 +486,7 @@ class Project
                      ?, ?, ?, ?, ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array(
+            DB_Helper::getInstance()->query($stmt, [
                 Date_Helper::getCurrentDateGMT(),
                 $_POST['title'],
                 $_POST['status'],
@@ -533,7 +498,7 @@ class Project
                 $_POST['remote_invocation'],
                 $_POST['customer_backend'],
                 $_POST['workflow_backend'],
-            ));
+            ]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -626,11 +591,11 @@ class Project
                  ORDER BY
                     prj_title';
         try {
-            $params = array(
+            $params = [
                 $usr_id,
                 'archived',
                 User::ROLE_MANAGER,
-            );
+            ];
             if ($include_extra) {
                 $res = DB_Helper::getInstance()->fetchAssoc($stmt, $params, AdapterInterface::DB_FETCHMODE_ASSOC);
             } else {
@@ -670,7 +635,7 @@ class Project
                     pru_prj_id=? AND
                     pru_usr_id=usr_id AND
                     usr_id != ?';
-        $params = array($prj_id, APP_SYSTEM_USER_ID);
+        $params = [$prj_id, APP_SYSTEM_USER_ID];
         if ($status != null) {
             $stmt .= " AND usr_status='active' ";
         }
@@ -710,7 +675,7 @@ class Project
                  ORDER BY
                     usr_full_name ASC';
         try {
-            $res = DB_Helper::getInstance()->getColumn($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getColumn($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -758,7 +723,7 @@ class Project
     public static function getAddressBookEmails($prj_id, $issue_id)
     {
         $list = self::getAddressBook($prj_id, $issue_id);
-        $emails = array();
+        $emails = [];
         foreach ($list as $address => $name) {
             $emails[] = Mail_Helper::getEmailAddress($address);
         }
@@ -778,7 +743,7 @@ class Project
     {
         static $returns;
 
-        $key = serialize(array($prj_id, $issue_id));
+        $key = serialize([$prj_id, $issue_id]);
         if (!empty($returns[$key])) {
             return $returns[$key];
         }
@@ -788,7 +753,7 @@ class Project
             return null;
         }
 
-        $temp = array();
+        $temp = [];
         foreach ($res as $name => $email) {
             $temp["$name <$email>"] = $name;
         }
@@ -807,7 +772,7 @@ class Project
      */
     public static function getAddressBookAssocList($prj_id, $issue_id = null)
     {
-        $contact_ids = array();
+        $contact_ids = [];
         $customer_id = false;
         if ($issue_id) {
             if (CRM::hasCustomerIntegration($prj_id)) {
@@ -817,7 +782,9 @@ class Project
                 if (!empty($contract_id)) {
                     try {
                         $contract = $crm->getContract($contract_id);
-                        $contact_ids = array_map(function ($element) { return $element->getContactID(); }, $contract->getContacts());
+                        $contact_ids = array_map(function ($element) {
+                            return $element->getContactID();
+                        }, $contract->getContacts());
                     } catch (CRMException $e) {
                     }
                 } elseif (!empty($customer_id)) {
@@ -841,7 +808,7 @@ class Project
                     pru_usr_id=usr_id AND
                     usr_status='active' AND
                     usr_id <> ?";
-        $params = array($prj_id, APP_SYSTEM_USER_ID);
+        $params = [$prj_id, APP_SYSTEM_USER_ID];
         if (count($contact_ids) > 0) {
             $stmt .= ' AND (pru_role <> ? OR usr_customer_contact_id IN(' . DB_Helper::buildList($contact_ids) . ')) ';
             $params[] = User::ROLE_CUSTOMER;
@@ -927,7 +894,7 @@ class Project
                  ORDER BY
                     prj_title';
         try {
-            $res = DB_Helper::getInstance()->getPair($stmt, array($usr_id, User::ROLE_CUSTOMER));
+            $res = DB_Helper::getInstance()->getPair($stmt, [$usr_id, User::ROLE_CUSTOMER]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -964,7 +931,7 @@ class Project
                  WHERE
                     pru_prj_id=? AND
                     pru_usr_id=usr_id';
-        $params = array($prj_id);
+        $params = [$prj_id];
         if ($status) {
             $stmt .= " AND usr_status='active' ";
         }
@@ -1010,9 +977,9 @@ class Project
                  ORDER BY
                     usr_full_name ASC';
         try {
-            $res = DB_Helper::getInstance()->getPair($stmt, array($prj_id, $prj_id));
+            $res = DB_Helper::getInstance()->getPair($stmt, [$prj_id, $prj_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         return $res;
@@ -1033,7 +1000,7 @@ class Project
                  WHERE
                     pfd_prj_id = ?';
         try {
-            DB_Helper::getInstance()->query($stmt, array($prj_id));
+            DB_Helper::getInstance()->query($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -1051,8 +1018,8 @@ class Project
                         ?, ?, ?, ?
                      )';
             try {
-                DB_Helper::getInstance()->query($stmt, array($prj_id, $field, $details['min_role'],
-                    (isset($details['required']) ? $details['required'] : 0)));
+                DB_Helper::getInstance()->query($stmt, [$prj_id, $field, $details['min_role'],
+                    (isset($details['required']) ? $details['required'] : 0)]);
             } catch (DatabaseException $e) {
                 return -1;
             }
@@ -1078,7 +1045,7 @@ class Project
                  WHERE
                     pfd_prj_id = ?';
         try {
-            $res = DB_Helper::getInstance()->fetchAssoc($stmt, array($prj_id), AdapterInterface::DB_FETCHMODE_ASSOC);
+            $res = DB_Helper::getInstance()->fetchAssoc($stmt, [$prj_id], AdapterInterface::DB_FETCHMODE_ASSOC);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -1086,10 +1053,10 @@ class Project
         $fields = self::getDisplayFields();
         foreach ($fields as $field_name => $field_info) {
             if (!isset($res[$field_name])) {
-                $res[$field_name] = array(
+                $res[$field_name] = [
                     'required'  =>  $field_info['required'],
                     'min_role'  =>  0,
-                );
+                ];
             }
         }
 
@@ -1103,56 +1070,56 @@ class Project
      */
     public static function getDisplayFields()
     {
-        return array(
-            'category'  =>  array(
+        return [
+            'category'  =>  [
                 'title' =>  ev_gettext('Category'),
                 'required'  =>  1,
-            ),
-            'priority'  =>    array(
+            ],
+            'priority'  =>    [
                 'title' =>  ev_gettext('Priority'),
                 'required'  =>  1,
-            ),
-            'severity'  =>    array(
+            ],
+            'severity'  =>    [
                 'title' =>  ev_gettext('Severity'),
                 'required'  =>  1,
-            ),
-            'assignment'    =>    array(
+            ],
+            'assignment'    =>    [
                 'title' =>  ev_gettext('Assignment'),
                 'required'  =>  0,
-            ),
-            'release'   =>    array(
+            ],
+            'release'   =>    [
                 'title' =>  ev_gettext('Scheduled Release'),
                 'required'  =>  0,
-            ),
-            'estimated_dev_time'    =>    array(
+            ],
+            'estimated_dev_time'    =>    [
                 'title' =>  ev_gettext('Estimated Dev. Time'),
                 'required'  =>  0,
-            ),
-            'expected_res_date'     =>    array(
+            ],
+            'expected_res_date'     =>    [
                 'title' =>  ev_gettext('Expected Resolution Date'),
                 'required'  =>  0,
-            ),
-            'group'     =>    array(
+            ],
+            'group'     =>    [
                 'title' =>  ev_gettext('Group'),
                 'required'  =>  0,
-            ),
-            'file'  =>    array(
+            ],
+            'file'  =>    [
                 'title' =>  ev_gettext('File'),
                 'required'  =>  0,
-            ),
-            'product'   =>    array(
+            ],
+            'product'   =>    [
                 'title' =>  ev_gettext('Product'),
                 'required'  =>  0,
-            ),
-            'associated_issues'   =>    array(
+            ],
+            'associated_issues'   =>    [
                 'title' =>  ev_gettext('Associated Issues'),
                 'required'  =>  0,
-            ),
-            'access_level'   =>    array(
+            ],
+            'access_level'   =>    [
                 'title' =>  ev_gettext('Access Level'),
                 'required'  =>  0,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -1163,12 +1130,12 @@ class Project
     public static function setDefaultDisplayFields($prj_id)
     {
         $fields = self::getDisplayFields();
-        $settings = array();
+        $settings = [];
         foreach ($fields as $field_name => $field_info) {
-            $settings[$field_name] = array(
+            $settings[$field_name] = [
                 'required'  =>  $field_info['required'],
                 'min_role'  =>  0,
-            );
+            ];
         }
         self::updateFieldDisplaySettings($prj_id, $settings);
     }

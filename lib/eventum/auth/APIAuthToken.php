@@ -15,8 +15,6 @@ use Eventum\Db\DatabaseException;
 
 class APIAuthToken
 {
-    private static $default_alg = 'HS256';
-
     public static function generate($usr_id)
     {
         $factory = new RandomLib\Factory();
@@ -37,14 +35,15 @@ class APIAuthToken
                     apt_created = ?,
                     apt_token = ?';
         try {
-            $res = DB_Helper::getInstance()->query($sql, array(
+            $res = DB_Helper::getInstance()->query($sql, [
                 $usr_id,
                 Date_Helper::getCurrentDateGMT(),
                 $token,
-            ));
+            ]);
         } catch (DatabaseException $e) {
             return -1;
         }
+        return $res;
     }
 
     public static function isTokenValidForEmail($token, $email)
@@ -74,7 +73,7 @@ class APIAuthToken
                     apt_token = ? AND
                     apt_status = 'active'";
         try {
-            $usr_id = DB_Helper::getInstance()->getOne($sql, array($token));
+            $usr_id = DB_Helper::getInstance()->getOne($sql, [$token]);
         } catch (DatabaseException $e) {
             throw new AuthException('Error fetching user token');
         }
@@ -104,9 +103,9 @@ class APIAuthToken
                 ORDER BY
                     apt_created DESC';
         try {
-            $res = DB_Helper::getInstance()->getAll($sql, array($usr_id));
+            $res = DB_Helper::getInstance()->getAll($sql, [$usr_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
         if (empty($res)) {
             if ($auto_generate) {
@@ -114,7 +113,7 @@ class APIAuthToken
 
                 return self::getTokensForUser($usr_id, false);
             } else {
-                return array();
+                return [];
             }
         }
 
@@ -130,12 +129,12 @@ class APIAuthToken
                 WHERE
                     apt_usr_id = ?";
         try {
-            DB_Helper::getInstance()->query($sql, array($usr_id));
+            DB_Helper::getInstance()->query($sql, [$usr_id]);
         } catch (DatabaseException $e) {
             return -1;
         }
 
-        $res = self::generate($usr_id);
+        self::generate($usr_id);
 
         return 1;
     }

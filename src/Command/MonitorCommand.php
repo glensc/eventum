@@ -28,16 +28,16 @@ class MonitorCommand extends Command
         define('STATE_DEPENDENT', 4);
 
         // the owner, group and filesize settings should be changed to match the correct permissions on your server.
-        $required_files = array(
-            APP_CONFIG_PATH . '/config.php' => array(
+        $required_files = [
+            APP_CONFIG_PATH . '/config.php' => [
                 'check_owner' => true,
                 'owner' => 'apache',
                 'check_group' => true,
                 'group' => 'apache',
                 'check_permission' => true,
                 'permission' => 640,
-            ),
-            APP_CONFIG_PATH . '/setup.php' => array(
+            ],
+            APP_CONFIG_PATH . '/setup.php' => [
                 'check_owner' => true,
                 'owner' => 'apache',
                 'check_group' => true,
@@ -46,19 +46,19 @@ class MonitorCommand extends Command
                 'permission' => 660,
                 'check_filesize' => true,
                 'filesize' => 1024,
-            ),
-        );
+            ],
+        ];
 
-        $required_directories = array(
-            APP_PATH . '/misc/routed_emails' => array(
+        $required_directories = [
+            APP_PATH . '/misc/routed_emails' => [
                 'check_permission' => true,
                 'permission' => 770,
-            ),
-            APP_PATH . '/misc/routed_notes' => array(
+            ],
+            APP_PATH . '/misc/routed_notes' => [
                 'check_permission' => true,
                 'permission' => 770,
-            ),
-        );
+            ],
+        ];
 
         $opt = getopt('q');
         $quiet = isset($opt['q']);
@@ -78,9 +78,6 @@ class MonitorCommand extends Command
         if ($prefs['paths']['status'] == 'enabled') {
             $errors += Monitor::checkRequiredFiles($required_files);
             $errors += Monitor::checkRequiredDirs($required_directories);
-        }
-        if ($prefs['ircbot']['status'] == 'enabled') {
-            $errors += Monitor::checkIRCBot();
         }
 
         if ($errors) {

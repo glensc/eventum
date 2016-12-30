@@ -65,7 +65,7 @@ interface AdapterInterface
      * or true for successful data manipulation queries.
      * @throws DatabaseException on failure.
      */
-    public function query($query, $params = array());
+    public function query($query, $params = []);
 
     /**
      * Quotes a string so it can be safely used as a table or column name
@@ -87,7 +87,7 @@ interface AdapterInterface
      * @return array the nested array.
      * @throws DatabaseException on failure.
      */
-    public function getAll($query, $params = array(), $fetchmode = self::DB_FETCHMODE_ASSOC);
+    public function getAll($query, $params = [], $fetchmode = self::DB_FETCHMODE_ASSOC);
 
     /**
      * Fetches an entire query result and returns it as an
@@ -101,7 +101,7 @@ interface AdapterInterface
      * @param int $fetchmode
      * @throws DatabaseException on failure.
      */
-    public function fetchAssoc($query, $params = array(), $fetchmode = self::DB_FETCHMODE_DEFAULT);
+    public function fetchAssoc($query, $params = [], $fetchmode = self::DB_FETCHMODE_DEFAULT);
 
     /**
      * Fetches a first column from a query result and returns it as an
@@ -112,7 +112,7 @@ interface AdapterInterface
      * @return array the results as an array.
      * @throws DatabaseException on failure.
      */
-    public function getColumn($query, $params = array());
+    public function getColumn($query, $params = []);
 
     /**
      * Fetches the first column of the first row from a query result
@@ -124,7 +124,7 @@ interface AdapterInterface
      * @return mixed the returned value of the query.
      * @throws DatabaseException on failure.
      */
-    public function getOne($query, $params = array());
+    public function getOne($query, $params = []);
 
     /**
      * Fetches an entire query result and returns it as an
@@ -138,7 +138,7 @@ interface AdapterInterface
      * @return array  the associative array containing the query results.
      * @throws DatabaseException on failure.
      */
-    public function getPair($query, $params = array());
+    public function getPair($query, $params = []);
 
     /**
      * Fetches the first row of data returned from a query result
@@ -149,5 +149,5 @@ interface AdapterInterface
      * @return array  the first row of results as an array.
      * @throws DatabaseException on failure.
      */
-    public function getRow($query, $params = array(), $fetchmode = self::DB_FETCHMODE_ASSOC);
+    public function getRow($query, $params = [], $fetchmode = self::DB_FETCHMODE_ASSOC);
 }

@@ -20,15 +20,17 @@ $(document).ready(function() {
 
     // check the class of the body and try to execute the prep functions if there is a class defined for that
     var $body = $("body");
+    var classes = $body.attr('class').split(" ");
     var page_id = $body.attr('id');
-    $.each($body.attr('class').split(" "), function(indexInArray, valueOfElement) {
-        if (valueOfElement == '') {
+    classes.push(page_id);
+    $.each(classes, function(indexInArray, className) {
+        if (className == '') {
             return
         }
-        valueOfElement = valueOfElement.replace('-', '_');
-        if (eval("typeof " + valueOfElement) !== "undefined" &&
-                eval("typeof " + valueOfElement + '.ready') == 'function') {
-            eval(valueOfElement + '.ready(page_id)');
+        className = className.replace(/-/g, '_');
+        if (className != 'new' && eval("typeof " + className) !== "undefined" &&
+                eval("typeof " + className + '.ready') == 'function') {
+            eval(className + '.ready(page_id)');
         }
     });
 
@@ -57,20 +59,6 @@ $(document).ready(function() {
         firstDay: user_prefs.week_firstday
     });
 
-    $('#search, #shortcut').focus(function(e) {
-        var target = $(this);
-        this.select();
-        target.removeClass('inactive');
-
-        // Work around Chrome's little problem
-        target.mouseup(function() {
-            // Prevent further mouseup intervention
-            target.unbind("mouseup");
-            return false;
-        });
-    }).blur(function(e) {
-        $(this).addClass('inactive');
-    });
     $('#shortcut_form').submit(function(e) {
         var target = $('#shortcut');
         if (!Validation.isNumberOnly(target.val())) {
@@ -82,6 +70,12 @@ $(document).ready(function() {
     $("a.help").click(Eventum.openHelp);
 
     $("input.issue_field").blur(Validation.validateIssueNumberField);
+
+    // % complete progressbar
+    $("div.iss_percent_complete").each(function() {
+        var $e = $(this);
+        $e.progressbar({value: $e.data('percent')});
+    });
 
     // chosen config
     var config = {
@@ -514,7 +508,7 @@ Eventum.clearAutoSave = function(prefix)
             localStorage.removeItem(localStorage.key(i));
         }
     }
-}
+};
 
 function Validation()
 {

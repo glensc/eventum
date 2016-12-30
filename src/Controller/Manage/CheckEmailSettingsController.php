@@ -48,14 +48,14 @@ class CheckEmailSettingsController extends ManageBaseController
             return;
         }
 
-        $account = array(
+        $account = [
             'ema_hostname' => $hostname,
             'ema_port' => $post->get('port'),
             'ema_type' => $post->get('type'),
             'ema_folder' => $post->get('folder'),
             'ema_username' => $post->get('username'),
             'ema_password' => $post->get('password'),
-        );
+        ];
         $mbox = Support::connectEmailServer($account);
         if (!$mbox) {
             $this->tpl->assign('error', 'could_not_connect');

@@ -43,12 +43,12 @@ class Validation
      */
     public static function isEmail($str)
     {
-        $valid_chars = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+        $valid_chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
                                 'j', 'l', 'k', 'm', 'n', 'o', 'p', 'q', 'r',
                                 's', 't', 'u', 'w', 'v', 'x', 'y', 'z',
                                 '0', '1', '2', '3', '4', '5', '6', '7',
-                                '8', '9', );
-        $extended_chars = array('.', '+', '_', '-', '@');
+                                '8', '9', ];
+        $extended_chars = ['.', '+', '_', '-', '@'];
         $str = strtolower($str);
 
         // we need at least one @ symbol
@@ -94,12 +94,13 @@ class Validation
      *
      * @param   string $str The string to check against
      * @return  boolean
+     * @deprecated method not used
      */
-    public function hasValidChars($str)
+    public static function hasValidChars($str)
     {
-        $valid_chars = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+        $valid_chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
                                 'j', 'l', 'k', 'm', 'n', 'o', 'p', 'q', 'r',
-                                's', 't', 'u', 'w', 'v', 'x', 'y', 'z', );
+                                's', 't', 'u', 'w', 'v', 'x', 'y', 'z', ];
 
         for ($i = 0; $i < strlen($str); $i++) {
             if (!in_array(substr($str, $i, 1), $valid_chars)) {

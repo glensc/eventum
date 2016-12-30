@@ -36,13 +36,13 @@ class PearAdapter implements AdapterInterface
 
     public function __construct(array $config)
     {
-        $dsn = array(
+        $dsn = [
             'phptype' => $config['driver'],
             'hostspec' => $config['hostname'],
             'database' => $config['database'],
             'username' => $config['username'],
             'password' => $config['password'],
-        );
+        ];
 
         if (isset($config['socket'])) {
             $dsn['socket'] = $config['socket'];
@@ -69,6 +69,10 @@ class PearAdapter implements AdapterInterface
                 break;
         }
 
+        // probe autoloader to load PEAR_Error class
+        // https://github.com/eventum/eventum/issues/200#issuecomment-252485838
+        class_exists('PEAR');
+
         $db = DB::connect($dsn);
         $this->assertError($db);
 
@@ -76,6 +80,7 @@ class PearAdapter implements AdapterInterface
         switch ($dsn['phptype']) {
             case 'mysql':
             case 'mysqli':
+                // http://dev.mysql.com/doc/refman/5.7/en/sql-mode.html
                 $db->query("SET SQL_MODE = ''");
                 if (Language::isUTF8()) {
                     $db->query('SET NAMES utf8');
@@ -92,7 +97,7 @@ class PearAdapter implements AdapterInterface
     /**
      * @see DB_common::getOne
      */
-    public function getOne($query, $params = array())
+    public function getOne($query, $params = [])
     {
         $query = $this->quoteSql($query, $params);
         $res = $this->db->getOne($query, $params);
@@ -118,7 +123,7 @@ class PearAdapter implements AdapterInterface
      * @deprecated use fetchAssoc() instead for cleaner interface
      */
     private function getAssoc(
-        $query, $force_array = false, $params = array(),
+        $query, $force_array = false, $params = [],
         $fetchmode = AdapterInterface::DB_FETCHMODE_DEFAULT, $group = false
     ) {
         if (is_array($force_array)) {
@@ -134,7 +139,7 @@ class PearAdapter implements AdapterInterface
     /**
      * @see DB_common::getAssoc
      */
-    public function fetchAssoc($query, $params = array(), $fetchmode = AdapterInterface::DB_FETCHMODE_DEFAULT)
+    public function fetchAssoc($query, $params = [], $fetchmode = AdapterInterface::DB_FETCHMODE_DEFAULT)
     {
         $query = $this->quoteSql($query, $params);
         $res = $this->db->getAssoc($query, false, $params, $fetchmode, false);
@@ -143,7 +148,7 @@ class PearAdapter implements AdapterInterface
         return $res;
     }
 
-    public function getPair($query, $params = array())
+    public function getPair($query, $params = [])
     {
         return $this->getAssoc($query, false, $params);
     }
@@ -151,7 +156,7 @@ class PearAdapter implements AdapterInterface
     /**
      * @see DB_common::query
      */
-    public function query($query, $params = array())
+    public function query($query, $params = [])
     {
         $query = $this->quoteSql($query, $params);
         $res = $this->db->query($query, $params);
@@ -167,7 +172,7 @@ class PearAdapter implements AdapterInterface
     /**
      * @see DB_common::getAll
      */
-    public function getAll($query, $params = array(), $fetchmode = AdapterInterface::DB_FETCHMODE_ASSOC)
+    public function getAll($query, $params = [], $fetchmode = AdapterInterface::DB_FETCHMODE_ASSOC)
     {
         $query = $this->quoteSql($query, $params);
         $res = $this->db->getAll($query, $params, $fetchmode);
@@ -179,7 +184,7 @@ class PearAdapter implements AdapterInterface
     /**
      * @see DB_common::getRow
      */
-    public function getRow($query, $params = array(), $fetchmode = AdapterInterface::DB_FETCHMODE_ASSOC)
+    public function getRow($query, $params = [], $fetchmode = AdapterInterface::DB_FETCHMODE_ASSOC)
     {
         $query = $this->quoteSql($query, $params);
         $res = $this->db->getRow($query, $params, $fetchmode);
@@ -191,7 +196,7 @@ class PearAdapter implements AdapterInterface
     /**
      * @see DB_common::getCol
      */
-    public function getColumn($query, $params = array())
+    public function getColumn($query, $params = [])
     {
         $query = $this->quoteSql($query, $params);
         $res = $this->db->getCol($query, 0, $params);
@@ -233,9 +238,9 @@ class PearAdapter implements AdapterInterface
             return;
         }
 
-        $context = array(
+        $context = [
             'debuginfo' => $e->getDebugInfo(),
-        );
+        ];
 
         // walk up in $e->backtrace until we find ourself
         // and from it we can get method name and it's arguments

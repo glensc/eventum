@@ -1,9 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
+use Cascade\Cascade;
 use Eventum\Db\DatabaseException;
 use Eventum\Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use Cascade\Cascade;
 
 class LoggerTest extends TestCase
 {
@@ -41,7 +52,7 @@ class LoggerTest extends TestCase
     {
         $this->assertDatabase();
         try {
-            DB_Helper::getInstance()->query('here -->?<-- be dragons?', array('param1', 'param2'));
+            DB_Helper::getInstance()->query('here -->?<-- be dragons?', ['param1', 'param2']);
         } catch (DatabaseException $e) {
         }
     }
@@ -54,7 +65,7 @@ class LoggerTest extends TestCase
         $e = new Exception('It happened');
 
         Logger::app()->error($e);
-        Logger::app()->error($e->getMessage(), array('exception' => $e));
+        Logger::app()->error($e->getMessage(), ['exception' => $e]);
     }
 
     public function testLogPearException()
@@ -65,7 +76,7 @@ class LoggerTest extends TestCase
         // "app.ERROR: It happened []"
         Logger::app()->error($e);
 
-        Logger::app()->error($e->getMessage(), array('debug' => $e->getDebugInfo()));
+        Logger::app()->error($e->getMessage(), ['debug' => $e->getDebugInfo()]);
     }
 
     public function testCliLog()

@@ -98,10 +98,10 @@ class ConvertNoteController extends BaseController
     protected function prepareTemplate()
     {
         $this->tpl->assign(
-            array(
+            [
                 'issue_id' => $this->issue_id,
                 'note_id' => $this->note_id,
-            )
+            ]
         );
     }
 }

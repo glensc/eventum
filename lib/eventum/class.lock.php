@@ -11,6 +11,10 @@
  * that were distributed with this source code.
  */
 
+/**
+ * Class Lock
+ * @deprecated use ConcurrentLock instead
+ */
 class Lock
 {
     /**
@@ -75,7 +79,7 @@ class Lock
         }
 
         $retval = 0;
-        $out = array();
+        $out = [];
         exec('kill -s 0 ' . $pid, $out, $retval);
 
         return $retval == 0;

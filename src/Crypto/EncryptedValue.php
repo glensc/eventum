@@ -90,7 +90,7 @@ final class EncryptedValue
      * @param array $data
      * @return EncryptedValue
      */
-    public function __set_state($data)
+    public static function __set_state($data)
     {
         return new self($data['ciphertext']);
     }

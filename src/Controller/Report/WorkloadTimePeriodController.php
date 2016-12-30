@@ -57,11 +57,11 @@ class WorkloadTimePeriodController extends ReportBaseController
         }
 
         $this->tpl->assign(
-            array(
+            [
                 'data' => $data,
                 'type' => $this->type,
                 'user_tz' => Date_Helper::getTimezoneShortNameByUser($this->usr_id),
-            )
+            ]
         );
     }
 }

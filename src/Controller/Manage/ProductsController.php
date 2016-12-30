@@ -13,7 +13,7 @@
 
 namespace Eventum\Controller\Manage;
 
-use Misc;
+use Eventum\Controller\Helper\MessagesHelper;
 use Product;
 use Project;
 
@@ -65,11 +65,11 @@ class ProductsController extends ManageBaseController
             $post->get('title'), $post->get('version_howto'), $post->get('rank'),
             $post->get('removed'), $post->get('email')
         );
-        $map = array(
-            1 => array('Thank you, the product was added successfully.', Misc::MSG_INFO),
-            -1 => array('An error occurred while trying to add the product.', Misc::MSG_ERROR),
-        );
-        Misc::mapMessages($res, $map);
+        $map = [
+            1 => ['Thank you, the product was added successfully.', MessagesHelper::MSG_INFO],
+            -1 => ['An error occurred while trying to add the product.', MessagesHelper::MSG_ERROR],
+        ];
+        $this->messages->mapMessages($res, $map);
     }
 
     private function updateAction()
@@ -80,11 +80,11 @@ class ProductsController extends ManageBaseController
             $post->get('id'), $post->get('title'), $post->get('version_howto'),
             $post->get('rank'), $post->get('removed'), $post->get('email')
         );
-        $map = array(
-            1 => array('Thank you, the product was updated successfully.', Misc::MSG_INFO),
-            -1 => array('An error occurred while trying to update the product.', Misc::MSG_ERROR),
-        );
-        Misc::mapMessages($res, $map);
+        $map = [
+            1 => ['Thank you, the product was updated successfully.', MessagesHelper::MSG_INFO],
+            -1 => ['An error occurred while trying to update the product.', MessagesHelper::MSG_ERROR],
+        ];
+        $this->messages->mapMessages($res, $map);
     }
 
     private function deleteAction()
@@ -108,10 +108,10 @@ class ProductsController extends ManageBaseController
     protected function prepareTemplate()
     {
         $this->tpl->assign(
-            array(
+            [
                 'list' => Product::getList(),
                 'project_list' => Project::getAll(),
-            )
+            ]
         );
     }
 }

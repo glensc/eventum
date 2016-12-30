@@ -1,45 +1,69 @@
 language: php
+sudo: required
 
-php:
-  - 7.0
-  - 5.6
-  - 5.5
-  - 5.4
-  - 5.3
-  - hhvm
+# disable the default submodule logic
+git:
+  submodules: false
 
 matrix:
+  fast_finish: true
+  include:
+    - php: "5.5"
+      env: RELEASE=yes
+    - php: "5.6"
+    - php: "7.0"
+    - php: "hhvm"
+    - php: "nightly"
   allow_failures:
     - php: hhvm
+    - php: nightly
     - php: 7.0
 
 cache:
   apt: true
   directories:
     - $HOME/.composer/cache
+    - cache
+    - vendor
 
 before_install:
-# install all locales used by eventum
-  - sudo apt-get update && travis_retry sudo apt-get --reinstall install -qq language-pack-{br,ca,cs,da,de,eo,es,et,fi,fo,fr,he,ht,hu,id,it,ja,ko,lt,lv,nl,oc,pl,pt,ru,si,sv,ta,th,tr,uk,ur,vi,zh-hans}
-# display some info from system
-  - dpkg --list | grep language-pack
+  - mkdir -p ~/.phpenv/versions/$(phpenv version-name)/etc
   - echo "extension=ldap.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - locale -a
-  - make php-cs-fixer.phar
-# pull translations from launchpad
-  - bzr branch lp:~glen666/eventum/po po
-  - cp -af po/localization/*.po localization
+  - if ! phpenv config-rm xdebug.ini; then :; fi
 
 install:
-  - composer install --no-interaction --prefer-source
-  - make pear-fix
+  # disable secure-http because sourceforge redirects to http:// urls
+  - composer config secure-http false
+  - composer install --no-interaction --prefer-dist
+
+script:
+  - bin/ci/check_patches.sh
+  - echo phpunit -v --debug
+  - bin/ci/dist.sh
+
+before_deploy:
+  - bin/ci/changelog.sh
+
+# https://docs.travis-ci.com/user/deployment/releases
+deploy:
+  provider: releases
+  # Create token in https://github.com/settings/tokens and set as env var:
+  # $ travis env set -p GITHUB_API_TOKEN ...
+  # or via https://travis-ci.org/eventum/eventum/settings
+  api_key: $GITHUB_API_TOKEN
+  file_glob: true
+  file:
+    - eventum-*.tar.gz
+  skip_cleanup: true
+  overwrite: true
+  on:
+    repo: eventum/eventum
+    php: '5.5'
+    tags: true
 
 notifications:
   irc:
     channels: "chat.freenode.net#eventum"
     skip_join: true
-
-script:
-  - phpunit -v --debug
 
 # vim:ts=2:sw=2:et

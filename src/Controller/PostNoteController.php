@@ -100,7 +100,7 @@ class PostNoteController extends BaseController
 
         if ($this->cat == 'post_result' && ($post_result = $get->getInt('post_result'))) {
             $this->tpl->assign('post_result', $post_result);
-            $this->tpl->assign('garlic_prefix', $get->get('garlic_prefix'), '');
+            $this->tpl->assign('garlic_prefix', $get->get('garlic_prefix', ''));
         } elseif ($this->cat == 'post_note') {
             $this->postNoteAction();
         } elseif ($this->cat == 'reply' && ($note_id = $get->getInt('id'))) {
@@ -123,10 +123,10 @@ class PostNoteController extends BaseController
         $header = Misc::formatReplyPreamble($note['timestamp'], $note['not_from']);
         $note['not_body'] = $header . Misc::formatReply($note['not_note']);
         $this->tpl->assign(
-            array(
+            [
                 'note' => $note,
                 'parent_note_id' => $note_id,
-            )
+            ]
         );
         $this->reply_subject = $note['not_title'];
     }
@@ -135,23 +135,23 @@ class PostNoteController extends BaseController
     {
         $email = Support::getEmailDetails($ema_id, $sup_id);
         $header = Misc::formatReplyPreamble($email['timestamp'], $email['sup_from']);
-        $note = array();
+        $note = [];
         $note['not_body'] = $header . Misc::formatReply($email['message']);
-        $this->tpl->assign(array(
+        $this->tpl->assign([
             'note'           => $note,
             'sup_id'         => $sup_id,
-        ));
+        ]);
         $this->reply_subject = $email['sup_subject'];
     }
 
     private function replyIssueAction()
     {
         $header = Misc::formatReplyPreamble($this->issue_details['iss_created_date'], $this->issue_details['reporter']);
-        $note = array();
+        $note = [];
         $note['not_body'] = $header . Misc::formatReply($this->issue_details['iss_original_description']);
-        $this->tpl->assign(array(
+        $this->tpl->assign([
             'note'           => $note
-        ));
+        ]);
         $this->reply_subject = $this->issue_details['iss_summary'];
     }
 
@@ -166,15 +166,27 @@ class PostNoteController extends BaseController
             $this->setIssueStatus($status);
         }
 
-        $res = Note::insertFromPost($this->usr_id, $this->issue_id);
+        $options = [
+            'parent_id' => $post->get('parent_id', null),
+            'add_extra_recipients' => ($post->get('add_extra_recipients', '') == 'yes'),
+            'cc' => $post->get('note_cc'),
+        ];
+
+        $res = Note::insertNote(
+            $this->usr_id,
+            $this->issue_id,
+            Mail_Helper::cleanSubject($post->get('title')),
+            $post->get('note'),
+            $options
+        );
 
         $issue_field = $post->get('issue_field') ?: $get->get('issue_field');
         Issue_Field::updateValues($this->issue_id, 'post_note', $issue_field);
 
         if ($res == -1) {
-            Misc::setMessage(ev_gettext('An error occurred while trying to run your query'), Misc::MSG_ERROR);
+            $this->messages->addErrorMessage(ev_gettext('An error occurred while trying to run your query'));
         } else {
-            Misc::setMessage(ev_gettext('Thank you, the internal note was posted successfully.'), Misc::MSG_INFO);
+            $this->messages->addInfoMessage(ev_gettext('Thank you, the internal note was posted successfully.'));
         }
         $this->tpl->assign('post_result', $res);
 
@@ -183,12 +195,12 @@ class PostNoteController extends BaseController
         }
 
         $this->redirect(
-            'post_note.php', array(
+            'post_note.php', [
                 'cat' => 'post_result',
                 'issue_id' => $this->issue_id,
                 'post_result' => $res,
                 'garlic_prefix' => $post->get('garlic_prefix', ''),
-            )
+            ]
         );
     }
 
@@ -205,10 +217,10 @@ class PostNoteController extends BaseController
         $status_title = Status::getStatusTitle($status);
         History::add(
             $this->issue_id, $this->usr_id, 'status_changed',
-            "Status changed to '{status}' by {user} when sending a note", array(
+            "Status changed to '{status}' by {user} when sending a note", [
                 'status' => $status_title,
                 'user' => User::getFullName($this->usr_id)
-            )
+            ]
         );
     }
 
@@ -235,7 +247,7 @@ class PostNoteController extends BaseController
     {
         $reply_subject = Mail_Helper::removeExcessRe(ev_gettext('Re: %1$s', $this->reply_subject), true);
         $this->tpl->assign(
-            array(
+            [
                 'issue_id' => $this->issue_id,
                 'reply_subject' => $reply_subject,
                 'from' => User::getFromHeader($this->usr_id),
@@ -246,7 +258,7 @@ class PostNoteController extends BaseController
                 'time_categories' => Time_Tracking::getAssocCategories($this->prj_id),
                 'note_category_id' => Time_Tracking::getCategoryId($this->prj_id, 'Note Discussion'),
                 'issue_fields' => Issue_Field::getDisplayData($this->issue_id, 'post_note'),
-            )
+            ]
         );
     }
 }

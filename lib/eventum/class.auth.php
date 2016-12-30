@@ -12,6 +12,7 @@
  */
 
 use Eventum\Monolog\Logger;
+use Eventum\Session;
 
 /**
  * Class to handle authentication issues.
@@ -68,7 +69,7 @@ class Auth
         } else {
             $msg .= "not successful because of '$extra'.";
         }
-        Logger::auth()->info($msg, array('user' => $email, 'type' => $type, 'extra' => $extra));
+        Logger::auth()->info($msg, ['user' => $email, 'type' => $type, 'extra' => $extra]);
     }
 
     /**
@@ -133,12 +134,8 @@ class Auth
 
             $usr_id = self::getUserID();
 
-            // check the session
-            Session::verify($usr_id);
-
-            if (!defined('SKIP_LANGUAGE_INIT')) {
-                Language::setPreference();
-            }
+            Session::init($usr_id);
+            Language::setPreference();
 
             // check whether the project selection is set or not
             $prj_id = self::getCurrentProject();
@@ -468,6 +465,10 @@ class Auth
      */
     public static function setCookie($name, $value, $expiration)
     {
+        // for testing
+        if (PHP_SAPI == 'cli') {
+            return;
+        }
         if (APP_COOKIE_DOMAIN === null) {
             setcookie($name, $value, $expiration, APP_COOKIE_URL);
         } else {
@@ -497,7 +498,7 @@ class Auth
                 $instance = new $class();
             } catch (AuthException $e) {
                 $message = "Unable to use auth backend '$class'";
-                Logger::app()->critical($message, array('exception' => $e));
+                Logger::app()->critical($message, ['exception' => $e]);
 
                 if (APP_AUTH_BACKEND_ALLOW_FALLBACK != true) {
                     $tpl = new Template_Helper();

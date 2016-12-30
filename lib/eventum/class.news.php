@@ -38,7 +38,7 @@ class News
                  LIMIT
                     3 OFFSET 0";
         try {
-            $res = DB_Helper::getInstance()->getAll($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getAll($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -67,9 +67,8 @@ class News
      *
      * @param   integer $nws_id The news ID
      * @param   integer $prj_id The project ID
-     * @return  void
      */
-    public function addProjectAssociation($nws_id, $prj_id)
+    public static function addProjectAssociation($nws_id, $prj_id)
     {
         $stmt = 'INSERT INTO
                     {{%project_news}}
@@ -79,7 +78,7 @@ class News
                  ) VALUES (
                     ?, ?
                  )';
-        DB_Helper::getInstance()->query($stmt, array($nws_id, $prj_id));
+        DB_Helper::getInstance()->query($stmt, [$nws_id, $prj_id]);
     }
 
     /**
@@ -106,13 +105,13 @@ class News
                  ) VALUES (
                     ?, ?, ?, ?, ?
                  )';
-        $params = array(
+        $params = [
             Auth::getUserID(),
             Date_Helper::getCurrentDateGMT(),
             $_POST['title'],
             $_POST['message'],
             $_POST['status'],
-        );
+        ];
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
@@ -160,10 +159,10 @@ class News
      * @param   integer $prj_id The project ID
      * @return  boolean
      */
-    public function removeProjectAssociations($nws_id, $prj_id = false)
+    public static function removeProjectAssociations($nws_id, $prj_id = false)
     {
         if (!is_array($nws_id)) {
-            $nws_id = array($nws_id);
+            $nws_id = [$nws_id];
         }
 
         $items = DB_Helper::buildList($nws_id);
@@ -206,7 +205,7 @@ class News
                     nws_status=?
                  WHERE
                     nws_id=?';
-        $params = array($_POST['title'], $_POST['message'], $_POST['status'], $_POST['id']);
+        $params = [$_POST['title'], $_POST['message'], $_POST['status'], $_POST['id']];
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
@@ -237,7 +236,7 @@ class News
                  WHERE
                     nws_id=?';
         try {
-            $res = DB_Helper::getInstance()->getRow($stmt, array($nws_id));
+            $res = DB_Helper::getInstance()->getRow($stmt, [$nws_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -264,7 +263,7 @@ class News
                  WHERE
                     nws_id=?';
         try {
-            $res = DB_Helper::getInstance()->getRow($stmt, array($nws_id));
+            $res = DB_Helper::getInstance()->getRow($stmt, [$nws_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -311,7 +310,7 @@ class News
      * @param   integer $nws_id The news ID
      * @return  array The list of projects
      */
-    public function getAssociatedProjects($nws_id)
+    public static function getAssociatedProjects($nws_id)
     {
         $stmt = 'SELECT
                     prj_id,
@@ -323,9 +322,9 @@ class News
                     prj_id=prn_prj_id AND
                     prn_nws_id=?';
         try {
-            $res = DB_Helper::getInstance()->getPair($stmt, array($nws_id));
+            $res = DB_Helper::getInstance()->getPair($stmt, [$nws_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         return $res;

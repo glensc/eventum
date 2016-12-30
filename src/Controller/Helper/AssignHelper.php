@@ -34,11 +34,11 @@ class AssignHelper
      */
     public function getAssignOptions($users)
     {
-        $assign_options = array(
+        $assign_options = [
             '' => ev_gettext('Any'),
             '-1' => ev_gettext('un-assigned'),
             '-2' => ev_gettext('myself and un-assigned'),
-        );
+        ];
 
         $user_groups = User::getGroups($this->usr_id);
 

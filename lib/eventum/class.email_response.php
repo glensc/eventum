@@ -25,9 +25,8 @@ class Email_Response
      *
      * @param   integer $ere_id The email response ID
      * @param   integer $prj_id The project ID
-     * @return  void
      */
-    public function addProjectAssociation($ere_id, $prj_id)
+    public static function addProjectAssociation($ere_id, $prj_id)
     {
         $stmt = 'INSERT INTO
                     {{%project_email_response}}
@@ -37,7 +36,7 @@ class Email_Response
                  ) VALUES (
                     ?, ?
                  )';
-        DB_Helper::getInstance()->query($stmt, array($ere_id, $prj_id));
+        DB_Helper::getInstance()->query($stmt, [$ere_id, $prj_id]);
     }
 
     /**
@@ -59,7 +58,7 @@ class Email_Response
                     ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($_POST['title'], $_POST['response_body']));
+            DB_Helper::getInstance()->query($stmt, [$_POST['title'], $_POST['response_body']]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -104,10 +103,10 @@ class Email_Response
      * @param   integer $prj_id The project ID
      * @return  boolean
      */
-    public function removeProjectAssociations($ere_id, $prj_id = null)
+    public static function removeProjectAssociations($ere_id, $prj_id = null)
     {
         if (!is_array($ere_id)) {
-            $ere_id = array($ere_id);
+            $ere_id = [$ere_id];
         }
 
         $stmt = 'DELETE FROM
@@ -146,7 +145,7 @@ class Email_Response
                  WHERE
                     ere_id=?';
         try {
-            DB_Helper::getInstance()->query($stmt, array($_POST['title'], $_POST['response_body'], $_POST['id']));
+            DB_Helper::getInstance()->query($stmt, [$_POST['title'], $_POST['response_body'], $_POST['id']]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -176,7 +175,7 @@ class Email_Response
                  WHERE
                     ere_id=?';
         try {
-            $res = DB_Helper::getInstance()->getRow($stmt, array($ere_id));
+            $res = DB_Helper::getInstance()->getRow($stmt, [$ere_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -194,7 +193,7 @@ class Email_Response
      * @param   integer $ere_id The email response ID
      * @return  array The list of projects
      */
-    public function getAssociatedProjects($ere_id)
+    public static function getAssociatedProjects($ere_id)
     {
         $stmt = 'SELECT
                     prj_id,
@@ -206,9 +205,9 @@ class Email_Response
                     prj_id=per_prj_id AND
                     per_ere_id=?';
         try {
-            $res = DB_Helper::getInstance()->getPair($stmt, array($ere_id));
+            $res = DB_Helper::getInstance()->getPair($stmt, [$ere_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         return $res;
@@ -264,7 +263,7 @@ class Email_Response
                  ORDER BY
                     ere_title ASC';
         try {
-            $res = DB_Helper::getInstance()->getPair($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getPair($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -291,7 +290,7 @@ class Email_Response
                     per_ere_id=ere_id AND
                     per_prj_id=?';
         try {
-            $res = DB_Helper::getInstance()->getAll($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getAll($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return '';
         }

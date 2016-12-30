@@ -56,7 +56,7 @@ class SearchbarController extends BaseController
         }
 
         $request = $this->getRequest();
-        $params = array();
+        $params = [];
 
         // merge with GET and POST
         $params += $request->request->all();

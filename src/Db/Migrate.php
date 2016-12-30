@@ -195,7 +195,7 @@ class Migrate
         }
         while (false !== ($file = readdir($handle))) {
             $number = substr($file, 0, strpos($file, '_'));
-            if (in_array(substr($file, -4), array('.sql', '.php')) && is_numeric($number)) {
+            if (in_array(substr($file, -4), ['.sql', '.php']) && is_numeric($number)) {
                 $files[(int)$number] = "$update_path/$file";
             }
         }
@@ -238,7 +238,7 @@ class Migrate
             return null;
         }
 
-        $patches = array();
+        $patches = [];
 
         // check for old table format
         if (!$this->hasVersionLog()) {

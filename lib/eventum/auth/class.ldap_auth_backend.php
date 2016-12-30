@@ -60,13 +60,13 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         if (!$conn) {
             $setup = Setup::get()->ldap;
 
-            $options = array(
+            $options = [
                 'host' => $setup['host'],
                 'port' => $setup['port'],
                 'binddn' => $setup['binddn'],
                 'bindpw' => $setup['bindpw'],
                 'basedn' => $this->basedn,
-            );
+            ];
 
             $conn = Net_LDAP2::connect($options);
             if (Misc::isError($conn)) {
@@ -87,7 +87,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         $filter = Net_LDAP2_Filter::create('uid', 'equals', '*', false);
         if (!empty($this->user_filter_string)) {
             $user_filter = Net_LDAP2_Filter::parse($this->user_filter_string);
-            $filter = Net_LDAP2_Filter::combine('and', array($filter, $user_filter));
+            $filter = Net_LDAP2_Filter::combine('and', [$filter, $user_filter]);
         }
 
         $search = $this->connect()->search($this->basedn, $filter);
@@ -101,7 +101,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
 
     private function validatePassword($uid, $password)
     {
-        $errors = array();
+        $errors = [];
 
         foreach (explode('|', $this->getUserDNstring($uid)) as $userDNstring) {
             // Connecting using the configuration
@@ -140,22 +140,22 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         }
         if (!empty($this->user_filter_string)) {
             $user_filter = Net_LDAP2_Filter::parse($this->user_filter_string);
-            $filter = Net_LDAP2_Filter::combine('and', array($filter, $user_filter));
+            $filter = Net_LDAP2_Filter::combine('and', [$filter, $user_filter]);
         }
-        $search = $this->connect()->search($this->basedn, $filter, array('sizelimit' => 1));
+        $search = $this->connect()->search($this->basedn, $filter, ['sizelimit' => 1]);
         $entry = $search->shiftEntry();
 
         if (!$entry || Misc::isError($entry)) {
             return null;
         }
 
-        $details = array(
+        $details = [
             'uid' => $entry->get_value('uid'),
             'full_name' => Misc::trim($entry->get_value('cn')),
             'emails' => Misc::trim(Misc::lowercase($entry->get_value('mail', 'all'))),
             'customer_id' => Misc::trim($entry->get_value($this->customer_id_attribute)) ?: null,
             'contact_id' => Misc::trim($entry->get_value($this->contact_id_attribute)) ?: null,
-        );
+        ];
 
         return $details;
     }
@@ -237,7 +237,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
 
         $usr_id = $this->getLocalUserId($login, $remote['emails']);
 
-        $data = array(
+        $data = [
             // do not add 'password' field here.
             // it maybe be set locally before ldap
             // and we don't want to store it in mysql at all
@@ -245,7 +245,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
             'external_id' => $remote['uid'],
             'customer_id' => $remote['customer_id'],
             'contact_id' => $remote['contact_id'],
-        );
+        ];
 
         // if local user found, update it and return usr id
         if ($usr_id) {
@@ -263,23 +263,45 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
 
             // read in details, and make modification only if data has changed
             $user_details = User::getDetails($usr_id);
-            $stored_data = array(
+            $aliases = User::getAliases($usr_id);
+            $stored_data = [
                 'full_name' => $user_details['usr_full_name'],
                 'external_id' => $user_details['usr_external_id'],
                 'customer_id' => $user_details['usr_customer_id'],
                 'contact_id' => $user_details['usr_customer_contact_id'],
                 'email' => $user_details['usr_email'],
-            );
+            ];
+            $remove_aliases = [];
 
-            if ($stored_data != $data) {
+            $diff = array_diff_assoc($data, $stored_data);
+            if ($diff) {
+                $diff = array_diff_assoc($data, $stored_data);
+                // if email is about to be updated, move current one to aliases
+                if (isset($diff['email']) && isset($stored_data['email'])) {
+                    $emails[] = $stored_data['email'];
+
+                    // if new email is present in aliases remove it from there
+                    if (($key = array_search($data['email'], $aliases)) !== false) {
+                        $remove_aliases[] = $aliases[$key];
+                    }
+                }
+
                 User::update($usr_id, $data, false);
             }
 
-            $aliases = User::getAliases($usr_id);
             // as we are only adding aliases (never removing)
             // check only one way
             if (array_diff($emails, $aliases)) {
-                $this->updateAliases($usr_id, $emails);
+                $res = $this->updateAliases($usr_id, $emails);
+                if (!$res) {
+                    error_log('aliases update failed');
+                }
+            }
+
+            if ($remove_aliases) {
+                foreach ($remove_aliases as $email) {
+                    User::removeAlias($usr_id, $email);
+                }
             }
 
             return $usr_id;
@@ -322,11 +344,22 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         return $usr_id;
     }
 
+    /**
+     * @return true if all aliases were added
+     */
     private function updateAliases($usr_id, $aliases)
     {
+        $updated = 0;
         foreach ($aliases as $alias) {
-            User::addAlias($usr_id, $alias);
+            $res = User::addAlias($usr_id, $alias);
+            if (!$res) {
+                error_log("updating $alias failed");
+            } else {
+                $updated++;
+            }
         }
+
+        return $updated === count($aliases);
     }
 
     public function getUserIDByLogin($login)
@@ -421,7 +454,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
     public static function getDefaults()
     {
         // don't do anything complex here that would load setup
-        return array(
+        return [
             'host' => 'localhost',
             'port' => '389',
             'binddn' => '',
@@ -432,8 +465,8 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
             'contact_id_attribute' => '',
             'user_filter' => '',
             'create_users' => null,
-            'default_role' => array(),
-        );
+            'default_role' => [],
+        ];
     }
 
     /**

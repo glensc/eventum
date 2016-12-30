@@ -45,7 +45,7 @@ class HistoryController extends BaseController
         Auth::checkAuthentication(null, true);
 
         $usr_id = Auth::getUserID();
-        if (!Access::canViewHistory($usr_id, $usr_id)) {
+        if (!Access::canViewHistory($this->issue_id, $usr_id)) {
             return false;
         }
 
@@ -64,10 +64,10 @@ class HistoryController extends BaseController
      */
     protected function prepareTemplate()
     {
-        $this->tpl->assign(array(
+        $this->tpl->assign([
             'issue_id' => $this->issue_id,
             'changes' => History::getListing($this->issue_id),
-        ));
+        ]);
 
         $role_id = Auth::getCurrentRole();
         if ($role_id > User::ROLE_CUSTOMER) {

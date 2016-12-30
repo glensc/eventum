@@ -61,7 +61,7 @@ class NewsController extends BaseController
         if ($this->nws_id) {
             $news = News::getDetails($this->nws_id);
             if ($news) {
-                return array($news);
+                return [$news];
             }
         }
 

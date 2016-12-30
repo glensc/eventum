@@ -47,13 +47,13 @@ class SanitizeHeaders
         }
 
         // headers to check and whether they need to be unique
-        $checkHeaders = array(
+        $checkHeaders = [
             'From' => true,
             'Subject' => true,
             'Message-Id' => true,
             'To' => false,
             'Cc' => false,
-        );
+        ];
         // NOTE: the headerClass does not match the format for Message-Id,
         // but luckily Message-Id header is always present (see above)
         foreach ($checkHeaders as $headerName => $unique) {

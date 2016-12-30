@@ -53,11 +53,11 @@ class OpenIssuesController extends ReportBaseController
     {
         $res = Report::getOpenIssuesByUser($this->prj_id, $this->cutoff_days ?: 7, $this->group_by_reporter);
         $this->tpl->assign(
-            array(
+            [
                 'cutoff_days' => $this->cutoff_days,
                 'group_by_reporter' => $this->group_by_reporter,
                 'users' => $res,
-            )
+            ]
         );
     }
 }

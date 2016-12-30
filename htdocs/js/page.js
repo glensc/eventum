@@ -105,19 +105,19 @@ list_issues.bulk_update = function(e)
     if (Validation.hasOneSelected('users[]')) {
         changed[changed.length] = 'Assignment';
     }
-    if (Eventum.getField('status').val() !== '') {
+    if (Eventum.getField('status', form).val() !== '') {
         changed[changed.length] = 'Status';
     }
     if (Eventum.getField('release', form).val() !== '') {
         changed[changed.length] = 'Release';
     }
-    if (Eventum.getField('priority').val() !== '') {
+    if (Eventum.getField('priority', form).val() !== '') {
         changed[changed.length] = 'Priority';
     }
-    if (Eventum.getField('category').val() !== '') {
+    if (Eventum.getField('category', form).val() !== '') {
         changed[changed.length] = 'Category';
     }
-    if (Eventum.getField('closed_status').val() !== '') {
+    if (Eventum.getField('closed_status', form).val() !== '') {
         changed[changed.length] = 'Closed Status';
     }
     if (changed.length < 1) {
@@ -142,8 +142,8 @@ list_issues.bulk_update = function(e)
     var features = 'width=420,height=200,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
     var popupWin = window.open('', '_popup', features);
     popupWin.focus();
-    form.action = 'popup.php';
-    form.target = '_popup';
+    form.attr('action','popup.php');
+    form.attr('target', '_popup');
     form.submit();
 };
 
@@ -255,6 +255,7 @@ issue_view.get_ema_id = function()
 issue_view.ready = function(page_id)
 {
     $('#toggle_time_tracking').click(function() { issue_view.toggle_issue_section('time_tracking'); });
+    $('#toggle_checkins').click(function() { issue_view.toggle_issue_section('checkins'); });
     $('#toggle_custom_fields').click(function() { issue_view.toggle_issue_section('custom_fields'); });
     $('#toggle_internal_notes').click(function() { issue_view.toggle_issue_section('internal_notes'); });
     $('#toggle_phone_calls').click(function() { issue_view.toggle_issue_section('phone_calls'); });
@@ -279,6 +280,9 @@ issue_view.ready = function(page_id)
     $('.reply_issue').click(issue_view.replyIssue);
     $('.reply_issue_note').click(issue_view.replyIssueNote);
     $('.edit_incident_redemption').click(issue_view.editIncidentRedemption);
+    $('a.edit_time_entry').click(issue_view.editTimeEntry);
+    $('a.delete_time_entry').click(issue_view.deleteTimeEntry);
+    $('.add_time_entry').click(issue_view.addTimeEntry);
 
     $('.mark_duplicate').click(function() { window.location.href='duplicate.php?id=' + issue_view.get_issue_id(); });
     $('.close_issue').click(function() { window.location.href='close.php?id=' + issue_view.get_issue_id(); });
@@ -429,11 +433,11 @@ issue_view.delete_attachment = function(e)
     var iat_id = $(e.target).attr('data-iat-id');
     if (!confirm('This action will permanently delete the selected attachment.')) {
         return false;
-    } else {
-        var features = 'width=420,height=200,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
-        var popupWin = window.open('popup.php?cat=delete_attachment&id=' + iat_id, '_popup', features);
-        popupWin.focus();
     }
+
+    var features = 'width=420,height=200,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
+    var popupWin = window.open('popup.php?cat=delete_attachment&id=' + iat_id, '_popup', features);
+    popupWin.focus();
 };
 
 issue_view.delete_file = function(e)
@@ -441,11 +445,11 @@ issue_view.delete_file = function(e)
     var iaf_id = $(e.target).attr('data-iaf-id');
     if (!confirm('This action will permanently delete the selected file.')) {
         return false;
-    } else {
-        var features = 'width=420,height=200,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
-        var popupWin = window.open('popup.php?cat=delete_file&id=' + iaf_id, '_popup', features);
-        popupWin.focus();
     }
+
+    var features = 'width=420,height=200,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
+    var popupWin = window.open('popup.php?cat=delete_file&id=' + iaf_id, '_popup', features);
+    popupWin.focus();
 };
 
 issue_view.removeQuarantine = function()
@@ -488,6 +492,42 @@ issue_view.openReporter = function(issue_id)
     var features = 'width=440,height=400,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
     var popupWin = window.open('edit_reporter.php?iss_id=' + issue_id, '_reporter', features);
     popupWin.focus();
+};
+
+issue_view.deleteTimeEntry = function(e)
+{
+    var target = $(e.target);
+    var ttr_id = target.data('ttr-id');
+    var warning_msg = target.closest('form').data('delete-warning');
+    if (!confirm(warning_msg)) {
+        return false;
+    }
+
+    var features = 'width=420,height=200,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
+    var popupWin = window.open('popup.php?cat=delete_time&id=' + ttr_id, '_popup', features);
+    popupWin.focus();
+
+    return false;
+};
+
+issue_view.addTimeEntry = function()
+{
+    var features = 'width=550,height=250,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
+    var popupWin = window.open('time_tracking.php?iss_id=' + issue_view.get_issue_id(), 'time_tracking_' + issue_view.get_issue_id(), features);
+
+    popupWin.focus();
+};
+
+issue_view.editTimeEntry = function(e)
+{
+    var target = $(e.target);
+    var features = 'width=550,height=250,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
+
+    var ttr_id = target.data('ttr-id');
+    var popupWin = window.open('time_tracking.php?ttr_id=' + ttr_id, 'time_tracking_edit_' + ttr_id, features);
+
+    popupWin.focus();
+    return false;
 };
 
 /*
@@ -820,12 +860,12 @@ adv_search.validateRemove = function()
     }
     if (!confirm('This action will permanently delete the selected entries.')) {
         return false;
-    } else {
-        var features = 'width=420,height=200,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
-        var popupWin = window.open('', '_removeFilter', features);
-        popupWin.focus();
-        return true;
     }
+
+    var features = 'width=420,height=200,top=30,left=30,resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
+    var popupWin = window.open('', '_removeFilter', features);
+    popupWin.focus();
+    return true;
 };
 
 /*
@@ -1021,7 +1061,7 @@ preferences.ready = function()
         var $this = $(this);
         $this.select();
     });
-}
+};
 
 preferences.validateName = function()
 {
@@ -1031,7 +1071,7 @@ preferences.validateName = function()
         return false;
     }
     return true;
-}
+};
 
 preferences.validateEmail = function()
 {
@@ -1041,7 +1081,7 @@ preferences.validateEmail = function()
         return false;
     }
     return true;
-}
+};
 
 preferences.validatePassword = function()
 {
@@ -1063,7 +1103,7 @@ preferences.validatePassword = function()
         return false;
     }
     return true;
-}
+};
 
 preferences.confirmRegenerateToken = function()
 {
@@ -1071,4 +1111,4 @@ preferences.confirmRegenerateToken = function()
         return true;
     }
     return false;
-}
+};

@@ -76,7 +76,7 @@ class StalledIssuesController extends ReportBaseController
     private function getAssignOptions()
     {
         $groups = Group::getAssocList($this->prj_id);
-        $assign_options = array();
+        $assign_options = [];
         if (count($groups) > 0 && Auth::getCurrentRole() > User::ROLE_CUSTOMER) {
             foreach ($groups as $grp_id => $grp_name) {
                 $assign_options["grp:$grp_id"] = 'Group: ' . $grp_name;
@@ -101,7 +101,7 @@ class StalledIssuesController extends ReportBaseController
         );
 
         $this->tpl->assign(
-            array(
+            [
                 'users' => $this->getAssignOptions(),
                 'before_date' => $before,
                 'after_date' => $after,
@@ -110,7 +110,7 @@ class StalledIssuesController extends ReportBaseController
                 'status_list' => Status::getAssocStatusList($this->prj_id),
                 'status' => $this->status,
                 'sort_order' => $this->sort_order,
-            )
+            ]
         );
     }
 }

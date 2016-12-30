@@ -70,7 +70,7 @@ class Reminder
                         rem_rank=?
                      WHERE
                         rem_id=?';
-            DB_Helper::getInstance()->query($stmt, array($ranking[$rem_id], $replaced_rem_id));
+            DB_Helper::getInstance()->query($stmt, [$ranking[$rem_id], $replaced_rem_id]);
         }
         $stmt = 'UPDATE
                     {{%reminder_level}}
@@ -78,7 +78,7 @@ class Reminder
                     rem_rank=?
                  WHERE
                     rem_id=?';
-        DB_Helper::getInstance()->query($stmt, array($new_rank, $rem_id));
+        DB_Helper::getInstance()->query($stmt, [$new_rank, $rem_id]);
 
         return true;
     }
@@ -101,7 +101,7 @@ class Reminder
         try {
             $res = DB_Helper::getInstance()->getPair($stmt);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         return $res;
@@ -139,7 +139,7 @@ class Reminder
                  WHERE
                     rem_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($rem_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$rem_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -162,7 +162,7 @@ class Reminder
                  WHERE
                     rem_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($rem_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$rem_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -185,7 +185,7 @@ class Reminder
                  WHERE
                     rem_id=?';
         try {
-            $res = DB_Helper::getInstance()->getRow($stmt, array($rem_id));
+            $res = DB_Helper::getInstance()->getRow($stmt, [$rem_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -227,7 +227,7 @@ class Reminder
      * @param   integer $rem_id The reminder ID
      * @return  array The list of associated priority IDs
      */
-    public function getAssociatedPriorities($rem_id)
+    public static function getAssociatedPriorities($rem_id)
     {
         $stmt = 'SELECT
                     rep_pri_id
@@ -236,15 +236,15 @@ class Reminder
                  WHERE
                     rep_rem_id=?';
         try {
-            $res = DB_Helper::getInstance()->getColumn($stmt, array($rem_id));
+            $res = DB_Helper::getInstance()->getColumn($stmt, [$rem_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         return $res;
     }
 
-    public function getAssociatedProducts($rem_id)
+    public static function getAssociatedProducts($rem_id)
     {
         $stmt = 'SELECT
                     rpr_pro_id
@@ -253,9 +253,9 @@ class Reminder
                  WHERE
                     rpr_rem_id=?';
         try {
-            $res = DB_Helper::getInstance()->getColumn($stmt, array($rem_id));
+            $res = DB_Helper::getInstance()->getColumn($stmt, [$rem_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         return $res;
@@ -268,7 +268,7 @@ class Reminder
      * @param   integer $rem_id The reminder ID
      * @return  array The list of associated severity IDs
      */
-    public function getAssociatedSeverities($rem_id)
+    public static function getAssociatedSeverities($rem_id)
     {
         $stmt = 'SELECT
                     rms_sev_id
@@ -277,9 +277,9 @@ class Reminder
                  WHERE
                     rms_rem_id=?';
         try {
-            $res = DB_Helper::getInstance()->getColumn($stmt, array($rem_id));
+            $res = DB_Helper::getInstance()->getColumn($stmt, [$rem_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         return $res;
@@ -293,7 +293,7 @@ class Reminder
      * @param   integer $support_level_id The support level ID
      * @return  boolean
      */
-    public function addSupportLevelAssociation($rem_id, $support_level_id)
+    public static function addSupportLevelAssociation($rem_id, $support_level_id)
     {
         $stmt = 'INSERT INTO
                     {{%reminder_requirement}}
@@ -304,7 +304,7 @@ class Reminder
                     ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($rem_id, $support_level_id));
+            DB_Helper::getInstance()->query($stmt, [$rem_id, $support_level_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -319,7 +319,7 @@ class Reminder
      * @param   integer $issue_id The issue ID
      * @return  boolean
      */
-    public function addIssueAssociation($rem_id, $issue_id)
+    public static function addIssueAssociation($rem_id, $issue_id)
     {
         $stmt = 'INSERT INTO
                     {{%reminder_requirement}}
@@ -330,7 +330,7 @@ class Reminder
                     ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($rem_id, $issue_id));
+            DB_Helper::getInstance()->query($stmt, [$rem_id, $issue_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -346,7 +346,7 @@ class Reminder
      * @param   integer $customer_id The customer ID
      * @return  boolean
      */
-    public function addCustomerAssociation($rem_id, $customer_id)
+    public static function addCustomerAssociation($rem_id, $customer_id)
     {
         $stmt = 'INSERT INTO
                     {{%reminder_requirement}}
@@ -357,7 +357,7 @@ class Reminder
                     ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($rem_id, $customer_id));
+            DB_Helper::getInstance()->query($stmt, [$rem_id, $customer_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -371,7 +371,7 @@ class Reminder
      * @param   integer $rem_id The reminder ID
      * @return  boolean
      */
-    public function associateAllIssues($rem_id)
+    public static function associateAllIssues($rem_id)
     {
         $stmt = 'INSERT INTO
                     {{%reminder_requirement}}
@@ -382,7 +382,7 @@ class Reminder
                     ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($rem_id, 1));
+            DB_Helper::getInstance()->query($stmt, [$rem_id, 1]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -397,7 +397,7 @@ class Reminder
      * @param   integer $priority_id The priority ID
      * @return  boolean
      */
-    public function addPriorityAssociation($rem_id, $priority_id)
+    public static function addPriorityAssociation($rem_id, $priority_id)
     {
         $stmt = 'INSERT INTO
                     {{%reminder_priority}}
@@ -408,7 +408,7 @@ class Reminder
                     ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($rem_id, $priority_id));
+            DB_Helper::getInstance()->query($stmt, [$rem_id, $priority_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -416,7 +416,7 @@ class Reminder
         return true;
     }
 
-    public function addProductAssociation($rem_id, $pro_id)
+    public static function addProductAssociation($rem_id, $pro_id)
     {
         $stmt = 'INSERT INTO
                     {{%reminder_product}}
@@ -427,7 +427,7 @@ class Reminder
                     ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($rem_id, $pro_id));
+            DB_Helper::getInstance()->query($stmt, [$rem_id, $pro_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -442,7 +442,7 @@ class Reminder
      * @param   integer $priority_id The severity ID
      * @return  boolean
      */
-    public function addSeverityAssociation($rem_id, $severity_id)
+    public static function addSeverityAssociation($rem_id, $severity_id)
     {
         $stmt = 'INSERT INTO
                     {{%reminder_severity}}
@@ -453,7 +453,7 @@ class Reminder
                     ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($rem_id, $severity_id));
+            DB_Helper::getInstance()->query($stmt, [$rem_id, $severity_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -467,10 +467,10 @@ class Reminder
      *
      * @param   integer $rem_id The reminder ID
      */
-    public function removeAllAssociations($rem_id)
+    public static function removeAllAssociations($rem_id)
     {
         if (!is_array($rem_id)) {
-            $rem_id = array($rem_id);
+            $rem_id = [$rem_id];
         }
         $itemlist = DB_Helper::buildList($rem_id);
 
@@ -517,13 +517,13 @@ class Reminder
                  ) VALUES (
                     ?, ?, ?, ?, ?
                  )';
-        $params = array(
+        $params = [
             Date_Helper::getCurrentDateGMT(),
             $_POST['rank'],
             $_POST['title'],
             $_POST['project'],
             $_POST['skip_weekend'],
-        );
+        ];
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
@@ -583,14 +583,14 @@ class Reminder
                     rem_skip_weekend=?
                  WHERE
                     rem_id=?';
-        $params = array(
+        $params = [
             Date_Helper::getCurrentDateGMT(),
             $_POST['rank'],
             $_POST['title'],
             $_POST['project'],
             $_POST['skip_weekend'],
             $_POST['id'],
-        );
+        ];
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
@@ -676,7 +676,7 @@ class Reminder
      * @param   integer $rem_id The reminder ID
      * @return  array The list of requirements
      */
-    public function getRequirements($rem_id)
+    public static function getRequirements($rem_id)
     {
         $stmt = 'SELECT
                     rer_customer_id,
@@ -688,16 +688,16 @@ class Reminder
                  WHERE
                     rer_rem_id=?';
         try {
-            $res = DB_Helper::getInstance()->getAll($stmt, array($rem_id));
+            $res = DB_Helper::getInstance()->getAll($stmt, [$rem_id]);
         } catch (DatabaseException $e) {
             return '';
         }
 
         $type = '';
-        $values = array();
+        $values = [];
         foreach ($res as $row) {
             if ($row['rer_trigger_all_issues'] == '1') {
-                return array('type' => 'ALL');
+                return ['type' => 'ALL'];
             }
 
             if (!empty($row['rer_support_level_id'])) {
@@ -712,10 +712,10 @@ class Reminder
             }
         }
 
-        return array(
+        return [
             'type'   => $type,
             'values' => $values,
-        );
+        ];
     }
 
     /**
@@ -739,7 +739,7 @@ class Reminder
         try {
             $res = DB_Helper::getInstance()->getAll($stmt);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         foreach ($res as &$row) {
@@ -747,7 +747,7 @@ class Reminder
             $row['total_actions'] = count($actions);
             $priorities = self::getAssociatedPriorities($row['rem_id']);
             $priority_titles = Priority::getAssocList($row['rem_prj_id']);
-            $row['priorities'] = array();
+            $row['priorities'] = [];
             if (count($priorities) > 0) {
                 foreach ($priorities as $pri_id) {
                     $row['priorities'][] = $priority_titles[$pri_id];
@@ -778,14 +778,14 @@ class Reminder
         try {
             $res = DB_Helper::getInstance()->getAll($stmt);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         if (empty($res)) {
-            return array();
+            return [];
         }
 
-        $t = array();
+        $t = [];
         foreach ($res as &$row) {
             // ignore reminders that have no actions set yet...
             $actions = Reminder_Action::getList($row['rem_id']);
@@ -829,12 +829,12 @@ class Reminder
         try {
             $res = DB_Helper::getInstance()->getPair($stmt);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         // - if query returns >= 1, then run the appropriate action
         if (empty($res)) {
-            return array();
+            return [];
         }
 
         // check for conditions that can't be run in the DB
@@ -863,7 +863,7 @@ class Reminder
      * @param   array $conditions The list of conditions
      * @return  string The where clause
      */
-    public function getWhereClause($reminder, $conditions)
+    public static function getWhereClause($reminder, $conditions)
     {
         $stmt = '
                   WHERE
@@ -877,10 +877,10 @@ class Reminder
                 if ($requirement['type'] == 'customer') {
                     $stmt .= ' AND iss_customer_id IN (' . implode(', ', $requirement['values']) . ")\n";
                 } elseif ($requirement['type'] == 'support_level') {
-                    $customer_ids = $crm->getCustomerIDsBySupportLevel($requirement['values'], array(CRM_EXCLUDE_EXPIRED));
+                    $customer_ids = $crm->getCustomerIDsBySupportLevel($requirement['values'], [CRM_EXCLUDE_EXPIRED]);
                     // break the query on purpose if no customers could be found
                     if (count($customer_ids) == 0) {
-                        $customer_ids = array(-1);
+                        $customer_ids = [-1];
                     }
                     $stmt .= ' AND iss_customer_id IN (' . implode(', ', $customer_ids) . ")\n";
                 }
@@ -986,9 +986,9 @@ class Reminder
                  ORDER BY
                     rmh_created_date DESC';
         try {
-            $res = DB_Helper::getInstance()->getAll($stmt, array($iss_id));
+            $res = DB_Helper::getInstance()->getAll($stmt, [$iss_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         return $res;
@@ -1002,7 +1002,7 @@ class Reminder
      */
     public static function _getReminderAlertAddresses()
     {
-        $emails = array();
+        $emails = [];
         $setup = Setup::get();
         if ($setup['email_reminder']['status'] == 'enabled' && $setup['email_reminder']['addresses']) {
             $emails = explode(',', $setup['email_reminder']['addresses']);

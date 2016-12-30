@@ -77,7 +77,7 @@
             <td>
                 <input type="text" name="email" size="100" value="{$info.pro_email|default:''|escape}">
                 {include file="error_icon.tpl.html" field="email"}
-                <br />This address will be notified when issues are created with this product.
+                <br />{t}This address will be notified when issues are created with this product.{/t}
             </td>
         </tr>
         <tr>
@@ -131,7 +131,7 @@
                 <input type="checkbox" name="items[]" value="{$list[i].pro_id}" {if $smarty.section.i.total == 0}disabled{/if}>
             </td>
             <td width="20%">
-                &nbsp;<a class="link" href="{$smarty.server.PHP_SELF}?cat=edit&id={$list[i].pro_id}" title="{t}update this entry{/t}">{$list[i].pro_title|escape}</a>
+                &nbsp;<a class="link" href="{$core.current_url}?cat=edit&id={$list[i].pro_id}" title="{t}update this entry{/t}">{$list[i].pro_title|escape}</a>
             </td>
             <td width="20%">
                 &nbsp;{$list[i].pro_version_howto|escape}

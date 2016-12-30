@@ -1,27 +1,22 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
+/**
+ * DateHelper tests that do not use database.
+ * Put user specific tests (that requires database) to DateHelperUserTests class
+ */
 class DateHelperTest extends TestCase
 {
-    /**
-     * timezone used for preferred user timezone tests
-     */
-    const USER_TIMEZONE = 'Europe/Tallinn';
-
-    /**
-     * @test Dependency test regarding user preferences
-     */
-    public function setAdminUserPreferences()
-    {
-        $this->assertDatabase();
-
-        $usr_id = APP_ADMIN_USER_ID;
-        $prefs = Prefs::get($usr_id);
-        $prefs['timezone'] = self::USER_TIMEZONE;
-        Prefs::set($usr_id, $prefs);
-        // this will force db refetch
-        Prefs::get($usr_id, true);
-    }
-
     /**
      * @covers       Date_Helper::isAM
      * @dataProvider testIsAM_data
@@ -34,12 +29,12 @@ class DateHelperTest extends TestCase
 
     public function testIsAM_data()
     {
-        return array(
-            array(0, true),
-            array(10, true),
-            array('20', false),
-            array(42, false),
-        );
+        return [
+            [0, true],
+            [10, true],
+            ['20', false],
+            [42, false],
+        ];
     }
 
     /**
@@ -54,12 +49,12 @@ class DateHelperTest extends TestCase
 
     public function testIsPM_data()
     {
-        return array(
-            array(0, false),
-            array(10, false),
-            array('20', true),
-            array(42, false),
-        );
+        return [
+            [0, false],
+            [10, false],
+            ['20', true],
+            [42, false],
+        ];
     }
 
     /**
@@ -74,12 +69,12 @@ class DateHelperTest extends TestCase
 
     public function testGetFormattedDateDiff_data()
     {
-        return array(
-            array(0, 10, '0d 0h'),
-            array(0, 3600, '0d -1h'),
-            array(7200, 3600, '0d 1h'),
-            array(new DateTime('tomorrow 04:00'), new DateTime('today 00:00'), '1d 4h'),
-        );
+        return [
+            [0, 10, '0d 0h'],
+            [0, 3600, '0d -1h'],
+            [7200, 3600, '0d 1h'],
+            [new DateTime('tomorrow 04:00'), new DateTime('today 00:00'), '1d 4h'],
+        ];
     }
 
     /**
@@ -94,11 +89,11 @@ class DateHelperTest extends TestCase
 
     public function testGetUnixTimestamp_data()
     {
-        return array(
+        return [
             // unix timestamps are timezoneless
-            array(1411842757, false, 1411842757),
-            array('2014-09-27 17:03:23', false, 1411837403),
-        );
+            [1411842757, false, 1411842757],
+            ['2014-09-27 17:03:23', false, 1411837403],
+        ];
     }
 
     /**
@@ -113,24 +108,9 @@ class DateHelperTest extends TestCase
 
     public function testGetRFC822Date_data()
     {
-        return array(
-            array(1411842757, false, 'Sat, 27 Sep 2014 18:32:37 GMT'),
-        );
-    }
-
-    /**
-     * @depends setAdminUserPreferences
-     * @covers  Date_Helper::getTimezoneShortNameByUser
-     */
-    public function testGetTimezoneShortNameByUser()
-    {
-        $this->assertDatabase();
-
-        $res = Date_Helper::getTimezoneShortNameByUser(APP_SYSTEM_USER_ID);
-        $this->assertEquals('UTC', $res);
-
-        $res = Date_Helper::getTimezoneShortNameByUser(APP_ADMIN_USER_ID);
-        $this->assertRegExp('/EET|EEST/', $res);
+        return [
+            [1411842757, false, 'Sat, 27 Sep 2014 18:32:37 GMT'],
+        ];
     }
 
     /**
@@ -145,10 +125,10 @@ class DateHelperTest extends TestCase
 
     public function testGetFormattedDate_data()
     {
-        return array(
-            array(0, 'Thu, 01 Jan 1970, 00:00:00 GMT'),
-            array(1411840837, 'Sat, 27 Sep 2014, 18:00:37 GMT'),
-        );
+        return [
+            [0, 'Thu, 01 Jan 1970, 00:00:00 GMT'],
+            [1411840837, 'Sat, 27 Sep 2014, 18:00:37 GMT'],
+        ];
     }
 
     /**
@@ -163,30 +143,12 @@ class DateHelperTest extends TestCase
 
     public function testGetSimpleDate_data()
     {
-        return array(
-            array(1391212800, false, '01 Feb 2014'),
-            array(1391299199, false, '01 Feb 2014'),
-            array(1391212800, true, '01 Feb 2014'),
-            array(1391299199, true, '01 Feb 2014'),
-        );
-    }
-
-    /**
-     * @depends setAdminUserPreferences
-     * @covers  Date_Helper::getPreferredTimezone
-     */
-    public function testGetPreferredTimezone()
-    {
-        $this->assertDatabase();
-
-        $res = Date_Helper::getPreferredTimezone();
-        $this->assertEquals('UTC', $res);
-
-        $res = Date_Helper::getPreferredTimezone(APP_SYSTEM_USER_ID);
-        $this->assertEquals('UTC', $res);
-
-        $res = Date_Helper::getPreferredTimezone(APP_ADMIN_USER_ID);
-        $this->assertEquals(self::USER_TIMEZONE, $res);
+        return [
+            [1391212800, false, '01 Feb 2014'],
+            [1391299199, false, '01 Feb 2014'],
+            [1391212800, true, '01 Feb 2014'],
+            [1391299199, true, '01 Feb 2014'],
+        ];
     }
 
     /**
@@ -201,11 +163,11 @@ class DateHelperTest extends TestCase
 
     public function testConvertDateGMT_data()
     {
-        return array(
-            array('2014-09-27 00:00:00', '2014-09-27 00:00:00'),
-            array('Sun Sep 28 09:46:50 EEST 2014', '2014-09-28 06:46:50'),
-            array('Sun Sep 28 06:47:25 GMT 2014', '2014-09-28 06:47:25'),
-        );
+        return [
+            ['2014-09-27 00:00:00', '2014-09-27 00:00:00'],
+            ['Sun Sep 28 09:46:50 EEST 2014', '2014-09-28 06:46:50'],
+            ['Sun Sep 28 06:47:25 GMT 2014', '2014-09-28 06:47:25'],
+        ];
     }
 
     /**
@@ -219,13 +181,13 @@ class DateHelperTest extends TestCase
 
     public function testInvalidTimezone_data()
     {
-        return array(
-            array("Sat Oct 11 11:51:12 EEST 2014", "Europe/Tallinn", "Sat, 11 Oct 2014, 11:51:12 EEST"),
-            array("Sat Oct 11 11:51:12 EEST 2014", "America/New_York", "Sat, 11 Oct 2014, 04:51:12 EDT"),
+        return [
+            ['Sat Oct 11 11:51:12 EEST 2014', 'Europe/Tallinn', 'Sat, 11 Oct 2014, 11:51:12 EEST'],
+            ['Sat Oct 11 11:51:12 EEST 2014', 'America/New_York', 'Sat, 11 Oct 2014, 04:51:12 EDT'],
 //            array("Sat Oct 11 11:51:12 EEST 2014", "Eastern Standard Time", "Sat, 11 Oct 2014, 08:51:12 UTC"),
-            array('2014-10-14 11:32:57', "Eastern Standard Time", 'Tue, 14 Oct 2014, 11:32:57 GMT'),
-            array('2014-10-14 11:32:57', "America/New_York", 'Tue, 14 Oct 2014, 07:32:57 EDT'),
-        );
+            ['2014-10-14 11:32:57', 'Eastern Standard Time', 'Tue, 14 Oct 2014, 11:32:57 GMT'],
+            ['2014-10-14 11:32:57', 'America/New_York', 'Tue, 14 Oct 2014, 07:32:57 EDT'],
+        ];
     }
 
     public function testGetTimezoneList()
@@ -243,12 +205,30 @@ class DateHelperTest extends TestCase
     public function testTzNamingDifferences()
     {
         $created_date = Date_Helper::convertDateGMT('2015-05-19 12:22:24 EET');
-        $this->assertEquals("2015-05-19 10:22:24", $created_date);
+        $this->assertEquals('2015-05-19 10:22:24', $created_date);
 
         $created_date = Date_Helper::convertDateGMT('2015-05-19 12:22:24 EEST');
-        $this->assertEquals("2015-05-19 09:22:24", $created_date);
+        $this->assertEquals('2015-05-19 09:22:24', $created_date);
 
         $created_date = Date_Helper::convertDateGMT('2015-05-19 12:22:24 Europe/Tallinn');
-        $this->assertEquals("2015-05-19 09:22:24", $created_date);
+        $this->assertEquals('2015-05-19 09:22:24', $created_date);
+    }
+
+    /**
+     * @link https://github.com/eventum/eventum/issues/204
+     */
+    public function testBug_204()
+    {
+        try {
+            Date_Helper::convertDateGMT('2016-10-03 10:20:00 US/Central');
+            $this->fail();
+        } catch (Exception $e) {
+            $this->assertEquals(
+                'DateTime::__construct(): Failed to parse time string (2016-10-03 10:20:00 US/Central) at position 20 (U): The timezone could not be found in the database',
+                $e->getMessage()
+            );
+        }
+        $d = Date_Helper::convertDateGMT('2016-10-03 10:20:00 America/Chicago');
+        $this->assertNotEmpty($d);
     }
 }

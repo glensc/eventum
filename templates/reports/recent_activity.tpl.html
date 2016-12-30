@@ -1,5 +1,4 @@
 {extends "reports/reports_base.tpl.html"}
-{block "page_id"}recent_activity_report{/block}
 {block "title"}Recent Activity{/block}
 
 {block "report_content"}
@@ -74,8 +73,8 @@
             </th>
             <td width="200">
                 <select name="sort_order">
-                    <option value="ASC" label="Ascending" {if $sort_order != 'DESC'}selected{/if}>{t}Ascending{/t}</option>
-                    <option value="DESC" label="Descending" {if $sort_order == 'DESC'}selected{/if}>{t}Descending{/t}</option>
+                    <option value="ASC" label="{t}Ascending{/t}" {if $sort_order != 'DESC'}selected{/if}>{t}Ascending{/t}</option>
+                    <option value="DESC" label="{t}Descending{/t}" {if $sort_order == 'DESC'}selected{/if}>{t}Descending{/t}</option>
                 </select>
             </td>
         </tr>

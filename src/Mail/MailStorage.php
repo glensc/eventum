@@ -70,13 +70,13 @@ class MailStorage
     private function convertParams($params)
     {
         // Simple options
-        $res = array(
+        $res = [
             'host' => $params['ema_hostname'],
             'port' => $params['ema_port'],
             'user' => $params['ema_username'],
             'password' => $params['ema_password'],
             'folder' => $params['ema_folder'],
-        );
+        ];
 
         /**
          * Parse type:
@@ -98,7 +98,7 @@ class MailStorage
         $classname = ucfirst($type[0]);
         $res['storage_class'] = '\\Zend\\Mail\\Storage\\' . $classname;
         $res['protocol_class'] = '\\Zend\\Mail\\Protocol\\' . $classname;
-        $res['ssl'] = in_array($type[1], array('ssl', 'tls')) ? $type[1] : false;
+        $res['ssl'] = in_array($type[1], ['ssl', 'tls']) ? $type[1] : false;
 
         // NOTE: novalidate and notls are not supported
 

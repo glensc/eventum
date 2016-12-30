@@ -11,6 +11,8 @@
  * that were distributed with this source code.
  */
 
+use Eventum\ConcurrentLock;
+
 class Eventum_Bot
 {
     /**
@@ -22,14 +24,14 @@ class Eventum_Bot
      *
      * @var array
      */
-    private $auth = array();
+    private $auth = [];
 
     /**
      * List of IRC channels where to join, notify and listen for commands
      *
      * @var array
      */
-    private $channels = array();
+    private $channels = [];
 
     /**
      * Configuration for the bot
@@ -60,14 +62,14 @@ class Eventum_Bot
             // we need to map old configs with just channels to new config with categories as well
             if (!is_array($chan)) {
                 // old config, one channel
-                $options = array(
-                    $chan => array($config['default_category']),
-                );
+                $options = [
+                    $chan => [$config['default_category']],
+                ];
             } elseif (isset($chan[0]) and !is_array($chan[0])) {
                 // old config with multiple channels
-                $options = array();
+                $options = [];
                 foreach ($chan as $individual_chan) {
-                    $options[$individual_chan] = array($config['default_category']);
+                    $options[$individual_chan] = [$config['default_category']];
                 }
             } else {
                 // new format
@@ -90,7 +92,7 @@ class Eventum_Bot
             throw new InvalidArgumentException("Config file '$config_file' does not exist");
         }
 
-        $default_config = array(
+        $default_config = [
             'default_category' => APP_EVENTUM_IRC_CATEGORY_DEFAULT,
             'lock' => 'irc_bot',
 
@@ -105,7 +107,7 @@ class Eventum_Bot
              * @see Net_SmartIRC::setDebugLevel
              */
             'debuglevel' => SMARTIRC_DEBUG_NOTICE
-        );
+        ];
 
         $config = require $config_file;
         if ($config == 1) {
@@ -117,7 +119,7 @@ class Eventum_Bot
             /** @var string $username */
             /** @var string $password */
             /** @var array $irc_channels */
-            $config = array(
+            $config = [
                 'hostname' => $irc_server_hostname,
                 'port' => $irc_server_port,
                 'nickname' => $nickname,
@@ -125,50 +127,36 @@ class Eventum_Bot
                 'username' => $username,
                 'password' => $password,
                 'channels' => $irc_channels,
-            );
+            ];
         }
 
         return array_merge($default_config, $config);
     }
 
     /**
-     * acquire a lock to prevent multiple scripts from running at the same time.
-     * if the lock was acquired, setup event handler to release lock on shutdown
-     *
-     * @param bool|true $check
-     * @return bool
+     * setup event handlers to cleanup on shutdown
      */
-    public function lock($check = true)
+    public function cleanup()
     {
-        $locked = Lock::acquire($this->config['lock'], $check);
-
-        if (!$locked) {
-            return $locked;
-        }
-
-        // setup signal handler to be able to remove lock and shutdown cleanly
-        $bot = $this;
-        $irc = &$this->irc;
-        $handler = function ($signal = null) use ($bot, &$irc) {
-            $bot->shutdown = true;
+        // setup signal handler to shutdown cleanly
+        $handler = function ($signal = null) {
+            $this->shutdown = true;
             // if stream_select receives signal, SmartIRC will automatically retry
             // disable reconnect, and die
             // this is not needed if we are connected,
             // but unable to query such state, all variables and methods related to it are not public
-            $irc->setAutoRetry(false);
+            $this->irc->setAutoRetry(false);
 
             if ($signal) {
-                $irc->log(SMARTIRC_DEBUG_NOTICE, "Got signal[$signal]; shutdown", __FILE__, __LINE__);
-                $irc->quit('Terminated');
+                $this->irc->log(SMARTIRC_DEBUG_NOTICE, "Got signal[$signal]; shutdown", __FILE__, __LINE__);
+                $this->irc->quit('Terminated');
             } else {
-                $irc->log(SMARTIRC_DEBUG_NOTICE, 'Shutdown handler', __FILE__, __LINE__);
-                $irc->quit('Bye');
+                $this->irc->log(SMARTIRC_DEBUG_NOTICE, 'Shutdown handler', __FILE__, __LINE__);
+                $this->irc->quit('Bye');
             }
 
             // QUIT has no effect if not connected
-            $irc->disconnect();
-
-            $bot->unlock();
+            $this->irc->disconnect();
         };
 
         if ($this->have_pcntl) {
@@ -181,19 +169,22 @@ class Eventum_Bot
         // NOTE: signal handler is not enough because stream_select() also catches the signals and aborts the process
         // so register the shutdown handler as well
         register_shutdown_function($handler);
-
-        return $locked;
     }
 
-    public function unlock()
+    public function run()
     {
-        Lock::release($this->config['lock']);
+        $lock = new ConcurrentLock($this->config['lock']);
+        $lock->synchronized(
+            function () {
+                $this->execute();
+            }
+        );
     }
 
     /**
      * Create IRC Bot, connect, login and listen for events, and finally disconnect.
      */
-    public function run()
+    private function execute()
     {
         $config = $this->config;
 
@@ -209,8 +200,8 @@ class Eventum_Bot
         }
 
         if (isset($config['logfile'])) {
-            $irc->setLogdestination(SMARTIRC_FILE);
-            $irc->setLogfile($config['logfile']);
+            $irc->setLogDestination(SMARTIRC_FILE);
+            $irc->setLogFile($config['logfile']);
         }
 
         // reconnect is poorly designed, do not use it
@@ -259,13 +250,13 @@ class Eventum_Bot
         // doing it cleanly with dispatch is not possible currently
         // @see http://pear.php.net/bugs/bug.php?id=20973
         if ($this->have_pcntl) {
-            declare (ticks = 1);
+            declare(ticks=1);
             //$irc->registerTimehandler(1000, $this, 'signalDispatch');
         }
 
         // methods that keep track of who is authenticated
-        $irc->registerActionhandler(SMARTIRC_TYPE_NICKCHANGE, '.*', $this, 'updateAuthenticatedUser');
-        $irc->registerActionhandler(
+        $irc->registerActionHandler(SMARTIRC_TYPE_NICKCHANGE, '.*', $this, 'updateAuthenticatedUser');
+        $irc->registerActionHandler(
             SMARTIRC_TYPE_KICK | SMARTIRC_TYPE_QUIT | SMARTIRC_TYPE_PART, '.*', $this, 'removeAuthenticatedUser'
         );
 
@@ -383,7 +374,7 @@ class Eventum_Bot
             return $this->channels[$prj_id];
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -394,7 +385,7 @@ class Eventum_Bot
      */
     public function getProjectsForChannel($channel)
     {
-        $projects = array();
+        $projects = [];
         foreach ($this->channels as $prj_id => $prj_channels) {
             foreach ($prj_channels as $prj_channel) {
                 if ($prj_channel == $channel) {

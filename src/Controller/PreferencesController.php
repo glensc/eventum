@@ -19,7 +19,6 @@ use Date_Helper;
 use Eventum\Monolog\Logger;
 use Exception;
 use Language;
-use Misc;
 use Prefs;
 use Project;
 use User;
@@ -38,29 +37,15 @@ class PreferencesController extends BaseController
     /** @var string */
     private $lang;
 
-    public function __construct()
-    {
-        $this->cat = $this->getRequest()->request->get('cat');
-
-        // must do Language::setPreference before template is initialized
-        if ($this->cat == 'update_account') {
-            if ($this->lang) {
-                User::setLang($this->usr_id, $this->lang);
-                Language::setPreference();
-            }
-        }
-
-        parent::__construct();
-    }
-
     /**
      * @inheritdoc
      */
     protected function configure()
     {
-        $request = $this->getRequest();
+        $post = $this->getRequest()->request;
 
-        $this->lang = $request->request->get('language');
+        $this->cat = $post->get('cat');
+        $this->lang = $post->get('language');
     }
 
     /**
@@ -109,9 +94,15 @@ class PreferencesController extends BaseController
         }
 
         if ($res == 1) {
-            Misc::setMessage(ev_gettext('Your information has been updated'));
+            $this->messages->addInfoMessage(ev_gettext('Your information has been updated'));
         } elseif ($res !== null) {
-            Misc::setMessage(ev_gettext('Sorry, there was an error updating your information'), Misc::MSG_ERROR);
+            $this->messages->addErrorMessage(ev_gettext('Sorry, there was an error updating your information'));
+        }
+
+        // redirect back to preferences because ui language may have changed
+        // and also to avoid reload page repost
+        if ($this->isPostRequest()) {
+            $this->redirect('preferences.php');
         }
     }
 
@@ -124,9 +115,14 @@ class PreferencesController extends BaseController
             $preferences['email_signature'] = file_get_contents($_FILES['file_signature']['tmp_name']);
         }
 
+        // XXX: $res only updated for Prefs::set
         $res = Prefs::set($this->usr_id, $preferences);
 
         User::updateSMS($this->usr_id, $preferences['sms_email']);
+
+        if ($this->lang) {
+            User::setLang($this->usr_id, $this->lang);
+        }
 
         return $res;
     }
@@ -138,7 +134,7 @@ class PreferencesController extends BaseController
 
         // verify current password
         if (!Auth::isCorrectPassword(Auth::getUserLogin(), $password)) {
-            Misc::setMessage(ev_gettext('Incorrect password'), Misc::MSG_ERROR);
+            $this->messages->addErrorMessage(ev_gettext('Incorrect password'));
 
             return -3;
         }
@@ -147,13 +143,13 @@ class PreferencesController extends BaseController
         $confirm_password = $post->get('confirm_password');
 
         if ($new_password != $confirm_password) {
-            Misc::setMessage(ev_gettext('New passwords mismatch'), Misc::MSG_ERROR);
+            $this->messages->addErrorMessage(ev_gettext('New passwords mismatch'));
 
             return -2;
         }
 
         if ($password == $new_password) {
-            Misc::setMessage(ev_gettext('Please set different password than current'), Misc::MSG_ERROR);
+            $this->messages->addErrorMessage(ev_gettext('Please set different password than current'));
 
             return -2;
         }
@@ -174,7 +170,7 @@ class PreferencesController extends BaseController
         $res = APIAuthToken::regenerateKey($this->usr_id);
         if ($res == 1) {
             // FIXME: looks like hack, return error string instead
-            Misc::setMessage(ev_gettext('Your key has been regenerated. All previous keys are now invalid.'));
+            $this->messages->addInfoMessage(ev_gettext('Your key has been regenerated. All previous keys are now invalid.'));
             $res = null;
         }
     }
@@ -187,7 +183,7 @@ class PreferencesController extends BaseController
         $prefs = Prefs::get($this->usr_id);
         $prefs['sms_email'] = User::getSMS($this->usr_id);
 
-        $this->tpl->assign(array(
+        $this->tpl->assign([
                 'user_prefs' => $prefs,
                 'user_info' => User::getDetails($this->usr_id),
                 'assigned_projects' => Project::getAssocList($this->usr_id, false, true),
@@ -198,7 +194,7 @@ class PreferencesController extends BaseController
                 'can_update_name' => Auth::canUserUpdateName($this->usr_id),
                 'can_update_email' => Auth::canUserUpdateEmail($this->usr_id),
                 'can_update_password' => Auth::canUserUpdatePassword($this->usr_id),
-            )
+            ]
         );
 
         if (Auth::getCurrentRole() >= User::ROLE_USER) {

@@ -86,7 +86,7 @@ class EmailsController extends BaseController
         $prefs = Prefs::get($this->usr_id);
 
         $this->tpl->assign(
-            array(
+            [
                 'options' => $options,
                 'sorting' => Support::getSortingInfo($options),
 
@@ -97,7 +97,7 @@ class EmailsController extends BaseController
 
                 'refresh_rate' => $prefs['email_refresh_rate'] * 60,
                 'refresh_page' => 'emails.php',
-            )
+            ]
         );
     }
 }

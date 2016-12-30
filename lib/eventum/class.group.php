@@ -38,7 +38,7 @@ class Group
                  ) VALUES (
                     ?, ?, ?
                  )';
-        $params = array($_POST['group_name'], $_POST['description'], $_POST['manager']);
+        $params = [$_POST['group_name'], $_POST['description'], $_POST['manager']];
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
@@ -71,7 +71,7 @@ class Group
                     grp_manager_usr_id = ?
                  WHERE
                     grp_id = ?';
-        $params = array($_POST['group_name'], $_POST['description'], $_POST['manager'], $_POST['id']);
+        $params = [$_POST['group_name'], $_POST['description'], $_POST['manager'], $_POST['id']];
         try {
             DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
@@ -113,7 +113,7 @@ class Group
                      WHERE
                         grp_id = ?';
             try {
-                DB_Helper::getInstance()->query($stmt, array($grp_id));
+                DB_Helper::getInstance()->query($stmt, [$grp_id]);
             } catch (DatabaseException $e) {
                 return -1;
             }
@@ -137,7 +137,7 @@ class Group
      * @param   array $projects An array of projects to associate with the group.
      * @return int
      */
-    public function setProjects($grp_id, $projects)
+    public static function setProjects($grp_id, $projects)
     {
         self::removeProjectsByGroup($grp_id);
 
@@ -152,7 +152,7 @@ class Group
                         ?, ?
                      )';
             try {
-                DB_Helper::getInstance()->query($stmt, array($prj_id, $grp_id));
+                DB_Helper::getInstance()->query($stmt, [$prj_id, $grp_id]);
             } catch (DatabaseException $e) {
                 return -1;
             }
@@ -175,30 +175,7 @@ class Group
                  WHERE
                     pgr_grp_id = ?';
         try {
-            DB_Helper::getInstance()->query($stmt, array($grp_id));
-        } catch (DatabaseException $e) {
-            return -1;
-        }
-
-        return 1;
-    }
-
-    /**
-     * Removes specified projects from all groups.
-     *
-     * @param   array $projects An array of projects to remove from all groups.
-     * @return  integer 1 if successful, -1 otherwise
-     */
-    public static function disassociateProjects($projects)
-    {
-        // delete all current associations
-        $stmt = 'DELETE FROM
-                    {{%project_group}}
-                 WHERE
-
-                    pgr_prj_id IN (' . DB_Helper::buildList($projects) . ')';
-        try {
-            DB_Helper::getInstance()->query($stmt, $projects);
+            DB_Helper::getInstance()->query($stmt, [$grp_id]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -230,7 +207,7 @@ class Group
                     grp_id = ?';
 
         try {
-            $res = DB_Helper::getInstance()->getRow($stmt, array($grp_id));
+            $res = DB_Helper::getInstance()->getRow($stmt, [$grp_id]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -241,7 +218,7 @@ class Group
             $res['project_ids'] = array_keys($res['projects']);
             $res['manager'] = User::getFullName($res['grp_manager_usr_id']);
         } else {
-            $res = array();
+            $res = [];
         }
         $returns[$grp_id] = $res;
 
@@ -324,7 +301,7 @@ class Group
                  ORDER BY
                     grp_name';
         try {
-            $res = DB_Helper::getInstance()->getPair($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getPair($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -373,7 +350,7 @@ class Group
                  WHERE
                     ugr_grp_id = ?';
         try {
-            $res = DB_Helper::getInstance()->getColumn($stmt, array($grp_id));
+            $res = DB_Helper::getInstance()->getColumn($stmt, [$grp_id]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -399,7 +376,7 @@ class Group
                     pgr_prj_id = prj_id AND
                     pgr_grp_id = ?';
         try {
-            $res = DB_Helper::getInstance()->getPair($stmt, array($grp_id));
+            $res = DB_Helper::getInstance()->getPair($stmt, [$grp_id]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -424,7 +401,7 @@ class Group
                     grp_id = pgr_grp_id AND
                     grp_name = ?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($name));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$name]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -452,7 +429,7 @@ class Group
                   ugr_grp_id = ?,
                   ugr_created = ?';
         try {
-            $res = DB_Helper::getInstance()->query($sql, array($usr_id, $grp_id, Date_Helper::getCurrentDateGMT()));
+            DB_Helper::getInstance()->query($sql, [$usr_id, $grp_id, Date_Helper::getCurrentDateGMT()]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -475,7 +452,7 @@ class Group
                   ugr_usr_id = ? AND
                   ugr_grp_id = ?';
         try {
-            $res = DB_Helper::getInstance()->query($sql, array($usr_id, $grp_id));
+            DB_Helper::getInstance()->query($sql, [$usr_id, $grp_id]);
         } catch (DatabaseException $e) {
             return -1;
         }

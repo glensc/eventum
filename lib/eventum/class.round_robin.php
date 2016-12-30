@@ -23,7 +23,7 @@ class Round_Robin
      * @param   integer $end The blackout end hour
      * @return  array The blackout dates
      */
-    public function getBlackoutDates($date, $start, $end)
+    public static function getBlackoutDates($date, $start, $end)
     {
         $start = substr($start, 0, 2);
         $end = substr($end, 0, 2);
@@ -78,10 +78,10 @@ class Round_Robin
             }
         }
 
-        return array(
+        return [
             date('Y-m-d', $date->getTimestamp() + $first),
             date('Y-m-d', $date->getTimestamp() + $second),
-        );
+        ];
     }
 
     /**
@@ -167,7 +167,7 @@ class Round_Robin
      * @param   integer $usr_id The assignee's user ID
      * @return  boolean
      */
-    public function markNextAssignee($prj_id, $usr_id)
+    public static function markNextAssignee($prj_id, $usr_id)
     {
         $prr_id = self::getID($prj_id);
         $stmt = 'UPDATE
@@ -177,7 +177,7 @@ class Round_Robin
                  WHERE
                     rru_prr_id=?';
         try {
-            DB_Helper::getInstance()->query($stmt, array($prr_id));
+            DB_Helper::getInstance()->query($stmt, [$prr_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -190,7 +190,7 @@ class Round_Robin
                     rru_usr_id=? AND
                     rru_prr_id=?';
         try {
-            DB_Helper::getInstance()->query($stmt, array($usr_id, $prr_id));
+            DB_Helper::getInstance()->query($stmt, [$usr_id, $prr_id]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -204,7 +204,7 @@ class Round_Robin
      * @param   integer $prj_id The project ID
      * @return  integer The round robin entry ID
      */
-    public function getID($prj_id)
+    public static function getID($prj_id)
     {
         $stmt = 'SELECT
                     prr_id
@@ -213,7 +213,7 @@ class Round_Robin
                  WHERE
                     prr_prj_id=?';
         try {
-            $res = DB_Helper::getInstance()->getOne($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getOne($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -228,7 +228,7 @@ class Round_Robin
      * @param   integer $prj_id The project ID
      * @return  array The list of users
      */
-    public function getUsersByProject($prj_id)
+    public static function getUsersByProject($prj_id)
     {
         $stmt = 'SELECT
                     usr_id,
@@ -246,29 +246,29 @@ class Round_Robin
                  ORDER BY
                     usr_id ASC';
         try {
-            $res = DB_Helper::getInstance()->getAll($stmt, array($prj_id));
+            $res = DB_Helper::getInstance()->getAll($stmt, [$prj_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         $blackout_start = '';
         $blackout_end = '';
-        $t = array();
+        $t = [];
         foreach ($res as $row) {
             $blackout_start = $row['prr_blackout_start'];
             $blackout_end = $row['prr_blackout_end'];
             $prefs = Prefs::get($row['usr_id']);
-            $t[$row['usr_id']] = array(
+            $t[$row['usr_id']] = [
                 'timezone' => $prefs['timezone'],
                 'is_next'  => $row['rru_next'],
-            );
+            ];
         }
 
-        return array(
+        return [
             $blackout_start,
             $blackout_end,
             $t,
-        );
+        ];
     }
 
     /**
@@ -290,7 +290,7 @@ class Round_Robin
                     ?, ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($_POST['project'], $blackout_start, $blackout_end));
+            DB_Helper::getInstance()->query($stmt, [$_POST['project'], $blackout_start, $blackout_end]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -311,7 +311,7 @@ class Round_Robin
      * @param   integer $usr_id The user ID
      * @return  boolean
      */
-    public function addUserAssociation($prr_id, $usr_id)
+    public static function addUserAssociation($prr_id, $usr_id)
     {
         $stmt = 'INSERT INTO
                     {{%round_robin_user}}
@@ -323,7 +323,7 @@ class Round_Robin
                     ?, ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($prr_id, $usr_id, 0));
+            DB_Helper::getInstance()->query($stmt, [$prr_id, $usr_id, 0]);
         } catch (DatabaseException $e) {
             return false;
         }
@@ -370,7 +370,7 @@ class Round_Robin
      * @param   integer $prr_id The round robin entry ID
      * @return  array The list of users
      */
-    public function getAssociatedUsers($prr_id)
+    public static function getAssociatedUsers($prr_id)
     {
         $stmt = 'SELECT
                     usr_id,
@@ -384,9 +384,9 @@ class Round_Robin
                  ORDER BY
                     usr_id ASC';
         try {
-            $res = DB_Helper::getInstance()->getPair($stmt, array($prr_id));
+            $res = DB_Helper::getInstance()->getPair($stmt, [$prr_id]);
         } catch (DatabaseException $e) {
-            return array();
+            return [];
         }
 
         return $res;
@@ -407,7 +407,7 @@ class Round_Robin
                  WHERE
                     prr_id=?';
         try {
-            $res = DB_Helper::getInstance()->getRow($stmt, array($prr_id));
+            $res = DB_Helper::getInstance()->getRow($stmt, [$prr_id]);
         } catch (DatabaseException $e) {
             return '';
         }
@@ -436,7 +436,7 @@ class Round_Robin
                  WHERE
                     prr_id=?';
         try {
-            DB_Helper::getInstance()->query($stmt, array($_POST['project'], $blackout_start, $blackout_end, $_POST['id']));
+            DB_Helper::getInstance()->query($stmt, [$_POST['project'], $blackout_start, $blackout_end, $_POST['id']]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -457,10 +457,10 @@ class Round_Robin
      * @param   integer $prr_id The round robin ID
      * @return  boolean
      */
-    public function removeUserAssociations($prr_id)
+    public static function removeUserAssociations($prr_id)
     {
         if (!is_array($prr_id)) {
-            $prr_id = array($prr_id);
+            $prr_id = [$prr_id];
         }
         $items = DB_Helper::buildList($prr_id);
         $stmt = "DELETE FROM

@@ -74,10 +74,10 @@ class MailQueueController extends BaseController
         $data = Mail_Queue::getListByIssueID($this->issue_id);
 
         $this->tpl->assign(
-            array(
+            [
                 'data' => $data,
                 'issue_id' => $this->issue_id,
-            )
+            ]
         );
     }
 }

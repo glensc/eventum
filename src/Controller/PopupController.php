@@ -18,7 +18,6 @@ use Auth;
 use Authorized_Replier;
 use Filter;
 use History;
-use Impact_Analysis;
 use Issue;
 use Note;
 use Notification;
@@ -108,26 +107,6 @@ class PopupController extends BaseController
                 $this->tpl->assign('bulk_update_result', $res);
                 break;
 
-            case 'set_initial_impact':
-                $res = Issue::setImpactAnalysis($this->issue_id);
-                $this->tpl->assign('set_initial_impact_result', $res);
-                break;
-
-            case 'add_requirement':
-                $res = Impact_Analysis::insert($this->issue_id);
-                $this->tpl->assign('add_requirement_result', $res);
-                break;
-
-            case 'set_impact_requirement':
-                $res = Impact_Analysis::update($this->isr_id);
-                $this->tpl->assign('set_impact_requirement_result', $res);
-                break;
-
-            case 'delete_requirement':
-                $res = Impact_Analysis::remove();
-                $this->tpl->assign('requirement_delete_result', $res);
-                break;
-
             case 'save_filter':
                 $res = Filter::save();
                 $this->tpl->assign('save_filter_result', $res);
@@ -188,10 +167,10 @@ class PopupController extends BaseController
                 if ($res == 1) {
                     History::add(
                         $this->issue_id, $this->usr_id, 'status_changed',
-                        "Issue manually set to status '{status}' by {user}", array(
+                        "Issue manually set to status '{status}' by {user}", [
                             'status' => Status::getStatusTitle($this->status_id),
                             'user' => User::getFullName($this->usr_id),
-                        )
+                        ]
                     );
                 }
                 $this->tpl->assign('new_status_result', $res);
@@ -226,9 +205,9 @@ class PopupController extends BaseController
     protected function prepareTemplate()
     {
         $this->tpl->assign(
-            array(
+            [
                 'cat' => $this->cat
-            )
+            ]
         );
     }
 }

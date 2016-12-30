@@ -72,7 +72,7 @@ class IssueAutoCreationController extends ManageBaseController
     protected function prepareTemplate()
     {
         $this->tpl->assign(
-            array(
+            [
                 'info' => Email_Account::getDetails($this->ema_id),
                 'cats' => Category::getAssocList($this->prj_id),
                 'priorities' => Priority::getList($this->prj_id),
@@ -81,7 +81,7 @@ class IssueAutoCreationController extends ManageBaseController
                 'ema_id' => $this->ema_id,
                 'prj_title' => Project::getName($this->prj_id),
                 'uses_customer_integration' => CRM::hasCustomerIntegration($this->prj_id),
-            )
+            ]
         );
     }
 }

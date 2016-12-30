@@ -12,6 +12,7 @@
  */
 
 use Eventum\Db\DatabaseException;
+use Eventum\Session;
 
 /**
  * Holding all search relevant methods
@@ -66,7 +67,7 @@ class Search
         $request_only = !$save_db; // if we should only look at get / post not the DB or cookies
 
         $sort_by = self::getParam('sort_by', $request_only);
-        $sort_order = self::getParam('sort_order', $request_only, array('asc', 'desc'));
+        $sort_order = self::getParam('sort_order', $request_only, ['asc', 'desc']);
         $rows = self::getParam('rows', $request_only);
         $hide_closed = self::getParam('hide_closed', $request_only);
         if ($hide_closed === '') {
@@ -80,7 +81,7 @@ class Search
         if (is_string($custom_field)) {
             $custom_field = unserialize(urldecode($custom_field));
         }
-        $cookie = array(
+        $cookie = [
             'rows'           => Misc::escapeString($rows ? $rows : APP_DEFAULT_PAGER_SIZE),
             'pagerRow'       => Misc::escapeInteger(self::getParam('pagerRow', $request_only)),
             'hide_closed'    => $hide_closed,
@@ -108,29 +109,29 @@ class Search
             'release'        => Misc::escapeInteger(self::getParam('release', $request_only)),
             // custom fields
             'custom_field'   => Misc::stripHTML($custom_field),
-        );
+        ];
         // now do some magic to properly format the date fields
-        $date_fields = array(
+        $date_fields = [
             'created_date',
             'updated_date',
             'last_response_date',
             'first_response_date',
             'closed_date',
-        );
+        ];
         foreach ($date_fields as $field_name) {
             $field = Misc::stripHTML(self::getParam($field_name, $request_only));
             if (empty($field)) {
                 continue;
             }
             if (@$field['filter_type'] == 'in_past') {
-                @$cookie[$field_name] = array(
+                @$cookie[$field_name] = [
                     'filter_type'   =>  'in_past',
                     'time_period'   =>  $field['time_period'],
-                );
+                ];
             } else {
                 $end_field_name = $field_name . '_end';
                 $end_field = Misc::stripHTML(self::getParam($end_field_name, $request_only));
-                @$cookie[$field_name] = array(
+                @$cookie[$field_name] = [
                     'past_hour'   => $field['past_hour'],
                     'Year'        => $field['Year'],
                     'Month'       => $field['Month'],
@@ -138,12 +139,12 @@ class Search
                     'start'       => $field['Year'] . '-' . $field['Month'] . '-' . $field['Day'],
                     'filter_type' => $field['filter_type'],
                     'end'         => $end_field['Year'] . '-' . $end_field['Month'] . '-' . $end_field['Day'],
-                );
-                @$cookie[$end_field_name] = array(
+                ];
+                @$cookie[$end_field_name] = [
                     'Year'        => $end_field['Year'],
                     'Month'       => $end_field['Month'],
                     'Day'         => $end_field['Day'],
-                );
+                ];
             }
         }
 
@@ -167,7 +168,7 @@ class Search
 
         // default order for last action date, priority should be descending
         // for textual fields, like summary, ascending is reasonable
-        $fields = array(
+        $fields = [
             'pri_rank' => 'desc',
             'sev_rank' => 'asc',
             'iss_id' => 'desc',
@@ -182,7 +183,8 @@ class Search
             'pre_title' => 'asc',
             'assigned' => 'asc',
             'grp_name'  =>  'asc',
-        );
+            'iss_percent_complete'  =>  'asc',
+        ];
 
         foreach ($custom_fields as $fld_id => $fld_name) {
             $fields['custom_field_' . $fld_id] = 'desc';
@@ -192,10 +194,10 @@ class Search
         $sortfields['pre_title'] = 'pre_scheduled_date';
         $sortfields['assigned'] = 'isu_usr_id';
 
-        $items = array(
-            'links'  => array(),
-            'images' => array(),
-        );
+        $items = [
+            'links'  => [],
+            'images' => [],
+        ];
         $current_sort_by = $options['sort_by'];
         $current_sort_order = $options['sort_order'];
         foreach ($sortfields as $field => $sortfield) {
@@ -254,6 +256,7 @@ class Search
                     iss_usr_id,
                     iss_summary,
                     pri_title,
+                    pri_icon,
                     prc_title,
                     sta_title,
                     sta_color status_color,
@@ -410,11 +413,11 @@ class Search
         try {
             $res = DB_Helper::getInstance()->getAll($stmt);
         } catch (DatabaseException $e) {
-            return array(
+            return [
                 'list' => null,
                 'info' => null,
                 'csv' => null,
-            );
+            ];
         }
 
         if (count($res) > 0) {
@@ -432,9 +435,7 @@ class Search
             Auth::redirect("list.php?pagerRow=0&rows=$max");
         }
 
-        $groups = Group::getAssocList($prj_id);
-        $categories = Category::getAssocList($prj_id);
-        $column_headings = array();
+        $column_headings = [];
         $columns_to_display = Display_Column::getColumnsToDisplay($prj_id, 'list_issues');
         foreach ($columns_to_display as $col_key => $column) {
             if ($col_key == 'custom_fields' && count($custom_fields) > 0) {
@@ -448,7 +449,7 @@ class Search
         $csv[] = @implode("\t", $column_headings);
 
         if (@$options['hide_excerpts'] != 1 && self::doesBackendSupportExcerpts() == true) {
-            $excerpts = self::getFullTextExcerpts();
+            $excerpts = self::getFullTextExcerpts($options);
         }
 
         foreach ($res as &$row) {
@@ -459,7 +460,7 @@ class Search
 
             $row['access_level_name'] = Access::getAccessLevelName($row['iss_access_level']);
 
-            $fields = array();
+            $fields = [];
             foreach (array_keys($columns_to_display) as $col_key) {
                 switch ($col_key) {
                     case 'pri_rank':
@@ -472,6 +473,8 @@ class Search
                         $col_key = 'status_change_date';break;
                     case 'sev_rank':
                         $col_key = 'sev_title';break;
+                    case 'iss_customer_id':
+                        $col_key = 'customer_title';break;
                 }
                 if ($col_key == 'custom_fields' && count($custom_fields) > 0) {
                     $custom_field_values = Custom_Field::getListByIssue($prj_id, $row['iss_id']);
@@ -503,9 +506,9 @@ class Search
         $total_pages = ceil($total_rows / $max);
         $last_page = $total_pages - 1;
 
-        return array(
+        return [
             'list' => $res,
-            'info' => array(
+            'info' => [
                 'current_page'  => $current_row,
                 'start_offset'  => $start,
                 'end_offset'    => $start + count($res),
@@ -515,9 +518,9 @@ class Search
                 'next_page'     => ($current_row == $last_page) ? '-1' : ($current_row + 1),
                 'last_page'     => $last_page,
                 'custom_fields' => $custom_fields,
-            ),
+            ],
             'csv' => @implode("\n", $csv),
-        );
+        ];
     }
 
     /**
@@ -537,7 +540,7 @@ class Search
         if ($role_id == User::ROLE_CUSTOMER) {
             $crm = CRM::getInstance($prj_id);
             $contact = $crm->getContact($usr_details['usr_customer_contact_id']);
-            $stmt .= " AND iss_customer_contract_id IN('" . implode("','", $contact->getContractIDS()) . "')";
+            $stmt .= " AND iss_customer_contract_id IN('" . implode("','", $contact->getContractIDs()) . "')";
             $stmt .= " AND iss_customer_id ='" . Auth::getCurrentCustomerID() . "'";
         } elseif (($role_id == User::ROLE_REPORTER) && (Project::getSegregateReporters($prj_id))) {
             $stmt .= " AND (
@@ -619,7 +622,7 @@ class Search
         }
         if (!empty($options['category'])) {
             if (!is_array($options['category'])) {
-                $options['category'] = array($options['category']);
+                $options['category'] = [$options['category']];
             }
             $stmt .= ' AND iss_prc_id IN(' . implode(', ', Misc::escapeInteger($options['category'])) . ')';
         }
@@ -633,13 +636,13 @@ class Search
             $stmt .= ' AND ipv_pro_id = ' . Misc::escapeInteger($options['product']);
         }
         // now for the date fields
-        $date_fields = array(
+        $date_fields = [
             'created_date',
             'updated_date',
             'last_response_date',
             'first_response_date',
             'closed_date',
-        );
+        ];
         foreach ($date_fields as $field_name) {
             if (!empty($options[$field_name])) {
                 switch ($options[$field_name]['filter_type']) {
@@ -738,6 +741,7 @@ class Search
         if ((APP_ENABLE_FULLTEXT) && (@$options['search_type'] != 'all_text')) {
             Session::set('fulltext_string', '');
             Session::set('fulltext_issues', '');
+            Session::set('fulltext_excerpts', '');
         }
 
         return $stmt;
@@ -761,11 +765,12 @@ class Search
         $issues = $fulltext->getIssueIDs($options);
 
         if (count($issues) < 1) {
-            $issues = array(-1); // no results, kill the query
+            $issues = [-1]; // no results, kill the query
         }
 
         Session::set('fulltext_string', $options['keywords']);
         Session::set('fulltext_issues', $issues);
+        Session::set('fulltext_excerpts', '');
 
         return $issues;
     }
@@ -773,13 +778,20 @@ class Search
     /**
      * This needs to be called after getFullTextIssues
      */
-    public static function getFullTextExcerpts()
+    public static function getFullTextExcerpts($options)
     {
-        if (APP_ENABLE_FULLTEXT) {
-            return self::getFullTextSearchInstance()->getExcerpts();
-        } else {
-            return array();
+        if (!APP_ENABLE_FULLTEXT || empty($options['keywords'])) {
+            return [];
         }
+
+        // check if excerpts for this full text search is already cached
+        $excerpts = Session::get('fulltext_excerpts');
+        if (empty($excerpts)) {
+            $excerpts = self::getFullTextSearchInstance()->getExcerpts();
+            Session::set('fulltext_excerpts', $excerpts);
+        }
+
+        return $excerpts;
     }
 
     /**

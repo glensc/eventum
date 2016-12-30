@@ -135,18 +135,18 @@ class DebugBar
 
         $renderer = $debugbar->getJavascriptRenderer("{$rel_url}debugbar");
         $renderer->addControl(
-            'Smarty', array(
+            'Smarty', [
                 'widget' => 'PhpDebugBar.Widgets.VariableListWidget',
                 'map' => 'Smarty',
                 'default' => '[]'
-            )
+            ]
         );
         $renderer->addControl(
-            'Config', array(
+            'Config', [
                 'widget' => 'PhpDebugBar.Widgets.VariableListWidget',
                 'map' => 'Config',
                 'default' => '[]'
-            )
+            ]
         );
 
         return $renderer;

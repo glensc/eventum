@@ -27,14 +27,16 @@ class Routing
      */
     public static function route(&$full_message)
     {
-        if (empty($full_message)) {
+        self::removeMboxHeader($full_message);
+
+        if (!$full_message) {
             throw RoutingException::noMessageBodyError();
         }
 
         $structure = Mime_Helper::decode($full_message, false, true);
 
         // we create addresses array so it can be reused
-        $addresses = array();
+        $addresses = [];
         if (isset($structure->headers['to'])) {
             $addresses[] = $structure->headers['to'];
         }
@@ -47,13 +49,13 @@ class Routing
         $setup = Setup::get();
 
         // create mapping for quickly checking if routing is enabled
-        $routing = array(
+        $routing = [
             'email' => $setup['email_routing']['status'] == 'enabled',
             'note' => $setup['note_routing']['status'] == 'enabled',
             'draft' => $setup['draft_routing']['status'] == 'enabled',
-        );
+        ];
 
-        $types = array('email', 'note', 'draft');
+        $types = ['email', 'note', 'draft'];
         foreach ($addresses as $address) {
             // NOTE: $address is not individual recipients,
             // but rather raw To or Cc header containing multiple addresses
@@ -185,7 +187,7 @@ class Routing
 
         // TODO: remove all params that use $mail in some form and pass just $mail object
         // as for example content and headers could be rewritten later!
-        $t = array(
+        $t = [
             'issue_id'       => $issue_id,
             'ema_id'         => $email_account_id,
             'message_id'     => $mail->messageId,
@@ -199,7 +201,7 @@ class Routing
             'has_attachment' => $has_attachments,
 //            'headers'        => $headers->toString(), // FIXME: needed
             'mail'           => $mail,
-        );
+        ];
 
         // automatically associate this incoming email with a customer
         if (CRM::hasCustomerIntegration($prj_id)) {
@@ -260,9 +262,9 @@ class Routing
             }
 
             // log routed email
-            History::add($issue_id, $usr_id, 'email_routed', 'Email routed from {from}', array(
+            History::add($issue_id, $usr_id, 'email_routed', 'Email routed from {from}', [
                 'from' => $mail->from,
-            ));
+            ]);
         }
 
         return true;
@@ -340,7 +342,7 @@ class Routing
         AuthCookie::setProjectCookie($prj_id);
 
         // parse the Cc: list, if any, and add these internal users to the issue notification list
-        $addresses = array();
+        $addresses = [];
         $to_addresses = Mail_Helper::getEmailAddresses(@$structure->headers['to']);
         if (count($to_addresses)) {
             $addresses = $to_addresses;
@@ -349,7 +351,7 @@ class Routing
         if (count($cc_addresses)) {
             $addresses = array_merge($addresses, $cc_addresses);
         }
-        $cc_users = array();
+        $cc_users = [];
         foreach ($addresses as $email) {
             $cc_usr_id = User::getUserIDByEmail(strtolower($email), true);
             if ((!empty($cc_usr_id)) && (User::getRoleByUser($cc_usr_id, $prj_id) >= User::ROLE_USER)) {
@@ -366,14 +368,14 @@ class Routing
         }
 
         // insert the new note and send notification about it
-        $_POST = array(
+        $_POST = [
             'title'                => @$structure->headers['subject'],
             'note'                 => $body,
             'note_cc'              => $cc_users,
             'add_extra_recipients' => 'yes',
             'message_id'           => @$structure->headers['message-id'],
             'parent_id'            => $parent_id,
-        );
+        ];
 
         // add the full email to the note if there are any attachments
         // this is needed because the front end code will display attachment links
@@ -389,9 +391,9 @@ class Routing
         }
 
         // FIXME! $res == -2 is not handled
-        History::add($issue_id, $usr_id, 'note_routed', 'Note routed from {user}', array(
+        History::add($issue_id, $usr_id, 'note_routed', 'Note routed from {user}', [
             'user' => $structure->headers['from'],
-        ));
+        ]);
 
         return true;
     }
@@ -496,7 +498,9 @@ class Routing
             } else {
                 $host_aliases = explode(' ', $settings['host_alias']);
             }
-            $host_aliases = implode('|', array_map(function ($s) { return quotemeta($s); }, $host_aliases));
+            $host_aliases = implode('|', array_map(function ($s) {
+                return quotemeta($s);
+            }, $host_aliases));
 
             $mail_domain = '(?:' . $mail_domain . '|' . $host_aliases . ')';
         }
@@ -509,5 +513,37 @@ class Routing
         }
 
         return false;
+    }
+
+    /**
+     * Remove Mbox header from message if it is present
+     *
+     * @param string $message
+     * @link https://github.com/eventum/eventum/issues/155
+     * @internal public for testing
+     */
+    public static function removeMboxHeader(&$message)
+    {
+        if (substr($message, 0, 5) != 'From ') {
+            return;
+        }
+
+        // $message can be big,
+        // so the code below tries to not to allocate big buffers just to strip out first line
+
+        // find EOL
+        $i = strpos($message, "\r");
+        if ($i === false) {
+            $i = strpos($message, "\n");
+        }
+        if ($i === false) {
+            throw new InvalidArgumentException('Could not find EOL');
+        }
+
+        // loop until no \r or \n
+        while (in_array($message[$i], ["\r", "\n"])) {
+            $i++;
+        }
+        $message = substr($message, $i);
     }
 }

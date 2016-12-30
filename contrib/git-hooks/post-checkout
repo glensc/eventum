@@ -56,11 +56,18 @@ checkin_vendor() {
 update_composer() {
 	branch=$(git rev-parse --abbrev-ref HEAD)
 
+	# handle rebases
+	# $ git rev-parse --abbrev-ref HEAD
+	# HEAD
+	# $ git branch
+	# * (HEAD detached from refs/heads/zf-mailqueue)
+	test "$branch" = "HEAD" && return
+
 	# rm lock, so if there's no lock from vendor dir we do "composer update"
 	rm composer.lock
 
 	checkout_vendor
-	composer install
+	composer "${@:-install}"
 	checkin_vendor
 }
 
@@ -71,11 +78,19 @@ check_composer_json() {
 	test "$c" = "composer.json" || return
 	echo "[post-checkout] composer.json changed"
 
+	# TODO: process:
+	# Warning: The lock file is not up to date with the latest changes in
+	# composer.json. You may be getting outdated dependencies. Run update to
+	# update them.
 	update_composer
 }
 
-# ran directly, assume user wants to update force vendor/ dir
-[ $# = 0 ] && { rm -f composer.lock vendor/composer.lock; update_composer; exit 0; }
+# if ran directly, assume user wants to update force vendor/ dir
+if [ -z "$GIT_DIR" ]; then
+	rm -f composer.lock vendor/composer.lock
+	update_composer "$@"
+	exit $?
+fi
 
 # file checkout, nothing to do
 [ "$flag" = "0" ] && exit 0

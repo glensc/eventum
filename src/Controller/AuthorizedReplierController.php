@@ -16,7 +16,7 @@ namespace Eventum\Controller;
 use Access;
 use Auth;
 use Authorized_Replier;
-use Misc;
+use Project;
 
 class AuthorizedReplierController extends BaseController
 {
@@ -87,15 +87,15 @@ class AuthorizedReplierController extends BaseController
 
         if ($res == 1) {
             $message = ev_gettext('Thank you, the authorized replier was inserted successfully.');
-            Misc::setMessage($message);
+            $this->messages->addInfoMessage($message);
         } elseif ($res == -1) {
             $message = ev_gettext('An error occurred while trying to insert the authorized replier.');
-            Misc::setMessage($message, Misc::MSG_ERROR);
+            $this->messages->addErrorMessage($message);
         } elseif ($res == -2) {
             $message = ev_gettext(
                 "Users with a role of 'customer' or below are not allowed to be added to the authorized repliers list."
             );
-            Misc::setMessage($message, Misc::MSG_ERROR);
+            $this->messages->addErrorMessage($message);
         }
     }
 
@@ -106,10 +106,10 @@ class AuthorizedReplierController extends BaseController
         $res = Authorized_Replier::removeRepliers($post->get('items'));
         if ($res == 1) {
             $message = ev_gettext('Thank you, the authorized replier was deleted successfully.');
-            Misc::setMessage($message);
+            $this->messages->addInfoMessage($message);
         } elseif ($res == -1) {
             $message = ev_gettext('An error occurred while trying to delete the authorized replier.');
-            Misc::setMessage($message, Misc::MSG_ERROR);
+            $this->messages->addErrorMessage($message);
         }
     }
 
@@ -120,11 +120,16 @@ class AuthorizedReplierController extends BaseController
     {
         list(, $repliers) = Authorized_Replier::getAuthorizedRepliers($this->issue_id);
 
+        $users = Project::getAddressBook($this->prj_id, $this->issue_id);
+        // add empty value which would be the default value in dropdown
+        array_unshift($users, '');
+
         $this->tpl->assign(
-            array(
+            [
                 'issue_id' => $this->issue_id,
                 'list' => $repliers,
-            )
+                'users' => $users,
+            ]
         );
     }
 }

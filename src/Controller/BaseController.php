@@ -15,7 +15,6 @@ namespace Eventum\Controller;
 
 use Auth;
 use InvalidArgumentException;
-use Misc;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
 use Template_Helper;
@@ -25,6 +24,9 @@ use Template_Helper;
  *
  * @property-read Helper\AssignHelper $assign
  * @property-read Helper\AttachHelper $attach
+ * @property-read Helper\HtmlHelper $html
+ * @property-read Helper\PlotHelper $plot
+ * @property-read Helper\MessagesHelper $messages
  */
 abstract class BaseController
 {
@@ -86,6 +88,7 @@ abstract class BaseController
      */
     protected function displayTemplate($tpl_name = null)
     {
+        $this->tpl->assign('messages', $this->messages->getMessages());
         // set new template, if needed
         if ($tpl_name) {
             $this->tpl->setTemplate($tpl_name);
@@ -100,9 +103,9 @@ abstract class BaseController
      */
     protected function error($msg)
     {
-        // TODO: move Misc::displayErrorMessage contents here,
-        // once this is only place it's called from
-        Misc::displayErrorMessage($msg);
+        $this->messages->addErrorMessage($msg);
+        $this->displayTemplate('error_message.tpl.html');
+        exit;
     }
 
     /**
@@ -112,7 +115,7 @@ abstract class BaseController
      * @param string $url
      * @param array $params
      */
-    protected function redirect($url, $params = array())
+    protected function redirect($url, $params = [])
     {
         if ($params) {
             $q = strstr($url, '?') ? '&' : '?';
@@ -121,6 +124,17 @@ abstract class BaseController
 
         // TODO: drop Auth::redirect once this is only place Auth::redirect is used
         Auth::redirect($url);
+    }
+
+    /**
+     * Returns TRUE if current request is HTTP POST.
+     *
+     * @return bool
+     * @since 3.1.4
+     */
+    protected function isPostRequest()
+    {
+        return $this->getRequest()->isMethod(Request::METHOD_POST);
     }
 
     public function __get($name)

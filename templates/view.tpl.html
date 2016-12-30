@@ -1,5 +1,5 @@
 {extends "base_full.tpl.html"}
-{block page_id}issue_view{/block}
+{block page_classes}issue_view{/block}
 
 {block "content"}
 {if $issue|default:'' != ''}
@@ -23,7 +23,7 @@
   <div class="view_issue_seperator"></div>
   {/if}
 
-  {if $core.current_role > $core.roles.customer and $core.app_setup.scm_integration|default:'' == 'enabled'}
+  {if $core.app_setup.scm_integration|default:'' == 'enabled' and $issue_access.checkins}
   {include file="checkins.tpl.html"}
   {/if}
 

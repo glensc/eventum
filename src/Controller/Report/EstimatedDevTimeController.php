@@ -63,10 +63,10 @@ class EstimatedDevTimeController extends ReportBaseController
             $total += $row['dev_time'];
             $res[$id]['dev_time'] = $this->pad($row['dev_time']);
         }
-        $res[] = array(
+        $res[] = [
             'dev_time' => $this->pad($total),
             'prc_title' => 'Total',
-        );
+        ];
 
         return $res;
     }
