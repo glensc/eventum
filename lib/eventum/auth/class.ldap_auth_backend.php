@@ -27,11 +27,25 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
     /** @var string */
     protected $basedn;
     /** @var string */
-    protected $user_dn_string;
-    /** @var string */
     protected $customer_id_attribute;
     /** @var string */
     protected $contact_id_attribute;
+    /** @var bool */
+    protected $create_users;
+
+    /**
+     * Use %UID% to specify where the UID should be substituted.
+     *
+     * @var string
+     */
+    protected $user_dn_string;
+
+    /**
+     * Optional filter when binding the user
+     *
+     * @var string
+     */
+    protected $user_filter_string;
 
     /**
      * configures LDAP
@@ -47,6 +61,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         $this->user_filter_string = $setup['user_filter'];
         $this->customer_id_attribute = $setup['customer_id_attribute'];
         $this->contact_id_attribute = $setup['contact_id_attribute'];
+        $this->create_users = (bool)$setup['create_users'];
     }
 
     /**
@@ -78,19 +93,16 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
     }
 
     /**
-     * Get all users from LDAP server
+     * Get all users from LDAP server.
+     *
+     * NOTE: not used for auth backend, but used by contrib/ldap_udate_users.php script
      *
      * @return Net_LDAP2_Search|Net_LDAP2_Error Net_LDAP2_Search object or Net_LDAP2_Error object
      */
-    public function getUserListing()
+    public function getUserListing($dn = null)
     {
         $filter = Net_LDAP2_Filter::create('uid', 'equals', '*', false);
-        if (!empty($this->user_filter_string)) {
-            $user_filter = Net_LDAP2_Filter::parse($this->user_filter_string);
-            $filter = Net_LDAP2_Filter::combine('and', [$filter, $user_filter]);
-        }
-
-        $search = $this->connect()->search($this->basedn, $filter);
+        $search = $this->connect()->search($dn ?: $this->basedn, $filter);
 
         if (Misc::isError($search)) {
             throw new AuthException($search->getMessage(), $search->getCode());
@@ -191,6 +203,13 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         return null;
     }
 
+    /**
+     * Disable account by external id.
+     *
+     * @param string $uid
+     * @return bool
+     * @throws AuthException if the account was not active
+     */
     public function disableAccount($uid)
     {
         $usr_id = User::getUserIDByExternalID($uid);
@@ -198,7 +217,31 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
             return false;
         }
 
+        if ($this->accountActive($uid) !== true) {
+            throw new AuthException("User[usr_id=$usr_id; external_id=$uid] status is not active");
+        }
+
         return User::changeStatus($usr_id, User::USER_STATUS_INACTIVE);
+    }
+
+    /**
+     * Return true if external uid is locally active user,
+     * returns NULL if local user not found.
+     *
+     * @param string $uid external_id
+     * @return bool
+     */
+    public function accountActive($uid)
+    {
+        $usr_id = User::getUserIDByExternalID($uid);
+        if ($usr_id <= 0) {
+            return null;
+        }
+
+        $details = User::getDetails($usr_id);
+        $status = $details['usr_status'];
+
+        return $status === User::USER_STATUS_ACTIVE;
     }
 
     /**
@@ -318,6 +361,10 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
      */
     private function createUser($remote)
     {
+        if (!$this->create_users) {
+            throw new AuthException('User does not exist and will not be created.');
+        }
+
         $emails = $remote['emails'];
         if (!$emails) {
             throw new AuthException('E-mail is required');
@@ -449,7 +496,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
     /**
      * Method used to get the system-wide defaults.
      *
-     * @return  string array of the default parameters
+     * @return array of the default parameters
      */
     public static function getDefaults()
     {
