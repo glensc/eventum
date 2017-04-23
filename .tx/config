@@ -1,7 +1,7 @@
 [main]
 host = https://www.transifex.com
 
-[eventum.eventumpot]
+[eventum.eventum]
 file_filter = localization/<lang>.po
 source_file = localization/eventum.pot
 source_lang = en
