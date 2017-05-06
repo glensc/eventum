@@ -11,11 +11,13 @@
  * that were distributed with this source code.
  */
 
+use Eventum\CustomField\CustomFieldInterface;
+
 /**
  * Custom field backend to assist other backends in dynamically changing the
  * contents of one field or hiding/showing based on another field.
  */
-abstract class Dynamic_Custom_Field_Backend
+abstract class Dynamic_Custom_Field_Backend implements CustomFieldInterface
 {
     public function getList($fld_id, $issue_id = false)
     {
