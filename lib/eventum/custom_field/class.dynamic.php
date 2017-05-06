@@ -15,7 +15,7 @@
  * Custom field backend to assist other backends in dynamically changing the
  * contents of one field or hiding/showing based on another field.
  */
-class Dynamic_Custom_Field_Backend
+abstract class Dynamic_Custom_Field_Backend
 {
     public function getList($fld_id, $issue_id = false)
     {
