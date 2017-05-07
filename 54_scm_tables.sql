@@ -1,0 +1,1 @@
+../eventum/upgrade/patches/54_scm_tables.sql

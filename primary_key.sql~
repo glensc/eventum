@@ -1,0 +1,8 @@
+alter table eventum_issue_association
+	drop key isa_issue_id,
+	add primary key isa_issue_id (isa_issue_id,isa_associated_id);
+
+	eventum_reminder_action_list;
+	eventum_round_robin_user;
+	eventum_user_alias;
+	eventum_version;

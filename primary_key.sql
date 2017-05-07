@@ -1,0 +1,1 @@
+../eventum/upgrade/patches/primary_key.sql

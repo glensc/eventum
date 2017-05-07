@@ -1,0 +1,31 @@
+  733  2016-04-06 21:12:18 cd ../eventum
+  734  2016-04-06 21:12:20 git cola
+  735  2016-04-06 21:22:14 cd -
+  736  2016-04-06 21:22:18 cat 54_scm_tables.sql |sed -e 's,eventum_,,'|mysql e
+  737  2016-04-06 21:22:20 rm -rf src/Eventum/Model/Entity/
+  738  2016-04-06 21:22:22 php doctrine.entity.generator.php
+  739  2016-04-06 21:22:30 #mv src/Eventum/Model/Entity/Commit* src/Eventum/Model/Entity/IssueCommit.php ../eventum/src/Model/Entity/ 
+  740  2016-04-06 21:22:32 cd -
+  741  2016-04-06 21:22:38 cd src/Model/Entity/
+  742  2016-04-06 21:22:48 dif ../../../../doctrine2/src/Eventum/Model/Entity/
+  743  2016-04-06 21:22:49 dif ../../../../doctrine2/src/Eventum/Model/Entity/ .
+  744  2016-04-06 21:22:56 dif . ../../../../doctrine2/src/Eventum/Model/Entity/  >m.patch
+  745  2016-04-06 21:22:57 vi m.patch 
+  746  2016-04-06 21:23:22 patch -p1 < m.patch 
+  747  2016-04-06 21:33:01 cd -
+  748  2016-04-06 21:33:04 cat 54_scm_tables.sql |sed -e 's,eventum_,,'|mysql e
+  749  2016-04-06 21:33:06 cd -
+  750  2016-04-06 21:33:08 cd -2
+  751  2016-04-06 21:33:09 cat 54_scm_tables.sql |sed -e 's,eventum_,,'|mysql e
+  752  2016-04-06 21:33:11 rm -rf src/Eventum/Model/Entity/
+  753  2016-04-06 21:33:13 php doctrine.entity.generator.php
+  754  2016-04-06 21:33:14 cd -
+  755  2016-04-06 21:33:16 dif . ../../../../doctrine2/src/Eventum/Model/Entity/  >m.patch
+  756  2016-04-06 21:33:17 vi m.patch
+  757  2016-04-06 21:33:34 patch -p1 < m.patch 
+  758  2016-04-06 21:37:05 mysql eventum
+  759  2016-04-06 21:37:40 cd -
+  760  2016-04-06 21:37:42 cat 54_scm_tables.sql |sed -e 's,eventum_,,'|mysql e
+  761  2016-04-06 21:37:44 rm -rf src/Eventum/Model/Entity/
+  762  2016-04-06 21:37:45 php doctrine.entity.generator.php
+  763  2016-04-06 21:37:49 h > regen.sh
