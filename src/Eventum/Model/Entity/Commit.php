@@ -31,9 +31,23 @@ class Commit
     /**
      * @var string
      *
-     * @ORM\Column(name="com_commit_id", type="string", length=40, nullable=false)
+     * @ORM\Column(name="com_project_name", type="string", length=255, nullable=true)
      */
-    private $comCommitId;
+    private $comProjectName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="com_changeset", type="string", length=40, nullable=false)
+     */
+    private $comChangeset;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="com_branch", type="string", length=255, nullable=true)
+     */
+    private $comBranch;
 
     /**
      * @var string
@@ -48,6 +62,13 @@ class Commit
      * @ORM\Column(name="com_author_name", type="string", length=255, nullable=true)
      */
     private $comAuthorName;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="com_usr_id", type="integer", nullable=true)
+     */
+    private $comUsrId;
 
     /**
      * @var \DateTime
@@ -98,26 +119,72 @@ class Commit
     }
 
     /**
-     * Set comCommitId
+     * Set comProjectName
      *
-     * @param string $comCommitId
+     * @param string $comProjectName
      * @return Commit
      */
-    public function setComCommitId($comCommitId)
+    public function setComProjectName($comProjectName)
     {
-        $this->comCommitId = $comCommitId;
+        $this->comProjectName = $comProjectName;
 
         return $this;
     }
 
     /**
-     * Get comCommitId
+     * Get comProjectName
      *
      * @return string 
      */
-    public function getComCommitId()
+    public function getComProjectName()
     {
-        return $this->comCommitId;
+        return $this->comProjectName;
+    }
+
+    /**
+     * Set comChangeset
+     *
+     * @param string $comChangeset
+     * @return Commit
+     */
+    public function setComChangeset($comChangeset)
+    {
+        $this->comChangeset = $comChangeset;
+
+        return $this;
+    }
+
+    /**
+     * Get comChangeset
+     *
+     * @return string 
+     */
+    public function getComChangeset()
+    {
+        return $this->comChangeset;
+    }
+
+    /**
+     * Set comBranch
+     *
+     * @param string $comBranch
+     * @return Commit
+     */
+    public function setComBranch($comBranch)
+    {
+        $this->comBranch = $comBranch;
+
+        return $this;
+    }
+
+    /**
+     * Get comBranch
+     *
+     * @return string 
+     */
+    public function getComBranch()
+    {
+        return $this->comBranch;
     }
 
     /**
@@ -164,6 +231,29 @@ class Commit
     public function getComAuthorName()
     {
         return $this->comAuthorName;
+    }
+
+    /**
+     * Set comUsrId
+     *
+     * @param integer $comUsrId
+     * @return Commit
+     */
+    public function setComUsrId($comUsrId)
+    {
+        $this->comUsrId = $comUsrId;
+
+        return $this;
+    }
+
+    /**
+     * Get comUsrId
+     *
+     * @return integer 
+     */
+    public function getComUsrId()
+    {
+        return $this->comUsrId;
     }
 
     /**

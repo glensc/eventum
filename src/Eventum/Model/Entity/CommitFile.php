@@ -31,16 +31,30 @@ class CommitFile
     /**
      * @var string
      *
-     * @ORM\Column(name="cof_project_name", type="string", length=255, nullable=false)
-     */
-    private $cofProjectName;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="cof_filename", type="string", length=255, nullable=false)
      */
     private $cofFilename;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="cof_added", type="boolean", nullable=false)
+     */
+    private $cofAdded;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="cof_modified", type="boolean", nullable=false)
+     */
+    private $cofModified;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="cof_removed", type="boolean", nullable=false)
+     */
+    private $cofRemoved;
 
     /**
      * @var string
@@ -91,29 +105,6 @@ class CommitFile
     }
 
     /**
-     * Set cofProjectName
-     *
-     * @param string $cofProjectName
-     * @return CommitFile
-     */
-    public function setCofProjectName($cofProjectName)
-    {
-        $this->cofProjectName = $cofProjectName;
-
-        return $this;
-    }
-
-    /**
-     * Get cofProjectName
-     *
-     * @return string 
-     */
-    public function getCofProjectName()
-    {
-        return $this->cofProjectName;
-    }
-
-    /**
      * Set cofFilename
      *
      * @param string $cofFilename
@@ -134,6 +125,75 @@ class CommitFile
     public function getCofFilename()
     {
         return $this->cofFilename;
+    }
+
+    /**
+     * Set cofAdded
+     *
+     * @param boolean $cofAdded
+     * @return CommitFile
+     */
+    public function setCofAdded($cofAdded)
+    {
+        $this->cofAdded = $cofAdded;
+
+        return $this;
+    }
+
+    /**
+     * Get cofAdded
+     *
+     * @return boolean 
+     */
+    public function getCofAdded()
+    {
+        return $this->cofAdded;
+    }
+
+    /**
+     * Set cofModified
+     *
+     * @param boolean $cofModified
+     * @return CommitFile
+     */
+    public function setCofModified($cofModified)
+    {
+        $this->cofModified = $cofModified;
+
+        return $this;
+    }
+
+    /**
+     * Get cofModified
+     *
+     * @return boolean 
+     */
+    public function getCofModified()
+    {
+        return $this->cofModified;
+    }
+
+    /**
+     * Set cofRemoved
+     *
+     * @param boolean $cofRemoved
+     * @return CommitFile
+     */
+    public function setCofRemoved($cofRemoved)
+    {
+        $this->cofRemoved = $cofRemoved;
+
+        return $this;
+    }
+
+    /**
+     * Get cofRemoved
+     *
+     * @return boolean 
+     */
+    public function getCofRemoved()
+    {
+        return $this->cofRemoved;
     }
 
     /**
