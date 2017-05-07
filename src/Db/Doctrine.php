@@ -10,6 +10,7 @@
  * please see the COPYING and AUTHORS files
  * that were distributed with this source code.
  */
+
 namespace Eventum\Db;
 
 use Doctrine\ORM\EntityManager;
@@ -26,8 +27,12 @@ class Doctrine
 
         // Create a simple "default" Doctrine ORM configuration for Annotations
         $isDevMode = true;
-        $proxyDir = __DIR__;
-        $config = Setup::createAnnotationMetadataConfiguration([__DIR__ . '/src'], $isDevMode, $proxyDir);
+        $proxyDir = APP_PATH . '/src/Doctrine/Proxy';
+        $paths = [
+            APP_PATH . '/src/Doctrine',
+            APP_PATH . '/src/Model/Entity',
+            ];
+        $config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode, $proxyDir);
         // or if you prefer yaml or XML
         //$config = Setup::createXMLMetadataConfiguration(array(__DIR__."/config/xml"), $isDevMode);
         //$config = Setup::createYAMLMetadataConfiguration(array(__DIR__."/config/yaml"), $isDevMode);
