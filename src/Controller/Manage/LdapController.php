@@ -31,7 +31,7 @@ class LdapController extends ManageBaseController
     private $cat;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -41,7 +41,7 @@ class LdapController extends ManageBaseController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function defaultAction()
     {
@@ -86,12 +86,12 @@ class LdapController extends ManageBaseController
             -1 => ["ERROR: The system doesn't have the appropriate permissions " .
                         'to create the configuration file in the setup directory (' . APP_CONFIG_PATH . '). ".
                         "Please contact your local system administrator and ask for write privileges on the provided path.',
-                        MessagesHelper::MSG_HTML_BOX],
+                        MessagesHelper::MSG_HTML_BOX, ],
             -2 => ["ERROR: The system doesn't have the appropriate permissions " .
                         'to update the configuration file in the setup directory (' . APP_CONFIG_PATH . '/ldap.php). ".
                         "Please contact your local system administrator ".
                         "and ask for write privileges on the provided filename.',
-                   MessagesHelper::MSG_HTML_BOX],
+                   MessagesHelper::MSG_HTML_BOX, ],
         ];
         $this->messages->mapMessages($res, $map);
 
@@ -99,7 +99,7 @@ class LdapController extends ManageBaseController
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function prepareTemplate()
     {

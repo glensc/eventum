@@ -111,6 +111,9 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         return $search;
     }
 
+    /**
+     * @param string $password
+     */
     private function validatePassword($uid, $password)
     {
         $errors = [];
@@ -207,8 +210,8 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
      * Disable account by external id.
      *
      * @param string $uid
-     * @return bool
      * @throws AuthException if the account was not active
+     * @return bool
      */
     public function disableAccount($uid)
     {
@@ -229,7 +232,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
      * returns NULL if local user not found.
      *
      * @param string $uid external_id
-     * @return bool
+     * @return null|bool
      */
     public function accountActive($uid)
     {
@@ -392,7 +395,8 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
     }
 
     /**
-     * @return true if all aliases were added
+     * @param int $usr_id
+     * @return bool returns true if all aliases were added
      */
     private function updateAliases($usr_id, $aliases)
     {
@@ -409,6 +413,9 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         return $updated === count($aliases);
     }
 
+    /**
+     * @param string $login
+     */
     public function getUserIDByLogin($login)
     {
         $usr_id = User::getUserIDByEmail($login, true);
@@ -439,14 +446,17 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         return $usr_id > 0;
     }
 
+    /**
+     * @param int $usr_id
+     */
     private function isLDAPuser($usr_id)
     {
         $local_user_info = User::getDetails($usr_id);
         if (empty($local_user_info['usr_external_id'])) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     public function verifyPassword($login, $password)
@@ -468,9 +478,9 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         $external_id = User::getExternalID($usr_id);
         if (empty($external_id)) {
             return Auth::getFallBackAuthBackend()->canUserUpdateName($usr_id);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public function canUserUpdateEmail($usr_id)
@@ -478,9 +488,9 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         $external_id = User::getExternalID($usr_id);
         if (empty($external_id)) {
             return Auth::getFallBackAuthBackend()->canUserUpdateEmail($usr_id);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public function canUserUpdatePassword($usr_id)
@@ -488,9 +498,9 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
         $external_id = User::getExternalID($usr_id);
         if (empty($external_id)) {
             return Auth::getFallBackAuthBackend()->canUserUpdatePassword($usr_id);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -519,17 +529,17 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
     /**
      * Method used to update the account password for a specific user.
      *
-     * @param   integer $usr_id The user ID
-     * @param   string $password The password.
-     * @return  boolean true if update worked, false otherwise
+     * @param   int $usr_id The user ID
+     * @param   string $password the password
+     * @return  bool true if update worked, false otherwise
      */
     public function updatePassword($usr_id, $password)
     {
         if (!$this->isLDAPuser($usr_id)) {
             return Auth::getFallBackAuthBackend()->updatePassword($usr_id, $password);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public function incrementFailedLogins($usr_id)
@@ -561,8 +571,6 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
     /**
      * Called on every page load and can be used to process external authentication checks before the rest of the
      * authentication process happens.
-     *
-     * @return null
      */
     public function checkAuthentication()
     {
@@ -582,7 +590,7 @@ class LDAP_Auth_Backend implements Auth_Backend_Interface
     /**
      * Returns true if the user should automatically be redirected to the external login URL, false otherwise
      *
-     * @return  boolean
+     * @return  bool
      */
     public function autoRedirectToExternalLogin()
     {

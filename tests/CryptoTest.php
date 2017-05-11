@@ -11,9 +11,17 @@
  * that were distributed with this source code.
  */
 
+namespace Eventum\Test;
+
+use Eventum;
 use Eventum\Crypto\CryptoManager;
 use Eventum\Crypto\EncryptedValue;
+use Exception;
+use InvalidArgumentException;
 
+/**
+ * @group crypto
+ */
 class CryptoTest extends TestCase
 {
     public function testCanEncrypt()

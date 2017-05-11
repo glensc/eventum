@@ -12,6 +12,7 @@
  */
 
 use Eventum\Mail\Exception\RoutingException;
+use Eventum\Mail\Helper\AddressHeader;
 
 /**
  * Class to handle all routing functionality
@@ -22,8 +23,8 @@ class Routing
      * Route all mail kinds: emails, notes, drafts (in that order) processing "To:" and "Cc:" headers
      *
      * @param string &$full_message
-     * @return array|bool
      * @throws RoutingException in case of failure
+     * @return array|bool
      */
     public static function route(&$full_message)
     {
@@ -100,6 +101,7 @@ class Routing
      * @param MailMessage $mail The Mail object
      * @return bool true if mail was routed
      * @throws RoutingException in case of failure
+     * @return bool true if mail was routed
      */
     protected static function route_emails(MailMessage $mail)
     {
@@ -111,10 +113,10 @@ class Routing
         if ($setup['email_routing']['status'] != 'enabled') {
             throw RoutingException::noEmailRouting();
         }
-        if (empty($setup['email_routing']['address_prefix'])) {
+        if (!$setup['email_routing']['address_prefix']) {
             throw RoutingException::noEmailPrefixConfigured();
         }
-        if (empty($setup['email_routing']['address_host'])) {
+        if (!$setup['email_routing']['address_host']) {
             throw RoutingException::noEmailDomainConfigured();
         }
 
@@ -276,6 +278,7 @@ class Routing
      * @param MailMessage $mail The Mail object
      * @return bool true if mail was routed
      * @throws RoutingException in case of failure
+     * @return bool true if mail was routed
      */
     protected static function route_notes(MailMessage $mail)
     {
@@ -292,10 +295,10 @@ class Routing
         if ($setup['note_routing']['status'] != 'enabled') {
             throw RoutingException::noEmailRouting();
         }
-        if (empty($setup['note_routing']['address_prefix'])) {
+        if (!$setup['note_routing']['address_prefix']) {
             throw RoutingException::noEmailPrefixConfigured();
         }
-        if (empty($setup['note_routing']['address_host'])) {
+        if (!$setup['note_routing']['address_host']) {
             throw RoutingException::noEmailDomainConfigured();
         }
 
@@ -343,12 +346,13 @@ class Routing
 
         // parse the Cc: list, if any, and add these internal users to the issue notification list
         $addresses = [];
-        $to_addresses = Mail_Helper::getEmailAddresses(@$structure->headers['to']);
-        if (count($to_addresses)) {
+
+        $to_addresses = AddressHeader::fromString(@$structure->headers['to'])->getEmails();
+        if ($to_addresses) {
             $addresses = $to_addresses;
         }
-        $cc_addresses = Mail_Helper::getEmailAddresses(@$structure->headers['cc']);
-        if (count($cc_addresses)) {
+        $cc_addresses = AddressHeader::fromString(@$structure->headers['cc'])->getEmails();
+        if ($cc_addresses) {
             $addresses = array_merge($addresses, $cc_addresses);
         }
         $cc_users = [];
@@ -369,12 +373,12 @@ class Routing
 
         // insert the new note and send notification about it
         $_POST = [
-            'title'                => @$structure->headers['subject'],
-            'note'                 => $body,
-            'note_cc'              => $cc_users,
+            'title' => @$structure->headers['subject'],
+            'note' => $body,
+            'note_cc' => $cc_users,
             'add_extra_recipients' => 'yes',
-            'message_id'           => @$structure->headers['message-id'],
-            'parent_id'            => $parent_id,
+            'message_id' => @$structure->headers['message-id'],
+            'parent_id' => $parent_id,
         ];
 
         // add the full email to the note if there are any attachments
@@ -404,6 +408,7 @@ class Routing
      * @param MailMessage $mail The Mail object
      * @return bool true if mail was routed
      * @throws RoutingException in case of failure
+     * @return bool true if mail was routed
      */
     protected static function route_drafts($mail)
     {
@@ -420,10 +425,10 @@ class Routing
         if ($setup['draft_routing']['status'] != 'enabled') {
             throw RoutingException::noDraftRouting();
         }
-        if (empty($setup['draft_routing']['address_prefix'])) {
+        if (!$setup['draft_routing']['address_prefix']) {
             throw RoutingException::noEmailPrefixConfigured();
         }
-        if (empty($setup['draft_routing']['address_host'])) {
+        if (!$setup['draft_routing']['address_host']) {
             throw RoutingException::noEmailDomainConfigured();
         }
 
@@ -519,7 +524,7 @@ class Routing
      * Remove Mbox header from message if it is present
      *
      * @param string $message
-     * @link https://github.com/eventum/eventum/issues/155
+     * @see https://github.com/eventum/eventum/issues/155
      * @internal public for testing
      */
     public static function removeMboxHeader(&$message)

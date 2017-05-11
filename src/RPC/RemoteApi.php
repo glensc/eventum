@@ -42,6 +42,8 @@ use User;
  * Class Eventum\RPC\RemoteApi
  *
  * All public non-static methods are exposed for XMLRPC
+ *
+ * @group api
  */
 class RemoteApi
 {
@@ -96,7 +98,7 @@ class RemoteApi
 
     /**
      * @param int $prj_id
-     * @param boolean $show_all_issues
+     * @param bool $show_all_issues
      * @param string $status
      * @return array
      * @access protected
@@ -707,12 +709,12 @@ class RemoteApi
         if (count($assignees) > 0) {
             if (in_array($usr_id, $assignees)) {
                 return 'yes';
-            } else {
-                return 'no';
             }
-        } else {
-            return 'yes';
+
+            return 'no';
         }
+
+        return 'yes';
     }
 
     /**

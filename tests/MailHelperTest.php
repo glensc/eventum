@@ -11,6 +11,11 @@
  * that were distributed with this source code.
  */
 
+namespace Eventum\Test;
+
+use Eventum\Mail\Helper\AddressHeader;
+use Mail_Helper;
+
 /**
  * Test class for Mail_Helper.
  */
@@ -59,6 +64,59 @@ class MailHelperTest extends TestCase
         // <eventum.md5.54hebbwge.myyt4c@eventum.example.org>
         $exp = '<eventum\.md5\.[0-9a-z]{8,64}\.[0-9a-z]{8,64}@' . APP_HOSTNAME . '>';
         $this->assertRegExp($exp, $msgid, 'Missing msg-id header');
+    }
+
+    /**
+     * test that @see Support::addExtraRecipientsToNotificationList adds cc addresses that are not 7bit
+     *
+     * @dataProvider validGetEmailAddressesData
+     */
+    public function testGetEmailAddresses($input, $exp)
+    {
+        $res = AddressHeader::fromString($input)->getEmails();
+        $this->assertEquals($exp, $res);
+    }
+
+    public function validGetEmailAddressesData()
+    {
+        return [
+            [
+                // decoded input
+                '"Erika Mkaitė" <erika@example.net>, Rööt (Šuperuser) <root@example.org>',
+                [
+                    'erika@example.net',
+                    'root@example.org',
+                ],
+            ],
+            [
+                // test that QP encoded input also works
+                'Erika =?utf-8?b?TWthaXTElyI=?= <erika@example.net>, =?utf-8?b?UsO2w7Z0IA==?= =?utf-8?b?KMWgdXBlcnVzZXIp?= <root@example.org>',
+                [
+                    'erika@example.net',
+                    'root@example.org',
+                ],
+            ],
+            // the @$array['foo'] results NULL
+            [null, []],
+
+            // test comments
+            // https://github.com/zendframework/zend-mail/pull/12
+            [
+                'ted@example.com (Ted Bloggs)',
+                ['ted@example.com'],
+            ],
+            [
+                // https://github.com/zendframework/zend-mail/pull/13
+                'undisclosed-recipients:;',
+                [],
+            ],
+            [
+                // https://github.com/zendframework/zend-mail/pull/13
+                // https://github.com/eventum/eventum/issues/91
+                'destinatarios-no-revelados:;',
+                [],
+            ],
+        ];
     }
 
     /**
@@ -140,9 +198,10 @@ class MailHelperTest extends TestCase
      */
     public function testGetAddressInfo($input, $sender_name, $email)
     {
-        $res = Mail_Helper::getAddressInfo($input);
-        $this->assertEquals($sender_name, $res['sender_name']);
-        $this->assertEquals($email, $res['email']);
+        $address = AddressHeader::fromString($input)->getAddress();
+
+        $this->assertEquals($sender_name, $address->getName());
+        $this->assertEquals($email, $address->getEmail());
     }
 
     public function testGetAddressInfoData()
@@ -150,12 +209,12 @@ class MailHelperTest extends TestCase
         return [
             0 => [
                 'Test User <test@example.com>',
-                '"Test User"',
+                'Test User',
                 'test@example.com',
             ],
             1 => [
                 '"Test User" <test@example.com>',
-                '"Test User"',
+                'Test User',
                 'test@example.com',
             ],
             2 => [
@@ -170,7 +229,7 @@ class MailHelperTest extends TestCase
             ],
             4 => [
                 '"Test User <test@example.com>" <test@example.com>',
-                '"Test User <test@example.com>"',
+                'Test User <test@example.com>',
                 'test@example.com',
             ],
         ];
@@ -181,7 +240,11 @@ class MailHelperTest extends TestCase
      */
     public function testGetAddressInfoMultiple($input, $exp)
     {
-        $res = Mail_Helper::getAddressInfo($input, true);
+        $res = AddressHeader::fromString($input)->toString();
+
+        // spaces are irrelevant
+        $res = preg_replace("/\s+/", ' ', $res);
+
         $this->assertEquals($exp, $res);
     }
 
@@ -190,38 +253,27 @@ class MailHelperTest extends TestCase
         return [
             // test for "addressgroup" with empty list
             // see https://github.com/eventum/eventum/issues/91
-            1 => [
-                'destinatarios-no-revelados: ',
-                [],
+            'addressgroup-es' => [
+                'destinatarios-no-revelados: ;',
+                '',
+            ],
+            // hostgroup things
+            // https://github.com/zendframework/zend-mail/pull/13
+            'group-empty' => [
+                'undisclosed-recipients:;',
+                '',
+            ],
+            'group-value' => [
+                // pear gives:
+                // Validation failed for: enemies: john@example.net
+                'friends: john@example.com; enemies: john@example.net, bart@example.net;',
+                'john@example.com, john@example.net, bart@example.net',
             ],
             // example taken from RFC822.php class source
-            // this doesn't parse correctly, because fixAddressQuoting() breaks it
-            // but at least document what it does
-            2 => [
-                'My Group: "Richard" <richard@localhost> (A comment), ted@example.com (Ted Bloggs), Barney;',
-                [
-                    [
-                        // this is how it currently is parsed
-                        'sender_name' => '"My Group: \"Richard"',
-                        // this is how it should be parsed if fixAddressQuoting didn't break it
-//                        'sender_name' => '"Richard"',
-                        'email' => 'richard@localhost',
-                        'username' => 'richard',
-                        'host' => 'localhost',
-                    ],
-                    [
-                        'sender_name' => '',
-                        'email' => 'ted@example.com',
-                        'username' => 'ted',
-                        'host' => 'example.com',
-                    ],
-                    [
-                        'sender_name' => '',
-                        'email' => 'Barney@localhost',
-                        'username' => 'Barney',
-                        'host' => 'localhost',
-                    ],
-                ],
+            // modified because not all of that parsed (and is relevant?)
+            'with comment' => [
+                'My Group: "Richard" <richard@localhost>, ted@example.com (Ted Bloggs);',
+                'Richard <richard@localhost>, ted@example.com',
             ],
         ];
     }
@@ -234,6 +286,8 @@ class MailHelperTest extends TestCase
     public function testFormatEmailAddresses($input, $exp)
     {
         $res = Mail_Helper::formatEmailAddresses($input);
+        // spaces are irrelevant
+        $res = preg_replace("/\s+/", ' ', $res);
         $this->assertEquals($exp, $res);
     }
 
@@ -246,11 +300,11 @@ class MailHelperTest extends TestCase
             ],
             [
                 'Test Name <test@example.com>,blah@example.com',
-                '"Test Name" <test@example.com>, blah@example.com',
+                'Test Name <test@example.com>, blah@example.com',
             ],
             [
                 '"Bob O\'Reilly" <bob@example.com>,blah@example.com',
-                '"Bob O\'Reilly" <bob@example.com>, blah@example.com',
+                'Bob O\'Reilly <bob@example.com>, blah@example.com',
             ],
             ['', ''],
         ];

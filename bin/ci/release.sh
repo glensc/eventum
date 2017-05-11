@@ -98,9 +98,9 @@ po_checkout() {
 	make -C $dir/localization touch-po
 }
 
-# setup $version and update APP_VERSION in init.php
+# setup $version and update APP_VERSION in globals.php
 update_version() {
-	version=$(awk -F"'" '/APP_VERSION/{print $4}' init.php)
+	version=$(awk -F"'" '/APP_VERSION/{print $4}' globals.php)
 
 	version=$(git describe --tags)
 	# trim 'v' prefix
@@ -111,7 +111,7 @@ update_version() {
 			idefine('APP_VERSION', '$version');
 		    d
 
-		}" init.php
+		}" globals.php
 }
 
 # clean trailing spaces/tabs
@@ -126,11 +126,11 @@ composer_install() {
 	$quick && test -f ../composer.lock && cp ../composer.lock .
 
 	# first install with dev to get assets installed
-	$composer install --prefer-dist --ignore-platform-reqs
+	$composer install --prefer-dist
 
 	# and then without dev to get clean autoloader
 	mv htdocs/components htdocs/components.save
-	$composer install --prefer-dist --no-dev --ignore-platform-reqs
+	$composer install --prefer-dist --no-dev
 	mv htdocs/components.save/* htdocs/components
 	rmdir htdocs/components.save
 

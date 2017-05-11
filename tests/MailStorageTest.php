@@ -11,9 +11,17 @@
  * that were distributed with this source code.
  */
 
+namespace Eventum\Test;
+
 use Eventum\Mail\MailStorage;
+use Setup;
+use Support;
+use Zend;
 use Zend\Mail;
 
+/**
+ * @group imap
+ */
 class MailStorageTest extends TestCase
 {
     /** @var array */
@@ -46,8 +54,8 @@ class MailStorageTest extends TestCase
         $mbox = new MailStorage($this->account);
         $flags = [
             Mail\Storage::FLAG_UNSEEN,
-//            'UNDELETED',
-//            'UNANSWERED',
+            //            'UNDELETED',
+            //            'UNANSWERED',
         ];
         var_dump($mbox->countMessages($flags));
     }

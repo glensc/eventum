@@ -256,6 +256,10 @@ body#list #bulk_update {
     margin: 1em auto;
 }
 
+body#list #export_csv {
+	cursor: pointer;
+}
+
 body#list #bulk_update table {
     width: 100%;
 }
@@ -266,9 +270,16 @@ body#list td.custom_field {
 
 /* End List Issue page */
 
-/*
- * Emails page
- */
+body#offline #error-header,
+body#confirm #error-header,
+body#setup #error-header,
+body#associate #error-header
+{
+    font-weight: bold; font-size: 160%; color: red;
+}
+    /*
+     * Emails page
+     */
 body#emails  table#email_filters {
     width: 80%;
     margin: 0 auto;
@@ -506,4 +517,39 @@ option.select_icon_priority {
 {
     background: transparent;
     border: 1px solid #c0c0c0;
+}
+
+/* manage custom field options */
+.custom_field_options #add_option {
+    margin-left: 1em;
+    cursor: pointer;
+}
+
+.custom_field_options .new_options {
+    margin: 0;
+    padding: 0;
+}
+
+.custom_field_options .new_options li {
+    border: 1px solid #000000;
+    list-style: none;
+    margin: 1em;
+    padding: 1em;
+    cursor: move;
+}
+
+.custom_field_options .delete {
+    float: right;
+    cursor: pointer;
+}
+
+.custom_field_options .instructions {
+    margin-left: 1em;
+    margin-top: .5em;
+    font-style: italic;
+}
+
+/* Font Awesome override */
+.expandable_buttons .fa {
+    font-size: 1.1em;
 }

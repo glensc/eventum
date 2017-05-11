@@ -1,10 +1,37 @@
 # Eventum Issue Tracking System
 
-## [3.1.10] - 2017-??-??
+## [3.2.0] - 2017-??-??
 
-- ldap: respect `create_users` configuration
+This version switches to use [PDO MySQL] driver, ensure you have the extension enabled.
+Even it will likely work, it's recommended that you update to latest 3.1 first before upgrading to 3.2.0.
+Consult [Upgrade] wiki page how to upgrade from previous versions.
 
-[3.1.10]: https://github.com/eventum/eventum/compare/v3.1.9...master
+- replace buggy `Mail_Helper::getEmailAddresses` with Zend\Mail based implementation (@glensc, #238)
+- enable filtering by Severity (@balsdorf, f387fd6)
+- drop PEAR DB support, only PDO is supported (@glensc, #252)
+- use Zend\Mail\Transport for Mail delivery (@glensc, #237)
+- use phinx for database migrations (@glensc, #235)
+- notify notification list when changing assignment (@balsdorf, 1527b68)
+- unify backend class loading (@glensc, #257)
+- use font awesome (@glensc, #253)
+- use ctrl/cmd enter to submit forms (@glensc, #255)
+- quote custom field names (@glensc, #258)
+- drop Mail_rfc822 PEAR Mail requirement (@glensc, #256)
+
+[3.2.0]: https://github.com/eventum/eventum/compare/v3.1.10...master
+[PDO MySQL]: http://php.net/manual/en/ref.pdo-mysql.php
+[Upgrade]: https://github.com/eventum/eventum/wiki/Upgrading
+
+## [3.1.10] - 2017-04-21
+
+- ldap: respect `create_users` configuration (@glensc)
+- Fix bug creating new priority (@balsdorf)
+- add MailTransport class to encapsulate smtp transport (@glensc, #236, #234)
+- Add option to control ordering of custom field options (@balsdorf, #240)
+- Check for release name uniqueness (@balsdorf, #246)
+- Add a per project recipient flag for outgoing emails (@balsdorf, #247)
+
+[3.1.10]: https://github.com/eventum/eventum/compare/v3.1.9...v3.1.10
 
 ## [3.1.9] - 2017-01-10
 

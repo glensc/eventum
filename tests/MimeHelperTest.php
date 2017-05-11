@@ -11,6 +11,10 @@
  * that were distributed with this source code.
  */
 
+namespace Eventum\Test;
+
+use Mime_Helper;
+
 /**
  * Test class for Mime_Helper.
  */
@@ -57,15 +61,12 @@ class MimeHelperTest extends TestCase
 
     /**
      * Method used to properly quote the sender of a given email address.
-     *
-     * @param   string $address The full email address
-     * @return  string The properly quoted email address
      */
     public function testQuoteSender()
     {
         $test_data = [
-            '<email@example.org>'   =>  'email@example.org',
-            'John Doe <email@example.org>'   =>  '"John Doe" <email@example.org>',
+            '<email@example.org>' => 'email@example.org',
+            'John Doe <email@example.org>' => '"John Doe" <email@example.org>',
         ];
         foreach ($test_data as $string => $exp) {
             $res = Mime_Helper::quoteSender($string);
@@ -75,15 +76,12 @@ class MimeHelperTest extends TestCase
 
     /**
      * Method used to remove any unnecessary quoting from an email address.
-     *
-     * @param   string $address The full email address
-     * @return  string The email address without quotes
      */
     public function testRemoveQuotes()
     {
         $test_data = [
-            '<email@example.org>'   =>  'email@example.org',
-            '"John Doe" <email@example.org>'   =>  'John Doe <email@example.org>',
+            '<email@example.org>' => 'email@example.org',
+            '"John Doe" <email@example.org>' => 'John Doe <email@example.org>',
         ];
         foreach ($test_data as $string => $exp) {
             $res = Mime_Helper::removeQuotes($string);
@@ -93,8 +91,7 @@ class MimeHelperTest extends TestCase
 
     public function testBug901653()
     {
-        $message = file_get_contents(__DIR__.'/data/LP901653.txt');
-        $this->assertNotEmpty($message);
+        $message = $this->readfile(__DIR__ . '/data/LP901653.txt');
         $structure = Mime_Helper::decode($message, true, true);
         $this->assertNotNull($structure);
     }

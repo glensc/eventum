@@ -12,6 +12,7 @@
  */
 
 use Eventum\Db\DatabaseException;
+use Eventum\Extension\ExtensionLoader;
 use Eventum\Mail\MailMessage;
 use Eventum\Model\Entity;
 
@@ -24,28 +25,16 @@ class Workflow
      */
     public static function getBackendList()
     {
-        $files = Misc::getFileList(APP_INC_PATH . '/workflow');
-        $files = array_merge($files, Misc::getFileList(APP_LOCAL_PATH . '/workflow'));
-        $list = [];
-        foreach ($files as $file) {
-            // display a prettyfied backend name in the admin section
-            if (preg_match('/^class\.(.*)\.php$/', $file, $matches)) {
-                if ($matches[1] == 'abstract_workflow_backend') {
-                    continue;
-                }
-                $name = ucwords(str_replace('_', ' ', $matches[1]));
-                $list[$file] = $name;
-            }
-        }
+        $files = static::getExtensionLoader()->getFileList();
 
-        return $list;
+        return $files;
     }
 
     /**
      * Returns the name of the workflow backend for the specified project.
      *
-     * @param   integer $prj_id The id of the project to lookup.
-     * @return  string The name of the customer backend.
+     * @param   int $prj_id the id of the project to lookup
+     * @return  string the name of the customer backend
      */
     private static function _getBackendNameByProject($prj_id)
     {
@@ -77,30 +66,23 @@ class Workflow
      * Includes the appropriate workflow backend class associated with the
      * given project ID, instantiates it and returns the class.
      *
-     * @param   integer $prj_id The project ID
-     * @return  Abstract_Workflow_Backend
+     * @param   int $prj_id The project ID
+     * @return bool|Abstract_Workflow_Backend
      */
     public static function _getBackend($prj_id)
     {
         static $setup_backends;
 
         if (empty($setup_backends[$prj_id])) {
-            $backend_class = self::_getBackendNameByProject($prj_id);
-            if (empty($backend_class)) {
+            $filename = self::_getBackendNameByProject($prj_id);
+            if (!$filename) {
                 return false;
             }
-            $file_name_chunks = explode('.', $backend_class);
-            $class_name = $file_name_chunks[1] . '_Workflow_Backend';
 
-            if (file_exists(APP_LOCAL_PATH . "/workflow/$backend_class")) {
-                /** @noinspection PhpIncludeInspection */
-                require_once APP_LOCAL_PATH . "/workflow/$backend_class";
-            } else {
-                /** @noinspection PhpIncludeInspection */
-                require_once APP_INC_PATH . "/workflow/$backend_class";
-            }
+            $instance = static::getExtensionLoader()->createInstance($filename);
+            $instance->prj_id = $prj_id;
 
-            $setup_backends[$prj_id] = new $class_name();
+            $setup_backends[$prj_id] = $instance;
         }
 
         return $setup_backends[$prj_id];
@@ -110,26 +92,26 @@ class Workflow
      * Checks whether the given project ID is setup to use workflow integration
      * or not.
      *
-     * @param   integer integer $prj_id The project ID
-     * @return  boolean
+     * @param   int $prj_id The project ID
+     * @return  bool
      */
     public static function hasWorkflowIntegration($prj_id)
     {
         $backend = self::_getBackendNameByProject($prj_id);
         if (empty($backend)) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**
      * Is called when an issue is updated.
      *
-     * @param   integer $prj_id The project ID.
-     * @param   integer $issue_id The ID of the issue.
-     * @param   integer $usr_id The ID of the user.
-     * @param   array $old_details The old details of the issues.
+     * @param   int $prj_id the project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   int $usr_id the ID of the user
+     * @param   array $old_details the old details of the issues
      * @param   array $changes The changes that were applied to this issue (the $_POST)
      */
     public static function handleIssueUpdated($prj_id, $issue_id, $usr_id, $old_details, $changes)
@@ -146,9 +128,9 @@ class Workflow
     /**
      * Called before an issue is updated.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue
-     * @param   integer $usr_id The ID of the user changing the issue.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id The ID of the issue
+     * @param   int $usr_id the ID of the user changing the issue
      * @param   array $changes
      * @return  mixed. True to continue, anything else to cancel the change and return the value
      */
@@ -165,9 +147,9 @@ class Workflow
     /**
      * Called when a file is attached to an issue..
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
-     * @param   integer $usr_id The id of the user who locked the issue.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   int $usr_id the id of the user who locked the issue
      */
     public static function handleAttachment($prj_id, $issue_id, $usr_id)
     {
@@ -182,11 +164,11 @@ class Workflow
     /**
      * Determines if the attachment should be added
      *
-     * @param   integer $prj_id The project ID.
-     * @param   integer $issue_id The ID of the issue.
-     * @param   integer $usr_id The id of the user who attached the file
+     * @param   int $prj_id the project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   int $usr_id The id of the user who attached the file
      * @param   array $attachment attachment object
-     * @return  boolean
+     * @return  bool
      */
     public static function shouldAttachFile($prj_id, $issue_id, $usr_id, $attachment)
     {
@@ -201,10 +183,10 @@ class Workflow
     /**
      * Called when the priority of an issue changes.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
-     * @param   integer $usr_id The id of the user who changed the issue.
-     * @param   array $old_details The old details of the issue.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   int $usr_id the id of the user who changed the issue
+     * @param   array $old_details the old details of the issue
      * @param   array $changes The changes that were applied to this issue (the $_POST)
      */
     public static function handlePriorityChange($prj_id, $issue_id, $usr_id, $old_details, $changes)
@@ -220,10 +202,10 @@ class Workflow
     /**
      * Called when the severity of an issue changes.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
-     * @param   integer $usr_id The id of the user who changed the issue.
-     * @param   array $old_details The old details of the issue.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   int $usr_id the id of the user who changed the issue
+     * @param   array $old_details the old details of the issue
      * @param   array $changes The changes that were applied to this issue (the $_POST)
      */
     public static function handleSeverityChange($prj_id, $issue_id, $usr_id, $old_details, $changes)
@@ -239,10 +221,10 @@ class Workflow
     /**
      * Called when an email is blocked.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
      * @param   array $email_details Details of the issue
-     * @param   string $type What type of blocked email this is.
+     * @param   string $type what type of blocked email this is
      */
     public static function handleBlockedEmail($prj_id, $issue_id, $email_details, $type)
     {
@@ -257,12 +239,12 @@ class Workflow
     /**
      * Called when the assignment on an issue changes.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
-     * @param   integer $usr_id The id of the user who assigned the issue.
-     * @param   array $issue_details The old details of the issue.
-     * @param   array $new_assignees The new assignees of this issue.
-     * @param   boolean $remote_assignment If this issue was remotely assigned.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   int $usr_id the id of the user who assigned the issue
+     * @param   array $issue_details the old details of the issue
+     * @param   array $new_assignees the new assignees of this issue
+     * @param   bool $remote_assignment if this issue was remotely assigned
      */
     public static function handleAssignmentChange($prj_id, $issue_id, $usr_id, $issue_details, $new_assignees, $remote_assignment = false)
     {
@@ -277,10 +259,10 @@ class Workflow
     /**
      * Called when a new issue is created.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
-     * @param   boolean $has_TAM If this issue has a technical account manager.
-     * @param   boolean $has_RR If Round Robin was used to assign this issue.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   bool $has_TAM if this issue has a technical account manager
+     * @param   bool $has_RR if Round Robin was used to assign this issue
      */
     public static function handleNewIssue($prj_id, $issue_id, $has_TAM, $has_RR)
     {
@@ -295,11 +277,11 @@ class Workflow
     /**
      * Called when an email is received.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
      * @param   MailMessage $mail The Mail object
      * @param   array $row The array of data that was inserted into the database.
-     * @param   boolean $closing If we are closing the issue.
+     * @param   bool $closing if we are closing the issue
      */
     public static function handleNewEmail($prj_id, $issue_id, MailMessage $mail, $row, $closing = false)
     {
@@ -316,8 +298,8 @@ class Workflow
     /**
      * Called when an email is manually associated with an existing issue.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
      */
     public static function handleManualEmailAssociation($prj_id, $issue_id)
     {
@@ -332,11 +314,11 @@ class Workflow
     /**
      * Called when a note is routed.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
-     * @param   integer $usr_id The user ID of the person posting this new note
-     * @param   boolean $closing If the issue is being closed
-     * @param   integer $note_id The ID of the new note
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   int $usr_id The user ID of the person posting this new note
+     * @param   bool $closing If the issue is being closed
+     * @param   int $note_id The ID of the new note
      */
     public static function handleNewNote($prj_id, $issue_id, $usr_id, $closing, $note_id)
     {
@@ -353,9 +335,9 @@ class Workflow
     /**
      * Method is called to return the list of statuses valid for a specific issue.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
-     * @return  array An associative array of statuses valid for this issue.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
+     * @return  array an associative array of statuses valid for this issue
      */
     public static function getAllowedStatuses($prj_id, $issue_id = null)
     {
@@ -371,14 +353,13 @@ class Workflow
     /**
      * Called when issue is closed.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
-     * @param   boolean $send_notification Whether to send a notification about this action or not
-     * @param   integer $resolution_id The resolution ID
-     * @param   integer $status_id The status ID
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   bool $send_notification Whether to send a notification about this action or not
+     * @param   int $resolution_id The resolution ID
+     * @param   int $status_id The status ID
      * @param   string $reason The reason for closing this issue
-     * @param   integer $usr_id The ID of the user closing this issue
-     * @return  void
+     * @param   int $usr_id The ID of the user closing this issue
      */
     public static function handleIssueClosed($prj_id, $issue_id, $send_notification, $resolution_id, $status_id, $reason, $usr_id)
     {
@@ -392,11 +373,11 @@ class Workflow
     /**
      * Called when custom fields are updated
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue
-     * @param   array $old The custom fields before the update.
-     * @param   array $new The custom fields after the update.
-     * @param   array $changed An array containing what was changed.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id The ID of the issue
+     * @param   array $old the custom fields before the update
+     * @param   array $new the custom fields after the update
+     * @param   array $changed an array containing what was changed
      */
     public static function handleCustomFieldsUpdated($prj_id, $issue_id, $old, $new, $changed)
     {
@@ -412,12 +393,12 @@ class Workflow
      * Called when an attempt is made to add a user or email address to the
      * notification list.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue.
-     * @param   integer $subscriber_usr_id The ID of the user to subscribe if this is a real user (false otherwise).
-     * @param   string $email The email address  to subscribe (if this is not a real user).
-     * @param   array $types The action types.
-     * @return  mixed An array of information or true to continue unchanged or false to prevent the user from being added.
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id the ID of the issue
+     * @param   int $subscriber_usr_id the ID of the user to subscribe if this is a real user (false otherwise)
+     * @param   string $email the email address  to subscribe (if this is not a real user)
+     * @param   array $types the action types
+     * @return  array|bool|null an array of information or true to continue unchanged or false to prevent the user from being added
      */
     public static function handleSubscription($prj_id, $issue_id, &$subscriber_usr_id, &$email, &$types)
     {
@@ -431,8 +412,8 @@ class Workflow
     }
 
     /**
-     * @param int $prj_id The project ID.
-     * @param int $issue_id The ID of the issue.
+     * @param int $prj_id the project ID
+     * @param int $issue_id the ID of the issue
      * @param Entity\Commit $commit
      * @since 3.1.0
      */
@@ -449,7 +430,7 @@ class Workflow
     /**
      * Method called on Commit to allow workflow update project name/commit author or user id
      *
-     * @param integer $prj_id The project ID.
+     * @param int $prj_id the project ID
      * @param Entity\Commit $commit
      * @param mixed $payload
      * @since 3.1.0
@@ -467,11 +448,11 @@ class Workflow
     /**
      * Determines if the address should should be emailed.
      *
-     * @param integer $prj_id The project ID.
+     * @param int $prj_id the project ID
      * @param string $address The email address to check
      * @param bool $issue_id
      * @param bool $type
-     * @return boolean
+     * @return bool
      */
     public static function shouldEmailAddress($prj_id, $address, $issue_id = false, $type = false)
     {
@@ -486,11 +467,11 @@ class Workflow
     /**
      * Returns additional email addresses that should be notified for a specific event..
      *
-     * @param   integer $prj_id The project ID.
-     * @param   integer $issue_id The ID of the issue.
+     * @param   int $prj_id the project ID
+     * @param   int $issue_id the ID of the issue
      * @param   string $event The event to return additional email addresses for. Currently only "new_issue" is supported.
      * @param   array $extra Extra information, contains different info depending on where it is called from
-     * @return  array   An array of email addresses to be notified.
+     * @return  array   an array of email addresses to be notified
      */
     public static function getAdditionalEmailAddresses($prj_id, $issue_id, $event, $extra = false)
     {
@@ -506,11 +487,11 @@ class Workflow
      * Indicates if the the specified email address can email the issue. Can be
      * used to disable email blocking by always returning true.
      *
-     * @param   integer $prj_id The project ID.
-     * @param   integer $issue_id The ID of the issue
+     * @param   int $prj_id the project ID
+     * @param   int $issue_id The ID of the issue
      * @param   string $email The email address that is trying to send an email
-     * @return  boolean true if the sender can email the issue, false if the sender
-     *          should not email the issue and null if the default rules should be used.
+     * @return  bool true if the sender can email the issue, false if the sender
+     *          should not email the issue and null if the default rules should be used
      */
     public static function canEmailIssue($prj_id, $issue_id, $email)
     {
@@ -525,11 +506,11 @@ class Workflow
     /**
      * Called to check if an email address that does not have an eventum account can send notes to an issue.
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The issue ID
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id The issue ID
      * @param   string $email The email address to check
      * @param $structure
-     * @return  boolean True if the note should be added, false otherwise
+     * @return  bool True if the note should be added, false otherwise
      */
     public static function canSendNote($prj_id, $issue_id, $email, $structure)
     {
@@ -544,10 +525,10 @@ class Workflow
     /**
      * Called to check if a user can clone an issue
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The issue ID
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id The issue ID
      * @param   string $usr_id The ID of the user
-     * @return  boolean True if the issue can be cloned, false otherwise
+     * @return  bool True if the issue can be cloned, false otherwise
      */
     public static function canCloneIssue($prj_id, $issue_id, $usr_id)
     {
@@ -562,10 +543,10 @@ class Workflow
     /**
      * Called to check if a user is allowed to edit the security settings of an issue
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The issue ID
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id The issue ID
      * @param   string $usr_id The ID of the user
-     * @return  boolean True if the issue can be cloned, false otherwise
+     * @return  bool True if the issue can be cloned, false otherwise
      */
     public static function canChangeAccessLevel($prj_id, $issue_id, $usr_id)
     {
@@ -580,10 +561,10 @@ class Workflow
     /**
      * Handles when an authorized replier is added
      *
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id The ID of the issue
      * @param   string $email The email address added
-     * @return  boolean
+     * @return  bool
      */
     public static function handleAuthorizedReplierAdded($prj_id, $issue_id, &$email)
     {
@@ -618,8 +599,8 @@ class Workflow
      * Called before inserting a note. If it returns false the rest of the note code
      * will not be executed. Return null to continue as normal (possibly with changed $data)
      *
-     * @param   integer $prj_id
-     * @param   integer $issue_id
+     * @param   int $prj_id
+     * @param   int $issue_id
      * @param   array $data
      * @return  mixed   Null by default, false if the note should not be inserted
      */
@@ -636,8 +617,8 @@ class Workflow
     /**
      * Indicates if the email addresses should automatically be added to the NL from notes and emails.
      *
-     * @param   integer $prj_id The project ID.
-     * @return  boolean
+     * @param   int $prj_id the project ID
+     * @return  bool
      */
     public static function shouldAutoAddToNotificationList($prj_id)
     {
@@ -680,13 +661,13 @@ class Workflow
     /**
      * Modifies the content of the message being added to the mail queue.
      *
-     * @param   integer $prj_id
+     * @param   int $prj_id
      * @param   string $recipient
      * @param   MailMessage $mail The Mail object
-     * @param   integer $issue_id
-     * @param   string $type The type of message this is.
-     * @param   integer $sender_usr_id The id of the user sending this email.
-     * @param   integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
+     * @param   int $issue_id
+     * @param   string $type the type of message this is
+     * @param   int $sender_usr_id the id of the user sending this email
+     * @param   int $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      */
     public static function modifyMailQueue($prj_id, &$recipient, &$mail, $issue_id, $type, $sender_usr_id, $type_id)
     {
@@ -709,11 +690,11 @@ class Workflow
     /**
      * Called before the status changes. Parameters are passed by reference so the values can be changed.
      *
-     * @param   integer $prj_id
-     * @param   integer $issue_id
-     * @param   integer $status_id
-     * @param   boolean $notify
-     * @return  boolean true to continue normal processing, anything else to cancel and return value.
+     * @param   int $prj_id
+     * @param   int $issue_id
+     * @param   int $status_id
+     * @param   bool $notify
+     * @return  bool true to continue normal processing, anything else to cancel and return value
      */
     public static function preStatusChange($prj_id, &$issue_id, &$status_id, &$notify)
     {
@@ -729,9 +710,8 @@ class Workflow
      * Called at the start of many pages. After the includes and maybe some other code this
      * method is called to do whatever you want. Eventually this will be called on many pages.
      *
-     * @param   integer $prj_id The project ID
+     * @param   int $prj_id The project ID
      * @param   string $page_name The name of the page
-     * @return  null
      */
     public static function prePage($prj_id, $page_name)
     {
@@ -747,8 +727,8 @@ class Workflow
      * Called to determine which actions to subscribe a new user too.
      *
      * @see     Notification::getDefaultActions()
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id The ID of the issue
      * @param   string $email The email address of the user being added
      * @param   string $source The source of this call
      * @return  array   an array of actions
@@ -767,8 +747,8 @@ class Workflow
      * Returns which "issue fields" should be displayed in a given location.
      *
      * @see     class.issue_field.php
-     * @param   integer $prj_id The project ID
-     * @param   integer $issue_id The ID of the issue
+     * @param   int $prj_id The project ID
+     * @param   int $issue_id The ID of the issue
      * @param   string $location The location to display these fields at
      * @return  array   an array of fields to display and their associated options
      */
@@ -785,7 +765,7 @@ class Workflow
     /**
      * Returns an array of patterns and replacements.
      *
-     * @param   integer $prj_id The ID of the project
+     * @param   int $prj_id The ID of the project
      * @return  array An array of patterns and replacements
      */
     public static function getLinkFilters($prj_id)
@@ -977,5 +957,18 @@ class Workflow
         $backend = self::_getBackend($prj_id);
 
         return $backend->getMovedIssueMapping($prj_id, $issue_id, $mapping, $old_prj_id);
+    }
+
+    /**
+     * @return ExtensionLoader
+     */
+    private static function getExtensionLoader()
+    {
+        $dirs = [
+            APP_INC_PATH . '/workflow',
+            APP_LOCAL_PATH . '/workflow',
+        ];
+
+        return new ExtensionLoader($dirs, '%s_Workflow_Backend');
     }
 }

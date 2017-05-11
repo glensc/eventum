@@ -106,7 +106,7 @@ class Eventum_Bot
              *
              * @see Net_SmartIRC::setDebugLevel
              */
-            'debuglevel' => SMARTIRC_DEBUG_NOTICE
+            'debuglevel' => SMARTIRC_DEBUG_NOTICE,
         ];
 
         $config = require $config_file;
@@ -292,6 +292,9 @@ class Eventum_Bot
         }
     }
 
+    /**
+     * @param Net_SmartIRC_data $data
+     */
     public function addUser($data, $email)
     {
         $this->auth[$data->nick] = $email;
@@ -311,6 +314,11 @@ class Eventum_Bot
         return in_array($data->nick, array_keys($this->auth));
     }
 
+    /**
+     * @param string $nickname
+     *
+     * @return string
+     */
     public function getEmailByNickname($nickname)
     {
         if (in_array($nickname, array_keys($this->auth))) {
@@ -365,7 +373,7 @@ class Eventum_Bot
      * Helper method to get the list of channels that should be used in the
      * notifications
      *
-     * @param   integer $prj_id The project ID
+     * @param   int $prj_id The project ID
      * @return  array The list of channels
      */
     public function getChannels($prj_id)

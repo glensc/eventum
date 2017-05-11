@@ -11,34 +11,30 @@
  * that were distributed with this source code.
  */
 
-class TestCase extends PHPUnit_Framework_TestCase
+namespace Eventum\Test;
+
+/*
+ * PHPUnit_Framework_TestCase is dropped in phpunit 6.0.0
+ * https://github.com/sebastianbergmann/phpunit/wiki/Release-Announcement-for-PHPUnit-6.0.0
+ *
+ * Load PHPUnit_Framework_TestCase wrapper if using older PHPUnit.
+ */
+
+if (!class_exists('\PHPUnit\Framework\TestCase')) {
+    require_once __DIR__ . '/phpunit-compat.php';
+}
+
+class TestCase extends \PHPUnit\Framework\TestCase
 {
-    public static function skipTravis($message = 'Disabled in Travis')
-    {
-        if (getenv('TRAVIS')) {
-            self::markTestSkipped($message);
-        }
-    }
-
-    public static function skipJenkins($message = 'Disabled Jenkins')
-    {
-        if (getenv('JENKINS_HOME')) {
-            self::markTestSkipped($message);
-        }
-    }
-
-    public static function skipCi($message = 'Disabled in Travis/Jenkins')
-    {
-        if (getenv('TRAVIS') || getenv('JENKINS_HOME')) {
-            self::markTestSkipped($message);
-        }
-    }
-
     /**
-     * skip test if database is not available
+     * @param string $filename
+     * @return string
      */
-    public static function assertDatabase()
+    protected function readfile($filename)
     {
-        self::skipTravis();
+        $content = file_get_contents($filename);
+        $this->assertNotEmpty($content);
+
+        return $content;
     }
 }
