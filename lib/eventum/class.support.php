@@ -13,8 +13,8 @@
 
 use Eventum\Db\DatabaseException;
 use Eventum\Mail\Exception\RoutingException;
-use Eventum\Mail\ImapMessage;
 use Eventum\Mail\Helper\AddressHeader;
+use Eventum\Mail\ImapMessage;
 use Eventum\Monolog\Logger;
 
 /**
@@ -420,13 +420,13 @@ class Support
         $tpl = new Template_Helper();
         $tpl->setTemplate('notifications/bounced_email.tpl.text');
         $tpl->assign([
-            'error_code'        => $error->getCode(),
-            'error_message'     => $error->getMessage(),
-            'date'              => $mail->getMailDate(),
-            'subject'           => $mail->subject,
-            'from'              => $mail->from,
-            'to'                => $mail->to,
-            'cc'                => $mail->cc,
+            'error_code' => $error->getCode(),
+            'error_message' => $error->getMessage(),
+            'date' => $mail->getMailDate(),
+            'subject' => $mail->subject,
+            'from' => $mail->from,
+            'to' => $mail->to,
+            'cc' => $mail->cc,
         ]);
 
         $sender_email = $mail->getSender();
@@ -519,13 +519,13 @@ class Support
         $sender_email = $mail->getSender();
 
         $t = [
-            'ema_id'         => $mail->getEmailAccountId(),
-            'message_id'     => $message_id,
-            'date'           => Date_Helper::convertDateGMT($mail->getMailDate()),
-            'from'           => $mail->from,
-            'to'             => $mail->to,
-            'cc'             => $mail->cc,
-            'subject'        => $mail->subject,
+            'ema_id' => $mail->getEmailAccountId(),
+            'message_id' => $message_id,
+            'date' => Date_Helper::convertDateGMT($mail->getMailDate()),
+            'from' => $mail->from,
+            'to' => $mail->to,
+            'cc' => $mail->cc,
+            'subject' => $mail->subject,
 //            'body'           => @$message_body,
 //            'full_email'     => @$message,
             'has_attachment' => $mail->hasAttachments(),
@@ -577,8 +577,8 @@ class Support
                         $user_emails = Misc::lowercase(array_values($users));
                         $users = array_flip($users);
 
-                        $addresses = array();
-                        $cc_users = array();
+                        $addresses = [];
+                        $cc_users = [];
 
                         foreach ($addresses as $email) {
                             if (in_array(strtolower($email), $user_emails)) {
@@ -675,7 +675,7 @@ class Support
      * Creates a new issue from an email if appropriate. Also returns if this message is related
      * to a previous message.
      *
-     * @param   array   $info An array of info about the email account.
+     * @param   array   $info an array of info about the email account
      * @param   ImapMessage $mail The Mail object
      * @return  array   An array of information about the message
      */
@@ -974,7 +974,7 @@ class Support
                     ?, ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, array($new_sup_id, $mail->getMessageBody(), $mail->getRawContent()));
+            DB_Helper::getInstance()->query($stmt, [$new_sup_id, $mail->getMessageBody(), $mail->getRawContent()]);
         } catch (DatabaseException $e) {
             return -1;
         }
@@ -2452,8 +2452,8 @@ class Support
                 'send_notification' => $notify,
                 'is_blocked' => true,
                 'full_message' => $mail->getRawContent(),
-                'message_id'  => $mail->messageId,
-			];
+                'message_id' => $mail->messageId,
+            ];
 
             $body = Mail_Helper::getCannedBlockedMsgExplanation() . $mail->getContent();
             $res = Note::insertNote(Auth::getUserID(), $issue_id, $mail->subject, $body, $options);
