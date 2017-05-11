@@ -280,7 +280,7 @@ class Workflow
      * @param   int $prj_id The project ID
      * @param   int $issue_id the ID of the issue
      * @param   MailMessage $mail The Mail object
-     * @param   array $row The array of data that was inserted into the database.
+     * @param   array $row the array of data that was inserted into the database
      * @param   bool $closing if we are closing the issue
      */
     public static function handleNewEmail($prj_id, $issue_id, MailMessage $mail, $row, $closing = false)
@@ -580,9 +580,9 @@ class Workflow
      * Called at the beginning of the email download process. If it returns -1, the
      * rest of the email code will not be executed.
      *
-     * @param   integer $prj_id The project ID
+     * @param   int $prj_id The project ID
      * @param   ImapMessage $mail The Mail Message object
-     * @return  mixed null by default, -1 if the rest of the email script should not be processed.
+     * @return  mixed null by default, -1 if the rest of the email script should not be processed
      */
     public static function preEmailDownload($prj_id, $mail)
     {
@@ -635,8 +635,8 @@ class Workflow
      * a new issue.
      * Can also return an array containing 'customer_id', 'contact_id' and 'contract_id', 'sev_id'
      *
-     * @param   integer $prj_id The ID of the project
-     * @param   array   $info An array of info about the email account.
+     * @param   int $prj_id The ID of the project
+     * @param   array   $info an array of info about the email account
      * @param   MailMessage $mail The Mail object
      * @return  string|array
      */

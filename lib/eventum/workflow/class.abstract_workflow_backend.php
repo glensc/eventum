@@ -440,9 +440,9 @@ class Abstract_Workflow_Backend
      * Called at the beginning of the email download process. If it returns true, the
      * rest of the email code will not be executed.
      *
-     * @param   integer $prj_id The project ID
+     * @param   int $prj_id The project ID
      * @param   ImapMessage $mail The Mail Message object
-     * @return  mixed null by default, -1 if the rest of the email script should not be processed.
+     * @return  mixed null by default, -1 if the rest of the email script should not be processed
      */
     public function preEmailDownload($prj_id, $mail)
     {

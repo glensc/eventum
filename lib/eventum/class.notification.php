@@ -304,13 +304,13 @@ class Notification
     /**
      * Method used to forward the new email to the list of subscribers.
      *
-     * @param   integer $user_id The user ID of the person performing this action
-     * @param   integer $issue_id The issue ID
+     * @param   int $user_id The user ID of the person performing this action
+     * @param   int $issue_id The issue ID
      * @param   MailMessage $mail The Mail object
-     * @param   boolean $internal_only Whether the email should only be redirected to internal users or not
-     * @param   boolean $assignee_only Whether the email should only be sent to the assignee
-     * @param   boolean $type The type of email this is
-     * @param   integer $sup_id the ID of this email
+     * @param   bool $internal_only Whether the email should only be redirected to internal users or not
+     * @param   bool $assignee_only Whether the email should only be sent to the assignee
+     * @param   bool $type The type of email this is
+     * @param   int $sup_id the ID of this email
      */
     public static function notifyNewEmail($usr_id, $issue_id, $mail, $internal_only = false, $assignee_only = false, $type = '', $sup_id = false)
     {

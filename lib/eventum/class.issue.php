@@ -1804,11 +1804,11 @@ class Issue
      * Creates an issue with the given email information.
      *
      * @param   ImapMessage  $mail The Mail object
-     * @param   integer $usr_id The user responsible for this action
-     * @param   integer $category The category ID
-     * @param   integer $priority The priority ID
+     * @param   int $usr_id The user responsible for this action
+     * @param   int $category The category ID
+     * @param   int $priority The priority ID
      * @param   array $assignment The list of users to assign this issue to
-     * @param   integer $severity
+     * @param   int $severity
      * @param   string $customer_id
      * @param   string $contact_id
      * @param   string $contract_id

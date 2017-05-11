@@ -11,8 +11,8 @@
  * that were distributed with this source code.
  */
 
-use Eventum\Mail\MailMessage;
 use Eventum\Mail\Helper\AddressHeader;
+use Eventum\Mail\MailMessage;
 use Eventum\Mail\MailTransport;
 use Eventum\Monolog\Logger;
 use Zend\Mail\Address;
@@ -119,7 +119,7 @@ class Mail_Helper
         return false;
     }
 
-	/**
+    /**
      * Checks whether the given headers are from a vacation
      * auto-responder message or not.
      *
@@ -407,8 +407,8 @@ class Mail_Helper
      * @param   string $subject The subject of the message
      * @param   int $issue_id The ID of the issue. If false, email will not be associated with issue.
      * @param   string $type The type of message this is
-     * @param   integer $sender_usr_id The id of the user sending this email.
-     * @param   integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
+     * @param   int $sender_usr_id the id of the user sending this email
+     * @param   int $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      * @deprecated use Mail_Queue::addMail instead with MailMessage object
      */
     public function send($from, $to, $subject, $save_email_copy = 0, $issue_id = false, $type = '', $sender_usr_id = false, $type_id = false)

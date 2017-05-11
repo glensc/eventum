@@ -99,8 +99,8 @@ class Routing
      * Routes an email to the correct issue.
      *
      * @param MailMessage $mail The Mail object
-     * @return bool true if mail was routed
      * @throws RoutingException in case of failure
+     * @return bool true if mail was routed
      * @return bool true if mail was routed
      */
     protected static function route_emails(MailMessage $mail)
@@ -190,19 +190,19 @@ class Routing
         // TODO: remove all params that use $mail in some form and pass just $mail object
         // as for example content and headers could be rewritten later!
         $t = [
-            'issue_id'       => $issue_id,
-            'ema_id'         => $email_account_id,
-            'message_id'     => $mail->messageId,
-            'date'           => Date_Helper::getCurrentDateGMT(),
-            'from'           => $mail->from,
-            'to'             => $mail->to,
-            'cc'             => $mail->cc,
-            'subject'        => $mail->subject,
+            'issue_id' => $issue_id,
+            'ema_id' => $email_account_id,
+            'message_id' => $mail->messageId,
+            'date' => Date_Helper::getCurrentDateGMT(),
+            'from' => $mail->from,
+            'to' => $mail->to,
+            'cc' => $mail->cc,
+            'subject' => $mail->subject,
 //            'body'           => $mail->getContent(), // FIXME: needed
 //            'full_email'     => $mail->getRawContent(), // FIXME: needed?
             'has_attachment' => $has_attachments,
 //            'headers'        => $headers->toString(), // FIXME: needed
-            'mail'           => $mail,
+            'mail' => $mail,
         ];
 
         // automatically associate this incoming email with a customer
@@ -276,8 +276,8 @@ class Routing
      * Routes a note to the correct issue
      *
      * @param MailMessage $mail The Mail object
-     * @return bool true if mail was routed
      * @throws RoutingException in case of failure
+     * @return bool true if mail was routed
      * @return bool true if mail was routed
      */
     protected static function route_notes(MailMessage $mail)
@@ -406,8 +406,8 @@ class Routing
      * Routes a draft to the correct issue.
      *
      * @param MailMessage $mail The Mail object
-     * @return bool true if mail was routed
      * @throws RoutingException in case of failure
+     * @return bool true if mail was routed
      * @return bool true if mail was routed
      */
     protected static function route_drafts($mail)
@@ -464,7 +464,7 @@ class Routing
         Draft::saveEmail($issue_id, $mail->to, $mail->cc, $mail->subject, $mail->getContent(), false, false, false);
         // XXX: need to handle attachments coming from drafts as well?
         $usr_id = Auth::getUserID();
-        History::add($issue_id, $usr_id, 'draft_routed', 'Draft routed from {from}', array('from' => $mail->from));
+        History::add($issue_id, $usr_id, 'draft_routed', 'Draft routed from {from}', ['from' => $mail->from]);
 
         return true;
     }
