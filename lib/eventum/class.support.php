@@ -427,7 +427,7 @@ class Support
             'from'              => $mail->from,
             'to'                => $mail->to,
             'cc'                => $mail->cc,
-        ));
+        ]);
 
         $sender_email = $mail->getSender();
         $usr_id = User::getUserIDByEmail($sender_email);
@@ -2453,6 +2453,7 @@ class Support
                 'is_blocked' => true,
                 'full_message' => $mail->getRawContent(),
                 'message_id'  => $mail->messageId,
+			];
 
             $body = Mail_Helper::getCannedBlockedMsgExplanation() . $mail->getContent();
             $res = Note::insertNote(Auth::getUserID(), $issue_id, $mail->subject, $body, $options);
