@@ -13,6 +13,7 @@
 
 use Eventum\Db\DatabaseException;
 use Eventum\Mail\Helper\AddressHeader;
+use Eventum\Mail\MailMessage;
 
 /**
  * Class to handle all of the business logic related to sending email
