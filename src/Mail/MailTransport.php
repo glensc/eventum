@@ -14,6 +14,7 @@
 namespace Eventum\Mail;
 
 use Eventum\Monolog\Logger;
+use InvalidArgumentException;
 use Setup;
 use Zend\Mail\Transport;
 
@@ -31,7 +32,7 @@ class MailTransport
      *              specified in the headers, for Bcc:, resending
      *              messages, etc.
      *
-     * @param array $headers The array of headers to send with the mail, in an
+     * @param MailMessage|array $headers The array of headers to send with the mail, in an
      *              associative array, where the array key is the
      *              header name (e.g., 'Subject'), and the array value
      *              is the header value (e.g., 'test'). The header
@@ -45,7 +46,7 @@ class MailTransport
      *               containing a descriptive error message on
      *               failure
      */
-    public function send($recipient, $headers, $body)
+    public function send($recipient, $headers, $body = null)
     {
         $transport = $this->getTransport();
 
@@ -53,7 +54,14 @@ class MailTransport
         $envelope->setTo($recipient);
         $transport->setEnvelope($envelope);
 
-        $message = MailMessage::createFromHeaderBody($headers, $body);
+        if ($headers instanceof MailMessage) {
+            $message = $headers;
+        } else {
+            if (!$body) {
+                throw new InvalidArgumentException('body is empty');
+            }
+            $message = MailMessage::createFromHeaderBody($headers, $body);
+        }
 
         try {
             $transport->send($message->toMessage());
