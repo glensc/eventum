@@ -26,9 +26,9 @@
   //-->
   </script>
 
-  {* libraries setup with component installer *}
+{function name="assetic_css"}
   {assetic
-    bundle="components"
+    bundle=$bundle
     output="css"
     config_path="{APP_PATH}/res/config/assetic"
     root_path="{APP_PATH}/htdocs"
@@ -37,47 +37,36 @@
     asset_url="asset_url"}
     <link rel="stylesheet" href="{$asset_url}">
   {/assetic}
+{/function}
+
+{function name="assetic_js"}
+  {assetic
+  bundle=$bundle
+    output="js"
+    config_path="{APP_PATH}/res/config/assetic"
+    root_path="{APP_PATH}/htdocs"
+    build_path="build"
+    debug=false
+    asset_url="asset_url"}
+      <link rel="stylesheet" href="{$asset_url}">
+  {/assetic}
+{/function}
+
+  {* libraries setup with component installer *}
+  {assetic_css bundle="components"}
 
   {* allow pages to inject to <head> block *}
   {block "stylesheets"}
   {/block}
 
   {* our css/js after remote assets to allow overrides *}
-  {assetic
-    bundle="main"
-    output="css"
-    config_path="{APP_PATH}/res/config/assetic"
-    root_path="{APP_PATH}/htdocs"
-    build_path="build"
-    debug=false
-    asset_url="asset_url"}
-    <link rel="stylesheet" href="{$asset_url}">
-  {/assetic}
+  {assetic_css bundle="main"}
 
   {* local directory can add overrides *}
   {$userstyle}
 
-  {assetic
-    bundle="components"
-    output="js"
-    config_path="{APP_PATH}/res/config/assetic"
-    root_path="{APP_PATH}/htdocs"
-    build_path="build"
-    debug=false
-    asset_url="asset_url"}
-    <link rel="stylesheet" href="{$asset_url}">
-  {/assetic}
-
-  {assetic
-    bundle="main"
-    output="js"
-    config_path="{APP_PATH}/res/config/assetic"
-    root_path="{APP_PATH}/htdocs"
-    build_path="build"
-    debug=false
-    asset_url="asset_url"}
-    <link rel="stylesheet" href="{$asset_url}">
-  {/assetic}
+  {assetic_js bundle="components"}
+  {assetic_js bundle="main"}
 
   {* allow pages to inject to <head> block *}
   {block "javascripts"}
