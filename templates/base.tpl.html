@@ -41,14 +41,14 @@
 
 {function name="assetic_js"}
   {assetic
-  bundle=$bundle
+    bundle=$bundle
     output="js"
     config_path="{APP_PATH}/res/config/assetic"
     root_path="{APP_PATH}/htdocs"
     build_path="build"
     debug=false
     asset_url="asset_url"}
-      <link rel="stylesheet" href="{$asset_url}">
+    <script type="text/javascript" src="{$asset_url}"></script>
   {/assetic}
 {/function}
 
