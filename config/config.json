@@ -1,0 +1,7 @@
+{
+	"site_url": "/~glen/eventum",
+	"cssembed_path": null,
+	"yuicompressor_path": "/usr/share/java/yuicompressor.jar",
+	"closurejar_path": "/usr/share/java/compiler.jar",
+	"java_path": "/usr/bin/java"
+}

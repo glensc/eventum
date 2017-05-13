@@ -22,6 +22,10 @@
 	},
 	"repositories": [
 		{
+			"type": "vcs",
+			"url": "https://github.com/glensc/assetic-smarty"
+		},
+		{
 			"type": "composer",
 			"url": "https://eventum.github.io/composer/"
 		}
@@ -64,6 +68,7 @@
 		"ext-spl": "*",
 		"fonts/liberation": "*",
 		"ircmaxell/random-lib": "~1.1.0",
+		"kriswallsmith/assetic": "~1.4.0",
 		"malkusch/lock": "^0.4.0",
 		"monolog/monolog": "~1.17.2",
 		"pear-pear.php.net/mail_mimedecode": "*",
@@ -82,7 +87,7 @@
 		"php-gettext/php-gettext": "1.0.*",
 		"phplot/phplot": "~6.1.0",
 		"phpxmlrpc/phpxmlrpc": "^4.1",
-		"pjparra/assetic-smarty": "dev-master",
+		"pjparra/assetic-smarty": "dev-composer-autoload",
 		"robmorgan/phinx": "^0.8.0",
 		"smarty-gettext/smarty-gettext": "~1.0",
 		"smarty/smarty": "~3.1.12",

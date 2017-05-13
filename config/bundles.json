@@ -1,0 +1,42 @@
+{
+	"css": {
+		"main": [
+			"css/main.css",
+			"css/page.css"
+		],
+		"components": [
+			"components/font-awesome/css/font-awesome.css",
+			"components/jquery-ui/themes/base/all.css",
+			"components/jquery-chosen/chosen.css",
+			"components/dropzone/dist/basic.css"
+		]
+	},
+	"js": {
+		"main": [
+			"js/main.js",
+			"js/page.js"
+		],
+		"components": [
+			"components/jquery/jquery.js",
+			"components/jquery-blockui/jquery.blockUI.js",
+			"components/form/src/jquery.form.js",
+			"components/jquery-cookie/jquery.cookie.js",
+			"components/jquery-ui/ui/core.js",
+			"components/jquery-ui/ui/datepicker.js",
+			"components/jquery-ui/ui/widget.js",
+			"components/jquery-ui/ui/mouse.js",
+			"components/jquery-ui/ui/progressbar.js",
+			"components/jquery-ui/ui/position.js",
+			"components/jquery-ui/ui/menu.js",
+			"components/jquery-ui/ui/selectmenu.js",
+			"components/jquery-ui/ui/sortable.js",
+			"components/jquery-chosen/chosen.jquery.js",
+			"components/dropzone/dist/dropzone.js",
+			"components/autosize/dist/autosize.js",
+			"components/jquery-timeago/jquery.timeago.js",
+			"components/filereader.js/filereader.js",
+			"components/garlicjs/js/garlic.min.js",
+			"components/cmd-ctrl-enter/src/cmd-ctrl-enter.js"
+		]
+	}
+}
