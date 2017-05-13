@@ -54,6 +54,10 @@
 
   {* libraries setup with component installer *}
   {assetic_css bundle="components"}
+  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}components/font-awesome/css/font-awesome.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}components/jquery-ui/themes/base/base.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}components/jquery-ui/themes/base/theme.css">
+
 
   {* allow pages to inject to <head> block *}
   {block "stylesheets"}
@@ -61,6 +65,7 @@
 
   {* our css/js after remote assets to allow overrides *}
   {assetic_css bundle="main"}
+  <link rel="stylesheet" type="text/css" media="screen" href="{$core.rel_url}css/page.css">
 
   {* local directory can add overrides *}
   {$userstyle}

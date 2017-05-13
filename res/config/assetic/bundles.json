@@ -1,12 +1,9 @@
 {
 	"css": {
 		"main": [
-			"css/main.css",
-			"css/page.css"
+			"css/main.css"
 		],
 		"components": [
-			"components/font-awesome/css/font-awesome.css",
-			"components/jquery-ui/themes/base/all.css",
 			"components/jquery-chosen/chosen.css",
 			"components/dropzone/dist/basic.css"
 		]
