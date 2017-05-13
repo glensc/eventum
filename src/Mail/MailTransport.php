@@ -67,7 +67,7 @@ class MailTransport
             $transport->send($message->toMessage());
             $res = true;
         } catch (\Exception $e) {
-            Logger::app()->error($e->getMessage());
+            Logger::app()->error($e->getMessage(), ['exception' => $e]);
             $res = $e;
         } finally {
             // avoid leaking recipient in case of transport reuse
