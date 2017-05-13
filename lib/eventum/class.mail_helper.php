@@ -190,7 +190,7 @@ class Mail_Helper
 
         $names = $address->getNames();
 
-        return $multiple ? $names : $names[0];
+        return $multiple ? $names : current($names);
     }
 
     /**
