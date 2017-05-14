@@ -212,7 +212,7 @@ class Mail_Helper
 
         $names = $address->getNames();
 
-        return $multiple ? $names : $names[0];
+        return $multiple ? $names : current($names);
     }
 
     /**
@@ -351,6 +351,8 @@ class Mail_Helper
         $setup = Setup::get();
         $enabled = $setup['email_routing']['status'] == 'enabled' && $setup['email_routing']['warning']['status'] == 'enabled';
         if (!$enabled) {
+            throw new LogicException('not enabled');
+
             return;
         }
 
@@ -373,6 +375,12 @@ class Mail_Helper
         } else {
             $warning = self::getWarningMessage('allowed');
         }
+
+        // FIXME: this is trash. does not handle MIME
+        // getContent just returns body part of split from headers+body
+        // it should be:
+        // 1. for plain text messages prepended
+        // 2. for multipart, new text multipart prepended?
 
         $body = $warning . "\n\n" . $mail->getContent();
         $mail->setContent($body);
