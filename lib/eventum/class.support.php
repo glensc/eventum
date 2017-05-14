@@ -15,6 +15,7 @@ use Eventum\Db\DatabaseException;
 use Eventum\Mail\Exception\RoutingException;
 use Eventum\Mail\Helper\AddressHeader;
 use Eventum\Mail\ImapMessage;
+use Eventum\Mail\MailMessage;
 use Eventum\Monolog\Logger;
 
 /**
@@ -1381,13 +1382,15 @@ class Support
         $res = DB_Helper::getInstance()->getAll($stmt, $items);
 
         foreach ($res as $row) {
-            // since downloading email should make the emails 'public', send 'false' below as the 'internal_only' flag
-            $structure = Mime_Helper::decode($row['seb_full_email'], true, false);
-            if (Mime_Helper::hasAttachments($structure)) {
+            // since downloading email should make the emails 'public',
+            // send 'false' below as the 'internal_only' flag
+            if (Mime_Helper::hasAttachments($row['seb_full_email'])) {
                 $has_attachments = 1;
             } else {
                 $has_attachments = 0;
             }
+
+            $structure = Mime_Helper::decode($row['seb_full_email'], true, false);
             $t = [
                 'issue_id' => $issue_id,
                 'message_id' => @$structure->headers['message-id'],

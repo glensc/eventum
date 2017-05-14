@@ -21,6 +21,7 @@
  * See the enclosed file COPYING for license information (LGPL). If you
  * did not receive this file, see http://www.fsf.org/copyleft/lgpl.html.
  */
+use Eventum\Mail\MailMessage;
 use Eventum\Monolog\Logger;
 
 /**
@@ -32,38 +33,6 @@ use Eventum\Monolog\Logger;
  */
 class Mime_Helper
 {
-    /**
-     * Method used to get charset from raw email.
-     *
-     * @param   mixed   $input the full body of the message or decoded email
-     * @return  string charset extracted from Content-Type header of email
-     * @deprecated method not used
-     */
-    public static function getCharacterSet($input)
-    {
-        if (!is_object($input)) {
-            $structure = self::decode($input, false, false);
-        } else {
-            $structure = $input;
-        }
-        if (empty($structure)) {
-            return false;
-        }
-
-        if ($structure->ctype_primary == 'multipart' and $structure->ctype_secondary == 'mixed'
-            and count($structure->parts) >= 1 and $structure->parts[0]->ctype_primary == 'text') {
-            $content_type = $structure->parts[0]->headers['content-type'];
-        } else {
-            $content_type = !empty($structure->headers['content-type']) ? $structure->headers['content-type'] : '';
-        }
-
-        if (preg_match('/charset\s*=\s*(["\'])?([-\w\d]+)(\1)?;?/i', $content_type, $matches)) {
-            return $matches[2];
-        }
-
-        return false;
-    }
-
     /**
      * Returns the appropriate message body for a given MIME-based decoded
      * structure.
@@ -491,7 +460,7 @@ class Mime_Helper
      * @param   string $input Headers to parse
      * @return  array Contains parsed headers
      */
-    public static function getHeaderNames($input)
+    public static function getHeaderNames($input, $lowercase = true)
     {
         if ($input === '') {
             return [];
@@ -504,7 +473,7 @@ class Mime_Helper
         $headers = explode("\r\n", trim($input));
         foreach ($headers as $value) {
             $hdr_name = substr($value, 0, strpos($value, ':'));
-            $return[strtolower($hdr_name)] = $hdr_name;
+            $return[$lowercase ? strtolower($hdr_name) : $hdr_name] = $hdr_name;
         }
 
         return $return;
@@ -555,20 +524,15 @@ class Mime_Helper
     /**
      * Method used to check whether a given email message has any attachments.
      *
-     * @param   mixed   $message the full body of the message or parsed message structure
+     * @param string $message the full body of the message
      * @return  bool
+     * @deprecated use MailMessage directly
      */
     public static function hasAttachments($message)
     {
-        if (!is_object($message)) {
-            $message = self::decode($message, true);
-        }
-        $attachments = self::_getAttachmentDetails($message, true);
-        if (count($attachments) > 0) {
-            return true;
-        }
+        $mail = MailMessage::createFromString($message);
 
-        return false;
+        return $mail->hasAttachments();
     }
 
     /**

@@ -30,22 +30,12 @@ class MailTransport
      *              each RFC822 valid. This may contain recipients not
      *              specified in the headers, for Bcc:, resending
      *              messages, etc.
-     *
-     * @param array $headers The array of headers to send with the mail, in an
-     *              associative array, where the array key is the
-     *              header name (e.g., 'Subject'), and the array value
-     *              is the header value (e.g., 'test'). The header
-     *              produced from those values would be 'Subject:
-     *              test'.
-     *
-     * @param string $body the full text of the message body, including any
-     *               MIME parts, etc
-     *
+     * @param MailMessage $mail
      * @return mixed Returns true on success, or a exception class
      *               containing a descriptive error message on
      *               failure
      */
-    public function send($recipient, $headers, $body)
+    public function send($recipient, MailMessage $mail)
     {
         $transport = $this->getTransport();
 
@@ -53,13 +43,11 @@ class MailTransport
         $envelope->setTo($recipient);
         $transport->setEnvelope($envelope);
 
-        $message = MailMessage::createFromHeaderBody($headers, $body);
-
         try {
-            $transport->send($message->toMessage());
+            $transport->send($mail->toMessage());
             $res = true;
         } catch (\Exception $e) {
-            Logger::app()->error($e->getMessage());
+            Logger::app()->error($e->getMessage(), ['exception' => $e]);
             $res = $e;
         } finally {
             // avoid leaking recipient in case of transport reuse

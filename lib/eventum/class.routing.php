@@ -13,6 +13,7 @@
 
 use Eventum\Mail\Exception\RoutingException;
 use Eventum\Mail\Helper\AddressHeader;
+use Eventum\Mail\MailMessage;
 
 /**
  * Class to handle all routing functionality
@@ -133,6 +134,12 @@ class Routing
 
         // remove the reply-to: header
         $headers->removeHeader('Reply-To');
+
+        if (Mime_Helper::hasAttachments($full_message)) {
+            $has_attachments = 1;
+        } else {
+            $has_attachments = 0;
+        }
 
         // find which issue ID this email refers to
         $issue_id = null;

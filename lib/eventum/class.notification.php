@@ -396,7 +396,6 @@ class Notification
         $from = self::getFixedFromHeader($issue_id, $sender, 'issue');
         $mail->setFrom($from);
         $mail->stripHeaders();
-
         $mail->setSubject(Mail_Helper::formatSubject($issue_id, $mail->subject));
 
         if (empty($type)) {
