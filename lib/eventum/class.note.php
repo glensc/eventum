@@ -12,6 +12,7 @@
  */
 
 use Eventum\Db\DatabaseException;
+use Eventum\Mail\MailMessage;
 
 /**
  * Class to handle the business logic related to adding, updating or
@@ -553,12 +554,11 @@ class Note
 
         $current_usr_id = Auth::getUserID();
         if ($target == 'email') {
-            if (Mime_Helper::hasAttachments($blocked_message)) {
-                $has_attachments = 1;
-            } else {
-                $has_attachments = 0;
-            }
-            list($blocked_message, $headers) = Mail_Helper::rewriteThreadingHeaders($issue_id, $blocked_message, @$structure->headers);
+            $mail = MailMessage::createFromString($blocked_message);
+
+            Mail_Helper::rewriteThreadingHeaders($mail, $issue_id);
+            $blocked_message = $mail->getRawContent();
+
             $t = [
                 'issue_id' => $issue_id,
                 'ema_id' => $email_account_id,
@@ -569,9 +569,9 @@ class Note
                 'cc' => @$structure->headers['cc'],
                 'subject' => @$structure->headers['subject'],
                 'body' => @$body,
-                'full_email' => @$blocked_message,
-                'has_attachment' => $has_attachments,
-                'headers' => $headers,
+                'full_email' => $blocked_message,
+                'has_attachment' => (int)$mail->hasAttachments(),
+                'headers' => $mail->getHeadersArray(),
             ];
 
             // need to check for a possible customer association

@@ -643,7 +643,10 @@ class Support
             // check if we need to block this email
             if (($should_create_issue == true) || (!self::blockEmailIfNeeded($t))) {
                 if (!empty($t['issue_id'])) {
-                    list($t['full_email'], $t['headers']) = Mail_Helper::rewriteThreadingHeaders($t['issue_id'], $t['full_email'], $t['headers'], 'email');
+                    $mail = MailMessage::createFromString($t['full_email']);
+                    Mail_Helper::rewriteThreadingHeaders($mail, $t['issue_id']);
+                    $t['headers'] = $mail->getHeadersArray();
+                    $t['full_email'] = $mail->getRawContent();
                 }
 
                 // make variable available for workflow to be able to detect whether this email created new issue
