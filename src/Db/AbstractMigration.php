@@ -15,10 +15,31 @@ namespace Eventum\Db;
 
 use LogicException;
 use Phinx;
+use Phinx\Db\Adapter\MysqlAdapter;
 use Phinx\Migration\AbstractMigration as PhinxAbstractMigration;
 
 abstract class AbstractMigration extends PhinxAbstractMigration
 {
+    // According to https://dev.mysql.com/doc/refman/5.0/en/blob.html BLOB sizes are the same as TEXT
+    const BLOB_TINY = MysqlAdapter::BLOB_TINY;
+    const BLOB_REGULAR = MysqlAdapter::BLOB_REGULAR;
+    const BLOB_MEDIUM = MysqlAdapter::BLOB_MEDIUM;
+    const BLOB_LONG = MysqlAdapter::BLOB_LONG;
+
+    const INT_TINY = MysqlAdapter::INT_TINY;
+    const INT_SMALL = MysqlAdapter::INT_SMALL;
+    const INT_MEDIUM = MysqlAdapter::INT_MEDIUM;
+    const INT_REGULAR = MysqlAdapter::INT_REGULAR;
+    const INT_BIG = MysqlAdapter::INT_BIG;
+
+    const TEXT_TINY = MysqlAdapter::TEXT_TINY;
+    const TEXT_SMALL = MysqlAdapter::TEXT_SMALL;
+    const TEXT_REGULAR = MysqlAdapter::TEXT_REGULAR;
+    const TEXT_MEDIUM = MysqlAdapter::TEXT_MEDIUM;
+    const TEXT_LONG = MysqlAdapter::TEXT_LONG;
+
+    const PHINX_TYPE_BLOB = MysqlAdapter::PHINX_TYPE_BLOB;
+
     /**
      * MySQL Engine
      *

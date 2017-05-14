@@ -12,6 +12,7 @@
  */
 
 use Eventum\DebugBar;
+use Eventum\Templating;
 
 /**
  * Class used to abstract the backend template system used by the site. This
@@ -79,8 +80,8 @@ class Template_Helper
     /**
      * Assigns variables to specific placeholders on the target template
      *
-     * @param  array|string $var_name Placeholder on the template
-     * @param  string $value Value to be assigned to this placeholder
+     * @param  string|string[] $var_name Placeholder on the template
+     * @param  string|array $value Value to be assigned to this placeholder
      * @return $this
      */
     public function assign($var_name, $value = null)
@@ -235,6 +236,9 @@ class Template_Helper
                 ];
         }
         $this->assign('core', $core);
+
+        $userfile = new Templating\UserFile($this->smarty, APP_LOCAL_PATH);
+        $userfile();
 
         if (isset($role_id) && $role_id >= User::ROLE_ADMINISTRATOR) {
             DebugBar::register($this->smarty);
