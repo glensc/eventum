@@ -13,6 +13,7 @@
 
 use Eventum\Mail\Exception\RoutingException;
 use Eventum\Mail\Helper\AddressHeader;
+use Eventum\Mail\MailMessage;
 
 /**
  * Class to handle all routing functionality
@@ -252,7 +253,11 @@ class Routing
         }
 
         // re-write Threading headers if needed
-        list($t['full_email'], $t['headers']) = Mail_Helper::rewriteThreadingHeaders($t['issue_id'], $t['full_email'], $t['headers'], 'email');
+        $mail = MailMessage::createFromString($t['full_email']);
+        Mail_Helper::rewriteThreadingHeaders($mail, $t['issue_id']);
+        $t['headers'] = $mail->getHeadersArray();
+        $t['full_email'] = $mail->getRawContent();
+
         $res = Support::insertEmail($t, $structure, $sup_id);
         if ($res != -1) {
             Support::extractAttachments($issue_id, $structure);
