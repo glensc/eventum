@@ -20,8 +20,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class Listening for Event Dispatcher event and proxying them to legacy workflow class
- *
- * @package Eventum\EventListener
  */
 class LegacyWorkflowListener implements EventSubscriberInterface
 {
