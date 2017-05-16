@@ -101,7 +101,7 @@ po_checkout() {
 	  $quick || bzr pull
 	  cd ..
 	else
-	  bzr branch lp:~glen666/eventum/po $podir
+	  bzr branch https://bazaar.launchpad.net/~glen666/eventum/po $podir
 	fi
 	rm -f $dir/localization/*.po
 	cp -af $podir/localization/*.po $dir/localization
