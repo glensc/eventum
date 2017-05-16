@@ -60,13 +60,6 @@ class Extension1 extends AbstractExtension
 
 class Extension2 extends AbstractExtension
 {
-    /**
-     * Get classes implementing EventSubscriberInterface.
-     *
-     * @see http://symfony.com/doc/current/components/event_dispatcher.html#using-event-subscribers
-     * @return string[]
-     * @since 3.2.0
-     */
     public function getSubscribers()
     {
         return [
