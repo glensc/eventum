@@ -24,6 +24,15 @@ class WorkflowListener implements EventSubscriberInterface
     {
     }
 
+    /**
+     * Argument 1 passed to Eventum\EventListener\WorkflowListener::onEmailBlocked()
+     * must be an instance of Eventum\Event\WorkflowEvent,
+     * instance of Symfony\Component\EventDispatcher\Event given
+     *
+     * @param WorkflowEvent $event
+     * @param $eventName
+     * @param EventDispatcher $eventDispatcher
+     */
     public function onEmailBlocked(WorkflowEvent $event, $eventName, EventDispatcher $eventDispatcher)
     {
         echo __FUNCTION__, ' got ', get_class($event), ' ' . $eventName, "\n";

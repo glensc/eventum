@@ -393,4 +393,20 @@ final class WorkflowEvents
     const GROUP_GET_ACTIVE = 'group.get_active';
 
     const IRC_FORMAT_MESSAGE = 'irc.format_message';
+
+    /**
+     * Upgrade config so that values contain EncryptedValue where some secrecy is wanted
+     * NOTE: this isn't really project specific, therefore it uses hardcoded project id to obtain workflow class
+     *
+     * @since 3.1.0
+     */
+    const CRYPTO_UPGRADE = 'crypto.upgrade_config';
+
+    /**
+     * Downgrade config: remove all EncryptedValue elements.
+     * NOTE: this isn't really project specific, therefore it uses hardcoded project id to obtain workflow class
+     *
+     * @since 3.1.0
+     */
+    const CRYPTO_DOWNGRADE = 'crypto.downgrade_config';
 }

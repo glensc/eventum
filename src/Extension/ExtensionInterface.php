@@ -24,6 +24,15 @@ interface ExtensionInterface
     public function registerAutoloader($loader);
 
     /**
+     * Get classes implementing EventSubscriberInterface.
+     *
+     * @see http://symfony.com/doc/current/components/event_dispatcher.html#using-event-subscribers
+     * @return string[]
+     * @since 3.2.0
+     */
+    public function getSubscribers();
+
+    /**
      * Return Workflow Class names your extension provides.
      *
      * @return string[]

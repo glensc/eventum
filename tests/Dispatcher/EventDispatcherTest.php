@@ -14,19 +14,27 @@
 use Eventum\Event\WorkflowEvent;
 use Eventum\Event\WorkflowEvents;
 use Eventum\EventListener\WorkflowListener;
+use Eventum\Test\Event\StoreSubscriber;
 use Eventum\Test\TestCase;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class EventDispatcherTest extends TestCase
 {
+    public function test1()
+    {
+        $dispatcher = new EventDispatcher();
+        $listener = new WorkflowListener();
+        $dispatcher->addListener(WorkflowEvents::EMAIL_BLOCKED, [$listener, 'onEmailBlocked']);
+    }
+
     public function test2()
     {
         $dispatcher = new EventDispatcher();
         $dispatcher->addSubscriber(new WorkflowListener());
 
         // create the FilterOrderEvent and dispatch it
-        $event = new Event();
+        $event = new WorkflowEvent(['prj_id' => 1]);
         $dispatcher->dispatch(WorkflowEvents::EMAIL_BLOCKED, $event);
     }
 
@@ -62,5 +70,12 @@ class EventDispatcherTest extends TestCase
             'type' => 'note',
         ];
         WorkflowEvent::dispatchEvent($dispatcher, WorkflowEvents::EMAIL_BLOCKED, $params);
+    }
+
+    public function test5()
+    {
+        $dispatcher = new EventDispatcher();
+        $subscriber = new StoreSubscriber();
+        $dispatcher->addSubscriber($subscriber);
     }
 }

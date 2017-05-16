@@ -12,9 +12,12 @@
  */
 
 use Eventum\Db\DatabaseException;
+use Eventum\Event\WorkflowEvents;
+use Eventum\EventDispatcher\EventManager;
 use Eventum\Extension\ExtensionLoader;
 use Eventum\Mail\MailMessage;
 use Eventum\Model\Entity;
+use Symfony\Component\EventDispatcher\Event;
 
 class Workflow
 {
@@ -878,6 +881,8 @@ class Workflow
      */
     public static function cryptoUpgradeConfig($prj_id = 1)
     {
+        EventManager::dispatch(WorkflowEvents::CRYPTO_UPGRADE);
+
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;
         }
@@ -892,6 +897,8 @@ class Workflow
      */
     public static function cryptoDowngradeConfig($prj_id = 1)
     {
+        EventManager::dispatch(WorkflowEvents::CRYPTO_DOWNGRADE);
+
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;
         }
