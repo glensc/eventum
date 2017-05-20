@@ -11,6 +11,7 @@
  * that were distributed with this source code.
  */
 
+use Email\Parse;
 use Eventum\Db\AbstractMigration;
 use Eventum\Mail\Helper\SplitHeaderBody;
 use Eventum\Mail\MailMessage;
@@ -45,9 +46,24 @@ class EventumFixSupFields extends AbstractMigration
 
     public function fixTruncatedAddressFields($field, $header)
     {
+        $parser = new Parse();
+
         $st = $this->getTruncatedRecords($field);
         foreach ($st as $row) {
             $sup_id = $row['sup_id'];
+            $em = $parser->parse($row['field']);
+            $email = $em['email_addresses'][0];
+            $a = new \Zend\Mail\Address($email['simple_address'], $email['name_parsed']);
+            print_r([$row['field'], $em, $a, $a->toString()]);
+
+            $em = $parser->parse($a->toString());
+            $email = $em['email_addresses'][0];
+
+            $a = new \Zend\Mail\Address($email['simple_address'], $email['name_parsed']);
+            print_r([$em, $a, $a->toString()]);
+
+            die;
+
             try {
                 $ah = \Eventum\Mail\Helper\AddressHeader::fromString($row['field']);
                 $value = $this->unfold($ah->toString(HeaderInterface::FORMAT_RAW));
@@ -80,6 +96,8 @@ class EventumFixSupFields extends AbstractMigration
         $value = $this->quoteValue($value);
 
         echo "Updating: $sup_id($field): $value\n";
+        # reset so we know which addresses did parse
+//        $value = '';
         $stmt
             = "
             UPDATE e.{$this->email_table}
@@ -122,7 +140,11 @@ class EventumFixSupFields extends AbstractMigration
             SELECT sup_id, $field field
             FROM e.{$this->email_table} 
             where length($field) > 0
-        ";
+            and sup_id=196
+
+/*
+            and sup_id=222
+*/        ";
 
         return $this->query($stmt);
     }
