@@ -14,6 +14,7 @@
 namespace Eventum\Mail\Helper;
 
 use Mail_Helper;
+use Mime_Helper;
 use Zend\Mime;
 
 class SplitHeaderBody
@@ -23,6 +24,9 @@ class SplitHeaderBody
      */
     public static function splitMessage($raw, &$headers, &$content)
     {
+
+//        list($headers, $content) = Mime_Helper::splitBodyHeader($content);
+
         // this method could be really easy
         // if we wouldn't need to handle broken input.
 
