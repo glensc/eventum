@@ -43,6 +43,19 @@ class Parser
         foreach ($res['email_addresses'] as $email) {
             $name = HeaderWrap::mimeDecodeValue($email['name']);
 
+            $name = trim($name);
+            $name = preg_replace(
+                [
+                    '#(?<!\\\)"(.*)(?<!\\\)"#', //quoted-text
+                    '#\\\([\x01-\x09\x0b\x0c\x0e-\x7f])#' //quoted-pair
+                ],
+                [
+                    '\\1',
+                    '\\1'
+                ],
+                $name
+            );
+
             $address = new Address($email['simple_address'], $name ?: null);
             $addressList->add($address);
         }

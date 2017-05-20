@@ -42,11 +42,21 @@ class EventumFixSupFields extends AbstractMigration
         $this->initTables();
         $this->fixTruncatedAddressFields('sup_cc', 'Cc');
         $this->fixTruncatedAddressFields('sup_to', 'To');
-        throw new RuntimeException();
+        throw new RuntimeException('migrate is done');
     }
 
     public function fixTruncatedAddressFields($field, $header)
     {
+//        $ah = AddressHeader::fromString('"Ingvar Kupinski" <ingvar.kupinski@delfi.ee>    issue-3698@eventum.dev.delfi.ee, <Helena.Eenok@delfi.ee>');
+//        $emails = 'gd@lists.delfi.ee, <helena.eenok@delfi.ee>    issue-3705@eventum.dev.delfi.ee';
+        $emails = '"\\[Eventum\\] Ratikainen, Arild" <issue-1003@eventum.dev.delfi.ee>';
+        $ah = AddressHeader::fromString($emails);
+        print_r([
+            $emails,
+            $ah->toString(HeaderInterface::FORMAT_RAW),
+            $ah->getEmails(),
+        ]);
+        die;
         $st = $this->getTruncatedRecords($field);
         foreach ($st as $row) {
             $sup_id = $row['sup_id'];
@@ -54,6 +64,8 @@ class EventumFixSupFields extends AbstractMigration
                 $ah = AddressHeader::fromString($row['field']);
                 $value = $this->unfold($ah->toString(HeaderInterface::FORMAT_RAW));
                 $this->updateFieldValue($sup_id, $field, $value);
+            } catch (\Eventum\Mail\Exception\ParseException $e) {
+                echo "sup_id=$sup_id # ($field) {$row['field']}:\n\t{$e->getMessage()}\n";
             } catch (\Zend\Mail\Exception\InvalidArgumentException $e) {
                 echo "sup_id=$sup_id # ($field) {$row['field']}:\n\t{$e->getMessage()}\n";
             }
@@ -126,8 +138,9 @@ class EventumFixSupFields extends AbstractMigration
             SELECT sup_id, $field field
             FROM e.{$this->email_table} 
             where length($field) > 0
-            and sup_id in (-222, -198, -196, 2872)
-
+            and $field not like '%;%'
+/*            and sup_id in (-222, -198, -196, 2872)
+*/
         ";
 
         return $this->query($stmt);
