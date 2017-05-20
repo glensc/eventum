@@ -13,6 +13,7 @@
 
 use Email\Parse;
 use Eventum\Db\AbstractMigration;
+use Eventum\Mail\Helper\AddressHeader;
 use Eventum\Mail\Helper\SplitHeaderBody;
 use Eventum\Mail\MailMessage;
 use Zend\Mail\Header\HeaderInterface;
@@ -46,31 +47,11 @@ class EventumFixSupFields extends AbstractMigration
 
     public function fixTruncatedAddressFields($field, $header)
     {
-        $parser = new Parse();
-
         $st = $this->getTruncatedRecords($field);
         foreach ($st as $row) {
-            $ah = \Eventum\Mail\Helper\AddressHeader::fromString($row['field']);
-
-            print_r([$row['field'], $ah->toString(HeaderInterface::FORMAT_RAW)]);
-            die('here');
-
             $sup_id = $row['sup_id'];
-            $em = $parser->parse($row['field']);
-            $email = $em['email_addresses'][0];
-            $a = new \Zend\Mail\Address($email['simple_address'], $email['name_parsed']);
-            print_r([$row['field'], $em, $a, $a->toString()]);
-
-            $em = $parser->parse($a->toString());
-            $email = $em['email_addresses'][0];
-
-            $a = new \Zend\Mail\Address($email['simple_address'], $email['name_parsed']);
-            print_r([$em, $a, $a->toString()]);
-
-            die;
-
             try {
-                $ah = \Eventum\Mail\Helper\AddressHeader::fromString($row['field']);
+                $ah = AddressHeader::fromString($row['field']);
                 $value = $this->unfold($ah->toString(HeaderInterface::FORMAT_RAW));
                 $this->updateFieldValue($sup_id, $field, $value);
             } catch (\Zend\Mail\Exception\InvalidArgumentException $e) {
@@ -145,12 +126,9 @@ class EventumFixSupFields extends AbstractMigration
             SELECT sup_id, $field field
             FROM e.{$this->email_table} 
             where length($field) > 0
-/*
-            and sup_id in (-198, 196)
-*/
-/*
-            and sup_id=222
-*/        ";
+            and sup_id in (-222, -198, -196, 2872)
+
+        ";
 
         return $this->query($stmt);
     }

@@ -14,7 +14,7 @@
 namespace Eventum\Mail\Address;
 
 use Email\Parse;
-use InvalidArgumentException;
+use Eventum\Mail\Exception\ParseException;
 use Zend\Mail\Address;
 use Zend\Mail\AddressList;
 use Zend\Mail\Header\HeaderWrap;
@@ -37,7 +37,7 @@ class Parser
     {
         $res = $this->parser->parse($emails);
         if (!$res['success']) {
-            throw new InvalidArgumentException($res['reason']);
+            throw ParseException::create($emails, $res);
         }
 
         foreach ($res['email_addresses'] as $email) {

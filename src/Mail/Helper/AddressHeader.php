@@ -60,7 +60,11 @@ class AddressHeader
 //        $addressList = new AddressList();
         $addressList = $header->getAddressList();
         $parser = new Parser();
-        $parser->parseAddresses($addresses, $addressList);
+        try {
+            $parser->parseAddresses($addresses, $addressList);
+        } catch (InvalidArgumentException $e) {
+            throw $e;
+        }
 
 //        $header->getAddressList()->addMany($addressList);
         return new static($header);
