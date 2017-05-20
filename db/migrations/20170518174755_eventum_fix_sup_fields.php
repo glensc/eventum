@@ -50,6 +50,11 @@ class EventumFixSupFields extends AbstractMigration
 
         $st = $this->getTruncatedRecords($field);
         foreach ($st as $row) {
+            $ah = \Eventum\Mail\Helper\AddressHeader::fromString($row['field']);
+
+            print_r([$row['field'], $ah->toString(HeaderInterface::FORMAT_RAW)]);
+            die('here');
+
             $sup_id = $row['sup_id'];
             $em = $parser->parse($row['field']);
             $email = $em['email_addresses'][0];
@@ -140,8 +145,9 @@ class EventumFixSupFields extends AbstractMigration
             SELECT sup_id, $field field
             FROM e.{$this->email_table} 
             where length($field) > 0
-            and sup_id=196
-
+/*
+            and sup_id in (-198, 196)
+*/
 /*
             and sup_id=222
 */        ";
