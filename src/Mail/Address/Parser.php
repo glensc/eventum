@@ -47,11 +47,11 @@ class Parser
             $name = preg_replace(
                 [
                     '#(?<!\\\)"(.*)(?<!\\\)"#', //quoted-text
-                    '#\\\([\x01-\x09\x0b\x0c\x0e-\x7f])#' //quoted-pair
+                    '#\\\([\x01-\x09\x0b\x0c\x0e-\x7f])#', //quoted-pair
                 ],
                 [
                     '\\1',
-                    '\\1'
+                    '\\1',
                 ],
                 $name
             );

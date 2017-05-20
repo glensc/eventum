@@ -45,47 +45,42 @@ class EventumFixSupFields extends AbstractMigration
         throw new RuntimeException('migrate is done');
     }
 
-    public function fixTruncatedAddressFields($field, $header)
+    private function tester()
     {
-//        $ah = AddressHeader::fromString('"Ingvar Kupinski" <ingvar.kupinski@delfi.ee>    issue-3698@eventum.dev.delfi.ee, <Helena.Eenok@delfi.ee>');
+        //        $ah = AddressHeader::fromString('"Ingvar Kupinski" <ingvar.kupinski@delfi.ee>    issue-3698@eventum.dev.delfi.ee, <Helena.Eenok@delfi.ee>');
 //        $emails = 'gd@lists.delfi.ee, <helena.eenok@delfi.ee>    issue-3705@eventum.dev.delfi.ee';
-        $emails = '"\\[Eventum\\] Ratikainen, Arild" <issue-1003@eventum.dev.delfi.ee>';
+//        $emails = '"\\[Eventum\\] Ratikainen, Arild" <issue-1003@eventum.dev.delfi.ee>';
+//        $emails = '"Supports (E-mail)" <support@lists.delfi.ee>';
+        $emails = 'issue-1047@eventum.dev.delfi.ee    "Ingvar Kupinski" <ingvar.kupinski@delfi.ee>';
         $ah = AddressHeader::fromString($emails);
-        print_r([
-            $emails,
-            $ah->toString(HeaderInterface::FORMAT_RAW),
-            $ah->getEmails(),
-        ]);
+        print_r(
+            [
+                $emails,
+                $ah->toString(HeaderInterface::FORMAT_RAW),
+                $this->unfold($ah->toString(HeaderInterface::FORMAT_RAW)),
+                $ah->getEmails(),
+            ]
+        );
         die;
+    }
+
+    private function fixTruncatedAddressFields($field, $header)
+    {
+        //        $this->tester();
+
         $st = $this->getTruncatedRecords($field);
         foreach ($st as $row) {
             $sup_id = $row['sup_id'];
             try {
-                $ah = AddressHeader::fromString($row['field']);
-                $value = $this->unfold($ah->toString(HeaderInterface::FORMAT_RAW));
+                $value = $this->encodeHeader($row['field']);
+//                print_r([$row['field'], $value]);die;
                 $this->updateFieldValue($sup_id, $field, $value);
             } catch (\Eventum\Mail\Exception\ParseException $e) {
                 echo "sup_id=$sup_id # ($field) {$row['field']}:\n\t{$e->getMessage()}\n";
             } catch (\Zend\Mail\Exception\InvalidArgumentException $e) {
                 echo "sup_id=$sup_id # ($field) {$row['field']}:\n\t{$e->getMessage()}\n";
             }
-//            file_put_contents("/tmp/{$row['sup_id']}", $row['body']);
-//            $mail = $this->createMessage($row['body']);
-//            $value = $this->unfold($mail->{$header});
-//            $this->updateFieldValue($sup_id, $field, $value);
         }
-    }
-
-    /**
-     * @see \Zend\Mail\Header\AbstractAddressList::fromString
-     * @param $fieldValue
-     * @return mixed
-     */
-    private function unfold($fieldValue)
-    {
-        $fieldValue = str_replace(Headers::FOLDING, ' ', $fieldValue);
-
-        return $fieldValue;
     }
 
     private function updateFieldValue($sup_id, $field, $value)
@@ -139,11 +134,38 @@ class EventumFixSupFields extends AbstractMigration
             FROM e.{$this->email_table} 
             where length($field) > 0
             and $field not like '%;%'
-/*            and sup_id in (-222, -198, -196, 2872)
-*/
-        ";
+/*            and sup_id in (-222, -198, -196, -2872, -2962, 2959)
+
+*/        ";
 
         return $this->query($stmt);
+    }
+
+    /**
+     * @see \Zend\Mail\Header\AbstractAddressList::fromString
+     * @param $fieldValue
+     * @return mixed
+     */
+    private function unfold($fieldValue)
+    {
+        $fieldValue = str_replace(Headers::FOLDING, ' ', $fieldValue);
+
+        return $fieldValue;
+    }
+
+    /**
+     * Parse, and re-encode the header
+     *
+     * @param string $header
+     * @return string
+     */
+    private function encodeHeader($header)
+    {
+        $ah = AddressHeader::fromString($header);
+        $value = $ah->toString(HeaderInterface::FORMAT_RAW);
+        $value = $this->unfold($value);
+
+        return $value;
     }
 
     private function createMessage($body)
