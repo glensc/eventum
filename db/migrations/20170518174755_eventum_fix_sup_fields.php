@@ -93,7 +93,10 @@ class EventumFixSupFields extends AbstractMigration
 //        $value = '';
         $stmt
             = "
-            UPDATE e.{$this->email_table}
+            UPDATE e.se
+            /*
+            e.{$this->email_table}
+            */
             SET $field=$value
             WHERE sup_id=$sup_id 
 /*        
@@ -131,7 +134,10 @@ class EventumFixSupFields extends AbstractMigration
         $stmt
             = "
             SELECT sup_id, $field field
-            FROM e.{$this->email_table} 
+            FROM e.se
+             /*
+             e.{$this->email_table} 
+             */
             where length($field) > 0
             and $field not like '%;%'
 /*            and sup_id in (-222, -198, -196, -2872, -2962, 2959)

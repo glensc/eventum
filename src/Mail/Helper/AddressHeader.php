@@ -47,7 +47,6 @@ class AddressHeader
     public static function fromString($addresses)
     {
         $header = new To();
-        $header->setEncoding('UTF-8');
 
         // avoid exceptions if NULL or empty string passed as input
         if (!$addresses) {
@@ -56,6 +55,8 @@ class AddressHeader
 
         // fromString expects 7bit input
         $addresses = Mime_Helper::encodeValue($addresses);
+
+        $header->setEncoding('UTF-8');
 
 //        $addressList = new AddressList();
         $addressList = $header->getAddressList();
