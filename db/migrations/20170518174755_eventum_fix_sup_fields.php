@@ -12,6 +12,7 @@
  */
 
 use Eventum\Db\AbstractMigration;
+use Eventum\Mail\Helper\SplitHeaderBody;
 use Eventum\Mail\MailMessage;
 use Zend\Mail\Headers;
 
@@ -47,7 +48,7 @@ class EventumFixSupFields extends AbstractMigration
         foreach ($st as $row) {
             $sup_id = $row['sup_id'];
             file_put_contents("/tmp/{$row['sup_id']}", $row['body']);
-            $mail = MailMessage::createFromString($row['body']);
+            $mail = $this->createMessage($row['body']);
             $value = $this->unfold($mail->{$header});
             $this->updateFieldValue($sup_id, $field, $value);
         }
@@ -70,6 +71,7 @@ class EventumFixSupFields extends AbstractMigration
         $field = $this->quoteTableName($field);
         $value = $this->quoteValue($value);
 
+        echo "Updating: $sup_id($field): $value\n";
         $stmt
             = "
             UPDATE {$this->email_table}
@@ -100,9 +102,25 @@ class EventumFixSupFields extends AbstractMigration
             FROM {$this->email_table} e, {$this->body_table} b
             WHERE sup_id=seb_sup_id
             AND LENGTH($field) = $length
-            aND sup_id=10357
+/*            and sup_id not in (10357, 4876)
+*/
+/*            aND sup_id=10357
+*/
         ";
 
         return $this->query($stmt);
+    }
+
+    private function createMessage($body)
+    {
+
+        SplitHeaderBody::splitMessage($body, $headers, $content);
+
+//        $message = new self(['root' => true, 'raw' => $raw]);
+//        $message = new self(['root' => true, 'headers' => $headers, 'content' => $content]);
+
+        $mail = MailMessage::createFromHeaderBody($headers, $content);
+
+        return $mail;
     }
 }

@@ -78,10 +78,14 @@ class MailParseTest extends TestCase
         echo $to->toString();
     }
 
+    /**
+     * @see https://github.com/zendframework/zend-mime/pull/26
+     * @see \Zend\Mime\Mime::encodeQuotedPrintableHeader
+     */
     public function testDogFood()
     {
         $headers = new Headers();
-        $headers->addHeader(GenericHeader::fromString('To: "=?iso-8859-1?Q?Wetlesen=2C_Asbj=F8rn?=" <asbjorn.wetlesen@findexa.no>'));
+        $headers->addHeader(GenericHeader::fromString('To: "=?iso-8859-1?Q?W=2C_bj=F8rn?=" <a.wet@example.com>'));
         $headers->get('To');
     }
 }

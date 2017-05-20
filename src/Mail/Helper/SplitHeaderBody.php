@@ -14,15 +14,12 @@
 namespace Eventum\Mail\Helper;
 
 use Mail_Helper;
+use Zend\Mime;
 
 class SplitHeaderBody
 {
     /**
      * Split $raw email to headers array and content part.
-     *
-     * @param string $raw
-     * @param array &$headers
-     * @param string &$content
      */
     public static function splitMessage($raw, &$headers, &$content)
     {
@@ -32,14 +29,48 @@ class SplitHeaderBody
         // Handle messages broken by Mail_Helper::rewriteThreadingHeaders()
         // which by inserted References: to \r\n separated headers
         // used \n separator.
+        file_put_contents('/tmp/debug.txt', $raw);
 
+//        if (!substr_count($raw, "\r\n\r\n")) {
         // split by standard headers separator
-        list($headers, $content) = explode("\r\n\r\n", $raw, 2);
+//            list($headers, $content) = explode("\r\n\r\n", $raw, 2);
+
+//        } else {
+        // split by unix separator
+//            list($headers, $content) = explode("\n\n", $raw, 2);
+//        }
+
+//                    Mime\Decode::splitMessage($raw, $headers, $content, "\r\n");
+
+        // then retry with \r\n
+//        try {
+//            Mime\Decode::splitMessage($raw, $headers, $content, "\n");
+//        } catch (\Zend\Mail\Exception\RuntimeException $e) {
+//            Mime\Decode::splitMessage($raw, $headers, $content, "\r\n");
+//        }
+
+
+        // try parse. if failed retry with our own header split
+        try {
+            Mime\Decode::splitMessage($raw, $headers, $content);
+        } catch (\Zend\Mail\Exception\RuntimeException $e) {
+            // retry our own splitting
+            // message likely corrupted by eventum
+            list($headers, $content) = explode("\r\n\r\n", $raw, 2);
+
+            // split by \r\n, but \r may be optional
+            $headers = preg_split("/\r?\n/", $headers);
+//             strip any leftover \r
+            $headers = array_map('trim', $headers);
+
+//            Mime\Decode::splitMessage($raw, $headers, $content);
+        }
+
 
         // split by \r\n, but \r may be optional
-        $headers = preg_split("/\r?\n/", $headers);
+//        $headers = preg_split("/\r?\n/", $headers);
         // strip any leftover \r
-        $headers = array_map('trim', $headers);
+//        $headers = array_map('trim', $headers);
 
         // now headers is in array form, hard to break that again.
     }
