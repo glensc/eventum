@@ -14,6 +14,7 @@
 use Eventum\Db\AbstractMigration;
 use Eventum\Mail\Helper\SplitHeaderBody;
 use Eventum\Mail\MailMessage;
+use Zend\Mail\Header\HeaderInterface;
 use Zend\Mail\Headers;
 
 class EventumFixSupFields extends AbstractMigration
@@ -47,10 +48,17 @@ class EventumFixSupFields extends AbstractMigration
         $st = $this->getTruncatedRecords($field);
         foreach ($st as $row) {
             $sup_id = $row['sup_id'];
-            file_put_contents("/tmp/{$row['sup_id']}", $row['body']);
-            $mail = $this->createMessage($row['body']);
-            $value = $this->unfold($mail->{$header});
-            $this->updateFieldValue($sup_id, $field, $value);
+            try {
+                $ah = \Eventum\Mail\Helper\AddressHeader::fromString($row['field']);
+                $value = $this->unfold($ah->toString(HeaderInterface::FORMAT_RAW));
+                $this->updateFieldValue($sup_id, $field, $value);
+            } catch (\Zend\Mail\Exception\InvalidArgumentException $e) {
+                echo "sup_id=$sup_id # ($field) {$row['field']}:\n\t{$e->getMessage()}\n";
+            }
+//            file_put_contents("/tmp/{$row['sup_id']}", $row['body']);
+//            $mail = $this->createMessage($row['body']);
+//            $value = $this->unfold($mail->{$header});
+//            $this->updateFieldValue($sup_id, $field, $value);
         }
     }
 
@@ -76,8 +84,10 @@ class EventumFixSupFields extends AbstractMigration
             = "
             UPDATE {$this->email_table}
             SET $field=$value
-            WHERE sup_id=$sup_id AND 1=0
-        ";
+            WHERE sup_id=$sup_id 
+/*        
+    AND 1=0
+*/        ";
         $this->query($stmt);
     }
 
@@ -99,7 +109,7 @@ class EventumFixSupFields extends AbstractMigration
         $stmt
             = "
             SELECT sup_id, $field field, seb_full_email body
-            FROM {$this->email_table} e, {$this->body_table} b
+            FROM e.{$this->email_table} e, {$this->body_table} b
             WHERE sup_id=seb_sup_id
             AND LENGTH($field) = $length
 /*            and sup_id not in (10357, 4876)
@@ -107,13 +117,18 @@ class EventumFixSupFields extends AbstractMigration
 /*            aND sup_id=10357
 */
         ";
+        $stmt
+            = "
+            SELECT sup_id, $field field
+            FROM e.{$this->email_table} 
+            where length($field) > 0
+        ";
 
         return $this->query($stmt);
     }
 
     private function createMessage($body)
     {
-
         SplitHeaderBody::splitMessage($body, $headers, $content);
 
 //        $message = new self(['root' => true, 'raw' => $raw]);

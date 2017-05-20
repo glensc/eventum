@@ -49,7 +49,6 @@ class SplitHeaderBody
 //            Mime\Decode::splitMessage($raw, $headers, $content, "\r\n");
 //        }
 
-
         // try parse. if failed retry with our own header split
         try {
             Mime\Decode::splitMessage($raw, $headers, $content);
@@ -65,7 +64,6 @@ class SplitHeaderBody
 
 //            Mime\Decode::splitMessage($raw, $headers, $content);
         }
-
 
         // split by \r\n, but \r may be optional
 //        $headers = preg_split("/\r?\n/", $headers);
