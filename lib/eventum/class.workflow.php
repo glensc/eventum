@@ -877,7 +877,8 @@ class Workflow
      * Upgrade config so that values contain EncryptedValue where some secrecy is wanted
      * NOTE: this isn't really project specific, therefore it uses hardcoded project id to obtain workflow class
      *
-     * @since 3.1.0
+     * @since 3.1.0 workflow method added
+     * @since 3.2.1 dispatches WorkflowEvents::CRYPTO_DOWNGRADE event
      */
     public static function cryptoUpgradeConfig($prj_id = 1)
     {
@@ -893,7 +894,8 @@ class Workflow
      * Downgrade config: remove all EncryptedValue elements.
      * NOTE: this isn't really project specific, therefore it uses hardcoded project id to obtain workflow class
      *
-     * @since 3.1.0
+     * @since 3.1.0 workflow method added
+     * @since 3.2.1 dispatches WorkflowEvents::CRYPTO_DOWNGRADE event
      */
     public static function cryptoDowngradeConfig($prj_id = 1)
     {
