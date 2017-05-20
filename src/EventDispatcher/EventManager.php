@@ -14,20 +14,20 @@
 namespace Eventum\EventDispatcher;
 
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\EventDispatcher\EventDispatcher as SymfonyEventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class EventManager
 {
     /**
      * Singleton for Event Dispatcher
      *
-     * @return SymfonyEventDispatcher
+     * @return EventDispatcher
      */
     public static function getEventDispatcher()
     {
         static $dispatcher;
         if (!$dispatcher) {
-            $dispatcher = new SymfonyEventDispatcher();
+            $dispatcher = new EventDispatcher();
         }
 
         return $dispatcher;
