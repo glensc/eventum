@@ -296,6 +296,8 @@ class Mime_Helper
     /**
      * Decode a quoted printable encoded string.
      *
+     * Formerly known as 'fixEncoding'
+     *
      * @author Elan Ruusamäe <glen@delfi.ee>
      * @see    Zend_Mime_Decode::decodeQuotedPrintable
      * @param  string $string encoded string

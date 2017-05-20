@@ -82,7 +82,7 @@ class EventumFixSupFields extends AbstractMigration
         echo "Updating: $sup_id($field): $value\n";
         $stmt
             = "
-            UPDATE {$this->email_table}
+            UPDATE e.{$this->email_table}
             SET $field=$value
             WHERE sup_id=$sup_id 
 /*        
