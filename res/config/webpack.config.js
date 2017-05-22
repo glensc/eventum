@@ -18,7 +18,7 @@ var config = {
         // main: './htdocs/js/webpack.js',
         main: '~/main.js',
         // jquery: './res/assets/js/jquery.js',
-        // components: './htdocs/components/webpack.js',
+        components: '~/components.js',
     },
 
     output: {
@@ -30,14 +30,14 @@ var config = {
     plugins: [
         // fix legacy jQuery plugins which depend on globals
         // https://webpack.js.org/plugins/provide-plugin/#use-jquery
-        new webpack.ProvidePlugin({
-            $: 'jquery',
-            jQuery: 'jquery',
-        }),
+        // new webpack.ProvidePlugin({
+        //     $: 'jquery',
+        //     jQuery: 'jquery',
+        // }),
     ],
 
     externals: {
-        jquery: 'jQuery',
+        // jquery: 'jQuery',
         eventum: 'Eventum',
     },
 

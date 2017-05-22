@@ -38,7 +38,11 @@
   {$userstyle}
 
 
+  {if "webpack"}
+  <script type="text/javascript" src="{$core.rel_url}assets/components.bundle.js"></script>
+  {else}
   <script type="text/javascript" src="{$core.rel_url}components/jquery/jquery.js"></script>
+  {/if}
   <script type="text/javascript" src="{$core.rel_url}components/jquery-blockui/jquery.blockUI.js"></script>
   <script type="text/javascript" src="{$core.rel_url}components/form/src/jquery.form.js"></script>
   <script type="text/javascript" src="{$core.rel_url}components/jquery-cookie/jquery.cookie.js"></script>

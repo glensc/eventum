@@ -1,10 +1,12 @@
-var path = require('path');
+// var path = require('path');
 
-var VENDOR_PATH = path.resolve(__dirname, '../../vendor');
-var COMPONENTS_PATH = path.resolve(__dirname, '../../htdocs/components');
+// var VENDOR_PATH = path.resolve(__dirname, '../../vendor');
+// var COMPONENTS_PATH = path.resolve(__dirname, '../../htdocs/components');
 
 // require(COMPONENTS_PATH + "/components/jquery/jquery.js");
-require("jquery-1.8");
+
+// window.jQuery = window.$ =
+require("jquery");
 // require(COMPONENTS_PATH + "/jquery-blockui/jquery.blockUI.js");
 // require(COMPONENTS_PATH + "/form/src/jquery.form.js");
 // require(COMPONENTS_PATH + "/jquery-cookie/jquery.cookie.js");
