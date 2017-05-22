@@ -1,17 +1,38 @@
-// var path = require('path');
+window.Eventum = require("exports-loader?Eventum!htdocs/js/main.js");
 
-// var JS_PATH = path.resolve(__dirname, '../../htdocs/js');
+/*
+ var pages = [
+ 'select_project',
+ 'list_issues',
+ 'issue_view',
+ 'issue_update',
+ 'close_issue',
+ 'adv_search',
+ 'new_issue',
+ 'anon_post',
+ 'stats',
+ 'product',
+ 'preferences',
+ 'custom_field_options',
+ ];
+ */
 
-// require('./components');
+// var page_exports = require("exports-loader?" + pages.join(',') + "!htdocs/js/page.js");
+var page_exports = require("exports-loader?select_project,list_issues,issue_view,issue_update,close_issue,adv_search,new_issue,anon_post,stats,product,preferences,custom_field_options!htdocs/js/page.js");
+// console.log(page_exports);
+window.select_project = page_exports.select_project;
+window.list_issues = page_exports.list_issues;
+window.issue_view = page_exports.issue_view;
+window.issue_update = page_exports.issue_update;
+window.close_issue = page_exports.close_issue;
+window.adv_search = page_exports.adv_search;
+window.new_issue = page_exports.new_issue;
+window.anon_post = page_exports.anon_post;
+window.stats = page_exports.stats;
+window.product = page_exports.product;
+window.preferences = page_exports.preferences;
+window.custom_field_options = page_exports.custom_field_options;
 
-// require(JS_PATH + "/main.js");
-// require(JS_PATH + "/page.js");
-
-// require("jquery");
-// require("htdocs-js/main.js");
-require("htdocs/js/page.js");
-
-window.Eventum = require("exports-loader?Eventum=Eventum!htdocs/js/main.js");
 
 // require("exports-loader?file,parse=helpers.parse!./file.js");
 // adds below code to the file's source:
