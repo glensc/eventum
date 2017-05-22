@@ -1,6 +1,12 @@
 {
   "private": true,
+  "scripts": {
+    "webpack": "webpack --config res/config/webpack.config.js",
+    "webpack-prod": "NODE_ENV=production webpack --config res/config/webpack.config.js"
+  },
   "dependencies": {
+    "exports-loader": "^0.6.4",
+    "jquery-1.8": "^1.8.3",
     "webpack": "^2.3.3"
   }
 }
