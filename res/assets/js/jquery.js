@@ -1,1 +1,3 @@
-require('../../../htdocs/components/jquery/jquery');
+require("components/jquery/jquery.js");
+
+module.exports = window.jQuery;

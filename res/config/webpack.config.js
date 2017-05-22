@@ -37,6 +37,7 @@ var config = {
     ],
 
     externals: {
+        // $: '$',
         // jquery: 'jQuery',
         eventum: 'Eventum',
     },
@@ -45,7 +46,9 @@ var config = {
         extensions: ['.js'],
         alias: {
             '~': path.join(ROOT_PATH, 'res/assets/js'),
-            'jquery': path.join(COMPONENTS_PATH, 'jquery/jquery.js'),
+            // 'jquery': path.join(COMPONENTS_PATH, 'jquery/jquery.js'),
+            'jquery': '~/jquery.js',
+            'components': COMPONENTS_PATH,
             'htdocs': HTDOCS_PATH,
         }
     }

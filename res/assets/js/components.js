@@ -1,29 +1,21 @@
-// var path = require('path');
-
-// var VENDOR_PATH = path.resolve(__dirname, '../../vendor');
-// var COMPONENTS_PATH = path.resolve(__dirname, '../../htdocs/components');
-
-// require(COMPONENTS_PATH + "/components/jquery/jquery.js");
-
-// window.jQuery = window.$ =
 require("jquery");
-// require(COMPONENTS_PATH + "/jquery-blockui/jquery.blockUI.js");
-// require(COMPONENTS_PATH + "/form/src/jquery.form.js");
-// require(COMPONENTS_PATH + "/jquery-cookie/jquery.cookie.js");
-// require(COMPONENTS_PATH + "/jquery-ui/ui/core.js");
-// require(COMPONENTS_PATH + "/jquery-ui/ui/datepicker.js");
-// require(COMPONENTS_PATH + "/jquery-ui/ui/widget.js");
-// require(COMPONENTS_PATH + "/jquery-ui/ui/mouse.js");
-// require(COMPONENTS_PATH + "/jquery-ui/ui/progressbar.js");
-// require(COMPONENTS_PATH + "/jquery-ui/ui/position.js");
-// require(COMPONENTS_PATH + "/jquery-ui/ui/menu.js");
-// require(COMPONENTS_PATH + "/jquery-ui/ui/selectmenu.js");
-// require(COMPONENTS_PATH + "/jquery-ui/ui/sortable.js");
-// require(COMPONENTS_PATH + "/jquery-chosen/chosen.jquery.js");
-// require(COMPONENTS_PATH + "/dropzone/dist/dropzone.js");
-// require(COMPONENTS_PATH + "/autosize/dist/autosize.js");
-// require(COMPONENTS_PATH + "/jquery-timeago/jquery.timeago.js");
-// require(COMPONENTS_PATH + "/filereader.js/filereader.js");
-// require(COMPONENTS_PATH + "/garlicjs/js/garlic.min.js");
-// require(COMPONENTS_PATH + "/cmd-ctrl-enter/src/cmd-ctrl-enter.js");
+require("components/jquery-blockui/jquery.blockUI.js");
+require("components/form/src/jquery.form.js");
+require("components/jquery-cookie/jquery.cookie.js");
+require("components/jquery-ui/ui/core.js");
+require("components/jquery-ui/ui/datepicker.js");
+require("components/jquery-ui/ui/widget.js");
+require("components/jquery-ui/ui/mouse.js");
+require("components/jquery-ui/ui/progressbar.js");
+require("components/jquery-ui/ui/position.js");
+require("components/jquery-ui/ui/menu.js");
+require("components/jquery-ui/ui/selectmenu.js");
+require("components/jquery-ui/ui/sortable.js");
+require("components/jquery-chosen/chosen.jquery.js");
+require("components/dropzone/dist/dropzone.js");
+window.autosize = require("components/autosize/dist/autosize.js");
+require("components/jquery-timeago/jquery.timeago.js");
+require("components/filereader.js/filereader.js");
+require("components/garlicjs/js/garlic.min.js");
+require("components/cmd-ctrl-enter/src/cmd-ctrl-enter.js");
 
