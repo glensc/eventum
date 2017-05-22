@@ -8,7 +8,7 @@
 // require(JS_PATH + "/page.js");
 
 // require("jquery");
-require("htdocs-js/main.js");
+// require("htdocs-js/main.js");
 require("htdocs-js/page.js");
 
 window.Eventum = require("exports-loader?Eventum=Eventum!htdocs-js/main.js");
