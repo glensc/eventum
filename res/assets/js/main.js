@@ -9,9 +9,9 @@
 
 // require("jquery");
 // require("htdocs-js/main.js");
-require("htdocs-js/page.js");
+require("htdocs/js/page.js");
 
-window.Eventum = require("exports-loader?Eventum=Eventum!htdocs-js/main.js");
+window.Eventum = require("exports-loader?Eventum=Eventum!htdocs/js/main.js");
 
 // require("exports-loader?file,parse=helpers.parse!./file.js");
 // adds below code to the file's source:

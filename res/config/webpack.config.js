@@ -46,7 +46,7 @@ var config = {
         alias: {
             '~': path.join(ROOT_PATH, 'res/assets/js'),
             'jquery': path.join(COMPONENTS_PATH, 'jquery/jquery.js'),
-            'htdocs-js': path.join(HTDOCS_PATH, 'js'),
+            'htdocs': HTDOCS_PATH,
         }
     }
 };
