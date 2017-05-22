@@ -32,7 +32,9 @@ Session.vim
 /cli/build/
 
 /composer.lock
-/vendor
+/vendor/
+/yarn.lock
+/node_modules/
 
 /config/cas.php
 /config/config.php
