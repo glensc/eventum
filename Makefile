@@ -20,6 +20,7 @@ PHING_VERSION := 2.15.0
 PHPCB_VERSION := 1.1.1
 PHPCS_FIXER_VERSION := 2.3.1
 PHPMD_VERSION := 2.6.0
+PULI_VERSION := 1.0.0-beta10
 
 define find_tool
 $(shell PATH=$$PATH:. which $1.phar 2>/dev/null || which $1 2>/dev/null || echo false)
@@ -81,6 +82,9 @@ phpcb.phar:
 
 phpmd.phar:
 	$(call fetch_tool,https://static.phpmd.org/php/$(PHPMD_VERSION)/phpmd.phar)
+
+puli.phar:
+	$(call fetch_tool,https://github.com/puli/cli/releases/download/$(PULI_VERSION)/puli.phar)
 
 phing.phar:
 	$(call fetch_tool,https://www.phing.info/get/phing-$(PHING_VERSION).phar)

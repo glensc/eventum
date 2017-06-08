@@ -28,6 +28,7 @@ Session.vim
 /phpcompatinfo.phar
 /phpmd.phar
 /phpunit.phar
+/puli.phar
 /cli/*.phar
 /cli/build/
 
