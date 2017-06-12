@@ -764,6 +764,11 @@ class Workflow
      */
     public static function getLinkFilters($prj_id)
     {
+        //        $event = new Eventum\Event\
+        $event = new Event();
+        $event->text = ';';
+        EventManager::dispatch(WorkflowEvents::LINKFILTER_FILTER, $event);
+
         if (!self::hasWorkflowIntegration($prj_id)) {
             return [];
         }

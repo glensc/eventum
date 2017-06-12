@@ -379,8 +379,9 @@ final class WorkflowEvents
      *
      * @param   int $prj_id The ID of the project
      * @return  array An array of patterns and replacements
+     * @see Workflow::getLinkFilters()
      */
-    const LINK_FILTERS_GET = 'link_filters.get';
+    const LINKFILTER_FILTER = 'linkfilter.filter';
 
     /**
      * Returns if a user can update an issue. Return null to use default rules.

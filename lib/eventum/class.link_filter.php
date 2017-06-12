@@ -13,6 +13,9 @@
 
 use Eventum\Db\Adapter\AdapterInterface;
 use Eventum\Db\DatabaseException;
+use Eventum\Event\WorkflowEvent;
+use Eventum\Event\WorkflowEvents;
+use Eventum\EventDispatcher\EventManager;
 
 /**
  * Class to handle parsing content for links.
@@ -261,18 +264,10 @@ class Link_Filter
         // process issue link separatly since it has to do something special
         $text = Misc::activateLinks($text, $class);
 
-        $filters = array_merge(self::getFilters(), self::getFiltersByProject($prj_id), Workflow::getLinkFilters($prj_id));
-        foreach ((array) $filters as $filter) {
-            list($pattern, $replacement) = $filter;
-            // replacement may be a callback, provided by workflow
-            if (is_callable($replacement)) {
-                $text = preg_replace_callback($pattern, $replacement, $text);
-            } else {
-                $text = preg_replace($pattern, $replacement, $text);
-            }
-        }
+        $event = new WorkflowEvent(['text' => $text]);
+        EventManager::dispatch(WorkflowEvents::LINKFILTER_FILTER, $event);
 
-        return $text;
+        return $event->text;
     }
 
     /**
@@ -342,7 +337,7 @@ class Link_Filter
      * @param   int $prj_id The ID of the project
      * @return  array An array of patterns and replacements
      */
-    private static function getFiltersByProject($prj_id)
+    public static function getFiltersByProject($prj_id)
     {
         static $filters;
 
