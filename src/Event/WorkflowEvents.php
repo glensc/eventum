@@ -396,17 +396,15 @@ final class WorkflowEvents
 
     /**
      * Upgrade config so that values contain EncryptedValue where some secrecy is wanted
-     * NOTE: this isn't really project specific, therefore it uses hardcoded project id to obtain workflow class
      *
-     * @since 3.1.0
+     * @since 3.2.1
      */
-    const CRYPTO_UPGRADE = 'crypto.upgrade_config';
+    const CONFIG_CRYPTO_UPGRADE = 'workflow.config.crypto_upgrade';
 
     /**
      * Downgrade config: remove all EncryptedValue elements.
-     * NOTE: this isn't really project specific, therefore it uses hardcoded project id to obtain workflow class
      *
-     * @since 3.1.0
+     * @since 3.2.1
      */
-    const CRYPTO_DOWNGRADE = 'crypto.downgrade_config';
+    const CONFIG_CRYPTO_DOWNGRADE = 'workflow.config.crypto_downgrade';
 }

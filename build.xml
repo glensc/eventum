@@ -96,12 +96,6 @@
 				<exclude name="Exception/**"/>
 			</fileset>
 
-			<fileset dir="${vendor}/zendframework/zend-mail/src">
-				<!-- not used yet -->
-				<include name="Protocol/**"/>
-				<include name="Transport/**"/>
-			</fileset>
-
 			<fileset dir="${vendor}/zendframework/zend-validator/src">
 				<include name="Barcode*/**"/>
 				<include name="Db/**"/>
@@ -175,6 +169,10 @@
 			<fileset dir="${vendor}/symfony/debug">
 				<!-- source for pecl extension -->
 				<include name="Resources/ext"/>
+			</fileset>
+
+			<fileset dir="${vendor}/symfony/event-dispatcher">
+				<include name="Debug/**"/>
 			</fileset>
 		</delete>
 	</target>

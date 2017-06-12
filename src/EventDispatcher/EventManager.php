@@ -13,6 +13,7 @@
 
 namespace Eventum\EventDispatcher;
 
+use Eventum\Extension\ExtensionManager;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -28,6 +29,13 @@ class EventManager
         static $dispatcher;
         if (!$dispatcher) {
             $dispatcher = new EventDispatcher();
+
+            // register subscribers from extensions
+            $em = ExtensionManager::getManager();
+            $subscribers = $em->getSubscribers();
+            foreach ($subscribers as $subscriber) {
+                $dispatcher->addSubscriber($subscriber);
+            }
         }
 
         return $dispatcher;
@@ -38,9 +46,11 @@ class EventManager
      *
      * @param string $eventName
      * @param Event $event
+     * @return Event
+     * @see EventDispatcherInterface::dispatch()
      */
     public static function dispatch($eventName, Event $event = null)
     {
-        self::getEventDispatcher()->dispatch($eventName, $event);
+        return self::getEventDispatcher()->dispatch($eventName, $event);
     }
 }

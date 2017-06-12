@@ -882,7 +882,7 @@ class Workflow
      */
     public static function cryptoUpgradeConfig($prj_id = 1)
     {
-        EventManager::dispatch(WorkflowEvents::CRYPTO_UPGRADE);
+        EventManager::dispatch(WorkflowEvents::CONFIG_CRYPTO_UPGRADE);
 
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;
@@ -899,7 +899,7 @@ class Workflow
      */
     public static function cryptoDowngradeConfig($prj_id = 1)
     {
-        EventManager::dispatch(WorkflowEvents::CRYPTO_DOWNGRADE);
+        EventManager::dispatch(WorkflowEvents::CONFIG_CRYPTO_DOWNGRADE);
 
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;

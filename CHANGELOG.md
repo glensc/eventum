@@ -1,10 +1,26 @@
 # Eventum Issue Tracking System
 
-## [3.2.1] - 2017-??-??
+## [3.2.2] - 2017-??-??
+
+Upgrading to 3.2.x versions requires that you upgrade to 3.2.0 version first.
+
+- cleanup templates for `core.current_url` (@glensc, #265)
+
+[3.2.2]: https://github.com/eventum/eventum/compare/v3.2.1...master
+
+## [3.2.1] - 2017-06-09
+
+Upgrading to 3.2.x versions requires that you upgrade to 3.2.0 version first.
 
 - add `$min_role` to base controller (@glensc, #261)
+- require `iconv` and `mbstring` extensions (@glensc, #269)
+- add Event/EventDispatcher to Eventum (@glensc, #272)
+- drop old db migrate system (@glensc, #270)
+- escape time tracking summary when editing (@balsdorf, #273)
+- include zend-mail transport and protocol classes (@glensc, #274)
+- improved confusing reminder admin by redirecting after submit (@balsdorf, ff26fcd8)
 
-[3.2.1]: https://github.com/eventum/eventum/compare/v3.2.0...master
+[3.2.1]: https://github.com/eventum/eventum/compare/v3.2.0...v3.2.1
 
 ## [3.2.0] - 2017-05-20
 
@@ -26,7 +42,7 @@ This version adds replacement for backend classes with adding Extension support,
 - use font awesome (@glensc, #253)
 - use ctrl/cmd enter to submit forms (@glensc, #255)
 - quote custom field names (@glensc, #258)
-- drop Mail_rfc822 PEAR Mail requirement (@glensc, #256)
+- drop `Mail_rfc822` PEAR Mail requirement (@glensc, #256)
 - add userfile.js, userscript.css support (@glensc, #264)
 - fix expected resolution date being rendered as -1 (@glensc, #260)
 - fix user roles being overridden when updating a project (@balsdorf, 7ae6d2563, #152)
