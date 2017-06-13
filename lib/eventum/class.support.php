@@ -1048,6 +1048,7 @@ class Support
         // FIXME: $row['ema_id'] is empty when mail is sent via convert note!
         if ($prj_id !== false) {
             $row['sup_id'] = $sup_id;
+
             Workflow::handleNewEmail($prj_id, $issue_id, $mail, $row, $closing);
         }
 
