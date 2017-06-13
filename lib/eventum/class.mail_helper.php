@@ -96,28 +96,6 @@ class Mail_Helper
     }
 
     /**
-     * Method used to parse a string and return all email addresses contained
-     * within it.
-     *
-     * @param   string $str The string containing email addresses
-     * @return  array The list of email addresses
-     */
-    public static function getEmailAddresses($str)
-    {
-        $str = self::fixAddressQuoting($str);
-        $str = Mime_Helper::encode($str);
-        $structs = self::parseAddressList($str);
-        $addresses = [];
-        foreach ($structs as $structure) {
-            if ((!empty($structure->mailbox)) && (!empty($structure->host))) {
-                $addresses[] = $structure->mailbox . '@' . $structure->host;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Checks whether the given headers are from a vacation
      * auto-responder message or not.
      *

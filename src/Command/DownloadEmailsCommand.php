@@ -15,8 +15,6 @@ namespace Eventum\Command;
 
 use Email_Account;
 use Eventum\Mail\ImapMessage;
-use Lock;
-use Project;
 use Support;
 
 class DownloadEmailsCommand extends Command
