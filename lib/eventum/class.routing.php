@@ -13,6 +13,7 @@
 
 use Eventum\Mail\Exception\RoutingException;
 use Eventum\Mail\Helper\AddressHeader;
+use Eventum\Mail\MailDumper;
 use Eventum\Mail\MailMessage;
 
 /**
@@ -107,7 +108,7 @@ class Routing
     protected static function route_emails(MailMessage $mail)
     {
         // save the full message for logging purposes
-        Support::saveRoutedEmail($mail);
+        MailDumper::dump($full_message, MailDumper::TYPE_EMAIL);
 
         // check if the email routing interface is even supposed to be enabled
         $setup = Setup::get();
@@ -298,7 +299,7 @@ class Routing
     protected static function route_notes(MailMessage $mail)
     {
         // save the full message for logging purposes
-        Note::saveRoutedNote($mail);
+        MailDumper::dump($full_message, MailDumper::TYPE_NOTE);
 
         $headers = $mail->getHeaders();
 
@@ -428,7 +429,7 @@ class Routing
     protected static function route_drafts($mail)
     {
         // save the full message for logging purposes
-        Draft::saveRoutedMessage($mail);
+        MailDumper::dump($full_message, MailDumper::TYPE_DRAFT);
 
         $headers = $mail->getHeaders();
 

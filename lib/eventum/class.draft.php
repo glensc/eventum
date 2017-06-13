@@ -16,23 +16,6 @@ use Eventum\Db\DatabaseException;
 class Draft
 {
     /**
-     * Method used to save the routed draft into a backup directory.
-     *
-     * @param MailMessage $mail The Mail object
-     */
-    public static function saveRoutedMessage($mail)
-    {
-        if (!defined('APP_ROUTED_MAILS_SAVEDIR') || !APP_ROUTED_MAILS_SAVEDIR) {
-            return;
-        }
-        list($usec) = explode(' ', microtime());
-        $filename = date('Y-m-d_H-i-s_') . $usec . '.draft.txt';
-        $file = APP_ROUTED_MAILS_SAVEDIR . '/routed_drafts/' . $filename;
-        file_put_contents($file, $mail->getRawContent());
-        chmod($file, 0644);
-    }
-
-    /**
      * Method used to save the draft response in the database for
      * further use.
      *
