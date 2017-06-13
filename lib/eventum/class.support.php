@@ -640,11 +640,15 @@ class Support
                         }
 
                         if (self::isAllowedToEmail($t['issue_id'], $sender_email)) {
-                            Notification::notifyNewEmail(Auth::getUserID(), $t['issue_id'], $t, $internal_only, $assignee_only, '', $sup_id);
+                            $t['internal_only'] = $internal_only;
+                            $t['assignee_only'] = $assignee_only;
+                            $t['sup_id'] = $sup_id;
+                            Notification::notifyNewEmail(Auth::getUserID(), $t['issue_id'], $mail, $t);
                         }
 
                         // try to get usr_id of sender, if not, use system account
-                        $usr_id = User::getUserIDByEmail($mail) ?: APP_SYSTEM_USER_ID;
+                        $addr = $mail->getSender();
+                        $usr_id = User::getUserIDByEmail($addr) ?: APP_SYSTEM_USER_ID;
 
                         // mark this issue as updated
                         if ((!empty($t['customer_id'])) && ($t['customer_id'] != 'NULL') && ((empty($usr_id)) || (User::getRoleByUser($usr_id, $prj_id) == User::ROLE_CUSTOMER))) {
@@ -658,7 +662,7 @@ class Support
                         }
                         // log routed email
                         History::add($t['issue_id'], $usr_id, 'email_routed', 'Email routed from {from}', [
-                            'from' => $mail->from,
+                            'from' => $mail->getSender(),
                         ]);
                     }
                 }
@@ -1304,12 +1308,12 @@ class Support
      *
      * @param   int $usr_id The user ID of the person performing this change
      * @param   int $issue_id The issue ID
-     * @param   array $items The list of email IDs to associate
+     * @param   array $sup_ids The list of email IDs to associate
      * @return  int 1 if it worked, -1 otherwise
      */
-    public static function associateEmail($usr_id, $issue_id, $items)
+    public static function associateEmail($usr_id, $issue_id, $sup_ids)
     {
-        $list = DB_Helper::buildList($items);
+        $list = DB_Helper::buildList($sup_ids);
         $stmt = "UPDATE
                     {{%support_email}}
                  SET
@@ -1317,14 +1321,13 @@ class Support
                  WHERE
                     sup_id IN ($list)";
         try {
-            DB_Helper::getInstance()->query($stmt, $items);
+            DB_Helper::getInstance()->query($stmt, $sup_ids);
         } catch (DatabaseException $e) {
             return -1;
         }
 
-        foreach ($items as $item) {
-            $full_email = self::getFullEmail($item);
-            $mail = MailMessage::createFromString($full_email);
+        foreach ($sup_ids as $sup_id) {
+            $mail = self::getSupportEmail($sup_id);
             self::extractAttachments($issue_id, $mail);
         }
 
@@ -1336,11 +1339,11 @@ class Support
                     {{%support_email}}
                  WHERE
                     sup_id IN ($list)";
-        $res = DB_Helper::getInstance()->getColumn($stmt, $items);
+        $res = DB_Helper::getInstance()->getColumn($stmt, $sup_ids);
 
-        foreach ($res as $row) {
+        foreach ($res as $subject) {
             History::add($issue_id, $usr_id, 'email_associated', "Email (subject: '{subject}') associated by {user}", [
-                'subject' => $row,
+                'subject' => $subject,
                 'user' => User::getFullName($usr_id),
             ]);
         }
@@ -1406,9 +1409,12 @@ class Support
                 self::addExtraRecipientsToNotificationList($prj_id, $t, false);
             }
 
-            Notification::notifyNewEmail($usr_id, $issue_id, $t, false, false, '', $row['sup_id']);
+            $mail = MailMessage::createFromString($row['seb_full_email']);
+            $t['sup_id'] = $row['sup_id'];
+            Notification::notifyNewEmail($usr_id, $issue_id, $mail, $t);
             if ($authorize) {
-                Authorized_Replier::manualInsert($issue_id, Mail_Helper::getEmailAddress(@$structure->headers['from']), false);
+                $sender_email = $mail->getSender();
+                Authorized_Replier::manualInsert($issue_id, $sender_email, false);
             }
         }
 
@@ -1418,13 +1424,10 @@ class Support
     /**
      * Method used to get the support email entry details.
      *
-     * FIXME: $ema_id is unused
-     *
-     * @param   int $ema_id The support email account ID
      * @param   int $sup_id The support email ID
      * @return  array The email entry details
      */
-    public static function getEmailDetails($ema_id, $sup_id)
+    public static function getEmailDetails($sup_id)
     {
         // $ema_id is not needed anymore and will be re-factored away in the future
         $stmt = 'SELECT
@@ -1485,7 +1488,7 @@ class Support
             return [];
         }
 
-        return self::getEmailDetails($res['sup_ema_id'], $res['sup_id']);
+        return self::getEmailDetails($res['sup_id']);
     }
 
     /**
@@ -1521,13 +1524,12 @@ class Support
     }
 
     /**
-     * Method used to get the full email message for a given support
-     * email ID.
+     * Get mail message for a given support email ID.
      *
-     * @param   int $sup_id The support email ID
-     * @return  string The full email message
+     * @param int $sup_id The support email ID
+     * @return MailMessage
      */
-    public static function getFullEmail($sup_id)
+    public static function getSupportEmail($sup_id)
     {
         $stmt = 'SELECT
                     seb_full_email
@@ -1535,13 +1537,9 @@ class Support
                     {{%support_email_body}}
                  WHERE
                     seb_sup_id=?';
-        try {
-            $res = DB_Helper::getInstance()->getOne($stmt, [$sup_id]);
-        } catch (DatabaseException $e) {
-            return '';
-        }
+        $full_email = DB_Helper::getInstance()->getOne($stmt, [$sup_id]);
 
-        return $res;
+        return MailMessage::createFromString($full_email);
     }
 
     /**
@@ -1747,7 +1745,7 @@ class Support
     }
 
     /**
-     * Method used to build the headers of a web-based message.
+     * Method used to build mail from web-based message.
      *
      * @param   int $issue_id The issue ID
      * @param   string $message_id The message-id
@@ -1758,9 +1756,9 @@ class Support
      * @param   string $body The message body
      * @param   string $in_reply_to The message-id that we are replying to
      * @param   array $iaf_ids Array with attachment file id-s
-     * @return  string The full email
+     * @return MailMessage
      */
-    public static function buildFullHeaders($issue_id, $message_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids = null)
+    public static function buildMail($issue_id, $message_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids = null)
     {
         // hack needed to get the full headers of this web-based email
         $mail = new Mail_Helper();
@@ -1808,7 +1806,7 @@ class Support
             }
         }
 
-        return $mail->getFullHeaders($from, $to, $subject);
+        return MailMessage::createFromString($mail->getFullHeaders($from, $to, $subject));
     }
 
     /**
@@ -1917,7 +1915,7 @@ class Support
         $add_cc_to_ar = isset($options['add_cc_to_ar']) ? (bool) $options['add_cc_to_ar'] : false;
         $ema_id = isset($options['ema_id']) ? (int) $options['ema_id'] : null;
 
-        $current_usr_id = Auth::getUserID();
+        $usr_id = Auth::getUserID();
         $prj_id = Issue::getProjectID($issue_id);
 
         // if we are replying to an existing email, set the In-Reply-To: header accordingly
@@ -1935,25 +1933,24 @@ class Support
         // from ajax upload, attachment file ids
         if ($iaf_ids) {
             // FIXME: is it correct to use sender from post data?
-            $attach_usr_id = $sender_usr_id ?: $current_usr_id;
+            $attach_usr_id = $sender_usr_id ?: $usr_id;
             Attachment::attachFiles($issue_id, $attach_usr_id, $iaf_ids, false, 'Attachment originated from outgoing email');
         }
 
-        // hack needed to get the full headers of this web-based email
-        $full_email = self::buildFullHeaders($issue_id, $message_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids);
+        $mail = self::buildMail($issue_id, $message_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids);
 
         // email blocking should only be done if this is an email about an associated issue
         if ($issue_id) {
-            $user_info = User::getNameEmail($current_usr_id);
+            $user_info = User::getNameEmail($usr_id);
             // check whether the current user is allowed to send this email to customers or not
             if (!self::isAllowedToEmail($issue_id, $user_info['usr_email'])) {
                 // add the message body as a note
                 $note = Mail_Helper::getCannedBlockedMsgExplanation() . $body;
                 $note_options = [
-                    'full_message' => $full_email,
+                    'full_message' => $mail->getRawContent(),
                     'is_blocked' => true,
                 ];
-                Note::insertNote($current_usr_id, $issue_id, $subject, $note, $note_options);
+                Note::insertNote($usr_id, $issue_id, $subject, $note, $note_options);
 
                 $email_details = [
                     'from' => $from,
@@ -1984,7 +1981,7 @@ class Support
             foreach ($recipients as $address) {
                 if ($address && !Notification::isIssueRoutingSender($issue_id, $address)) {
                     $actions = Notification::getDefaultActions($issue_id, $address, 'add_unknown_user');
-                    Notification::subscribeEmail($current_usr_id, $issue_id, Mail_Helper::getEmailAddress($address), $actions);
+                    Notification::subscribeEmail($usr_id, $issue_id, Mail_Helper::getEmailAddress($address), $actions);
                 }
             }
         } else {
@@ -2027,10 +2024,10 @@ class Support
                 $project_info = Project::getOutgoingSenderAddress(Auth::getCurrentProject());
                 // use the project-related outgoing email address, if there is one
                 if (!empty($project_info['email'])) {
-                    $from = Mail_Helper::getFormattedName(User::getFullName($current_usr_id), $project_info['email']);
+                    $from = Mail_Helper::getFormattedName(User::getFullName($usr_id), $project_info['email']);
                 } else {
                     // otherwise, use the real email address for the current user
-                    $from = User::getFromHeader($current_usr_id);
+                    $from = User::getFromHeader($usr_id);
                 }
                 // send direct emails
                 self::sendDirectEmail(
@@ -2045,7 +2042,7 @@ class Support
             }
         }
 
-        $email = [
+        $email_options = [
             // FIXME: use actual null, not string 'null'
             'customer_id' => 'NULL',
             'issue_id' => $issue_id,
@@ -2057,7 +2054,7 @@ class Support
             'cc' => $cc,
             'subject' => $subject,
             'body' => $body,
-            'full_email' => $full_email,
+            'full_email' => $mail->getRawContent(),
         ];
 
         // associate this new email with a customer, if appropriate
@@ -2065,35 +2062,35 @@ class Support
             if ($issue_id) {
                 $crm = CRM::getInstance($prj_id);
                 try {
-                    $contact = $crm->getContact(User::getCustomerContactID($current_usr_id));
+                    $contact = $crm->getContact(User::getCustomerContactID($usr_id));
                     $issue_contract = $crm->getContract(Issue::getContractID($issue_id));
                     if ($contact->canAccessContract($issue_contract)) {
-                        $email['customer_id'] = $issue_contract->getCustomerID();
+                        $email_options['customer_id'] = $issue_contract->getCustomerID();
                     }
                 } catch (CRMException $e) {
                 }
             } else {
-                $customer_id = User::getCustomerID($current_usr_id);
+                $customer_id = User::getCustomerID($usr_id);
                 if ($customer_id && $customer_id != -1) {
-                    $email['customer_id'] = $customer_id;
+                    $email_options['customer_id'] = $customer_id;
                 }
             }
         }
 
-        $email['has_attachment'] = $iaf_ids ? 1 : 0;
+        $email_options['has_attachment'] = $iaf_ids ? 1 : 0;
+        $email_options['headers'] = $mail->getHeadersArray();
 
-        $structure = Mime_Helper::decode($full_email, true, false);
-        $email['headers'] = $structure->headers;
-
-        $mail = MailMessage::createFromString($full_email);
-        self::insertEmail($email, $mail, $sup_id);
+        self::insertEmail($email_options, $mail, $sup_id);
 
         if ($issue_id) {
-            // need to send a notification
-            Notification::notifyNewEmail($current_usr_id, $issue_id, $email, $internal_only, false, $type, $sup_id);
+            $email_options['internal_only'] = $internal_only;
+            $email_options['type'] = $type;
+            $email_options['sup_id'] = $sup_id;
+            Notification::notifyNewEmail($usr_id, $issue_id, $mail, $email_options);
+
             // mark this issue as updated
-            $has_customer = $email['customer_id'] && $email['customer_id'] != 'NULL';
-            if ($has_customer && (!$current_usr_id || User::getRoleByUser($current_usr_id, $prj_id) == User::ROLE_CUSTOMER)) {
+            $has_customer = $email_options['customer_id'] && $email_options['customer_id'] != 'NULL';
+            if ($has_customer && (!$usr_id || User::getRoleByUser($usr_id, $prj_id) == User::ROLE_CUSTOMER)) {
                 Issue::markAsUpdated($issue_id, 'customer action');
             } else {
                 if ($sender_usr_id && User::getRoleByUser($sender_usr_id, $prj_id) > User::ROLE_CUSTOMER) {
@@ -2103,8 +2100,8 @@ class Support
                 }
             }
 
-            History::add($issue_id, $current_usr_id, 'email_sent', 'Outgoing email sent by {user}', [
-                'user' => User::getFullName($current_usr_id),
+            History::add($issue_id, $usr_id, 'email_sent', 'Outgoing email sent by {user}', [
+                'user' => User::getFullName($usr_id),
             ]);
         }
 
@@ -2326,14 +2323,13 @@ class Support
      */
     public static function moveEmail($sup_id, $current_ema_id, $new_ema_id)
     {
-        $email = self::getEmailDetails($current_ema_id, $sup_id);
+        $email = self::getEmailDetails($sup_id);
         if (!empty($email['sup_iss_id'])) {
             return -1;
         }
 
         $info = Email_Account::getDetails($new_ema_id);
-        $full_email = self::getFullEmail($sup_id);
-        $mail = MailMessage::createFromString($full_email);
+        $mail = self::getSupportEmail($sup_id);
         $headers = $mail->getHeaders()->toString();
 
         // handle auto creating issues (if needed)

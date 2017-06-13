@@ -154,7 +154,7 @@ class Notification
      * @param   int $issue_id The issue ID
      * @param   string $sender The email address of the sender
      * @param   string $type Whether this is a note or email routing message
-     * @return  string The properly encoded email address
+     * @return  string The properly encoded email address: =?UTF-8?Q?Elan_Ruusam=C3=A4e?= <default_project@example.com>
      * @deprecated kill this monstrocity!
      */
     public static function getFixedFromHeader($issue_id, $sender, $type)
@@ -305,32 +305,28 @@ class Notification
     /**
      * Method used to forward the new email to the list of subscribers.
      *
-     * @param   int $user_id The user ID of the person performing this action
-     * @param   int $issue_id The issue ID
-     * @param   MailMessage $mail The Mail object
-     * @param   bool $internal_only Whether the email should only be redirected to internal users or not
-     * @param   bool $assignee_only Whether the email should only be sent to the assignee
-     * @param   bool $type The type of email this is
-     * @param   int $sup_id the ID of this email
+     * @param int $usr_id The user ID of the person performing this action
+     * @param int $issue_id The issue ID
+     * @param MailMessage $mail The Mail object
+     * @param array $options
+     * - bool $internal_only Whether the email should only be redirected to internal users or not
+     * - bool $assignee_only Whether the email should only be sent to the assignee
+     * - string|bool $type The type of email this is
+     * - int $sup_id the ID of this email
      */
-    public static function notifyNewEmail($usr_id, $issue_id, $mail, $internal_only = false, $assignee_only = false, $type = '', $sup_id = false)
+    public static function notifyNewEmail($usr_id, $issue_id, MailMessage $mail, array $options = [])
     {
-        if (!$mail instanceof MailMessage) {
-            die;
-        }
+        $internal_only = isset($options['internal_only']) ? $options['internal_only'] : false;
+        $assignee_only = isset($options['assignee_only']) ? $options['assignee_only'] : false;
+        $type = isset($options['type']) ? $options['type'] : '';
+        $sup_id = isset($options['sup_id']) ? $options['sup_id'] : false;
         $prj_id = Issue::getProjectID($issue_id);
 
-//        $full_message = $mail['full_email'];
-//        $sender = $mail['from'];
-//        $sender_email = strtolower(Mail_Helper::getEmailAddress($sender));
         $sender = $mail->from;
         $sender_email = $mail->getSender();
 
         // get ID of whoever is sending this.
-        $sender_usr_id = User::getUserIDByEmail($sender_email, true);
-        if (empty($sender_usr_id)) {
-            $sender_usr_id = false;
-        }
+        $sender_usr_id = User::getUserIDByEmail($sender_email, true) ?: false;
 
         // automatically subscribe this sender to email notifications on this issue
         $subscribed_emails = self::getSubscribedEmails($issue_id, 'emails');
@@ -353,7 +349,7 @@ class Notification
                 }
             } else {
                 // if we are only supposed to send email to internal users, check if the role is lower than standard user
-                if ($internal_only == true && (User::getRoleByUser($user['sub_usr_id'], Issue::getProjectID($issue_id)) < User::ROLE_USER)) {
+                if ($internal_only == true && (User::getRoleByUser($user['sub_usr_id'], $prj_id) < User::ROLE_USER)) {
                     continue;
                 }
                 // check if we are only supposed to send email to the assignees
@@ -371,7 +367,7 @@ class Notification
             }
 
             // don't send the email to the same person who sent it unless they want it
-            if ($sender_usr_id != false) {
+            if ($sender_usr_id) {
                 $prefs = Prefs::get($sender_usr_id);
                 if (!isset($prefs['receive_copy_of_own_action'][$prj_id])) {
                     $prefs['receive_copy_of_own_action'][$prj_id] = 0;
@@ -394,32 +390,14 @@ class Notification
         //  - keep everything else in the message, except 'From:', 'Sender:', 'To:', 'Cc:'
         // make 'Joe Blow <joe@example.com>' become 'Joe Blow [CSC] <eventum_59@example.com>'
         $from = self::getFixedFromHeader($issue_id, $sender, 'issue');
+        $from = AddressHeader::fromString($from)->getAddressList();
         $mail->setFrom($from);
         $mail->stripHeaders();
         $mail->setSubject(Mail_Helper::formatSubject($issue_id, $mail->subject));
 
-        list($_headers, $body) = Mime_Helper::splitBodyHeader($full_message);
-        $header_names = Mime_Helper::getHeaderNames($_headers, false);
-
-        $current_headers = Mail_Helper::stripHeaders($message['headers']);
-        $headers = [];
-        // build the headers array required by the smtp library
-
-        foreach ($current_headers as $header_name => $value) {
-            if (strtolower($header_name) == 'from') {
-                $headers['From'] = $from;
-            } else {
-                if (is_array($value)) {
-                    $value = implode('; ', $value);
-                }
-                $headers[$header_names[$header_name]] = $value;
-            }
-        }
-
-        $headers['Subject'] = Mail_Helper::formatSubject($issue_id, $headers['Subject']);
-
-        if (empty($type)) {
-            if (($sender_usr_id != false) && (User::getRoleByUser($sender_usr_id, Issue::getProjectID($issue_id)) == User::ROLE_CUSTOMER)) {
+        if (!$type) {
+            $usr_role = User::getRoleByUser($sender_usr_id, $prj_id);
+            if ($sender_usr_id && $usr_role == User::ROLE_CUSTOMER) {
                 $type = 'customer_email';
             } else {
                 $type = 'other_email';
@@ -434,9 +412,12 @@ class Notification
             'type_id' => $sup_id,
         ];
 
+        $headers = $mail->getHeadersArray();
+        $body = $mail->getContent();
         foreach ($emails as $to) {
-            $clone = clone $mail;
-            $clone->setTo($to);
+            // add the warning message about replies being blocked or not
+            $fixed_body = Mail_Helper::addWarningMessage($issue_id, $to, $body, $headers);
+            $headers['To'] = Mime_Helper::encodeAddress($to);
 
             // add the warning message about replies being blocked or not
             Mail_Helper::addWarningMessage($issue_id, $to, $clone);
@@ -1370,7 +1351,7 @@ class Notification
                 'app_title' => Misc::getToolCaption(),
                 'recipient_name' => Mail_Helper::getName($recipient),
             ]);
-            $email_details = Support::getEmailDetails(Email_Account::getAccountByEmail($sup_id), $sup_id);
+            $email_details = Support::getEmailDetails($sup_id);
             $tpl->assign([
                 'email' => [
                     'date' => $email_details['sup_date'],
