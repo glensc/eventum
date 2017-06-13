@@ -398,6 +398,27 @@ class Notification
         $mail->stripHeaders();
         $mail->setSubject(Mail_Helper::formatSubject($issue_id, $mail->subject));
 
+        list($_headers, $body) = Mime_Helper::splitBodyHeader($full_message);
+        $header_names = Mime_Helper::getHeaderNames($_headers, false);
+
+        $current_headers = Mail_Helper::stripHeaders($message['headers']);
+        $headers = [];
+        // build the headers array required by the smtp library
+
+        foreach ($current_headers as $header_name => $value) {
+            if (strtolower($header_name) == 'from') {
+                $headers['From'] = $from;
+            } else {
+                if (is_array($value)) {
+                    $value = implode('; ', $value);
+                }
+                $headers[$header_names[$header_name]] = $value;
+            }
+        }
+
+        $headers['Subject'] = Mail_Helper::formatSubject($issue_id, $headers['Subject']);
+>>>>>>> drop-pear-mimedecode
+
         if (empty($type)) {
             if (($sender_usr_id != false) && (User::getRoleByUser($sender_usr_id, Issue::getProjectID($issue_id)) == User::ROLE_CUSTOMER)) {
                 $type = 'customer_email';

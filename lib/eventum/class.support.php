@@ -415,7 +415,7 @@ class Support
      * @param   ImapMessage $mail The Mail object
      * @param   array   array(ERROR_CODE, ERROR_STRING) of error to bounce
      */
-    private function bounceMessage($mail, $error)
+    private static function bounceMessage($mail, $error)
     {
         // open text template
         $tpl = new Template_Helper();
@@ -600,7 +600,7 @@ class Support
 
                         // need to handle attachments coming from notes as well
                         if ($res != -1) {
-                            self::extractAttachments($t['issue_id'], $structure, true, $res);
+                            self::extractAttachments($t['issue_id'], $mail, true, $res);
                         }
                     }
                 }
@@ -1149,14 +1149,7 @@ class Support
         foreach ($res as &$row) {
             $row['sup_from'] = implode(', ', Mail_Helper::getName($row['sup_from'], true));
             if ((empty($row['sup_to'])) && (!empty($row['sup_iss_id']))) {
-                $row['sup_to'] = 'Notification List';
-            } else {
-                try {
-                    $row['sup_to'] = Mail_Helper::getName($row['sup_to']);
-                } catch (\Zend\Mail\Header\Exception\InvalidArgumentException $e) {
-                    // Ignore unformattable headers
-                    Logger::app()->error($e->getMessage(), ['exception' => $e]);
-                }
+                $row['sup_to'] = ev_gettext('Notification List');
             }
             if (CRM::hasCustomerIntegration($prj_id)) {
                 // FIXME: $company_titles maybe used uninitialied
@@ -1280,7 +1273,7 @@ class Support
             }
 
             $iaf_ids = [];
-            foreach ($attachments as &$attachment) {
+            foreach ($mail->getAttachments() as $attachment) {
                 $attach = Workflow::shouldAttachFile($prj_id, $issue_id, $usr_id, $attachment);
                 if (!$attach) {
                     continue;
@@ -1327,9 +1320,10 @@ class Support
             return -1;
         }
 
-        foreach ($items as &$item) {
+        foreach ($items as $item) {
             $full_email = self::getFullEmail($item);
-            self::extractAttachments($issue_id, $full_email);
+            $mail = MailMessage::createFromString($full_email);
+            self::extractAttachments($issue_id, $mail);
         }
 
         Issue::markAsUpdated($issue_id, 'email');
@@ -1451,8 +1445,6 @@ class Support
         $res['timestamp'] = Date_Helper::getUnixTimestamp($res['sup_date'], 'GMT');
         // TRANSLATORS: %1 = email subject
         $res['reply_subject'] = Mail_Helper::removeExcessRe(ev_gettext('Re: %1$s', $res['sup_subject']), true);
-        $res['sup_to'] = Mail_Helper::formatEmailAddresses($res['sup_to']);
-        $res['sup_cc'] = Mail_Helper::formatEmailAddresses($res['sup_cc']);
 
         if (!empty($res['sup_iss_id'])) {
             $res['reply_subject'] = Mail_Helper::formatSubject($res['sup_iss_id'], $res['reply_subject']);
@@ -1608,11 +1600,6 @@ class Support
 
         if (count($res) == 0) {
             return [];
-        }
-
-        foreach ($res as &$row) {
-            $row['sup_to'] = Mail_Helper::formatEmailAddresses($row['sup_to']);
-            $row['sup_cc'] = Mail_Helper::formatEmailAddresses($row['sup_cc']);
         }
 
         return $res;
@@ -2096,7 +2083,8 @@ class Support
         $structure = Mime_Helper::decode($full_email, true, false);
         $email['headers'] = $structure->headers;
 
-        self::insertEmail($email, $structure, $sup_id);
+        $mail = MailMessage::createFromString($full_email);
+        self::insertEmail($email, $mail, $sup_id);
 
         if ($issue_id) {
             // need to send a notification
@@ -2343,17 +2331,12 @@ class Support
 
         $info = Email_Account::getDetails($new_ema_id);
         $full_email = self::getFullEmail($sup_id);
-        $structure = Mime_Helper::decode($full_email, true, true);
-        $headers = '';
-        foreach ($structure->headers as $key => $value) {
-            if (is_array($value)) {
-                continue;
-            }
-            $headers .= "$key: $value\n";
-        }
+        $mail = MailMessage::createFromString($full_email);
+        $headers = $mail->getHeaders()->toString();
 
         // handle auto creating issues (if needed)
-        $should_create_array = self::createIssueFromEmail($info, $headers, $email['seb_body'], $email['timestamp'],
+        $should_create_array = self::createIssueFromEmail(
+            $info, $headers, $email['seb_body'], $email['timestamp'],
             $email['sup_from'], $email['sup_subject'], $email['sup_to'], $email['sup_cc']);
         $issue_id = $should_create_array['issue_id'];
         $customer_id = $should_create_array['customer_id'];
@@ -2396,7 +2379,9 @@ class Support
             'full_email' => $email['seb_full_email'],
             'has_attachment' => $email['sup_has_attachment'],
         ];
-        Workflow::handleNewEmail(self::getProjectByEmailAccount($new_ema_id), $issue_id, $structure, $row);
+
+        $prj_id = self::getProjectByEmailAccount($new_ema_id);
+        Workflow::handleNewEmail($prj_id, $issue_id, $mail, $row);
 
         return 1;
     }
@@ -2448,6 +2433,7 @@ class Support
                 $notify = true;
             }
 
+            $mail = MailMessage::createFromHeaderBody($text_headers, $body);
             $options = [
                 'unknown_user' => $sender_email,
                 'log' => false,

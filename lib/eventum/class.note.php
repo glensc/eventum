@@ -549,6 +549,7 @@ class Note
         $blocked_message = self::getBlockedMessage($note_id);
         $unknown_user = self::getUnknownUser($note_id);
         $structure = Mime_Helper::decode($blocked_message, true, true);
+        $mail = MailMessage::createFromString($blocked_message);
         $body = $structure->body;
         $sender_email = Mail_Helper::getEmailAddress($structure->headers['from']);
 
@@ -598,7 +599,7 @@ class Note
                 $update_type = 'customer action';
             }
 
-            $res = Support::insertEmail($t, $structure, $sup_id);
+            $res = Support::insertEmail($t, $mail, $sup_id);
             if ($res != -1) {
                 Support::extractAttachments($issue_id, $mail);
                 // notifications about new emails are always external

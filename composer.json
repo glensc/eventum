@@ -46,7 +46,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Eventum\\Test\\": "tests/"
+			"Eventum\\Test\\": [ "tests/", "tests/src/" ]
 		},
 		"classmap": [ "tests/src" ]
 	},
@@ -86,6 +86,7 @@
 		"smarty-gettext/smarty-gettext": "~1.0",
 		"smarty/smarty": "~3.1.12",
 		"sphinx/php-sphinxapi": "2.0.*",
+		"symfony/event-dispatcher": "~2.7.0",
 		"symfony/filesystem": "~2.7.0",
 		"symfony/http-foundation": "~2.7.0",
 		"theorchard/monolog-cascade": "^0.3.1",
@@ -108,7 +109,7 @@
 		"components/jquery-datatables": "~1.10.4",
 		"components/jqueryui": "1.11.*",
 		"drmonty/garlicjs": "~1.2.4",
-		"enyo/dropzone": "~4.0.1",
+		"enyo/dropzone": "~4.3.0",
 		"eventum/rpc": "~4.0.0",
 		"fortawesome/font-awesome": "^4.7",
 		"jackmoore/autosize": "*",

@@ -141,6 +141,12 @@ class Routing
             $has_attachments = 0;
         }
 
+        if (Mime_Helper::hasAttachments($full_message)) {
+            $has_attachments = 1;
+        } else {
+            $has_attachments = 0;
+        }
+
         // find which issue ID this email refers to
         $issue_id = null;
         if ($headers->has('To')) {
@@ -390,7 +396,7 @@ class Routing
 
         // add the full email to the note if there are any attachments
         // this is needed because the front end code will display attachment links
-        if (Mime_Helper::hasAttachments($structure)) {
+        if ($mail->hasAttachments()) {
             $_POST['full_message'] = $full_message;
         }
 
@@ -398,7 +404,7 @@ class Routing
         $res = Note::insertFromPost($usr_id, $issue_id, $unknown_user, false);
         // need to handle attachments coming from notes as well
         if ($res != -1) {
-            Support::extractAttachments($issue_id, $structure, true, $res);
+            Support::extractAttachments($issue_id, $mail, true, $res);
         }
 
         // FIXME! $res == -2 is not handled

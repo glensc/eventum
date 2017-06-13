@@ -14,9 +14,7 @@
 use Eventum\Mail\Helper\AddressHeader;
 use Eventum\Mail\MailMessage;
 use Eventum\Mail\MailTransport;
-use Eventum\Monolog\Logger;
 use Zend\Mail\Address;
-use Zend\Mail\Header\HeaderInterface;
 
 /**
  * Class to handle the business logic related to sending email to
@@ -155,27 +153,6 @@ class Mail_Helper
         }
 
         return $address->toString();
-    }
-
-    /**
-     * Parses a one or more email addresses (could be QP encoded)
-     * and returns them encoded in utf-8.
-     *
-     * Method should be used when displaying header values to user.
-     *
-     * @param Address|string $address The email address value
-     * @return string
-     */
-    public static function formatEmailAddresses($address)
-    {
-        if (!$address) {
-            return '';
-        }
-        if (!$address instanceof Address) {
-            $address = AddressHeader::fromString($address);
-        }
-
-        return $address->toString(HeaderInterface::FORMAT_RAW);
     }
 
     /**
@@ -444,10 +421,7 @@ class Mail_Helper
         $this->setHeaders($headers);
         $hdrs = $this->mime->headers($this->headers);
 
-        $mail = [
-            'headers' => $hdrs,
-            'body' => $body,
-        ];
+        $mail = MailMessage::createFromHeaderBody($hdrs, $body);
         $options = [
             'save_email_copy' => $save_email_copy,
             'issue_id' => $issue_id,
@@ -456,11 +430,7 @@ class Mail_Helper
             'type_id' => $type_id,
         ];
 
-        $res = Mail_Queue::addMail($mail, $to, $options);
-        if (Misc::isError($res)) {
-            /** @var PEAR_Error $res */
-            Logger::app()->error($res->getMessage(), ['debug' => $res->getDebugInfo()]);
-        }
+        Mail_Queue::addMail($mail, $to, $options);
     }
 
     /**
@@ -758,7 +728,7 @@ class Mail_Helper
      * @param   string $type If this is a note or an email
      * @param   array $references the array the references will be stored in
      */
-    private function _getReferences($msg_id, $type, &$references)
+    private static function _getReferences($msg_id, $type, &$references)
     {
         $references[] = $msg_id;
         if ($type == 'note') {

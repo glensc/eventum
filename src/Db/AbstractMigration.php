@@ -64,6 +64,11 @@ abstract class AbstractMigration extends PhinxAbstractMigration
     /** @var bool */
     private $initialized;
 
+    /**
+     * This would be in init() but it's too early to use adapter.
+     *
+     * @see https://github.com/robmorgan/phinx/issues/1095
+     */
     private function initOptions()
     {
         // extract options from phinx.php config
@@ -91,6 +96,41 @@ abstract class AbstractMigration extends PhinxAbstractMigration
         $options['collation'] = $this->collation;
 
         return parent::table($tableName, $options);
+    }
+
+    /**
+     * @param string $columnName
+     * @return string
+     */
+    protected function quoteColumnName($columnName)
+    {
+        return $this->getAdapter()->quoteColumnName($columnName);
+    }
+
+    /**
+     * @param string $tableName
+     * @return string
+     */
+    protected function quoteTableName($tableName)
+    {
+        return $this->getAdapter()->quoteTableName($tableName);
+    }
+
+    /**
+     * Quote field value.
+     * As long as execute() does not take params, we need to quote values.
+     *
+     * @see https://github.com/robmorgan/phinx/pull/850
+     * @param string $value
+     * @return string
+     */
+    protected function quoteValue($value)
+    {
+        /** @var MysqlAdapter $adapter */
+        $adapter = $this->getAdapter();
+        $connection = $adapter->getConnection();
+
+        return $connection->quote($value);
     }
 
     /**

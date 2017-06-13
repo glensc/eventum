@@ -47,7 +47,11 @@ class MailTransport
             $transport->send($mail->toMessage());
             $res = true;
         } catch (\Exception $e) {
-            Logger::app()->error($e->getMessage(), ['exception' => $e]);
+            $traceFile = $this->getTraceFile();
+            if ($traceFile) {
+                file_put_contents($traceFile, json_encode([$recipient, $headers, $body]));
+            }
+            Logger::app()->error($e->getMessage(), ['traceFile' => $traceFile, 'exception' => $e]);
             $res = $e;
         } finally {
             // avoid leaking recipient in case of transport reuse
@@ -69,6 +73,20 @@ class MailTransport
         }
 
         return $this->transport;
+    }
+
+    /**
+     * Get path where to dump trace of errors.
+     * Can be made configurable in the future.
+     *
+     * @return string
+     */
+    private function getTraceFile()
+    {
+        $id = uniqid('zf-mail-');
+        $traceFile = APP_LOG_PATH . "/$id.json";
+
+        return $traceFile;
     }
 
     /**

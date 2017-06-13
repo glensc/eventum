@@ -20,6 +20,8 @@ namespace Eventum\Test;
  * Load PHPUnit_Framework_TestCase wrapper if using older PHPUnit.
  */
 
+use Eventum\Extension\ExtensionManager;
+
 if (!class_exists('\PHPUnit\Framework\TestCase')) {
     require_once __DIR__ . '/phpunit-compat.php';
 }
@@ -27,11 +29,48 @@ if (!class_exists('\PHPUnit\Framework\TestCase')) {
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
+     * Create ExtensionManager with given config
+     *
+     * @return ExtensionManager
+     */
+    protected function getExtensionManager($config)
+    {
+        /** @var ExtensionManager $stub */
+        $stub = $this->getMockBuilder(ExtensionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getExtensionFiles'])
+            ->getMock();
+
+        $stub->method('getExtensionFiles')
+            ->willReturn($config);
+
+        // as ->getMock() calls original constructor before method mocks is setup
+        // we disabled original constructor and call it out now.
+        $stub->__construct();
+
+        return $stub;
+    }
+
+    /**
+     * Read file from tests/data directory.
+     *
      * @param string $filename
      * @return string
      */
-    protected function readfile($filename)
+    protected function readDataFile($filename)
     {
+        $file = __DIR__ . '/../data/' . $filename;
+
+        return $this->readFile($file);
+    }
+
+    /**
+     * @param string $filename
+     * @return string
+     */
+    protected function readFile($filename)
+    {
+        $this->assertFileExists($filename);
         $content = file_get_contents($filename);
         $this->assertNotEmpty($content);
 
