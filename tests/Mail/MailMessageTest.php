@@ -197,13 +197,7 @@ class MailMessageTest extends TestCase
         $message = MailMessage::createFromFile(__DIR__ . '/data/attachment-bug.txt');
         $this->assertTrue($message->hasAttachments());
     }
-
-    public function testGetAttachments()
-    {
-        $message = MailMessage::createFromFile(__DIR__ . '/data/attachment-bug.txt');
-        $this->assertTrue($message->hasAttachments());
-    }
-
+    
     public function testGetAttachments()
     {
         $raw = $this->readDataFile('bug684922.txt');
