@@ -285,6 +285,9 @@ class Workflow
         $backend = self::_getBackend($prj_id);
 
         $structure = Mime_Helper::decode($mail->getRawContent(), true, true);
+
+        $row['headers'] = $mail->getHeadersArray();
+        $row['has_attachment'] = $mail->hasAttachments();
         $backend->handleNewEmail($prj_id, $issue_id, $structure, $row, $closing);
     }
 
@@ -662,7 +665,7 @@ class Workflow
      * @param   int $sender_usr_id the id of the user sending this email
      * @param   int $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      */
-    public static function modifyMailQueue($prj_id, &$recipient, &$mail, $issue_id, $type, $sender_usr_id, $type_id)
+    public static function modifyMailQueue($prj_id, &$recipient, MailMessage &$mail, $issue_id, $type, $sender_usr_id, $type_id)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;

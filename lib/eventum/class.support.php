@@ -485,7 +485,7 @@ class Support
         // route emails if necessary
         if ($info['ema_use_routing'] == 1) {
             try {
-                $routed = Routing::route($message);
+                $routed = Routing::route($full_message);
             } catch (RoutingException $e) {
                 // "if leave copy of emails on IMAP server" is "off",
                 // then we can bounce on the message
@@ -918,20 +918,21 @@ class Support
         if (empty($row['customer_id'])) {
             $row['customer_id'] = null;
         }
+        $issue_id = isset($row['issue_id']) ? $row['issue_id'] : null;
 
         // try to get the parent ID
         $reference_message_id = $mail->getReferenceMessageID();
-        $parent_id = '';
-        if (!empty($reference_message_id)) {
+        $parent_id = null;
+        if ($reference_message_id) {
             $parent_id = self::getIDByMessageID($reference_message_id);
             // make sure it is in the same issue
-            if ((!empty($parent_id)) && ((empty($row['issue_id'])) || (@$row['issue_id'] != self::getIssueFromEmail($parent_id)))) {
-                $parent_id = '';
+            if ($parent_id && (!$issue_id || $issue_id != self::getIssueFromEmail($parent_id))) {
+                $parent_id = null;
             }
         }
         $params = [
             'sup_ema_id' => $row['ema_id'],
-            'sup_iss_id' => $row['issue_id'],
+            'sup_iss_id' => $issue_id,
             'sup_customer_id' => $row['customer_id'],
             'sup_message_id' => $mail->messageId,
             'sup_date' => Date_Helper::convertDateGMT($mail->getMailDate()),
@@ -942,7 +943,7 @@ class Support
             'sup_has_attachment' => $mail->hasAttachments(),
         ];
 
-        if (!empty($parent_id)) {
+        if ($parent_id) {
             $params['sup_parent_id'] = $parent_id;
         }
 
@@ -961,10 +962,8 @@ class Support
             return -1;
         }
 
-        $new_sup_id = DB_Helper::get_last_insert_id();
-        $sup_id = $new_sup_id;
-        $row['sup_id'] = $sup_id;
-        // now add the body and full email to the separate table
+        $sup_id = DB_Helper::get_last_insert_id();
+
         $stmt = 'INSERT INTO
                     {{%support_email_body}}
                  (
@@ -975,13 +974,14 @@ class Support
                     ?, ?, ?
                  )';
         try {
-            DB_Helper::getInstance()->query($stmt, [$new_sup_id, $mail->getMessageBody(), $mail->getRawContent()]);
+            $params = [$sup_id, $mail->getMessageBody(), $mail->getRawContent()];
+            DB_Helper::getInstance()->query($stmt, $params);
         } catch (DatabaseException $e) {
             return -1;
         }
 
-        if (!empty($row['issue_id'])) {
-            $prj_id = Issue::getProjectID($row['issue_id']);
+        if ($issue_id) {
+            $prj_id = Issue::getProjectID($issue_id);
         } elseif (!empty($row['ema_id'])) {
             $prj_id = Email_Account::getProjectID($row['ema_id']);
         } else {
@@ -990,7 +990,9 @@ class Support
 
         // FIXME: $row['ema_id'] is empty when mail is sent via convert note!
         if ($prj_id !== false) {
-            Workflow::handleNewEmail($prj_id, @$row['issue_id'], $mail, $row, $closing);
+            $row['sup_id'] = $sup_id;
+
+            Workflow::handleNewEmail($prj_id, $issue_id, $mail, $row, $closing);
         }
 
         return 1;
