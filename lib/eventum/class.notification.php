@@ -417,7 +417,6 @@ class Notification
         }
 
         $headers['Subject'] = Mail_Helper::formatSubject($issue_id, $headers['Subject']);
->>>>>>> drop-pear-mimedecode
 
         if (empty($type)) {
             if (($sender_usr_id != false) && (User::getRoleByUser($sender_usr_id, Issue::getProjectID($issue_id)) == User::ROLE_CUSTOMER)) {
