@@ -1303,7 +1303,6 @@ class Issue
                 'subject' => ev_gettext('Issue closed comments'),
                 'from' => $from,
                 'body' => $reason,
-                'full_email' => $full_email,
             ];
             $sup_id = null;
             Support::insertEmail($email_options, $mail, $sup_id, true);
