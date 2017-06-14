@@ -11,9 +11,10 @@
  * that were distributed with this source code.
  */
 
-namespace Eventum\Test;
+namespace Eventum\Test\Mail;
 
 use Eventum\Mail\MailMessage;
+use Eventum\Test\TestCase;
 use Mail_Helper;
 use Mime_Helper;
 use Setup;
@@ -43,6 +44,9 @@ class MimeDecodeTest extends TestCase
 
         $this->assertEquals('"Some Guy" <abcd@origin.com>', $input->headers['from']);
         $this->assertEquals('Some Guy <abcd@origin.com>', $mail->from);
+
+        $this->assertEquals('PD: My: Gołblahblah', $input->headers['subject']);
+        $this->assertEquals('PD: My: Gołblahblah', $mail->subject);
     }
 
     public function testAddWarningMessage()

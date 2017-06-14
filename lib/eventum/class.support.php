@@ -562,8 +562,17 @@ class Support
                         $users = array_flip($users);
 
                         $addresses = [];
-                        $cc_users = [];
 
+                        $to_addresses = AddressHeader::fromString($mail->to)->getEmails();
+                        if ($to_addresses) {
+                            $addresses = $to_addresses;
+                        }
+                        $cc_addresses = AddressHeader::fromString($mail->cc)->getEmails();
+                        if ($cc_addresses) {
+                            $addresses = array_merge($addresses, $cc_addresses);
+                        }
+
+                        $cc_users = [];
                         foreach ($addresses as $email) {
                             if (in_array(strtolower($email), $user_emails)) {
                                 $cc_users[] = $users[strtolower($email)];
@@ -645,7 +654,7 @@ class Support
                         }
                         // log routed email
                         History::add($t['issue_id'], $usr_id, 'email_routed', 'Email routed from {from}', [
-                            'from' => $mail->getSender(),
+                            'from' => $mail->from,
                         ]);
                     }
                 }
@@ -663,7 +672,7 @@ class Support
      * Creates a new issue from an email if appropriate. Also returns if this message is related
      * to a previous message.
      *
-     * @param   array   $info an array of info about the email account
+     * @param   array $info an array of info about the email account
      * @param   ImapMessage $mail The Mail object
      * @return  array   An array of information about the message
      */
@@ -709,7 +718,7 @@ class Support
             if (($setup['subject_based_routing']['status'] == 'enabled')
                 and (preg_match("/\[#(\d+)\]( Note| BLOCKED)*/", $subject, $matches))) {
                 // look for [#XXXX] in the subject line
-                    $should_create_issue = false;
+                $should_create_issue = false;
                 $issue_id = $matches[1];
                 if (!Issue::exists($issue_id, false)) {
                     $issue_id = '';
@@ -766,20 +775,22 @@ class Support
         if (($should_create_issue) && ($info['ema_issue_auto_creation_options']['only_known_customers'] == 'yes') &&
                 (CRM::hasCustomerIntegration($prj_id)) && !$customer_id) {
             try {
-                $crm = CRM::getInstance($prj_id);
+                CRM::getInstance($prj_id);
                 $should_create_issue = true;
             } catch (CRMException $e) {
                 $should_create_issue = false;
             }
         }
         // check whether we need to create a new issue or not
-        if (($info['ema_issue_auto_creation'] == 'enabled') && ($should_create_issue) && (!$mail->isBounceMessage())) {
+        if ($info['ema_issue_auto_creation'] == 'enabled' && $should_create_issue && (!$mail->isBounceMessage())) {
             $options = Email_Account::getIssueAutoCreationOptions($info['ema_id']);
             AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
             AuthCookie::setProjectCookie($prj_id);
-            $issue_id = Issue::createFromEmail($mail, APP_SYSTEM_USER_ID,
-                    @$options['category'], @$options['priority'], @$options['users'],
-                    $severity, $customer_id, $contact_id, $contract_id);
+            $issue_id = Issue::createFromEmail(
+                $mail, APP_SYSTEM_USER_ID,
+                @$options['category'], @$options['priority'], @$options['users'],
+                $severity, $customer_id, $contact_id, $contract_id
+            );
 
             // add sender to authorized repliers list if they are not a real user
             $sender_usr_id = User::getUserIDByEmail($sender_email, true);
