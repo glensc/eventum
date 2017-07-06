@@ -521,17 +521,10 @@ class Note
         $email_account_id = Email_Account::getEmailAccount();
         $mail = self::getBlockedMessage($note_id);
         $unknown_user = self::getUnknownUser($note_id);
-        $mail = MailMessage::createFromString($blocked_message);
-
         $sender_email = $mail->getSender();
         $usr_id = Auth::getUserID();
 
         if ($target == 'email') {
-            $mail = MailMessage::createFromString($blocked_message);
-
-            Mail_Helper::rewriteThreadingHeaders($mail, $issue_id);
-            $blocked_message = $mail->getRawContent();
-
             Mail_Helper::rewriteThreadingHeaders($mail, $issue_id);
             $email_options = [
                 'issue_id' => $issue_id,

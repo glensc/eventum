@@ -92,7 +92,6 @@ class Routing
      * @param MailMessage $mail The Mail object
      * @throws RoutingException in case of failure
      * @return bool true if mail was routed
-     * @return bool true if mail was routed
      */
     protected static function route_emails(MailMessage $mail)
     {
@@ -118,24 +117,10 @@ class Routing
         }
         unset($sys_account);
 
-        AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
-
         $headers = $mail->getHeaders();
 
         // remove the reply-to: header
         $headers->removeHeader('Reply-To');
-
-        if (Mime_Helper::hasAttachments($full_message)) {
-            $has_attachments = 1;
-        } else {
-            $has_attachments = 0;
-        }
-
-        if (Mime_Helper::hasAttachments($full_message)) {
-            $has_attachments = 1;
-        } else {
-            $has_attachments = 0;
-        }
 
         // find which issue ID this email refers to
         $issue_id = null;
@@ -161,9 +146,6 @@ class Routing
             throw RoutingException::noEmaiAccountConfigured();
         }
 
-        // get the sender's email address
-        // FIXME: this is "From" or "From:" header?
-        /** @var string $sender_email */
         $sender_email = $mail->getSender();
 
         // strip out the warning message sent to staff users
@@ -178,9 +160,6 @@ class Routing
         AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
         AuthCookie::setProjectCookie($prj_id);
 
-        // FIXME: does this need to be int?
-        $has_attachments = (int)$mail->hasAttachments();
-
         // remove certain CC addresses
         if ($headers->has('Cc') && $setup['smtp']['save_outgoing_email'] == 'yes') {
             $mail->removeFromAddressList('Cc', $setup['smtp']['save_address']);
@@ -190,8 +169,6 @@ class Routing
         // Note: the method will still keep one 'Re'
         $mail->setSubject(Mail_Helper::removeExcessRe($mail->subject));
 
-        // TODO: remove all params that use $mail in some form and pass just $mail object
-        // as for example content and headers could be rewritten later!
         $email_options = [
             'issue_id' => $issue_id,
             'ema_id' => $email_account_id,
@@ -212,7 +189,7 @@ class Routing
             $crm = CRM::getInstance($prj_id);
             if ($sender_email) {
                 try {
-                    $contact = $crm->getContactByEmail($sender_email->toString());
+                    $contact = $crm->getContactByEmail($sender_email);
                     $issue_contract = $crm->getContract(Issue::getContractID($issue_id));
                     if ($contact->canAccessContract($issue_contract)) {
                         $email_options['customer_id'] = $issue_contract->getCustomerID();
@@ -225,16 +202,6 @@ class Routing
             $email_options['customer_id'] = null;
         }
 
-        if (Support::blockEmailIfNeeded($email_options)) {
-            return true;
-        }
-
-        // this method is weird.
-        // it modifies $structure in one place, modifies $full_email in other place
-        // and then inserts with $structure
-        // the $mail for Support::insertEmail is used for workflow
-        // probably doesn't matter much which version to use
-        $mail = MailMessage::createFromString($full_message);
         if (Support::blockEmailIfNeeded($mail, $email_options)) {
             return true;
         }
@@ -264,7 +231,7 @@ class Routing
                 Issue::markAsUpdated($issue_id, 'customer action');
             } else {
                 if ((!empty($usr_id)) && ($usr_id != APP_SYSTEM_USER_ID) &&
-                        (User::getRoleByUser($usr_id, $prj_id) > User::getRoleID('Customer'))) {
+                        (User::getRoleByUser($usr_id, $prj_id) > User::ROLE_CUSTOMER)) {
                     Issue::markAsUpdated($issue_id, 'staff response');
                 } else {
                     Issue::markAsUpdated($issue_id, 'user response');
@@ -285,7 +252,6 @@ class Routing
      *
      * @param MailMessage $mail The Mail object
      * @throws RoutingException in case of failure
-     * @return bool true if mail was routed
      * @return bool true if mail was routed
      */
     protected static function route_notes(MailMessage $mail)
@@ -415,7 +381,6 @@ class Routing
      * @param MailMessage $mail The Mail object
      * @throws RoutingException in case of failure
      * @return bool true if mail was routed
-     * @return bool true if mail was routed
      */
     protected static function route_drafts($mail)
     {
@@ -442,11 +407,6 @@ class Routing
         // find which issue ID this email refers to
         $issue_id = null;
         if ($headers->has('To')) {
-            $issue_id = self::getMatchingIssueIDs($mail->getAddresses('To'), 'note');
-        }
-        // we need to try the Cc header as well
-        if (!$issue_id && $headers->has('Cc')) {
-            $issue_id = self::getMatchingIssueIDs($mail->getAddresses('Cc'), 'note');
             $issue_id = self::getMatchingIssueIDs($mail->getAddresses('To'), 'draft');
         }
         // we need to try the Cc header as well
@@ -473,7 +433,6 @@ class Routing
         AuthCookie::setAuthCookie(User::getUserIDByEmail($sender_email));
         AuthCookie::setProjectCookie($prj_id);
 
-        Draft::saveEmail($issue_id, $mail->to, $mail->cc, $mail->subject, $mail->getContent(), false, false, false);
         Draft::saveEmail($issue_id, $mail->to, $mail->cc, $mail->subject, $mail->getMessageBody(), false, false, false);
         // XXX: need to handle attachments coming from drafts as well?
         $usr_id = Auth::getUserID();
@@ -523,7 +482,6 @@ class Routing
             $mail_domain = '(?:' . $mail_domain . '|' . $host_aliases . ')';
         }
 
-        // everything safely escaped and checked, try matching address
         foreach ((array)$addresses as $address) {
             if (preg_match("/$prefix(\d+)@$mail_domain/i", $address, $matches)) {
                 return (int) $matches[1];

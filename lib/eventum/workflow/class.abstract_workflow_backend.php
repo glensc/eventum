@@ -441,10 +441,15 @@ class Abstract_Workflow_Backend
      * rest of the email code will not be executed.
      *
      * @param   int $prj_id The project ID
-     * @param   ImapMessage $mail The Mail Message object
+     * @param   array $info an array containing the information on the email account
+     * @param   resource $mbox The imap connection resource
+     * @param   int $num The sequential email number
+     * @param   string $message The complete email message
+     * @param   object $email An object containing the decoded email
+     * @param   object $structure An object containing the decoded email
      * @return  mixed null by default, -1 if the rest of the email script should not be processed
      */
-    public function preEmailDownload($prj_id, $mail)
+    public function preEmailDownload($prj_id, $info, $mbox, $num, &$message, $email, $structure = null)
     {
         return null;
     }

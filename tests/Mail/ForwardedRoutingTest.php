@@ -15,7 +15,6 @@ namespace Eventum\Test\Mail;
 
 use Eventum\Mail\MailMessage;
 use Eventum\Test\TestCase;
-use Mail_Helper;
 
 /**
  * @group mail

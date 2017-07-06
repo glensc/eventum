@@ -357,7 +357,6 @@ class Mail_Helper
      * @param   string $type The type of message this is
      * @param   int $sender_usr_id the id of the user sending this email
      * @param   int $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
-     * @deprecated use Mail_Queue::addMail instead with MailMessage object
      */
     public function send($from, $to, $subject, $save_email_copy = 0, $issue_id = false, $type = '', $sender_usr_id = null, $type_id = false)
     {

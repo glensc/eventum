@@ -277,9 +277,13 @@ class Notification
      * @param   string $email The email address to check against
      * @return  bool
      */
-    public static function isBounceMessage(array $email)
+    public static function isBounceMessage($email)
     {
-        throw new LogicException('MailMessage');
+        if (strtolower(substr($email, 0, 14)) == 'mailer-daemon@') {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -689,7 +689,6 @@ class Support
         $severity = false;
         $references = $mail->getAllReferences();
 
-        $workflow = Workflow::getIssueIDforNewEmail($mail->getEmailAccountId(), $info, $mail);
         $workflow = Workflow::getIssueIDforNewEmail($info['ema_prj_id'], $info, $mail);
         if (is_array($workflow)) {
             if (isset($workflow['customer_id'])) {
@@ -941,7 +940,6 @@ class Support
             'sup_iss_id' => $issue_id,
             'sup_customer_id' => $row['customer_id'],
             'sup_message_id' => $mail->messageId,
-            //'sup_date' => Date_Helper::convertDateGMT($mail->getMailDate()),
             'sup_date' => $row['date'],
             'sup_from' => $mail->getSender(),
             'sup_to' => $mail->to,
@@ -980,7 +978,6 @@ class Support
                  ) VALUES (
                     ?, ?, ?
                  )';
-
         $params = [$sup_id, $mail->getMessageBody(), $mail->getRawContent()];
         DB_Helper::getInstance()->query($stmt, $params);
 
@@ -1271,7 +1268,6 @@ class Support
 
         // now for the real thing
         if ($mail->hasAttachments()) {
-            $attachments = $mail->getAttachments();
             if (empty($associated_note_id)) {
                 $history_log = ev_gettext('Attachment originated from an email');
             } else {
@@ -1382,14 +1378,6 @@ class Support
 
         $prj_id = Issue::getProjectID($issue_id);
         foreach ($res as $row) {
-            // since downloading email should make the emails 'public',
-            // send 'false' below as the 'internal_only' flag
-            if (Mime_Helper::hasAttachments($row['seb_full_email'])) {
-                $has_attachments = 1;
-            } else {
-                $has_attachments = 0;
-            }
-
             $mail = MailMessage::createFromString($row['seb_full_email']);
             $t = [
                 'issue_id' => $issue_id,
@@ -1409,7 +1397,6 @@ class Support
                 self::addExtraRecipientsToNotificationList($prj_id, $t, false);
             }
 
-            $mail = MailMessage::createFromString($row['seb_full_email']);
             $t['sup_id'] = $row['sup_id'];
             Notification::notifyNewEmail($usr_id, $issue_id, $mail, $t);
             if ($authorize) {
@@ -2330,12 +2317,6 @@ class Support
 
         $info = Email_Account::getDetails($new_ema_id);
         $mail = self::getSupportEmail($sup_id);
-        $headers = $mail->getHeaders()->toString();
-
-        // handle auto creating issues (if needed)
-        $should_create_array = self::createIssueFromEmail(
-            $info, $headers, $email['seb_body'], $email['timestamp'],
-            $email['sup_from'], $email['sup_subject'], $email['sup_to'], $email['sup_cc']);
 
         // handle auto creating issues (if needed)
         $should_create_array = self::createIssueFromEmail($info, $mail);
@@ -2414,7 +2395,6 @@ class Support
                 $notify = true;
             }
 
-            $mail = MailMessage::createFromHeaderBody($text_headers, $body);
             $options = [
                 'unknown_user' => $sender_email,
                 'log' => false,
@@ -2495,7 +2475,7 @@ class Support
             if ((!in_array($address, $subscribers)) && (!in_array($address, $addresses_not_too_add))) {
                 Notification::subscribeEmail(Auth::getUserID(), $email['issue_id'], $address, Notification::getDefaultActions($email['issue_id'], $address, 'add_extra_recipients'));
                 if ($is_auto_created) {
-                    //                    Notification::notifyAutoCreatedIssue($prj_id, $email['issue_id'], $email['from'], $email['date'], $email['subject'], $address);
+                    Notification::notifyAutoCreatedIssue($prj_id, $email['issue_id'], $email['from'], $email['date'], $email['subject'], $address);
                 }
             }
         }
