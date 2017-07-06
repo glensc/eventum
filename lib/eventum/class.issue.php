@@ -1297,6 +1297,7 @@ class Issue
                 'ema_id' => Email_Account::getEmailAccount($prj_id),
                 'issue_id' => $issue_id,
                 'date' => Date_Helper::convertDateGMT($mail->getDate()),
+                'closing' => true,
                 // these below are likely unused by Support::insertEmail
                 'message_id' => $mail->messageId,
                 'subject' => $mail->subject,
@@ -1304,7 +1305,7 @@ class Issue
                 'body' => $mail->getContent(),
             ];
             $sup_id = null;
-            Support::insertEmail($mail, $email_options, $sup_id, true);
+            Support::insertEmail($mail, $email_options, $sup_id);
             $ids = $sup_id;
         } else {
             // add note with the reason to close the issue
