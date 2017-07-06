@@ -77,33 +77,26 @@ class Note
                  WHERE
                     not_usr_id=usr_id AND
                     not_id=?';
-        try {
-            $res = DB_Helper::getInstance()->getRow($stmt, [$note_id]);
-        } catch (DatabaseException $e) {
-            return '';
+
+        $res = DB_Helper::getInstance()->getRow($stmt, [$note_id]);
+        if (!$res) {
+            throw new InvalidArgumentException("Could not fetch note: $note_id");
         }
 
-        if (count($res) > 0) {
-            $res['timestamp'] = Date_Helper::getUnixTimestamp($res['not_created_date'], 'GMT');
+        $res['timestamp'] = Date_Helper::getUnixTimestamp($res['not_created_date'], 'GMT');
+        $res['has_blocked_message'] = $res['not_is_blocked'] == 1;
 
-            if ($res['not_is_blocked'] == 1) {
-                $res['has_blocked_message'] = true;
-            } else {
-                $res['has_blocked_message'] = false;
-            }
-            if (!empty($res['not_unknown_user'])) {
-                $res['not_from'] = $res['not_unknown_user'];
-            } else {
-                $res['not_from'] = User::getFullName($res['not_usr_id']);
-            }
-            if ($res['not_has_attachment']) {
-                $res['attachments'] = Mime_Helper::getAttachmentCIDs($res['not_full_message']);
-            }
-
-            return $res;
+        if (!empty($res['not_unknown_user'])) {
+            $res['not_from'] = $res['not_unknown_user'];
+        } else {
+            $res['not_from'] = User::getFullName($res['not_usr_id']);
+        }
+        if ($res['not_has_attachment']) {
+            $mail = MailMessage::createFromString($res['not_full_message']);
+            $res['attachments'] = $mail->getAttachments();
         }
 
-        return '';
+        return $res;
     }
 
     /**
@@ -150,10 +143,10 @@ class Note
     }
 
     /**
-     * Returns the blocked email message body associated with the given note ID.
+     * Returns the blocked email message associated with the given note ID.
      *
      * @param   int $note_id The note ID
-     * @return  string The blocked email message body
+     * @return MailMessage
      */
     public static function getBlockedMessage($note_id)
     {
@@ -163,13 +156,10 @@ class Note
                     {{%note}}
                  WHERE
                     not_id=?';
-        try {
-            $res = DB_Helper::getInstance()->getOne($stmt, [$note_id]);
-        } catch (DatabaseException $e) {
-            throw new RuntimeException("Can't find note");
-        }
 
-        return $res;
+        $blocked_message = DB_Helper::getInstance()->getOne($stmt, [$note_id]);
+
+        return MailMessage::createFromString($blocked_message);
     }
 
     /**
@@ -529,9 +519,10 @@ class Note
     {
         $issue_id = self::getIssueID($note_id);
         $email_account_id = Email_Account::getEmailAccount();
-        $blocked_message = self::getBlockedMessage($note_id);
+        $mail = self::getBlockedMessage($note_id);
         $unknown_user = self::getUnknownUser($note_id);
         $mail = MailMessage::createFromString($blocked_message);
+
         $sender_email = $mail->getSender();
         $usr_id = Auth::getUserID();
 
@@ -541,6 +532,7 @@ class Note
             Mail_Helper::rewriteThreadingHeaders($mail, $issue_id);
             $blocked_message = $mail->getRawContent();
 
+            Mail_Helper::rewriteThreadingHeaders($mail, $issue_id);
             $email_options = [
                 'issue_id' => $issue_id,
                 'ema_id' => $email_account_id,

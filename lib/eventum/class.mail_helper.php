@@ -348,21 +348,6 @@ class Mail_Helper
     }
 
     /**
-     * Strips out email headers that should not be sent over to the recipient
-     * of the routed email. The 'Received:' header was sometimes being used to
-     * validate the sender of the message, and because of that some emails were
-     * not being delivered correctly.
-     *
-     * @param   array $headers An array of headers for this email
-     * @return  array The headers of the email, without the stripped ones
-     * @deprecated
-     */
-    public static function stripHeaders(Mailmessage $headers)
-    {
-        throw new LogicException('port to mailmessage');
-    }
-
-    /**
      * Build message and add it to mail queue.
      *
      * @param   string $from The originator of the message
@@ -374,7 +359,7 @@ class Mail_Helper
      * @param   int $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      * @deprecated use Mail_Queue::addMail instead with MailMessage object
      */
-    public function send($from, $to, $subject, $save_email_copy = 0, $issue_id = false, $type = '', $sender_usr_id = false, $type_id = false)
+    public function send($from, $to, $subject, $save_email_copy = 0, $issue_id = false, $type = '', $sender_usr_id = null, $type_id = false)
     {
         if ($from === null) {
             $from = Setup::get()->smtp->from;
@@ -611,38 +596,6 @@ class Mail_Helper
         }
 
         return '';
-    }
-
-    /**
-     * Returns the message IDs of all emails this message references.
-     *
-     * @param   string $text_headers The full headers of the message
-     * @return  array An array of message-ids
-     */
-    public static function getAllReferences($text_headers)
-    {
-        $references = [];
-
-        // if X-Forwarded-Message-Id is present, assume this is forwarded email and this root email
-        if (preg_match('/^X-Forwarded-Message-Id: .*/mi', $text_headers)) {
-            return $references;
-        }
-
-        if (preg_match('/^In-Reply-To: (.*)/mi', $text_headers, $matches)) {
-            $references[] = trim($matches[1]);
-        }
-        if (preg_match('/^References: (.+?)(\r?\n\r?\n|\r?\n\r?\S)/smi', $text_headers, $matches)) {
-            $references = array_merge($references, explode(' ', self::unfold(trim($matches[1]))));
-            $references = Misc::trim($references);
-            $references = array_unique($references);
-        }
-        foreach ($references as $key => $reference) {
-            if (empty($reference)) {
-                unset($references[$key]);
-            }
-        }
-
-        return $references;
     }
 
     /**

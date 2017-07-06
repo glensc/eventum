@@ -12,6 +12,7 @@
  */
 
 use Eventum\Db\DatabaseException;
+use Eventum\Mail\MailMessage;
 use Eventum\Model\Repository\IssueAssociationRepository;
 
 /**
@@ -1798,7 +1799,9 @@ class Issue
     /**
      * Creates an issue with the given email information.
      *
-     * @param   ImapMessage  $mail The Mail object
+     * @param   int $prj_id The project ID
+     * @param   MailMessage $mail The Mail object
+     * @param   string $date the date the email was originally sent
      * @param   int $usr_id The user responsible for this action
      * @param   int $category The category ID
      * @param   int $priority The priority ID
@@ -1809,15 +1812,12 @@ class Issue
      * @param   string $contract_id
      * @return int
      */
-    public static function createFromEmail(ImapMessage $mail, $usr_id, $category, $priority, $assignment,
+    public static function createFromEmail(MailMessage $mail, $date, $prj_id, $usr_id, $category, $priority, $assignment,
                              $severity, $customer_id, $contact_id, $contract_id)
     {
-        $prj_id = $mail->getProjectId();
-
         $sender = $mail->from;
         $summary = $mail->subject;
         $description = $mail->getMessageBody();
-        $date = Date_Helper::getRFC822Date($mail->getMailDate());
         $msg_id = $mail->messageId;
 
         $exclude_list = [];

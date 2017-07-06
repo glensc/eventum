@@ -395,17 +395,17 @@ class Support
     /**
      * Bounce message to sender.
      *
-     * @param   ImapMessage $mail The Mail object
-     * @param   array   array(ERROR_CODE, ERROR_STRING) of error to bounce
+     * @param ImapMessage $mail
+     * @param RoutingException $e error to bounce
      */
-    private static function bounceMessage($mail, $error)
+    private static function bounceMessage(ImapMessage $mail, RoutingException $e)
     {
         // open text template
         $tpl = new Template_Helper();
         $tpl->setTemplate('notifications/bounced_email.tpl.text');
         $tpl->assign([
-            'error_code' => $error->getCode(),
-            'error_message' => $error->getMessage(),
+            'error_code' => $e->getCode(),
+            'error_message' => $e->getMessage(),
             'date' => $mail->getMailDate(),
             'subject' => $mail->subject,
             'from' => $mail->from,
@@ -443,7 +443,7 @@ class Support
      * @param   ImapMessage $mail The Mail object
      * @param   array $info The support email account information
      */
-    public static function getEmailInfo(ImapMessage $mail, $info)
+    public static function processMailMessage(ImapMessage $mail, $info)
     {
         AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
 
@@ -468,15 +468,15 @@ class Support
         // route emails if necessary
         if ($info['ema_use_routing'] == 1) {
             try {
-                $routed = Routing::route($full_message);
+                $routed = Routing::route($mail->getRawContent());
             } catch (RoutingException $e) {
                 // "if leave copy of emails on IMAP server" is "off",
                 // then we can bounce on the message
                 // otherwise proper would be to create table -
                 // eventum_bounce: bon_id, bon_message_id, bon_error
                 if (!$info['ema_leave_copy']) {
-                    self::bounceMessage($email, $e);
-                    self::deleteMessage($info, $mbox, $num);
+                    self::bounceMessage($mail, $e);
+                    $mail->deleteMessage();
                 }
 
                 return;
@@ -485,7 +485,7 @@ class Support
             // the mail was routed
             if ($routed === true) {
                 if (!$info['ema_leave_copy']) {
-                    self::deleteMessage($info, $mbox, $num);
+                    $mail->deleteMessage();
                 }
 
                 return;
@@ -510,11 +510,11 @@ class Support
             'to' => $mail->to,
             'cc' => $mail->cc,
             'subject' => $mail->subject,
-//            'body'           => @$message_body,
-//            'full_email'     => @$message,
+            'body' => $mail->getMessageBody(),
+            'full_email' => $mail->getRawContent(),
             'has_attachment' => $mail->hasAttachments(),
             // the following items are not inserted, but useful in some methods
-//            'headers'        => @$structure->headers,
+            'headers' => $mail->getHeadersArray(),
         ];
 
         $should_create_array = self::createIssueFromEmail($info, $mail);
@@ -599,7 +599,7 @@ class Support
             }
         } else {
             // check if we need to block this email
-            if (($should_create_issue == true) || (!self::blockEmailIfNeeded($mail, $t))) {
+            if ($should_create_issue == true || !self::blockEmailIfNeeded($mail, $t)) {
                 if ($t['issue_id']) {
                     Mail_Helper::rewriteThreadingHeaders($mail, $t['issue_id'], 'email');
                 }
@@ -669,14 +669,14 @@ class Support
     }
 
     /**
-     * Creates a new issue from an email if appropriate. Also returns if this message is related
-     * to a previous message.
+     * Creates a new issue from an email if appropriate.
+     * Also returns if this message is related to a previous message.
      *
      * @param   array $info an array of info about the email account
-     * @param   ImapMessage $mail The Mail object
+     * @param   MailMessage $mail The Mail object
      * @return  array   An array of information about the message
      */
-    public static function createIssueFromEmail($info, ImapMessage $mail)
+    public static function createIssueFromEmail($info, MailMessage $mail)
     {
         $should_create_issue = false;
         $issue_id = null;
@@ -687,10 +687,10 @@ class Support
         $contact_id = false;
         $contract_id = false;
         $severity = false;
-
         $references = $mail->getAllReferences();
 
         $workflow = Workflow::getIssueIDforNewEmail($mail->getEmailAccountId(), $info, $mail);
+        $workflow = Workflow::getIssueIDforNewEmail($info['ema_prj_id'], $info, $mail);
         if (is_array($workflow)) {
             if (isset($workflow['customer_id'])) {
                 $customer_id = $workflow['customer_id'];
@@ -715,8 +715,8 @@ class Support
             $issue_id = $workflow;
         } else {
             $setup = Setup::get();
-            if (($setup['subject_based_routing']['status'] == 'enabled')
-                and (preg_match("/\[#(\d+)\]( Note| BLOCKED)*/", $subject, $matches))) {
+            if ($setup['subject_based_routing']['status'] == 'enabled'
+                and (preg_match("/\[#(\d+)\]( Note| BLOCKED)*/", $mail->subject, $matches))) {
                 // look for [#XXXX] in the subject line
                 $should_create_issue = false;
                 $issue_id = $matches[1];
@@ -772,8 +772,10 @@ class Support
 
         // only create a new issue if this email is coming from a known customer
         $prj_id = $info['ema_prj_id'];
-        if (($should_create_issue) && ($info['ema_issue_auto_creation_options']['only_known_customers'] == 'yes') &&
-                (CRM::hasCustomerIntegration($prj_id)) && !$customer_id) {
+        if ($should_create_issue
+            && $info['ema_issue_auto_creation_options']['only_known_customers'] == 'yes'
+            && CRM::hasCustomerIntegration($prj_id)
+            && !$customer_id) {
             try {
                 CRM::getInstance($prj_id);
                 $should_create_issue = true;
@@ -781,13 +783,17 @@ class Support
                 $should_create_issue = false;
             }
         }
+
         // check whether we need to create a new issue or not
-        if ($info['ema_issue_auto_creation'] == 'enabled' && $should_create_issue && (!$mail->isBounceMessage())) {
+        if ($info['ema_issue_auto_creation'] == 'enabled'
+            && $should_create_issue && !$mail->isBounceMessage()) {
             $options = Email_Account::getIssueAutoCreationOptions($info['ema_id']);
             AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
             AuthCookie::setProjectCookie($prj_id);
+            $date = Date_Helper::getRFC822Date($mail->date);
+
             $issue_id = Issue::createFromEmail(
-                $mail, APP_SYSTEM_USER_ID,
+                $prj_id, $mail, $date, APP_SYSTEM_USER_ID,
                 @$options['category'], @$options['priority'], @$options['users'],
                 $severity, $customer_id, $contact_id, $contract_id
             );
@@ -803,8 +809,10 @@ class Support
                 self::associate(APP_SYSTEM_USER_ID, $issue_id, [$reference_sup_id]);
             }
         }
+
         // need to check crm for customer association
-        if (!empty($from)) {
+        if ($sender_email) {
+            // FIXME: how can $sender_email be empty?
             if (CRM::hasCustomerIntegration($prj_id) && !$customer_id) {
                 // check for any customer contact association
                 try {
@@ -933,7 +941,8 @@ class Support
             'sup_iss_id' => $issue_id,
             'sup_customer_id' => $row['customer_id'],
             'sup_message_id' => $mail->messageId,
-            'sup_date' => Date_Helper::convertDateGMT($mail->getMailDate()),
+            //'sup_date' => Date_Helper::convertDateGMT($mail->getMailDate()),
+            'sup_date' => $row['date'],
             'sup_from' => $mail->getSender(),
             'sup_to' => $mail->to,
             'sup_cc' => $mail->cc,
@@ -971,12 +980,9 @@ class Support
                  ) VALUES (
                     ?, ?, ?
                  )';
-        try {
-            $params = [$sup_id, $mail->getMessageBody(), $mail->getRawContent()];
-            DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DatabaseException $e) {
-            return -1;
-        }
+
+        $params = [$sup_id, $mail->getMessageBody(), $mail->getRawContent()];
+        DB_Helper::getInstance()->query($stmt, $params);
 
         if ($issue_id) {
             $prj_id = Issue::getProjectID($issue_id);
@@ -1351,13 +1357,13 @@ class Support
      *
      * @param   int $usr_id The user ID of the person performing this change
      * @param   int $issue_id The issue ID
-     * @param   array $items The list of email IDs to associate
+     * @param   array $sup_ids The list of email IDs to associate
      * @param   bool $authorize If the senders should be added the authorized repliers list
      * @return  int 1 if it worked, -1 otherwise
      */
-    public static function associate($usr_id, $issue_id, $items, $authorize = false)
+    public static function associate($usr_id, $issue_id, $sup_ids, $authorize = false)
     {
-        $res = self::associateEmail($usr_id, $issue_id, $items);
+        $res = self::associateEmail($usr_id, $issue_id, $sup_ids);
         if ($res != 1) {
             return -1;
         }
@@ -1370,10 +1376,11 @@ class Support
                     {{%support_email_body}}
                  WHERE
                     sup_id=seb_sup_id AND
-                    sup_id IN (' . DB_Helper::buildList($items) . ')';
+                    sup_id IN (' . DB_Helper::buildList($sup_ids) . ')';
 
-        $res = DB_Helper::getInstance()->getAll($stmt, $items);
+        $res = DB_Helper::getInstance()->getAll($stmt, $sup_ids);
 
+        $prj_id = Issue::getProjectID($issue_id);
         foreach ($res as $row) {
             // since downloading email should make the emails 'public',
             // send 'false' below as the 'internal_only' flag
@@ -1383,22 +1390,21 @@ class Support
                 $has_attachments = 0;
             }
 
-            $structure = Mime_Helper::decode($row['seb_full_email'], true, false);
+            $mail = MailMessage::createFromString($row['seb_full_email']);
             $t = [
                 'issue_id' => $issue_id,
-                'message_id' => @$structure->headers['message-id'],
-                'from' => @$structure->headers['from'],
-                'to' => @$structure->headers['to'],
-                'cc' => @$structure->headers['cc'],
-                'subject' => @$structure->headers['subject'],
-                'body' => Mime_Helper::getMessageBody($structure),
+                'message_id' => $mail->messageId,
+                'from' => $mail->from,
+                'to' => $mail->to,
+                'cc' => $mail->cc,
+                'subject' => $mail->subject,
+                'body' => $mail->getMessageBody(),
                 'full_email' => $row['seb_full_email'],
-                'has_attachment' => $has_attachments,
+                'has_attachment' => $mail->hasAttachments(),
                 // the following items are not inserted, but useful in some methods
-                'headers' => @$structure->headers,
+                'headers' => $mail->getHeadersArray(),
             ];
 
-            $prj_id = Issue::getProjectID($t['issue_id']);
             if (Workflow::shouldAutoAddToNotificationList($prj_id)) {
                 self::addExtraRecipientsToNotificationList($prj_id, $t, false);
             }
@@ -1433,14 +1439,14 @@ class Support
                  WHERE
                     sup_id=seb_sup_id AND
                     sup_id=?';
-        try {
-            $res = DB_Helper::getInstance()->getRow($stmt, [$sup_id]);
-        } catch (DatabaseException $e) {
-            return '';
+
+        $res = DB_Helper::getInstance()->getRow($stmt, [$sup_id]);
+        if (!$res) {
+            throw new InvalidArgumentException("Could not fetch email: $sup_id");
         }
 
         $res['message'] = $res['seb_body'];
-        $res['attachments'] = Mime_Helper::getAttachmentCIDs($res['seb_full_email']);
+        $res['attachments'] = MailMessage::createFromString($res['seb_full_email'])->getAttachments();
         $res['timestamp'] = Date_Helper::getUnixTimestamp($res['sup_date'], 'GMT');
         // TRANSLATORS: %1 = email subject
         $res['reply_subject'] = Mail_Helper::removeExcessRe(ev_gettext('Re: %1$s', $res['sup_subject']), true);
@@ -1818,7 +1824,7 @@ class Support
      * @param   int $sender_usr_id the ID of the user sending this message
      * @param   array $iaf_ids an array with attachment information
      */
-    public static function sendDirectEmail($issue_id, $from, $to, $cc, $subject, $body, $iaf_ids, $message_id, $sender_usr_id = false)
+    public static function sendDirectEmail($issue_id, $from, $to, $cc, $subject, $body, $iaf_ids, $message_id, $sender_usr_id = null)
     {
         $prj_id = Issue::getProjectID($issue_id);
         $subject = Mail_Helper::formatSubject($issue_id, $subject);
@@ -2330,6 +2336,9 @@ class Support
         $should_create_array = self::createIssueFromEmail(
             $info, $headers, $email['seb_body'], $email['timestamp'],
             $email['sup_from'], $email['sup_subject'], $email['sup_to'], $email['sup_cc']);
+
+        // handle auto creating issues (if needed)
+        $should_create_array = self::createIssueFromEmail($info, $mail);
         $issue_id = $should_create_array['issue_id'];
         $customer_id = $should_create_array['customer_id'];
 
@@ -2379,31 +2388,11 @@ class Support
     }
 
     /**
-     * Deletes the specified message from the server
-     * NOTE: YOU STILL MUST call imap_expunge($mbox) to permanently delete the message.
-     *
-     * @param   array $info An array of email account information
-     * @param   resource $mbox The mailbox object
-     * @param   int $num the number of the message to delete
-     */
-    public static function deleteMessage($info, $mbox, $num)
-    {
-        // need to delete the message from the server?
-        if (!$info['ema_leave_copy']) {
-            @imap_delete($mbox, $num);
-        } else {
-            // mark the message as already read
-            @imap_setflag_full($mbox, $num, '\\Seen');
-        }
-    }
-
-    /**
      * Check if this email needs to be blocked and if so, block it.
      *
      * @param MailMessage $mail The Mail object
      * @param array $params
      * @return bool
-     * @status PORTED
      */
     public static function blockEmailIfNeeded(MailMessage $mail, $params)
     {
@@ -2437,7 +2426,8 @@ class Support
             ];
 
             $body = Mail_Helper::getCannedBlockedMsgExplanation() . $mail->getContent();
-            $res = Note::insertNote(Auth::getUserID(), $issue_id, $mail->subject, $body, $options);
+            $usr_id = Auth::getUserID();
+            $res = Note::insertNote($usr_id, $issue_id, $mail->subject, $body, $options);
 
             // associate the email attachments as internal-only files on this issue
             if ($res != -1) {
@@ -2464,11 +2454,7 @@ class Support
             Workflow::handleBlockedEmail($prj_id, $issue_id, $email_details, $email_type);
 
             // try to get usr_id of sender, if not, use system account
-            $usr_id = User::getUserIDByEmail($sender_email, true);
-            if (!$usr_id) {
-                $usr_id = APP_SYSTEM_USER_ID;
-            }
-
+            $usr_id = User::getUserIDByEmail($sender_email, true) ?: APP_SYSTEM_USER_ID;
             History::add($issue_id, $usr_id, 'email_blocked', "Email from '{from}' blocked", [
                 'from' => $sender_email,
             ]);

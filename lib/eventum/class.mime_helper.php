@@ -41,7 +41,7 @@ class Mime_Helper
      * @return  string The message body
      * @see     self::decode()
      */
-    public static function getMessageBody(&$output)
+    private static function getMessageBody(&$output)
     {
         $parts = [];
         self::parse_output($output, $parts);
@@ -72,14 +72,6 @@ class Mime_Helper
         }
 
         return $str;
-    }
-
-    /**
-     * @deprecated  use decodeQuotedPrintable
-     */
-    public static function fixEncoding($input)
-    {
-        return self::decodeQuotedPrintable($input);
     }
 
     /**
@@ -135,7 +127,7 @@ class Mime_Helper
      * Method used to properly encode an email address.
      *
      * @param   string $address The full email address
-     * @return  string The properly encoded email address
+     * @return  string The properly encoded email address: =?UTF-8?Q?Elan_Ruusam=C3=A4e?= <glen@example.com>
      */
     public static function encodeAddress($address)
     {
@@ -228,22 +220,6 @@ class Mime_Helper
     }
 
     /**
-     * Returns if a specified string contains a quoted printable address.
-     * TODO: make it support any parameter not just email address
-     *
-     * @param   string $address The email address
-     * @return  bool if the address is quoted printable encoded
-     */
-    public static function isQuotedPrintable($address)
-    {
-        if (preg_match("/=\?.+\?Q\?.+\?= <.+>/i", $address)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Determine if a string contains 8-bit characters.
      *
      * @param string $string  the string to check
@@ -258,23 +234,13 @@ class Mime_Helper
         return false;
     }
 
-    public static function encodeHeaders($headers)
-    {
-        // encodes emails headers
-        foreach ($headers as $name => $value) {
-            $headers[$name] = self::encode($value);
-        }
-
-        return $headers;
-    }
-
     /**
      * Encode a string containing non-ASCII characters according to RFC 2047.
      *
      * @param string $text     the text to encode
      * @param string $charset  (optional) The character set of the text
      * @return string  the text, encoded only if it contains non-ASCII
-     *                 characters
+     *                 characters. Example: =?utf-8?b?WmXDpMOkbmQ=?=
      */
     public static function encode($text, $charset = APP_CHARSET)
     {
@@ -570,6 +536,7 @@ class Mime_Helper
      * @param   string $message The full body of the message
      * @param   bool $include_bodies Whether to include the bodies in the return value or not
      * @return  mixed The decoded content of the message
+     * @deprecated
      */
     public static function decode(&$message, $include_bodies = false, $decode_bodies = true)
     {
@@ -628,7 +595,7 @@ class Mime_Helper
      * @param   object $obj The decoded object structure of the MIME message
      * @param   array $parts The parsed parts of the MIME message
      */
-    public static function parse_output($obj, &$parts)
+    private static function parse_output($obj, &$parts)
     {
         if (!empty($obj->parts)) {
             foreach ($obj->parts as &$part) {

@@ -17,6 +17,9 @@ use Eventum\Mail\MailMessage;
 use Eventum\Test\TestCase;
 use Mail_Helper;
 
+/**
+ * @group mail
+ */
 class ForwardedRoutingTest extends TestCase
 {
     /**
@@ -26,12 +29,10 @@ class ForwardedRoutingTest extends TestCase
      */
     public function testForwardedMailRouting()
     {
-        $full_message = file_get_contents(__DIR__ . '/data/thunderbird-forwarded.txt');
-        $message = MailMessage::createFromString($full_message);
+        $full_message = $this->readDataFile('thunderbird-forwarded.txt');
+        $mail = MailMessage::createFromString($full_message);
 
-        $headers = $message->getHeaders();
-
-        $references = Mail_Helper::getAllReferences($headers->toString());
+        $references = $mail->getAllReferences();
         $this->assertEmpty($references);
     }
 }

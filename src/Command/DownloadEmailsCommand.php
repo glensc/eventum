@@ -93,7 +93,7 @@ class DownloadEmailsCommand extends Command
             if (is_array($emails)) {
                 foreach ($emails as $i) {
                     $mail = ImapMessage::createFromImap($mbox, $i, $account);
-                    Support::getEmailInfo($mail, $account);
+                    Support::processMailMessage($mail, $account);
                 }
             }
         } else {
@@ -102,7 +102,7 @@ class DownloadEmailsCommand extends Command
             if ($total_emails > 0) {
                 for ($i = 1; $i <= $total_emails; $i++) {
                     $mail = ImapMessage::createFromImap($mbox, $i, $account);
-                    Support::getEmailInfo($mail, $account);
+                    Support::processMailMessage($mail, $account);
                 }
             }
         }

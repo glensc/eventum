@@ -15,6 +15,7 @@ use Eventum\Db\DatabaseException;
 use Eventum\Event\WorkflowEvents;
 use Eventum\EventDispatcher\EventManager;
 use Eventum\Extension\ExtensionLoader;
+use Eventum\Mail\ImapMessage;
 use Eventum\Mail\MailMessage;
 use Eventum\Model\Entity;
 
@@ -580,15 +581,29 @@ class Workflow
      * @param   ImapMessage $mail The Mail Message object
      * @return  mixed null by default, -1 if the rest of the email script should not be processed
      */
-    public static function preEmailDownload($prj_id, $mail)
+    public static function preEmailDownload($prj_id, &$mail)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return null;
         }
         $backend = self::_getBackend($prj_id);
 
-        // NOTE: these no longer exist, just pass as null them
-        return $backend->preEmailDownload($prj_id, $mail);
+        $full_message = $mail->getRawContent();
+        $structure = Mime_Helper::decode($full_message, true, true);
+
+        $email = clone $mail->imapheaders;
+        $res = $backend->preEmailDownload($prj_id, $mail->info, $mail->mbox, $mail->num, $full_message, $email, $structure);
+
+        // if $full_message was modified by workflow call, load it back
+        if ($full_message != $mail->getRawContent()) {
+            $mail = ImapMessage::createFromString($full_message);
+        }
+        if ($email != $mail->imapheaders) {
+            // TODO
+            throw new BadMethodCallException('workflow modified $email, not ported');
+        }
+
+        return $res;
     }
 
     /**
@@ -643,11 +658,13 @@ class Workflow
         }
         $backend = self::_getBackend($prj_id);
 
-        $headers = $mail->getHeaders()->toArray();
+        $headers = $mail->getHeadersArray();
         $message_body = $mail->getContent();
-        $date = Date_Helper::convertDateGMT($mail->getMailDate());
+        // the $date used to be Received Date, but for simplicity just use Date header
+        $date = Date_Helper::convertDateGMT($mail->date);
         $from = $mail->getSender();
         $subject = $mail->subject;
+        /** @see MailStorageTest::testImapHeaderStructure */
         $to = implode(',', (array)$mail->getAddresses('To'));
         $cc = implode(',', (array)$mail->getAddresses('Cc'));
 

@@ -14,24 +14,27 @@
 namespace Eventum\Mail;
 
 use DomainException;
+use Eventum\Mail\Helper\DecodePart;
 use Eventum\Mail\Helper\MimePart;
 use Eventum\Mail\Helper\SanitizeHeaders;
 use InvalidArgumentException;
-use LogicException;
 use Mime_Helper;
 use Zend\Mail;
 use Zend\Mail\Address;
 use Zend\Mail\AddressList;
 use Zend\Mail\Header\AbstractAddressList;
-use Zend\Mail\Header\ContentTransferEncoding;
+use Zend\Mail\Header\Cc;
 use Zend\Mail\Header\ContentType;
+use Zend\Mail\Header\From;
 use Zend\Mail\Header\GenericHeader;
 use Zend\Mail\Header\HeaderInterface;
 use Zend\Mail\Header\MessageId;
+use Zend\Mail\Header\MimeVersion;
 use Zend\Mail\Header\MultipleHeadersInterface;
 use Zend\Mail\Header\Subject;
+use Zend\Mail\Header\To;
 use Zend\Mail\Headers;
-use Zend\Mail\Storage as ZendMailStorage;
+use Zend\Mail\Storage;
 use Zend\Mail\Storage\Message;
 use Zend\Mime;
 
@@ -42,15 +45,11 @@ use Zend\Mime;
  * @property-read string $from a From header value
  * @property-read string $to a To header value
  * @property-read string $cc a Cc header value
+ * @property-read string $date a Date header value
  * @property-read string $subject a Subject header value
  */
 class MailMessage extends Message
 {
-    /**
-     * Namespace for Header classes
-     */
-    const HEADER_NS = '\\Zend\\Mail\\Header\\';
-
     /**
      * Public constructor
      *
@@ -259,32 +258,11 @@ class MailMessage extends Message
                 ?: $attachment->getHeaderField('Content-Disposition', 'filename')
                     ?: ev_gettext('Untitled.%s', end(explode('/', $ct->getType())));
 
-            // get body.
-            // have to decode ourselves or use something like Mime\Message::createFromMessage
-            $body = $attachment->getContent();
-            /** @var ContentTransferEncoding $cte */
-            $cte = $headers->get('Content-Transfer-Encoding');
-            switch ($cte->getTransferEncoding()) {
-                case 'quoted-printable':
-                    $body = quoted_printable_decode($body);
-                    break;
-                case 'base64':
-                    $body = base64_decode($body);
-                    break;
-                case '7bit':
-                case '8bit':
-                case 'binary':
-                    // these need no transformation
-                    break;
-                default:
-                    throw new LogicException("Unsupported Content-Transfer-Encoding: '{$cte->getTransferEncoding()}'");
-            }
-
             $attachments[] = [
                 'filename' => $filename,
                 'cid' => $headers->get('Content-Id')->getFieldValue(),
                 'filetype' => $ct->getType(),
-                'blob' => $body,
+                'blob' => (new DecodePart($attachment))->decode(),
             ];
         }
 
@@ -368,7 +346,8 @@ class MailMessage extends Message
             return $str;
         }
 
-        return null;
+        // fallback to read just main part
+        return (new DecodePart($this))->decode();
     }
 
     public function addMimePart($content, $type = Mime\Mime::TYPE_TEXT, $charset = APP_CHARSET)
@@ -418,6 +397,11 @@ class MailMessage extends Message
     public function getAllReferences()
     {
         $references = [];
+
+        // if X-Forwarded-Message-Id is present, assume this is forwarded email and this root email
+        if ($this->headers->has('X-Forwarded-Message-Id')) {
+            return $references;
+        }
 
         if ($this->headers->has('In-Reply-To')) {
             $references[] = $this->headers->get('In-Reply-To')->getFieldValue();
@@ -540,7 +524,7 @@ class MailMessage extends Message
      */
     public function getFrom()
     {
-        $addresslist = $this->getAddressListFromHeader('from', '\Zend\Mail\Header\From');
+        $addresslist = $this->getAddressListFromHeader('from', From::class);
 
         // obtain first address from addresses list
         $addresses = current($addresslist);
@@ -557,7 +541,7 @@ class MailMessage extends Message
      */
     public function getTo()
     {
-        return $this->getAddressListFromHeader('to', '\Zend\Mail\Header\To');
+        return $this->getAddressListFromHeader('to', To::class);
     }
 
     /**
@@ -568,7 +552,7 @@ class MailMessage extends Message
      */
     public function getCc()
     {
-        return $this->getAddressListFromHeader('cc', '\Zend\Mail\Header\Cc');
+        return $this->getAddressListFromHeader('cc', Cc::class);
     }
 
     /**
@@ -692,9 +676,9 @@ class MailMessage extends Message
      */
     public function isSeen()
     {
-        return $this->hasFlag(ZendMailStorage::FLAG_SEEN)
-        || $this->hasFlag(ZendMailStorage::FLAG_DELETED)
-        || $this->hasFlag(ZendMailStorage::FLAG_ANSWERED);
+        return $this->hasFlag(Storage::FLAG_SEEN)
+        || $this->hasFlag(Storage::FLAG_DELETED)
+        || $this->hasFlag(Storage::FLAG_ANSWERED);
     }
 
     /**
@@ -737,8 +721,6 @@ class MailMessage extends Message
      * not being delivered correctly.
      *
      * FIXME: think of better method name
-     *
-     * @see Mail_Helper::stripHeaders
      */
     public function stripHeaders()
     {
@@ -751,7 +733,7 @@ class MailMessage extends Message
             'bcc',
             'return-path',
             'received',
-            'Disposition-Notification-To',
+            'disposition-notification-to',
         ];
         foreach ($ignore_headers as $name) {
             if ($headers->has($name)) {
@@ -785,17 +767,19 @@ class MailMessage extends Message
             $message = new Mail\Message();
             $message->setBody($content);
 
-            // this is copied from Zend\Mail\Message::setBody
+            /**
+             * this is copied from @see \Zend\Mail\Message::setBody
+             */
 
             // Get headers, and set Mime-Version header
             $headers = $this->getHeaders();
-            $this->getHeaderByName('mime-version', self::HEADER_NS . 'MimeVersion');
+            $this->getHeaderByName('mime-version', MimeVersion::class);
 
             // Multipart content headers
             if ($content->isMultiPart()) {
                 $mime = $content->getMime();
                 /** @var ContentType $header */
-                $header = $this->getHeaderByName('content-type', self::HEADER_NS . 'ContentType');
+                $header = $this->getHeaderByName('content-type', ContentType::class);
                 $header->setType('multipart/mixed');
                 $header->addParameter('boundary', $mime->boundary());
             } else {
@@ -857,13 +841,8 @@ class MailMessage extends Message
      * @return HeaderInterface|\ArrayIterator header instance or collection of headers
      * @see \Zend\Mail\Message::getHeaderByName
      */
-    public function getHeaderByName($headerName, $headerClass = 'GenericHeader')
+    public function getHeaderByName($headerName, $headerClass = GenericHeader::class)
     {
-        // add namespace if called without namespace
-        if ($headerClass[0] != '\\') {
-            $headerClass = self::HEADER_NS . $headerClass;
-        }
-
         $headers = $this->headers;
         if ($headers->has($headerName)) {
             $header = $headers->get($headerName);

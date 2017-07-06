@@ -419,9 +419,8 @@ class Notification
             $fixed_body = Mail_Helper::addWarningMessage($issue_id, $to, $body, $headers);
             $headers['To'] = Mime_Helper::encodeAddress($to);
 
-            // add the warning message about replies being blocked or not
-            Mail_Helper::addWarningMessage($issue_id, $to, $clone);
-            Mail_Queue::addMail($clone, $to, $options);
+            $mail = MailMessage::createFromHeaderBody($headers, $fixed_body);
+            Mail_Queue::addMail($mail, $to, $options);
         }
     }
 
