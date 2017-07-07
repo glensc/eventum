@@ -1834,7 +1834,7 @@ class Issue
         $summary = $mail->subject;
         $description = $mail->getMessageBody();
         $msg_id = $mail->messageId;
-        $date = Date_Helper::getRFC822Date($mail->date);
+        $date = isset($options['date']) ? $options['date'] : Date_Helper::getRFC822Date($mail->date);
 
         $exclude_list = [];
         $managers = [];
