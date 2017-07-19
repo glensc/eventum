@@ -14,9 +14,12 @@
 use Eventum\Db\DatabaseException;
 use Eventum\Mail\Exception\RoutingException;
 use Eventum\Mail\Helper\AddressHeader;
+use Eventum\Mail\Helper\MimePart;
 use Eventum\Mail\ImapMessage;
 use Eventum\Mail\MailMessage;
 use Eventum\Monolog\Logger;
+use Zend\Mail\AddressList;
+use Zend\Mime;
 
 /**
  * Class to handle the business logic related to the email feature of
@@ -1766,7 +1769,19 @@ class Support
      */
     public static function buildMail($issue_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids = null)
     {
-        $message_id = Mail_Helper::generateMessageID();
+        $mime = new Mime\Message();
+        $mime->addPart(MimePart::createTextPart($body));
+
+        $m = MailMessage::createNew()
+            ->setContent($mime)
+            ->setSubject($subject)
+            ->setFrom($from)
+            ->setDate();
+
+        if ($to) {
+            $m->setTo($to);
+        }
+
         // hack needed to get the full headers of this web-based email
         $mail = new Mail_Helper();
         $mail->setTextBody($body);
@@ -1781,17 +1796,18 @@ class Support
         );
 
         if (!empty($issue_id)) {
-            $mail->setHeaders(['Message-Id' => $message_id]);
+            $mail->setHeaders(['Message-Id' => Mail_Helper::generateMessageID()]);
         } else {
             $issue_id = 0;
         }
 
         // if there is no existing in-reply-to header, get the root message for the issue
-        if (($in_reply_to == false) && (!empty($issue_id))) {
+        if (!$in_reply_to && $issue_id) {
             $in_reply_to = Issue::getRootMessageID($issue_id);
         }
 
         if ($in_reply_to) {
+            $m->setInReplyTo($in_reply_to);
             $mail->setHeaders(['In-Reply-To' => $in_reply_to]);
         }
 
@@ -1799,13 +1815,20 @@ class Support
             foreach ($iaf_ids as $iaf_id) {
                 $attachment = Attachment::getDetails($iaf_id);
                 $mail->addAttachment($attachment['iaf_filename'], $attachment['iaf_file'], $attachment['iaf_filetype']);
+
+                $part = $m->addMimePart($attachment['iaf_file'], $attachment['iaf_filetype']);
+                $part->setFileName($attachment['iaf_filename']);
             }
         }
 
         $cc = trim($cc);
         if (!empty($cc)) {
+            // FIXME: this ; to , is spooky
             $cc = str_replace(',', ';', $cc);
             $ccs = explode(';', $cc);
+            $al = new AddressList();
+            $al->addMany($ccs);
+            $m->setAddressListHeader('Cc', $al);
             foreach ($ccs as $address) {
                 if (!empty($address)) {
                     $mail->addCc($address);
@@ -1813,7 +1836,9 @@ class Support
             }
         }
 
-        return MailMessage::createFromString($mail->getFullHeaders($from, $to, $subject));
+        $m2 = MailMessage::createFromString($mail->getFullHeaders($from, $to, $subject));
+//        return $m2;//
+        return $m;
     }
 
     /**
