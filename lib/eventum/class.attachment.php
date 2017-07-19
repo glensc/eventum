@@ -19,6 +19,9 @@ use Eventum\Db\DatabaseException;
  */
 class Attachment
 {
+    const STATUS_INTERNAL = 'internal';
+    const STATUS_PUBLIC = 'public';
+
     /**
      * files uploaded, but not linked to attachment are expired after this time passes
      * use 24h, this is very safe value
@@ -144,7 +147,7 @@ class Attachment
      * Method used to return the details for a given attachment.
      *
      * @param   int $file_id The attachment ID
-     * @return  array The details of the attachment
+     * @return array|null The details of the attachment
      */
     public static function getDetails($file_id)
     {
@@ -156,16 +159,17 @@ class Attachment
                  WHERE
                     iat_id=iaf_iat_id AND
                     iaf_id=?';
-        try {
-            $res = DB_Helper::getInstance()->getRow($stmt, [$file_id]);
-        } catch (DatabaseException $e) {
-            return '';
-        }
 
-        // don't allow customers to reach internal only files
-        $user_role_id = User::getRoleByUser(Auth::getUserID(), Issue::getProjectID($res['iat_iss_id']));
-        if (($res['iat_status'] == 'internal') && $user_role_id <= User::ROLE_CUSTOMER) {
-            return '';
+        $res = DB_Helper::getInstance()->getRow($stmt, [$file_id]);
+
+        if ($res['iat_status'] == self::STATUS_INTERNAL) {
+            // don't allow customers to reach internal only files
+            $usr_id = Auth::getUserID();
+            $prj_id = Issue::getProjectID($res['iat_iss_id']);
+            $user_role_id = User::getRoleByUser($usr_id, $prj_id);
+            if ($user_role_id <= User::ROLE_CUSTOMER) {
+                return null;
+            }
         }
 
         return $res;
