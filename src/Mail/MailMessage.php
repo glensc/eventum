@@ -13,6 +13,7 @@
 
 namespace Eventum\Mail;
 
+use DateTime;
 use DomainException;
 use Eventum\Mail\Helper\DecodePart;
 use Eventum\Mail\Helper\MimePart;
@@ -50,6 +51,9 @@ use Zend\Mime;
  */
 class MailMessage extends Message
 {
+    /** @var Attachment */
+    private $attachment;
+
     /**
      * Public constructor
      *
@@ -193,80 +197,40 @@ class MailMessage extends Message
     }
 
     /**
+     * Return Attachment object related to current Mail Message
+     *
+     * @return Attachment
+     */
+    public function getAttachment()
+    {
+        if (!$this->attachment) {
+            $this->attachment = new Attachment($this);
+        }
+
+        return $this->attachment;
+    }
+
+    /**
      * Return true if mail has attachments,
      * inline text messages are not accounted as attachments.
      *
      * @return  bool
+     * @deprecated
      */
     public function hasAttachments()
     {
-        $have_multipart = $this->isMultipart() && $this->countParts() > 0;
-        if (!$have_multipart) {
-            return false;
-        }
-
-        $has_attachments = 0;
-
-        // check what really the attachments are
-        foreach ($this as $part) {
-            $is_attachment = 0;
-            $disposition = $filename = null;
-
-            $ctype = $part->getHeaderField('Content-Type');
-            if ($part->getHeaders()->has('Content-Disposition')) {
-                $disposition = $part->getHeaderField('Content-Disposition');
-                $filename = $part->getHeaderField('Content-Disposition', 'filename');
-                $is_attachment = $disposition == 'attachment' || $filename;
-            }
-
-            if (in_array($ctype, ['text/plain', 'text/html', 'text/enriched'])) {
-                $has_attachments |= $is_attachment;
-            } else {
-                // avoid treating forwarded messages as attachments
-                $is_attachment |= ($disposition == 'inline' && $ctype != 'message/rfc822');
-                // handle inline images
-                $type = current(explode('/', $ctype));
-                $is_attachment |= $type == 'image';
-
-                $has_attachments |= $is_attachment;
-            }
-        }
-
-        return (bool)$has_attachments;
+        return $this->getAttachment()->hasAttachments();
     }
 
     /**
      * Get attachments with 'filename', 'cid', 'filetype', 'blob' array elements
      *
      * @return array
+     * @deprecated
      */
     public function getAttachments()
     {
-        $attachments = [];
-
-        /** @var MailMessage $attachment */
-        foreach ($this as $attachment) {
-            $headers = $attachment->headers;
-
-            $ct = $headers->get('Content-Type');
-            // attempt to extract filename
-            // 1. try Content-Type: name parameter
-            // 2. try Content-Disposition: filename parameter
-            // 3. as last resort use Untitled with extension from mime-type subpart
-            /** @var ContentType $ct */
-            $filename = $ct->getParameter('name')
-                ?: $attachment->getHeaderField('Content-Disposition', 'filename')
-                    ?: ev_gettext('Untitled.%s', end(explode('/', $ct->getType())));
-
-            $attachments[] = [
-                'filename' => $filename,
-                'cid' => $headers->get('Content-Id')->getFieldValue(),
-                'filetype' => $ct->getType(),
-                'blob' => (new DecodePart($attachment))->decode(),
-            ];
-        }
-
-        return $attachments;
+        return $this->getAttachment()->getAttachments();
     }
 
     /**
@@ -279,9 +243,11 @@ class MailMessage extends Message
     {
         $parts = [];
         foreach ($this as $part) {
+            $headers = $part->getHeaders();
             $ctype = $part->getHeaderField('Content-Type');
-            $disposition = $part->getHeaderField('Content-Disposition');
-            $filename = $part->getHeaderField('Content-Disposition', 'filename');
+            $hasDisposition = $headers->has('Content-Disposition');
+            $disposition = $hasDisposition ? $part->getHeaderField('Content-Disposition') : null;
+            $filename = $hasDisposition ? $part->getHeaderField('Content-Disposition', 'filename') : null;
             $is_attachment = $disposition == 'attachment' || $filename;
 
             $charset = $part->getHeaderField('Content-Type', 'charset');
@@ -556,6 +522,16 @@ class MailMessage extends Message
     }
 
     /**
+     * Get Date as DateTime object
+     *
+     * @return DateTime
+     */
+    public function getDate()
+    {
+        return new DateTime($this->date);
+    }
+
+    /**
      * Get the message Subject header object
      *
      * @return Subject
@@ -677,8 +653,8 @@ class MailMessage extends Message
     public function isSeen()
     {
         return $this->hasFlag(Storage::FLAG_SEEN)
-        || $this->hasFlag(Storage::FLAG_DELETED)
-        || $this->hasFlag(Storage::FLAG_ANSWERED);
+            || $this->hasFlag(Storage::FLAG_DELETED)
+            || $this->hasFlag(Storage::FLAG_ANSWERED);
     }
 
     /**

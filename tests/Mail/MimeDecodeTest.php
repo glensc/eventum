@@ -13,6 +13,7 @@
 
 namespace Eventum\Test\Mail;
 
+use Date_Helper;
 use Eventum\Mail\MailMessage;
 use Eventum\Test\TestCase;
 use Mail_Helper;
@@ -48,6 +49,49 @@ class MimeDecodeTest extends TestCase
 
         $this->assertEquals('PD: My: Gołblahblah', $input->headers['subject']);
         $this->assertEquals('PD: My: Gołblahblah', $mail->subject);
+    }
+
+    public function testSupportBuildMail()
+    {
+        $issue_id = null;
+        $from = 'rööts <me@localhost>';
+        $reason = 'reason';
+        $subject = 'Issue closed comments';
+        $cc = '';
+        $to = '';
+        $mail = Support::buildMail(
+            $issue_id, $from,
+            $to, $cc, $subject, $reason, ''
+        );
+
+        $this->assertEquals($reason, $mail->getContent());
+        $this->assertEquals($reason, $mail->getMessageBody());
+        $this->assertEquals($from, $mail->from);
+        $this->assertEquals('', $mail->to);
+        $this->assertEquals('', $mail->cc);
+        $this->assertEquals($subject, $mail->subject);
+
+        // date header is in rfc822 format: 'Thu, 06 Jul 2017 16:43:46 GMT'
+        // for sql insert we need iso8601 format: '2017-07-06 16:43:46'
+        $date = Date_Helper::convertDateGMT($mail->getDate());
+        $this->assertEquals(Date_Helper::getCurrentDateGMT(), $date);
+    }
+
+    /**
+     * Test that $mail->getAttachments can be called if no attachments present
+     *
+     * @see Support::getEmailDetails()
+     */
+    public function testGetAttachments()
+    {
+        $content = $this->readDataFile('attachment-bug.txt');
+        $mail = MailMessage::createFromString($content);
+        $attachment = $mail->getAttachment();
+        $this->assertTrue($attachment->hasAttachments());
+        $attachments = $attachment->getAttachments();
+        $this->assertContains('i cannot get any cursed header', $attachments[0]['blob']);
+        $content = $mail->getMessageBody();
+        $this->assertContains('i cannot get any cursed header', $content);
     }
 
     public function testAddWarningMessage()
@@ -100,16 +144,15 @@ class MimeDecodeTest extends TestCase
     public function testBuildMail()
     {
         $issue_id = null;
-        $message_id = 2;
         $from = 'root@localhost';
         $to = '';
         $cc = '';
         $subject = 'söme messidž';
-        $body = 'bödi tekst';
+        $body = "Hello, bödi tekst\n\nBye\n";
         $in_reply_to = '';
         $iaf_ids = [];
 
-        $mail = Support::buildMail($issue_id, $message_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids);
+        $mail = Support::buildMail($issue_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids);
         $structure = Mime_Helper::decode($mail->getRawContent(), true, true);
 
         $this->assertEquals($body, $structure->body);

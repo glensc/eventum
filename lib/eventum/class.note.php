@@ -93,7 +93,7 @@ class Note
         }
         if ($res['not_has_attachment']) {
             $mail = MailMessage::createFromString($res['not_full_message']);
-            $res['attachments'] = $mail->getAttachments();
+            $res['attachments'] = $mail->getAttachment()->getAttachments();
         }
 
         return $res;
@@ -529,8 +529,9 @@ class Note
             $email_options = [
                 'issue_id' => $issue_id,
                 'ema_id' => $email_account_id,
+                'date' => Date_Helper::convertDateGMT($mail->getDate()),
+                // these below are likely unused by Support::insertEmail
                 'message_id' => $mail->messageId,
-                'date' => Date_Helper::getCurrentDateGMT(),
                 'from' => $mail->from,
                 'to' => $mail->to,
                 'cc' => $mail->cc,
@@ -565,14 +566,16 @@ class Note
                 $update_type = 'customer action';
             }
 
-            $res = Support::insertEmail($email_options, $mail, $sup_id);
-            if ($res != -1) {
+            $sup_id = Support::insertEmail($mail, $email_options);
+            if ($sup_id) {
                 Support::extractAttachments($issue_id, $mail);
                 // notifications about new emails are always external
                 // special case when emails are bounced back, so we don't want to notify the customer about those
                 $email_options['internal_only'] = $mail->isBounceMessage();
                 $email_options['sup_id'] = $sup_id;
-                Notification::notifyNewEmail($usr_id, $issue_id, $mail, $email_options);
+                $email_options['usr_id'] = $usr_id;
+                $email_options['issue_id'] = $issue_id;
+                Notification::notifyNewEmail($mail, $email_options);
                 Issue::markAsUpdated($issue_id, $update_type);
                 self::remove($note_id, false);
                 History::add($issue_id, $usr_id, 'note_converted_email', 'Note converted to e-mail (from: {from}) by {user}', [
@@ -585,7 +588,7 @@ class Note
                 }
             }
 
-            return $res;
+            return $sup_id ? 1 : -1;
         }
 
         // save message as a draft

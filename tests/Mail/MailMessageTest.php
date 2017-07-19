@@ -17,6 +17,7 @@ use Date_Helper;
 use Eventum\Mail\MailMessage;
 use Eventum\Test\TestCase;
 use Mail_Helper;
+use Mail_mimeDecode;
 use Mail_Queue;
 use Mime_Helper;
 use PHPUnit_Framework_Error_Notice;
@@ -172,18 +173,18 @@ class MailMessageTest extends TestCase
         $multipart = $message->isMultipart();
         $this->assertFalse($multipart);
         $this->assertEquals(0, $has_attachments);
-        $this->assertFalse($message->hasAttachments());
+        $this->assertFalse($message->getAttachment()->hasAttachments());
 
         $message = MailMessage::createFromFile(__DIR__ . '/../data/bug684922.txt');
         $multipart = $message->isMultipart();
         $this->assertTrue($multipart);
         $has_attachments = $message->countParts();
         $this->assertEquals(2, $has_attachments);
-        $this->assertTrue($message->hasAttachments());
+        $this->assertTrue($message->getAttachment()->hasAttachments());
 
         // this one does not have "Attachments" even it is multipart
         $message = MailMessage::createFromFile(__DIR__ . '/../data/multipart-text-html.txt');
-        $this->assertFalse($message->hasAttachments());
+        $this->assertFalse($message->getAttachment()->hasAttachments());
     }
 
     /**
@@ -196,7 +197,7 @@ class MailMessageTest extends TestCase
     {
         $content = $this->readDataFile('attachment-bug.txt');
         $message = MailMessage::createFromString($content);
-        $this->assertTrue($message->hasAttachments());
+        $this->assertTrue($message->getAttachment()->hasAttachments());
     }
 
     public function testGetAttachments()
@@ -204,8 +205,9 @@ class MailMessageTest extends TestCase
         $raw = $this->readDataFile('bug684922.txt');
 
         $mail = MailMessage::createFromString($raw);
-        $this->assertTrue($mail->hasAttachments());
-        $att2 = $mail->getAttachments();
+        $attachment = $mail->getAttachment();
+        $this->assertTrue($attachment->hasAttachments());
+        $att2 = $attachment->getAttachments();
 
         $this->assertCount(2, $att2);
         $att = $att2[0];
@@ -810,5 +812,30 @@ class MailMessageTest extends TestCase
             " root@example.org,\r\n" .
             ' Root =?utf-8?b?TcOkZQ==?= <root2@example.org>';
         $this->assertEquals($exp, $m->to);
+    }
+
+    /**
+     * Multipart/related contains attachment.
+     * Current implementation sees 2 attachments, should see 3.
+     */
+    public function testMultipartRelatedAttachments()
+    {
+        $content = $this->readDataFile('102232.txt');
+
+        $decode = new Mail_mimeDecode($content);
+        $params = [
+            'crlf' => "\r\n",
+            'include_bodies' => true,
+            'decode_headers' => false,
+            'decode_bodies' => true,
+        ];
+        $email = $decode->decode($params);
+
+        $mail = MailMessage::createFromString($content);
+        $attachment = $mail->getAttachment();
+
+        $this->assertTrue($attachment->hasAttachments());
+        $attachments = $attachment->getAttachments();
+        $this->assertCount(3, $attachments);
     }
 }

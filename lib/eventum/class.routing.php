@@ -172,15 +172,15 @@ class Routing
         $email_options = [
             'issue_id' => $issue_id,
             'ema_id' => $email_account_id,
+            'date' => Date_Helper::convertDateGMT($mail->getDate()),
             'message_id' => $mail->messageId,
-            'date' => Date_Helper::getCurrentDateGMT(),
+            // these below are likely unused by Support::insertEmail
             'from' => $mail->from,
             'to' => $mail->to,
             'cc' => $mail->cc,
             'subject' => $mail->subject,
             'body' => $mail->getContent(), // FIXME: needed
             'full_email' => $mail->getRawContent(),  // used by Support::blockEmailIfNeeded, Workflow::handleBlockedEmail
-            'has_attachment' => (int)$mail->hasAttachments(), // FIXME: does this need to be int?
             'headers' => $mail->getHeadersArray(), // FIXME: needed?
         ];
 
@@ -202,47 +202,46 @@ class Routing
             $email_options['customer_id'] = null;
         }
 
-        if (Support::blockEmailIfNeeded($mail, $email_options)) {
+        if (Support::blockEmailIfNeeded($mail, $email_options['issue_id'])) {
             return true;
         }
 
         Mail_Helper::rewriteThreadingHeaders($mail, $issue_id);
 
-        $res = Support::insertEmail($email_options, $mail, $sup_id);
-        if ($res != -1) {
-            Support::extractAttachments($issue_id, $mail);
+        $sup_id = Support::insertEmail($mail, $email_options);
+        Support::extractAttachments($issue_id, $mail);
 
-            // notifications about new emails are always external
-            // special case when emails are bounced back, so we don't want a notification to customers about those
-            // broadcast this email only to the assignees for this issue
-            $is_bounce = $mail->isBounceMessage();
-            $email_options['internal_only'] = $is_bounce;
-            $email_options['assignee_only'] = $is_bounce;
-            $email_options['sup_id'] = $sup_id;
-            Notification::notifyNewEmail(Auth::getUserID(), $issue_id, $mail, $email_options);
+        // notifications about new emails are always external
+        // special case when emails are bounced back, so we don't want a notification to customers about those
+        // broadcast this email only to the assignees for this issue
+        $is_bounce = $mail->isBounceMessage();
+        $email_options['internal_only'] = $is_bounce;
+        $email_options['assignee_only'] = $is_bounce;
+        $email_options['sup_id'] = $sup_id;
+        $email_options['usr_id'] = Auth::getUserID();
+        Notification::notifyNewEmail($mail, $email_options);
 
-            // try to get usr_id of sender, if not, use system account
-            $usr_id = User::getUserIDByEmail($mail->getSender());
-            if (!$usr_id) {
-                $usr_id = APP_SYSTEM_USER_ID;
-            }
-            // mark this issue as updated
-            if ((!empty($email_options['customer_id'])) && ($email_options['customer_id'] != null)) {
-                Issue::markAsUpdated($issue_id, 'customer action');
-            } else {
-                if ((!empty($usr_id)) && ($usr_id != APP_SYSTEM_USER_ID) &&
-                        (User::getRoleByUser($usr_id, $prj_id) > User::ROLE_CUSTOMER)) {
-                    Issue::markAsUpdated($issue_id, 'staff response');
-                } else {
-                    Issue::markAsUpdated($issue_id, 'user response');
-                }
-            }
-
-            // log routed email
-            History::add($issue_id, $usr_id, 'email_routed', 'Email routed from {from}', [
-                'from' => $mail->from,
-            ]);
+        // try to get usr_id of sender, if not, use system account
+        $usr_id = User::getUserIDByEmail($mail->getSender());
+        if (!$usr_id) {
+            $usr_id = APP_SYSTEM_USER_ID;
         }
+        // mark this issue as updated
+        if ((!empty($email_options['customer_id'])) && ($email_options['customer_id'] != null)) {
+            Issue::markAsUpdated($issue_id, 'customer action');
+        } else {
+            if ((!empty($usr_id)) && ($usr_id != APP_SYSTEM_USER_ID) &&
+                    (User::getRoleByUser($usr_id, $prj_id) > User::ROLE_CUSTOMER)) {
+                Issue::markAsUpdated($issue_id, 'staff response');
+            } else {
+                Issue::markAsUpdated($issue_id, 'user response');
+            }
+        }
+
+        // log routed email
+        History::add($issue_id, $usr_id, 'email_routed', 'Email routed from {from}', [
+            'from' => $mail->from,
+        ]);
 
         return true;
     }
@@ -356,7 +355,7 @@ class Routing
 
         // add the full email to the note if there are any attachments
         // this is needed because the front end code will display attachment links
-        if ($mail->hasAttachments()) {
+        if ($mail->getAttachment()->hasAttachments()) {
             $_POST['full_message'] = $mail->getRawContent();
         }
 
