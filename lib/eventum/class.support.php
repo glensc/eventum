@@ -1769,55 +1769,44 @@ class Support
      */
     public static function buildMail($issue_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids = null)
     {
+        $message = new \Zend\Mail\Message();
+        $message->setEncoding('UTF-8');
+        $message->setSubject($subject);
+        $message->setFrom($from);
+        if ($to) {
+            $message->setTo($to);
+        }
+
         $mime = new Mime\Message();
         $mime->addPart(MimePart::createTextPart($body));
 
-        $message = new \Zend\Mail\Message();
-        $message->setEncoding('UTF-8');
-//        $message->setContent($mime);
-        $message->setSubject($subject);
-        $message->setFrom($from);
-//        $message->setDate();
+        if ($iaf_ids) {
+            foreach ($iaf_ids as $iaf_id) {
+                $attachment = Attachment::getDetails($iaf_id);
+
+                $part = MimePart::createAttachmentPart(
+                    $attachment['iaf_file'],
+                    $attachment['iaf_filetype'],
+                    $attachment['iaf_filename']
+                );
+                $mime->addPart($part);
+            }
+        }
+
+        $cc = trim($cc);
+        if (!empty($cc)) {
+            // FIXME: kill this ';' to ',' tragedy
+            $cc = str_replace(',', ';', $cc);
+            $ccs = explode(';', $cc);
+//            $al = new AddressList();
+//            $al->addMany($ccs);
+//            $m->setAddressListHeader('Cc', $al);
+            $message->addCc($ccs);
+        }
 
         $message->setBody($mime);
-        $content = $message->getBodyText();
-//        $message->get
-//        var_dump($content);die;
-        $h = $message->getHeaders();
-        $h->toString();
 
-//        dump($message->toString());die;
-
-        $m = MailMessage::createFromString($message->toString());
-
-        $mz = MailMessage::createNew()
-            ->setContent($mime)
-            ->setSubject($subject)
-            ->setFrom($from)
-            ->setDate();
-
-        if ($to) {
-            $m->setTo($to);
-        }
-
-        // hack needed to get the full headers of this web-based email
-        $mail = new Mail_Helper();
-        $mail->setTextBody($body);
-
-        // FIXME: $body unused, but does mime->get() have side effects?
-        $body = $mail->mime->get(
-            [
-                'text_charset' => APP_CHARSET,
-                'head_charset' => APP_CHARSET,
-                'text_encoding' => APP_EMAIL_ENCODING,
-            ]
-        );
-
-        if (!empty($issue_id)) {
-            $mail->setHeaders(['Message-Id' => Mail_Helper::generateMessageID()]);
-        } else {
-            $issue_id = 0;
-        }
+        $m = MailMessage::createFromMessage($message);
 
         // if there is no existing in-reply-to header, get the root message for the issue
         if (!$in_reply_to && $issue_id) {
@@ -1826,36 +1815,8 @@ class Support
 
         if ($in_reply_to) {
             $m->setInReplyTo($in_reply_to);
-            $mail->setHeaders(['In-Reply-To' => $in_reply_to]);
         }
 
-        if ($iaf_ids) {
-            foreach ($iaf_ids as $iaf_id) {
-                $attachment = Attachment::getDetails($iaf_id);
-                $mail->addAttachment($attachment['iaf_filename'], $attachment['iaf_file'], $attachment['iaf_filetype']);
-
-                $part = $m->addMimePart($attachment['iaf_file'], $attachment['iaf_filetype']);
-                $part->setFileName($attachment['iaf_filename']);
-            }
-        }
-
-        $cc = trim($cc);
-        if (!empty($cc)) {
-            // FIXME: this ; to , is spooky
-            $cc = str_replace(',', ';', $cc);
-            $ccs = explode(';', $cc);
-            $al = new AddressList();
-            $al->addMany($ccs);
-            $m->setAddressListHeader('Cc', $al);
-            foreach ($ccs as $address) {
-                if (!empty($address)) {
-                    $mail->addCc($address);
-                }
-            }
-        }
-
-//        $m2 = MailMessage::createFromString($mail->getFullHeaders($from, $to, $subject));
-//        return $m2;//
         return $m;
     }
 
