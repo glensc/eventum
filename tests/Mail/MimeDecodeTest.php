@@ -144,7 +144,7 @@ class MimeDecodeTest extends TestCase
     public function testBuildMail()
     {
         $issue_id = null;
-        $from = 'root@localhost';
+        $from = 'Elan Ruusamäe <root@localhost>';
         $to = '';
         $cc = '';
         $subject = 'söme messidž';

@@ -1836,7 +1836,7 @@ class Support
             }
         }
 
-        $m2 = MailMessage::createFromString($mail->getFullHeaders($from, $to, $subject));
+//        $m2 = MailMessage::createFromString($mail->getFullHeaders($from, $to, $subject));
 //        return $m2;//
         return $m;
     }
