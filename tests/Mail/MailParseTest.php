@@ -13,8 +13,13 @@
 
 namespace Eventum\Test\Mail;
 
+use Eventum\Mail\MailMessage;
 use Eventum\Test\TestCase;
+use Mail_Helper;
 use Mime_Helper;
+use Zend\Mail\Header\GenericHeader;
+use Zend\Mail\Header\To;
+use Zend\Mail\Headers;
 
 /**
  * @group mail
@@ -41,5 +46,46 @@ class MailParseTest extends TestCase
         $structure = Mime_Helper::decode($message, true, true);
         $message_body = $structure->body;
         $this->assertEquals('', $message_body);
+    }
+
+    /**
+     * Test reading email whose headers are \r\n separated
+     * but body is \n separated. AND it contains \n\n in the email body
+     */
+    public function testReadHeadersSeparator()
+    {
+        /*        $content = $this->readDataFile('10357_fixed.txt');
+
+        $m = MailMessage::createFromString($content);
+        $headers = $m->getHeadersArray();
+        list($text_headers, $body) = Mail_Helper::rewriteThreadingHeaders(1, $content, $headers);
+
+        file_put_contents('/tmp/broken2.txt', $text_headers);
+*/
+
+        $content = $this->readDataFile('10357_original.txt');
+        $mail = MailMessage::createFromString($content);
+
+//        $content = $this->readDataFile('10357.txt');
+//        $mail = MailMessage::createFromString($content);
+    }
+
+    public function testToHeaderNameWithComma()
+    {
+        $to = To::fromString('To: "=?iso-8859-1?Q?Wetlesen=2C_Asbj=F8rn?=" <asbjorn.wetlesen@findexa.no>');
+        echo $to->toString();
+        $to = To::fromString($to->toString());
+        echo $to->toString();
+    }
+
+    /**
+     * @see https://github.com/zendframework/zend-mime/pull/26
+     * @see \Zend\Mime\Mime::encodeQuotedPrintableHeader
+     */
+    public function testDogFood()
+    {
+        $headers = new Headers();
+        $headers->addHeader(GenericHeader::fromString('To: "=?iso-8859-1?Q?W=2C_bj=F8rn?=" <a.wet@example.com>'));
+        $headers->get('To');
     }
 }

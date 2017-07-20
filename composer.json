@@ -93,7 +93,9 @@
 		"willdurand/email-reply-parser": "dev-set-sig-regex",
 		"zendframework/zend-config": "2.4.*",
 		"zendframework/zend-mail": "dev-develop-2.4",
-		"zendframework/zend-servicemanager": "2.4.*"
+		"zendframework/zend-servicemanager": "2.4.*",
+		"pear/mail": "^1.4",
+		"mmucklo/email-parse": "^1.0"
 	},
 	"replace": {
 		"symfony/polyfill-mbstring": "1.1.1",

@@ -13,6 +13,8 @@
 
 namespace Eventum\Mail\Helper;
 
+use Email\Parse;
+use Eventum\Mail\Address\Parser;
 use InvalidArgumentException;
 use Mime_Helper;
 use Zend\Mail\Address;
@@ -44,16 +46,34 @@ class AddressHeader
      */
     public static function fromString($addresses)
     {
+        $header = new To();
+
         // avoid exceptions if NULL or empty string passed as input
         if (!$addresses) {
-            return new static(new To());
+            return new static($header);
         }
 
         // fromString expects 7bit input
         $addresses = Mime_Helper::encodeValue($addresses);
 
+        $header->setEncoding('UTF-8');
+
+//        $addressList = new AddressList();
+        $addressList = $header->getAddressList();
+        $parser = new Parser();
+        try {
+            $parser->parseAddresses($addresses, $addressList);
+        } catch (InvalidArgumentException $e) {
+            throw $e;
+        }
+
+//        $header->getAddressList()->addMany($addressList);
+        return new static($header);
+
         // use To header to utilize AddressList functionality
-        return new static(To::fromString('To:' . $addresses));
+        $header = To::fromString('To:' . $addresses);
+
+        return new static($header);
     }
 
     /**

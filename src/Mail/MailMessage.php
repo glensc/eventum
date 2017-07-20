@@ -19,6 +19,7 @@ use DomainException;
 use Eventum\Mail\Helper\DecodePart;
 use Eventum\Mail\Helper\MimePart;
 use Eventum\Mail\Helper\SanitizeHeaders;
+use Eventum\Mail\Helper\SplitHeaderBody;
 use InvalidArgumentException;
 use Mime_Helper;
 use Zend\Mail;
@@ -97,7 +98,42 @@ class MailMessage extends Message
      */
     public static function createFromString($raw)
     {
-        $message = new self(['root' => true, 'raw' => $raw]);
+        // some old emails that were \r separated
+        // eventum filled as \r\r\nheader\nheader\r\n
+        //    Mail_Helper::rewriteThreadingHeaders()
+        // corrupted them
+
+        // split headers/body by \r\n and join headers back by \n
+        // this ensures Headers::fromString doesn't assume email headers are \n\n separated
+        // splitMessage)_
+//        list($headers, $content) = explode("\r\n\r\n", $raw, 2);
+
+//        $headers = preg_split("/\r?\n/", $headers);
+        // strip any leftover \r
+//        $headers = array_map('trim', $headers);
+//        echo json_encode($headersArray);die;
+//        $headers = join("\n", $headersArray);
+//        $raw = $headers."\n\n".$content;
+
+        /*        // try with default \n
+                // then retry with \r\n
+                try {
+                    Mime\Decode::splitMessage($raw, $headers, $content, "\n");
+                } catch (\Zend\Mail\Exception\RuntimeException $e) {
+                    Mime\Decode::splitMessage($raw, $headers, $content, "\r\n");
+                }*/
+
+        /*
+                // if $raw is "\r" only separated, replace it with "\n"
+                if (substr_count($headers, "\n") == 0) {
+                    $parts = explode("\r", $raw);
+                    $raw = join("\n", $parts);
+                }*/
+//        return new CreateFromRaw();
+        SplitHeaderBody::splitMessage($raw, $headers, $content);
+
+//        $message = new self(['root' => true, 'raw' => $raw]);
+        $message = new self(['root' => true, 'headers' => $headers, 'content' => $content]);
 
         return $message;
     }
