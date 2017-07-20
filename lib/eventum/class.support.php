@@ -16,6 +16,7 @@ use Eventum\Mail\Exception\RoutingException;
 use Eventum\Mail\Helper\AddressHeader;
 use Eventum\Mail\Helper\MailBuilder;
 use Eventum\Mail\ImapMessage;
+use Eventum\Mail\MailBuilder;
 use Eventum\Mail\MailMessage;
 use Eventum\Monolog\Logger;
 use Zend\Mail\AddressList;
@@ -422,14 +423,16 @@ class Support
             Language::set(User::getLang($usr_id));
         }
 
-        $text_message = $tpl->getTemplateContents();
-
-        // send email (use PEAR's classes)
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
         // TRANSLATORS: %s: APP_SHORT_NAME
         $subject = ev_gettext('%s: Postmaster notify: see transcript for details', APP_SHORT_NAME);
-        $mail->send(null, $sender_email, $subject);
+
+        $builder = new MailBuilder();
+        $builder->addTextPart($tpl->getTemplateContents())
+            ->getMessage()
+            ->setSubject($subject)
+            ->setTo($sender_email);
+
+        Mail_Queue::queue($builder, $sender_email);
 
         if ($usr_id) {
             Language::restore();
