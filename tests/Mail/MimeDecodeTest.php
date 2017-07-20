@@ -160,6 +160,14 @@ class MimeDecodeTest extends TestCase
         $this->assertEquals($body, $mail->getMessageBody());
     }
 
+    public function testBuildMailSave()
+    {
+        // this is mail saved by Support::buildMail
+        $content = $this->readDataFile('saved_mail.txt');
+        $mail = MailMessage::createFromString($content);
+        $this->assertNotEmpty($mail);
+    }
+
     /**
      * Hack out inconsistencies:
      *
