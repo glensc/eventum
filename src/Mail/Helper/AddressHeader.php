@@ -56,9 +56,9 @@ class AddressHeader
         // fromString expects 7bit input
         $addresses = Mime_Helper::encodeValue($addresses);
 
+        /*
         $header->setEncoding('UTF-8');
 
-//        $addressList = new AddressList();
         $addressList = $header->getAddressList();
         $parser = new Parser();
         try {
@@ -66,9 +66,7 @@ class AddressHeader
         } catch (InvalidArgumentException $e) {
             throw $e;
         }
-
-//        $header->getAddressList()->addMany($addressList);
-        return new static($header);
+        */
 
         // use To header to utilize AddressList functionality
         $header = To::fromString('To:' . $addresses);
