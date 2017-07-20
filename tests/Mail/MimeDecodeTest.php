@@ -155,7 +155,7 @@ class MimeDecodeTest extends TestCase
         $mail = Support::buildMail($issue_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids);
         $structure = Mime_Helper::decode($mail->getRawContent(), true, true);
 
-        echo $mail->getRawContent();
+        dump($mail->getRawContent());
         $this->assertEquals($body, $structure->body);
         $this->assertEquals($body, $mail->getMessageBody());
     }

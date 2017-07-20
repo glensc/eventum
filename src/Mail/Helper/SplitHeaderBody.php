@@ -46,12 +46,16 @@ class SplitHeaderBody
 
 //                    Mime\Decode::splitMessage($raw, $headers, $content, "\r\n");
 
-        // then retry with \r\n
-//        try {
-//            Mime\Decode::splitMessage($raw, $headers, $content, "\n");
-//        } catch (\Zend\Mail\Exception\RuntimeException $e) {
-//            Mime\Decode::splitMessage($raw, $headers, $content, "\r\n");
-//        }
+        $f = 1;
+        // use rfc compliant "\r\n" EOL
+        try {
+            Mime\Decode::splitMessage($raw, $headers, $content, "\r\n");
+        } catch (\Zend\Mail\Exception\RuntimeException $e) {
+            // retry with heuristic
+            Mime\Decode::splitMessage($raw, $headers, $content);
+        }
+
+        return;
 
         // try parse. if failed retry with our own header split
         try {
