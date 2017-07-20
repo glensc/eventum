@@ -14,12 +14,11 @@
 use Eventum\Db\DatabaseException;
 use Eventum\Mail\Exception\RoutingException;
 use Eventum\Mail\Helper\AddressHeader;
-use Eventum\Mail\Helper\MimePart;
+use Eventum\Mail\Helper\MailBuilder;
 use Eventum\Mail\ImapMessage;
 use Eventum\Mail\MailMessage;
 use Eventum\Monolog\Logger;
 use Zend\Mail\AddressList;
-use Zend\Mime;
 
 /**
  * Class to handle the business logic related to the email feature of
@@ -1769,27 +1768,20 @@ class Support
      */
     public static function buildMail($issue_id, $from, $to, $cc, $subject, $body, $in_reply_to, $iaf_ids = null)
     {
-        $message = new \Zend\Mail\Message();
-        $message->setEncoding('UTF-8');
+        $builder = new MailBuilder();
+        $builder->addTextPart($body);
+
+        $message = $builder->getMessage();
         $message->setSubject($subject);
         $message->setFrom($from);
         if ($to) {
             $message->setTo($to);
         }
 
-        $mime = new Mime\Message();
-        $mime->addPart(MimePart::createTextPart($body));
-
         if ($iaf_ids) {
             foreach ($iaf_ids as $iaf_id) {
                 $attachment = Attachment::getDetails($iaf_id);
-
-                $part = MimePart::createAttachmentPart(
-                    $attachment['iaf_file'],
-                    $attachment['iaf_filetype'],
-                    $attachment['iaf_filename']
-                );
-                $mime->addPart($part);
+                $builder->addAttachment($attachment);
             }
         }
 
@@ -1798,15 +1790,10 @@ class Support
             // FIXME: kill this ';' to ',' tragedy
             $cc = str_replace(',', ';', $cc);
             $ccs = explode(';', $cc);
-//            $al = new AddressList();
-//            $al->addMany($ccs);
-//            $m->setAddressListHeader('Cc', $al);
             $message->addCc($ccs);
         }
 
-        $message->setBody($mime);
-
-        $m = MailMessage::createFromMessage($message);
+        $m = $builder->toMailMessage();
 
         // if there is no existing in-reply-to header, get the root message for the issue
         if (!$in_reply_to && $issue_id) {
