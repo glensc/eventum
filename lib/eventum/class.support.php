@@ -1772,7 +1772,25 @@ class Support
         $mime = new Mime\Message();
         $mime->addPart(MimePart::createTextPart($body));
 
-        $m = MailMessage::createNew()
+        $message = new \Zend\Mail\Message();
+        $message->setEncoding('UTF-8');
+//        $message->setContent($mime);
+        $message->setSubject($subject);
+        $message->setFrom($from);
+//        $message->setDate();
+
+        $message->setBody($mime);
+        $content = $message->getBodyText();
+//        $message->get
+//        var_dump($content);die;
+        $h = $message->getHeaders();
+        $h->toString();
+
+//        dump($message->toString());die;
+
+        $m = MailMessage::createFromString($message->toString());
+
+        $mz = MailMessage::createNew()
             ->setContent($mime)
             ->setSubject($subject)
             ->setFrom($from)
