@@ -690,14 +690,16 @@ class Support
                             }
                         }
 
-                        // mark this issue as updated
-                        if ((!empty($t['customer_id'])) && ($t['customer_id'] != 'NULL') && ((empty($usr_id)) || (User::getRoleByUser($usr_id, $prj_id) == User::ROLE_CUSTOMER))) {
-                            Issue::markAsUpdated($t['issue_id'], 'customer action');
-                        } else {
-                            if ((!empty($usr_id)) && (User::getRoleByUser($usr_id, $prj_id) > User::ROLE_CUSTOMER)) {
-                                Issue::markAsUpdated($t['issue_id'], 'staff response');
+                        // mark this issue as updated if only if this email wasn't used to open it
+                        if (!$should_create_issue) {
+                            if ((!empty($t['customer_id'])) && ($t['customer_id'] != 'NULL') && ((empty($usr_id)) || (User::getRoleByUser($usr_id, $prj_id) == User::ROLE_CUSTOMER))) {
+                                Issue::markAsUpdated($t['issue_id'], 'customer action');
                             } else {
-                                Issue::markAsUpdated($t['issue_id'], 'user response');
+                                if ((!empty($usr_id)) && (User::getRoleByUser($usr_id, $prj_id) > User::ROLE_CUSTOMER)) {
+                                    Issue::markAsUpdated($t['issue_id'], 'staff response');
+                                } else {
+                                    Issue::markAsUpdated($t['issue_id'], 'user response');
+                                }
                             }
                         }
                         // log routed email
@@ -1206,8 +1208,7 @@ class Support
                 $row['sup_to'] = ev_gettext('Notification List');
             }
             if (CRM::hasCustomerIntegration($prj_id)) {
-                // FIXME: $company_titles maybe used uninitialied
-                $row['customer_title'] = $company_titles[$row['sup_customer_id']];
+                $row['customer_title'] = isset($company_titles[$row['sup_customer_id']]) ? $company_titles[$row['sup_customer_id']] : '';
             }
         }
 
