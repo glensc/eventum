@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Eventum (Issue Tracking System) package.
  *
@@ -10,8 +11,7 @@
  * that were distributed with this source code.
  */
 
-
 // cli-config.php
-require_once "bootstrap.php";
+require_once 'bootstrap.php';
 
 return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($entityManager);
