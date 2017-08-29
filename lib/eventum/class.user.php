@@ -12,6 +12,8 @@
  */
 
 use Eventum\Db\DatabaseException;
+use Eventum\Event;
+use Eventum\EventDispatcher\EventManager;
 use Eventum\Monolog\Logger;
 
 /**
@@ -419,6 +421,12 @@ class User
     {
         static $returns;
 
+        $params = [
+            'email' => $email,
+        ];
+        $event = new Event\UnstructuredEvent($params);
+        EventManager::dispatch(Event\SystemEvents::USER_EMAIL, $event);
+
         if (!is_string($email)) {
             if (Misc::isError($email)) {
                 Logger::app()->error($email->getMessage(), ['debug' => $email->getDebugInfo()]);
@@ -443,7 +451,7 @@ class User
                     usr_email=?';
         $res = DB_Helper::getInstance()->getOne($stmt, [$email]);
 
-        if (empty($res) && $check_aliases) {
+        if (!$res && $check_aliases) {
             $res = self::getUserIDByAlias($email);
         }
         $returns[$email] = $res;
@@ -1659,13 +1667,8 @@ class User
                     {{%user_alias}}
                 WHERE
                     ual_email = ?';
-        try {
-            $res = DB_Helper::getInstance()->getOne($sql, [$email]);
-        } catch (DatabaseException $e) {
-            return '';
-        }
 
-        return $res;
+        return DB_Helper::getInstance()->getOne($sql, [$email]);
     }
 
     public static function isPartner($usr_id)

@@ -21,4 +21,10 @@ final class SystemEvents
      * @since 3.2.2
      */
     const HISTORY_ADD = 'history.add';
+
+    /**
+     * Event fired when attempt to lookup user by email is attempted
+     * Event handler may create system user inside this event.
+     */
+    const USER_EMAIL = 'user.email';
 }
