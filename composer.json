@@ -53,6 +53,7 @@
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"require": {
+		"cebe/markdown": "~1.1.1",
 		"defuse/php-encryption": "~1.2.1",
 		"ext-filter": "*",
 		"ext-iconv": "*",
@@ -65,7 +66,6 @@
 		"fonts/liberation": "*",
 		"ircmaxell/random-lib": "~1.1.0",
 		"malkusch/lock": "^0.4.0",
-		"michelf/php-markdown": "1.5.0",
 		"monolog/monolog": "^1.22.0",
 		"pear-pear.php.net/mail_mimedecode": "*",
 		"pear-pear.php.net/math_stats": "*",
