@@ -299,6 +299,11 @@ class Link_Filter
      */
     public static function textFormat($text, $issue_id)
     {
+        if (!self::markdownEnabled()) {
+            // this used to be in Issue::getDetails
+            $text = nl2br(htmlspecialchars($text));
+        }
+
         $text = self::activateLinks($text);
         $text = self::activateAttachmentLinks($text, $issue_id);
 
