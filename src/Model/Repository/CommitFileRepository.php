@@ -13,10 +13,18 @@
 
 namespace Eventum\Model\Repository;
 
-abstract class BaseRepository
+use Doctrine\ORM\EntityRepository;
+use Eventum\Model\Entity;
+use Issue;
+
+class CommitFileRepository extends EntityRepository
 {
-    public static function create()
+    /**
+     * @param int $cid
+     * @return Entity\CommitFile[]
+     */
+    public function findByCommitId($cid)
     {
-        return new static();
+        return $this->findBy(['cof_com_id' => $cid]);
     }
 }

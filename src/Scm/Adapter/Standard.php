@@ -13,8 +13,10 @@
 
 namespace Eventum\Scm\Adapter;
 
+use Eventum\Db\Doctrine;
 use Eventum\Model\Entity;
-use Eventum\Model\Repository\CommitRepository;
+use Eventum\Scm\Payload\StandardPayload;
+use Eventum\Scm\ScmRepository;
 use InvalidArgumentException;
 use Issue;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Standard SCM handler
  */
-class StdScm extends AbstractScmAdapter
+class Standard extends AbstractAdapter
 {
     /**
      * {@inheritdoc}
@@ -51,7 +53,7 @@ class StdScm extends AbstractScmAdapter
         }
 
         $ci = $payload->createCommit();
-        $repo = new Entity\CommitRepo($ci->getScmName());
+        $repo = new ScmRepository($ci->getScmName());
 
         if (!$repo->branchAllowed($payload->getBranch())) {
             throw new InvalidArgumentException("Branch not allowed: {$payload->getBranch()}");
@@ -59,18 +61,22 @@ class StdScm extends AbstractScmAdapter
 
         $ci->setChangeset($payload->getCommitId());
 
+        $em = Doctrine::getEntityManager();
+        $cr = Doctrine::getCommitRepository();
+
         // XXX: take prj_id from first issue_id
         $prj_id = Issue::getProjectID($issues[0]);
-        $cr = CommitRepository::create();
         $cr->preCommit($prj_id, $ci, $payload);
-        $ci->save();
+        $em->persist($ci);
+        $em->flush();
 
         // save issue association
         foreach ($issues as $issue_id) {
-            Entity\IssueCommit::create()
+            $ic = (new Entity\IssueCommit())
                 ->setCommitId($ci->getId())
-                ->setIssueId($issue_id)
-                ->save();
+                ->setIssueId($issue_id);
+            $em->persist($ic);
+            $em->flush();
 
             // print report to stdout of commits so hook could report status back to commiter
             $details = Issue::getDetails($issue_id);
@@ -92,6 +98,6 @@ class StdScm extends AbstractScmAdapter
     {
         $data = json_decode($this->request->getContent(), true);
 
-        return new Entity\StdScmPayload($data);
+        return new StandardPayload($data);
     }
 }

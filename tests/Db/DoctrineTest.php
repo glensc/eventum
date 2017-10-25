@@ -22,6 +22,8 @@ use Eventum\Test\TestCase;
 
 /**
  * TODO: datetime and timezone: http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/cookbook/working-with-datetime.html
+ *
+ * @group db
  */
 class DoctrineTest extends TestCase
 {
@@ -40,8 +42,7 @@ class DoctrineTest extends TestCase
 
     public function test2()
     {
-        $em = $this->getEntityManager();
-        $repo = $em->getRepository(Entity\Commit::class);
+        $repo = Doctrine::getCommitRepository();
         $items = $repo->findBy([], null, 10);
 
         /**
@@ -54,8 +55,7 @@ class DoctrineTest extends TestCase
 
     public function test3()
     {
-        $em = $this->getEntityManager();
-        $repo = $em->getRepository(Entity\Commit::class);
+        $repo = Doctrine::getCommitRepository();
         $qb = $repo->createQueryBuilder('commit');
 
         $qb->setMaxResults(10);
@@ -66,13 +66,16 @@ class DoctrineTest extends TestCase
         print_r($items);
     }
 
+    /**
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function test4()
     {
         $em = $this->getEntityManager();
 
         $issue_id = 1;
         $changeset = uniqid('z1', true);
-        $ci = Entity\Commit::create()
+        $ci = (new Entity\Commit())
             ->setScmName('cvs')
             ->setAuthorName('Au Thor')
             ->setCommitDate(Date_Helper::getDateTime())
@@ -81,13 +84,13 @@ class DoctrineTest extends TestCase
         $em->persist($ci);
         $em->flush();
 
-        $cf = Entity\CommitFile::create()
+        $cf = (new Entity\CommitFile())
             ->setCommitId($ci->getId())
             ->setFilename('file');
         $em->persist($cf);
         $em->flush();
 
-        $isc = Entity\IssueCommit::create()
+        $isc = (new Entity\IssueCommit())
             ->setCommitId($ci->getId())
             ->setIssueId($issue_id);
         $em->persist($isc);
@@ -105,6 +108,32 @@ class DoctrineTest extends TestCase
         $project = $em->getRepository(Entity\Project::class);
     }
 
+    public function testDeleteByQuery()
+    {
+        $issue_id = 13;
+        $associated_issue_id = 12;
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+        $qb->delete(Entity\IssueAssociation::class, 'ia');
+
+        $expr = $qb->expr();
+        $left = $expr->andX('ia.isa_issue_id = :isa_issue_id', 'ia.isa_associated_id = :isa_associated_id');
+        $right = $expr->andX('ia.isa_issue_id = :isa_associated_id', 'ia.isa_associated_id = :isa_issue_id');
+        $qb->where(
+            $expr->orX()
+                ->add($left)
+                ->add($right)
+        );
+
+        $qb->setParameter('isa_issue_id', $issue_id);
+        $qb->setParameter('isa_associated_id', $associated_issue_id);
+        $query = $qb->getQuery();
+        $query->execute();
+    }
+
+    /**
+     * @throws \Doctrine\ORM\EntityNotFoundException
+     */
     public function testProjectStatusId()
     {
         /** @var ProjectRepository $repo */

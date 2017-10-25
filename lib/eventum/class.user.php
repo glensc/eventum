@@ -395,6 +395,10 @@ class User
         self::updatePassword($usr_id, $password, true);
     }
 
+    /**
+     * @param int $external_id
+     * @return int
+     */
     public static function getUserIDByExternalID($external_id)
     {
         $sql = 'SELECT
@@ -403,13 +407,8 @@ class User
                     `user`
                 WHERE
                     usr_external_id=?';
-        try {
-            $res = DB_Helper::getInstance()->getOne($sql, [$external_id]);
-        } catch (DatabaseException $e) {
-            return null;
-        }
 
-        return $res;
+        return DB_Helper::getInstance()->getOne($sql, [$external_id]);
     }
 
     /**
@@ -884,9 +883,9 @@ class User
      * Method used to change the status of users, making them inactive
      * or active.
      *
-     * @param int[] $usr_ids
+     * @param int[]|int $usr_ids
      * @param string $status
-     * @return  bool
+     * @return bool
      */
     public static function changeStatus($usr_ids, $status)
     {
@@ -914,11 +913,7 @@ class User
                  WHERE
                     usr_id IN ($items)";
         $params = array_merge([$status], $usr_ids);
-        try {
-            DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DatabaseException $e) {
-            return false;
-        }
+        DB_Helper::getInstance()->query($stmt, $params);
 
         return true;
     }

@@ -16,7 +16,7 @@ namespace Eventum;
 class AppInfo
 {
     const URL = 'https://github.com/eventum/eventum';
-    const VERSION = '3.3.1-dev';
+    const VERSION = '3.3.4-dev';
 
     /** @var string */
     private $version;
@@ -28,7 +28,8 @@ class AppInfo
     {
         $this->version = self::VERSION;
         $this->hash = $this->getGitHash($this->version);
-        if ($this->hash) {
+        // append VCS version if not yet there
+        if ($this->hash && !preg_match('/-g[0-9a-f]+$/', $this->version)) {
             $this->version = "{$this->version}-g{$this->hash}";
         }
     }

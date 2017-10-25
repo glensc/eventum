@@ -11,6 +11,12 @@
  * that were distributed with this source code.
  */
 
-class TestWorkflow extends Abstract_Workflow_Backend
+namespace Eventum\Scm\Payload;
+
+interface PayloadInterface
 {
+    /**
+     * @return array
+     */
+    public function getPayload();
 }

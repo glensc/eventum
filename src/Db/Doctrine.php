@@ -21,8 +21,10 @@ use Eventum\Model\Entity;
 use Eventum\Model\Repository;
 
 /**
- * Class Doctrine
- *
+ * @method static Repository\CommitFileRepository getCommitFileRepository()
+ * @method static Repository\CommitRepository getCommitRepository()
+ * @method static Repository\IssueAssociationRepository getIssueAssociationRepository()
+ * @method static Repository\IssueCommitRepository getIssueCommitRepository()
  * @method static Repository\ProjectRepository getProjectRepository()
  */
 class Doctrine
@@ -69,10 +71,12 @@ class Doctrine
         if (preg_match('/get(\w+)Repository/', $method, $m)) {
             $class = '\\Eventum\\Model\\Entity\\' . $m[1];
 
-            return $repos[$class]
-                ?: $repos[$class] = self::getEntityManager()
+            return isset($repos[$class])
+                ? $repos[$class]
+                : $repos[$class] = self::getEntityManager()
                     ->getRepository($class);
         }
+
         throw new BadMethodCallException($method);
     }
 }
