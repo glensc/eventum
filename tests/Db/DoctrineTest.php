@@ -102,12 +102,6 @@ class DoctrineTest extends TestCase
         );
     }
 
-    public function test5()
-    {
-        $em = $this->getEntityManager();
-        $project = $em->getRepository(Entity\Project::class);
-    }
-
     public function testDeleteByQuery()
     {
         $issue_id = 13;
@@ -178,10 +172,5 @@ class DoctrineTest extends TestCase
             ['status' => 'inactive'],
             ['id' => 'ASC']
         );
-    }
-
-    private function getEntityManager()
-    {
-        return Doctrine::getEntityManager();
     }
 }
