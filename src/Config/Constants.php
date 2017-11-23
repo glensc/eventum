@@ -45,34 +45,37 @@ class Constants
 
     private function configureOptions(OptionsResolver $resolver)
     {
-        $resolver
-            ->setDefault('APP_PATH', dirname(__DIR__, 2))
-            ->setDefault('APP_CONFIG_PATH', function (Options $options) {
+        $defaults = [
+            'APP_PATH' => dirname(__DIR__, 2),
+            'APP_CONFIG_PATH' => function (Options $options) {
                 return $options['APP_PATH'] . '/config';
-            })
-            ->setDefault('APP_INC_PATH', function (Options $options) {
+            },
+            'APP_INC_PATH' => function (Options $options) {
                 return $options['APP_PATH'] . '/lib/eventum';
-            })
-            ->setDefault('APP_SETUP_FILE', function (Options $options) {
+            },
+            'APP_SETUP_FILE' => function (Options $options) {
                 return $options['APP_CONFIG_PATH'] . '/setup.php';
-            })
-            ->setDefault('APP_VAR_PATH', function (Options $options) {
+            },
+            'APP_VAR_PATH' => function (Options $options) {
                 return $options['APP_PATH'] . '/var';
-            })
-            ->setDefault('APP_TPL_PATH', function (Options $options) {
+            },
+            'APP_TPL_PATH' => function (Options $options) {
                 return $options['APP_PATH'] . '/templates';
-            })
-            ->setDefault('APP_TPL_COMPILE_PATH', function (Options $options) {
+            },
+            'APP_TPL_COMPILE_PATH' => function (Options $options) {
                 return $options['APP_VAR_PATH'] . '/cache';
-            })
-            ->setDefault('APP_LOCKS_PATH', function (Options $options) {
+            },
+            'APP_LOCKS_PATH' => function (Options $options) {
                 return $options['APP_VAR_PATH'] . '/lock';
-            })
-            ->setDefault('APP_LOG_PATH', function (Options $options) {
+            },
+            'APP_LOG_PATH' => function (Options $options) {
                 return $options['APP_VAR_PATH'] . '/log';
-            })
-            ->setDefault('APP_ERROR_LOG', function (Options $options) {
+            },
+            'APP_ERROR_LOG' => function (Options $options) {
                 return $options['APP_LOG_PATH'] . '/errors.log';
-            });
+            },
+        ];
+
+        $resolver->setDefaults($defaults);
     }
 }
