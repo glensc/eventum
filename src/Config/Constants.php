@@ -34,7 +34,8 @@ class Constants
 
     public static function initialize()
     {
-        $constants = (new static(Setup::get()['app']->toArray()))->getOptions();
+        $paths = Setup::get()['app']['paths'];
+        $constants = (new static($paths->toArray()))->getOptions();
 
         foreach ($constants as $name => $value) {
             if (!defined($name)) {
