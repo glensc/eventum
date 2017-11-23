@@ -353,6 +353,7 @@ class Setup
         // so that fluent access works without errors and notices
         $defaults = [
             'relative_url' => '/',
+            'app' => [],
             'monitor' => [
                 'diskcheck' => [
                     'status' => 'enabled',
