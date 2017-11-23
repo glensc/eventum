@@ -16,11 +16,19 @@ namespace Eventum\Config;
 use Setup;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Zend\Config\Config;
 
 class Constants
 {
-    public function __construct(array $options = [])
+    /** @var array */
+    private $options;
+
+    public function __construct()
     {
+        /** @var Config $paths */
+        $paths = Setup::get()['app']['paths'];
+        $options = $paths->toArray();
+
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
 
@@ -34,8 +42,7 @@ class Constants
 
     public static function initialize()
     {
-        $paths = Setup::get()['app']['paths'];
-        $constants = (new static($paths->toArray()))->getOptions();
+        $constants = (new static())->getOptions();
 
         foreach ($constants as $name => $value) {
             if (!defined($name)) {
