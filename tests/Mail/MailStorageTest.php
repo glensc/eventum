@@ -16,7 +16,6 @@ namespace Eventum\Test\Mail;
 use Eventum\Mail\ImapMessage;
 use Eventum\Mail\MailStorage;
 use Eventum\Test\TestCase;
-use Mime_Helper;
 use Setup;
 use Support;
 use Zend;
@@ -91,11 +90,6 @@ class MailStorageTest extends TestCase
 
         foreach ($emails as $i) {
             $mail = ImapMessage::createFromImap($mbox, $i, $this->account);
-
-            $structure = Mime_Helper::decode($mail->getRawContent(), true, true);
-            // string: name + email in decoded (utf-8) form
-            $cc = $structure->headers['to'];
-            var_dump($cc);
 
             // array of emails
             $cc = $mail->getAddresses('To');

@@ -14,6 +14,7 @@
 namespace Eventum\Mail;
 
 use Eventum\Monolog\Logger;
+use Mail_Helper;
 use Setup;
 use Zend\Mail\Transport;
 
@@ -40,7 +41,8 @@ class MailTransport
         $transport = $this->getTransport();
 
         $envelope = new Transport\Envelope();
-        $envelope->setTo($recipient);
+        // SMTP wants just Address
+        $envelope->setTo(Mail_Helper::getEmailAddress($recipient));
         $transport->setEnvelope($envelope);
 
         try {
@@ -49,7 +51,8 @@ class MailTransport
         } catch (\Exception $e) {
             $traceFile = $this->getTraceFile();
             if ($traceFile) {
-                file_put_contents($traceFile, json_encode([$recipient, $headers, $body]));
+                // this is largely useless, as the exception likely happens in toMessage call above
+                file_put_contents($traceFile, json_encode([$recipient, $mail->getHeadersArray(), $mail->getContent()]));
             }
             Logger::app()->error($e->getMessage(), ['traceFile' => $traceFile, 'exception' => $e]);
             $res = $e;
@@ -83,7 +86,7 @@ class MailTransport
      */
     private function getTraceFile()
     {
-        $id = uniqid('zf-mail-');
+        $id = uniqid('zf-mail-', true);
         $traceFile = APP_LOG_PATH . "/$id.json";
 
         return $traceFile;
@@ -103,7 +106,7 @@ class MailTransport
             $options['host'] = $setup['host'];
         }
         if ($setup['port']) {
-            $options['port'] = $setup['port'];
+            $options['port'] = (int)$setup['port'];
         }
 
         if (file_exists('/etc/mailname')) {
@@ -111,10 +114,14 @@ class MailTransport
         }
 
         if ($setup['auth']) {
+            $ssl = $options['port'] === 587 ? 'tls' : 'ssl';
             $options['connection_class'] = 'login';
             $options['connection_config'] = [
                 'username' => $setup['username'],
                 'password' => $setup['password'],
+                /** @see \Zend\Mail\Protocol\Smtp */
+                // possible values: tls, ssl
+                'ssl' => $setup['ssl'] ?: $ssl,
             ];
         }
 

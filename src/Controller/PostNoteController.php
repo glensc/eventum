@@ -216,7 +216,7 @@ class PostNoteController extends BaseController
     private function setIssueStatus($status)
     {
         $res = Issue::setStatus($this->issue_id, $status);
-        if ($res == -1) {
+        if ($res != 1) {
             return;
         }
 

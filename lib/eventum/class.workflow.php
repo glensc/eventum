@@ -11,7 +11,7 @@
  * that were distributed with this source code.
  */
 
-use Eventum\Db\DatabaseException;
+use Eventum\Attachment\AttachmentGroup;
 use Eventum\Event\WorkflowEvents;
 use Eventum\EventDispatcher\EventManager;
 use Eventum\Extension\ExtensionLoader;
@@ -25,32 +25,25 @@ class Workflow
      * Returns the name of the workflow backend for the specified project.
      *
      * @param   int $prj_id the id of the project to lookup
+     * @throws Exception
      * @return  string the name of the customer backend
      */
     private static function _getBackendNameByProject($prj_id)
     {
         static $backends;
 
-        if (isset($backends[$prj_id])) {
-            return $backends[$prj_id];
-        }
-
-        $stmt = 'SELECT
+        if ($backends === null) {
+            $stmt = 'SELECT
                     prj_id,
                     prj_workflow_backend
                  FROM
-                    {{%project}}
+                    `project`
                  ORDER BY
                     prj_id';
-        try {
-            $res = DB_Helper::getInstance()->getPair($stmt);
-        } catch (DatabaseException $e) {
-            return '';
+            $backends = DB_Helper::getInstance()->getPair($stmt);
         }
 
-        $backends = $res;
-
-        return @$backends[$prj_id];
+        return isset($backends[$prj_id]) ? $backends[$prj_id] : null;
     }
 
     /**
@@ -141,16 +134,17 @@ class Workflow
      *
      * @param   int $prj_id The project ID
      * @param   int $issue_id the ID of the issue
-     * @param   int $usr_id the id of the user who locked the issue
+     * @param   int $usr_id the id of the user who attached this file
+     * @param   AttachmentGroup $attachment_group The attachment object
      */
-    public static function handleAttachment($prj_id, $issue_id, $usr_id)
+    public static function handleAttachment($prj_id, $issue_id, $usr_id, AttachmentGroup $attachment_group)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;
         }
 
         $backend = self::_getBackend($prj_id);
-        $backend->handleAttachment($prj_id, $issue_id, $usr_id);
+        $backend->handleAttachment($prj_id, $issue_id, $usr_id, $attachment_group);
     }
 
     /**
@@ -284,12 +278,7 @@ class Workflow
         }
 
         $backend = self::_getBackend($prj_id);
-
-        $structure = Mime_Helper::decode($mail->getRawContent(), true, true);
-
-        $row['headers'] = $mail->getHeadersArray();
-        $row['has_attachment'] = $mail->getAttachment()->hasAttachments();
-        $backend->handleNewEmail($prj_id, $issue_id, $structure, $row, $closing);
+        $backend->handleNewEmail($prj_id, $issue_id, $mail, $row, $closing);
     }
 
     /**
@@ -413,6 +402,7 @@ class Workflow
      * @param int $issue_id the ID of the issue
      * @param Entity\Commit $commit
      * @since 3.1.0
+     * @deprecated since 3.4.0 use SystemEvents::SCM_COMMIT_ASSOCIATED event
      */
     public static function handleScmCommit($prj_id, $issue_id, Entity\Commit $commit)
     {
@@ -431,6 +421,7 @@ class Workflow
      * @param Entity\Commit $commit
      * @param mixed $payload
      * @since 3.1.0
+     * @deprecated since 3.4.0 use SystemEvents::SCM_COMMIT_BEFORE event
      */
     public static function preScmCommit($prj_id, $commit, $payload)
     {
@@ -505,18 +496,18 @@ class Workflow
      *
      * @param   int $prj_id The project ID
      * @param   int $issue_id The issue ID
-     * @param   string $email The email address to check
-     * @param $structure
+     * @param string $sender_email The email address to check
+     * @param MailMessage $mail
      * @return  bool True if the note should be added, false otherwise
      */
-    public static function canSendNote($prj_id, $issue_id, $email, $structure)
+    public static function canSendNote($prj_id, $issue_id, $sender_email, MailMessage $mail)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
-            return;
+            return null;
         }
         $backend = self::_getBackend($prj_id);
 
-        return $backend->canSendNote($prj_id, $issue_id, $email, $structure);
+        return $backend->canSendNote($prj_id, $issue_id, $sender_email, $mail);
     }
 
     /**
@@ -578,32 +569,18 @@ class Workflow
      * rest of the email code will not be executed.
      *
      * @param   int $prj_id The project ID
-     * @param   ImapMessage $mail The Mail Message object
+     * @param   ImapMessage $mail The Imap Mail Message object
      * @return  mixed null by default, -1 if the rest of the email script should not be processed
      */
-    public static function preEmailDownload($prj_id, &$mail)
+    public static function preEmailDownload($prj_id, ImapMessage $mail)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return null;
         }
+
         $backend = self::_getBackend($prj_id);
 
-        $full_message = $mail->getRawContent();
-        $structure = Mime_Helper::decode($full_message, true, true);
-
-        $email = clone $mail->imapheaders;
-        $res = $backend->preEmailDownload($prj_id, $mail->info, $mail->mbox, $mail->num, $full_message, $email, $structure);
-
-        // if $full_message was modified by workflow call, load it back
-        if ($full_message != $mail->getRawContent()) {
-            $mail = ImapMessage::createFromString($full_message);
-        }
-        if ($email != $mail->imapheaders) {
-            // TODO
-            throw new BadMethodCallException('workflow modified $email, not ported');
-        }
-
-        return $res;
+        return $backend->preEmailDownload($prj_id, $mail);
     }
 
     /**
@@ -658,17 +635,7 @@ class Workflow
         }
         $backend = self::_getBackend($prj_id);
 
-        $headers = $mail->getHeadersArray();
-        $message_body = $mail->getContent();
-        // the $date used to be Received Date, but for simplicity just use Date header
-        $date = Date_Helper::convertDateGMT($mail->date);
-        $from = $mail->getSender();
-        $subject = $mail->subject;
-        /** @see MailStorageTest::testImapHeaderStructure */
-        $to = implode(',', (array)$mail->getAddresses('To'));
-        $cc = implode(',', (array)$mail->getAddresses('Cc'));
-
-        return $backend->getIssueIDforNewEmail($prj_id, $info, $headers, $message_body, $date, $from, $subject, $to, $cc);
+        return $backend->getIssueIDforNewEmail($prj_id, $info, $mail);
     }
 
     /**
@@ -676,28 +643,17 @@ class Workflow
      *
      * @param   int $prj_id
      * @param   string $recipient
-     * @param   MailMessage $mail The Mail object
-     * @param   int $issue_id
-     * @param   string $type the type of message this is
-     * @param   int $sender_usr_id the id of the user sending this email
-     * @param   int $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
+     * @param MailMessage $mail The Mail object
+     * @param array $options Optional options, see Mail_Queue::queue
+     * @since 3.3.0 the method signature changed
      */
-    public static function modifyMailQueue($prj_id, &$recipient, MailMessage &$mail, $issue_id, $type, $sender_usr_id, $type_id)
+    public static function modifyMailQueue($prj_id, $recipient, MailMessage $mail, $options)
     {
         if (!self::hasWorkflowIntegration($prj_id)) {
             return;
         }
-        $backend = self::_getBackend($prj_id);
 
-        $o_headers = $headers = $mail->getHeadersArray();
-        $o_body = $body = $mail->getContent();
-
-        $backend->modifyMailQueue($prj_id, $recipient, $headers, $body, $issue_id, $type, $sender_usr_id, $type_id);
-
-        // recreate mail object if headers or body was modified by workflow method
-        if ($o_headers != $headers || $o_body != $body) {
-            $mail = MailMessage::createFromHeaderBody($headers, $body);
-        }
+        self::_getBackend($prj_id)->modifyMailQueue($prj_id, $recipient, $mail, $options);
     }
 
     /**
@@ -898,6 +854,7 @@ class Workflow
      *
      * @since 3.1.0 workflow method added
      * @since 3.2.1 dispatches WorkflowEvents::CRYPTO_DOWNGRADE event
+     * @deprecated since 3.4.0 use Extension EventSubscriber
      */
     public static function cryptoUpgradeConfig($prj_id = 1)
     {
@@ -915,6 +872,7 @@ class Workflow
      *
      * @since 3.1.0 workflow method added
      * @since 3.2.1 dispatches WorkflowEvents::CRYPTO_DOWNGRADE event
+     * @deprecated since 3.4.0 use Extension EventSubscriber
      */
     public static function cryptoDowngradeConfig($prj_id = 1)
     {

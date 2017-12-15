@@ -16,30 +16,8 @@ use Eventum\Mail\MailMessage;
 use Eventum\Mail\MailTransport;
 use Zend\Mail\Address;
 
-/**
- * Class to handle the business logic related to sending email to
- * outside recipients. This class utilizes the PEAR::Mail
- * infrastructure to deliver email in a compatible way across
- * different platforms.
- */
 class Mail_Helper
 {
-    // variable to keep the Mail_mime object
-    public $mime;
-    // variable to keep the headers to be used in the email
-    public $headers = '';
-    // text version of this message
-    public $text_body = '';
-
-    /**
-     * Class constructor. It includes and initializes the required
-     * PEAR::Mail related objects
-     */
-    public function __construct()
-    {
-        $this->mime = new Mail_mime("\r\n");
-    }
-
     /**
      * Correctly formats the subject line of outgoing emails/notes
      *
@@ -68,7 +46,7 @@ class Mail_Helper
         }
         // XXX: this works in most cases,
         // probably the reply prefixes should be configurable per Eventum install
-        $re_pattern = "/(\[#\d+\] ){0,1}(([Rr][Ee][Ss]?|Ответ|Antwort|SV|[Aa][Ww]|[Rr][Ii][Ff]\.?)(\[[0-9]+\])?[ \t]*: ){2}(.*)/";
+        $re_pattern = "/(\[#\d+\] ){0,1}(([Rr][Ee][Ss]?|Ответ|Antwort|SV|[Aa][Ww]|[Rr][Ii][Ff]\.?)(\[[0-9]+\])?[ \t]*: ){2}(.*)/u";
         if (preg_match($re_pattern, $subject, $matches)) {
             // TRANSLATORS: %1 = email subject
             $re_format = '$1' . ev_gettext('Re: %1$s', '$5');
@@ -93,27 +71,6 @@ class Mail_Helper
         $msg .= str_repeat('-', 70) . "\n\n";
 
         return $msg;
-    }
-
-    /**
-     * Checks whether the given headers are from a vacation
-     * auto-responder message or not.
-     *
-     * @param   array $headers The list of headers
-     * @return  bool
-     */
-    public static function isVacationAutoResponder($headers)
-    {
-        // loop through the headers and make sure they are all lowercase.
-        foreach ($headers as $key => $value) {
-            $headers[strtolower($key)] = $value;
-        }
-
-        if ((@$headers['x-vacationmessage'] == 'Yes') || ((isset($headers['auto-submitted'])) && (!empty($headers['auto-submitted'])))) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -188,253 +145,6 @@ class Mail_Helper
     }
 
     /**
-     * Method used to set the text version of the body of the MIME
-     * multipart message that you wish to send.
-     *
-     * @param   string $text The text-based message
-     */
-    public function setTextBody($text)
-    {
-        $this->text_body = $text;
-        $this->mime->setTXTBody($text);
-    }
-
-    /**
-     * Method used to set the HTML version of the body of the MIME
-     * multipart message that you wish to send.
-     *
-     * @param   string $html The HTML-based message
-     */
-    public function setHTMLBody($html)
-    {
-        $this->mime->setHTMLBody($html);
-    }
-
-    /**
-     * Method used to add an embedded image to a MIME message.
-     *
-     * @param   string $filename The full path to the image
-     */
-    public function addHTMLImage($filename)
-    {
-        $this->mime->addHTMLImage($filename);
-    }
-
-    /**
-     * Method used to set extra headers that you may wish to use when
-     * sending the email.
-     *
-     * @param   mixed $header The header(s) to set
-     * @param   mixed $value The value of the header to be set
-     */
-    public function setHeaders($header, $value = false)
-    {
-        if (is_array($header)) {
-            foreach ($header as $key => $value) {
-                $this->headers[$key] = Mime_Helper::encode($value);
-            }
-        } else {
-            $this->headers[$header] = Mime_Helper::encode($value);
-        }
-    }
-
-    /**
-     * Method used to add an email address in the Cc list.
-     *
-     * @param   string $email The email address to be added
-     */
-    public function addCc($email)
-    {
-        $this->mime->addCc($email);
-    }
-
-    /**
-     * Method used to add an attachment to the message.
-     *
-     * @param   string $name The attachment name
-     * @param   string $data The attachment data
-     * @param   string $content_type The content type of the attachment
-     */
-    public function addAttachment($name, $data, $content_type)
-    {
-        $this->mime->addAttachment($data, $content_type, $name, false);
-    }
-
-    /**
-     * Removes the warning message contained in a message, so that certain users
-     * don't receive that extra information as it may not be relevant to them.
-     *
-     * @param   string $str The body of the email
-     * @return  string The body of the email, without the warning message
-     */
-    public static function stripWarningMessage($str)
-    {
-        $str = str_replace(self::getWarningMessage('allowed'), '', $str);
-        $str = str_replace(self::getWarningMessage('blocked'), '', $str);
-
-        return $str;
-    }
-
-    /**
-     * Returns the warning message that needs to be added to the top of routed
-     * issue emails to alert the recipient that he can (or not) send emails to
-     * the issue notification list.
-     *
-     * @param   string $type Whether the warning message is of an allowed recipient or not
-     * @return  string The warning message
-     */
-    public static function getWarningMessage($type)
-    {
-        if ($type == 'allowed') {
-            $str = ev_gettext('ADVISORY: Your reply will be sent to the notification list.');
-        } else {
-            $str = ev_gettext('WARNING: If replying, add yourself to Authorized Repliers list first.');
-        }
-
-        return $str;
-    }
-
-    /**
-     * Method used to add a customized warning message to the body of outgoing emails.
-     *
-     * @param   int $issue_id The issue ID
-     * @param   string $to The recipient of the message
-     * @param   MailMessage $mail The Mail object
-     */
-    public static function addWarningMessage($issue_id, $to, $mail)
-    {
-        $setup = Setup::get();
-        $enabled = $setup['email_routing']['status'] == 'enabled' && $setup['email_routing']['warning']['status'] == 'enabled';
-        if (!$enabled) {
-            //            throw new LogicException('not enabled');
-
-            return;
-        }
-
-        // check if the recipient can send emails to the customer
-        $recipient_email = self::getEmailAddress($to);
-        $recipient_usr_id = User::getUserIDByEmail($recipient_email);
-        // don't add the warning message if the recipient is an unknown email address
-        if (empty($recipient_usr_id)) {
-            return;
-        }
-
-        // don't add anything if the recipient is a known customer contact
-        $recipient_role_id = User::getRoleByUser($recipient_usr_id, Issue::getProjectID($issue_id));
-        if ($recipient_role_id == User::ROLE_CUSTOMER) {
-            return;
-        }
-
-        if (!Support::isAllowedToEmail($issue_id, $recipient_email)) {
-            $warning = self::getWarningMessage('blocked');
-        } else {
-            $warning = self::getWarningMessage('allowed');
-        }
-
-        // FIXME: this is trash. does not handle MIME
-        // getContent just returns body part of split from headers+body
-        // it should be:
-        // 1. for plain text messages prepended
-        // 2. for multipart, new text multipart prepended?
-
-        $body = $warning . "\n\n" . $mail->getContent();
-        $mail->setContent($body);
-        /*
-
-        if (@$headers['Content-Transfer-Encoding'] == 'base64') {
-            return base64_encode($warning . "\n\n" . trim(base64_decode($body)));
-        }
-        */
-    }
-
-    /**
-     * Build message and add it to mail queue.
-     *
-     * @param   string $from The originator of the message
-     * @param   string $to The recipient of the message
-     * @param   string $subject The subject of the message
-     * @param   int $issue_id The ID of the issue. If false, email will not be associated with issue.
-     * @param   string $type The type of message this is
-     * @param   int $sender_usr_id the id of the user sending this email
-     * @param   int $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
-     */
-    public function send($from, $to, $subject, $save_email_copy = 0, $issue_id = false, $type = '', $sender_usr_id = null, $type_id = false)
-    {
-        if ($from === null) {
-            $from = Setup::get()->smtp->from;
-        }
-        // encode the addresses
-        $from = Mime_Helper::encodeAddress($from);
-        $to = Mime_Helper::encodeAddress($to);
-        $subject = Mime_Helper::encode($subject);
-
-        $body = $this->mime->get([
-            'text_charset' => APP_CHARSET,
-            'html_charset' => APP_CHARSET,
-            'head_charset' => APP_CHARSET,
-            'text_encoding' => APP_EMAIL_ENCODING,
-        ]);
-        $headers = [
-            'From' => $from,
-            'To' => self::fixAddressQuoting($to),
-            'Subject' => $subject,
-        ];
-
-        $this->setHeaders($headers);
-        $hdrs = $this->mime->headers($this->headers);
-
-        $mail = MailMessage::createFromHeaderBody($hdrs, $body);
-        $options = [
-            'save_email_copy' => $save_email_copy,
-            'issue_id' => $issue_id,
-            'type' => $type,
-            'sender_usr_id' => $sender_usr_id,
-            'type_id' => $type_id,
-        ];
-
-        Mail_Queue::addMail($mail, $to, $options);
-    }
-
-    /**
-     * Returns the full headers for the email properly encoded.
-     *
-     * @param   string $from The sender of the email
-     * @param   string $to The recipient of the email
-     * @param   string $subject The subject of this email
-     * @return  string The full header version of the email
-     */
-    public function getFullHeaders($from, $to, $subject)
-    {
-        // encode the addresses
-        $from = Mime_Helper::encodeAddress($from);
-        $to = Mime_Helper::encodeAddress($to);
-        $subject = Mime_Helper::encode($subject);
-
-        $body = $this->mime->get([
-            'text_charset' => APP_CHARSET,
-            'html_charset' => APP_CHARSET,
-            'head_charset' => APP_CHARSET,
-            'text_encoding' => APP_EMAIL_ENCODING,
-        ]);
-        $this->setHeaders([
-            'From' => $from,
-            'To' => $to,
-            'Subject' => $subject,
-        ]);
-        $hdrs = $this->mime->headers($this->headers);
-        // RFC 822 formatted date
-        $header = 'Date: ' . Date_Helper::getRFC822Date(time()) . "\r\n";
-
-        // return the full dump of the email
-        foreach ($hdrs as $name => $value) {
-            $header .= "$name: $value\r\n";
-        }
-        $header .= "\r\n";
-
-        return $header . $body;
-    }
-
-    /**
      * Method used to save a copy of the given email to a configurable address.
      *
      * @param MailMessage $mail the email to save
@@ -463,7 +173,7 @@ class Mail_Helper
 
         // add specialized headers if they are not already added
         if (!$headers->has('X-Eventum-Type')) {
-            $headers->addHeaders(self::getSpecializedHeaders($issue_id, $maq_type));
+            self::addSpecializedHeaders($mail, $issue_id, $maq_type);
         }
 
         $transport = new MailTransport();
@@ -471,26 +181,29 @@ class Mail_Helper
     }
 
     /**
-     * Generates the specialized headers for an email.
+     * Adds specialized headers for an email.
      *
-     * @param   int $issue_id The issue ID
-     * @param   string $type The type of message this is
-     * @return  array An array of specialized headers
+     * @param MailMessage $mail
+     * @param int $issue_id The issue ID
+     * @param string $type The type of message this is
      */
-    public static function getSpecializedHeaders($issue_id, $type)
+    public static function addSpecializedHeaders(MailMessage $mail, $issue_id, $type)
     {
         $new_headers = [];
-
         $new_headers['X-Eventum-Type'] = $type;
 
         if (!$issue_id) {
-            return $new_headers;
+            // nothing else to do if no issue id
+            $mail->addHeaders($new_headers);
+
+            return;
         }
 
         $prj_id = Issue::getProjectID($issue_id);
         if (count(Group::getAssocList($prj_id)) > 0) {
             // group issue is currently assigned too
-            $new_headers['X-Eventum-Group-Issue'] = Group::getName(Issue::getGroupID($issue_id));
+            $groupName = Group::getName(Issue::getGroupID($issue_id));
+            $new_headers['X-Eventum-Group-Issue'] = $groupName;
         }
 
         if (CRM::hasCustomerIntegration($prj_id)) {
@@ -510,12 +223,10 @@ class Mail_Helper
             }
         }
 
-        // add assignee header
-        $new_headers['X-Eventum-Assignee'] = implode(',', User::getEmail(Issue::getAssignedUserIDs($issue_id)));
-
+        $assignees = User::getEmail(Issue::getAssignedUserIDs($issue_id));
+        $new_headers['X-Eventum-Assignee'] = implode(',', $assignees);
         $new_headers['X-Eventum-Category'] = Category::getTitle(Issue::getCategory($issue_id));
         $new_headers['X-Eventum-Project'] = Project::getName($prj_id);
-
         $new_headers['X-Eventum-Priority'] = Priority::getTitle(Issue::getPriority($issue_id));
 
         // handle custom fields
@@ -543,7 +254,7 @@ class Mail_Helper
             $new_headers['X-Eventum-CustomField-' . $cf_title] = $cf_value;
         }
 
-        return $new_headers;
+        $mail->addHeaders($new_headers);
     }
 
     /**
@@ -574,27 +285,6 @@ class Mail_Helper
         }
 
         return '<eventum.md5.' . $first . '.' . $second . '@' . APP_HOSTNAME . '>';
-    }
-
-    /**
-     * Returns the referenced message-id for a given reply.
-     *
-     * @param   string $text_headers The full headers of the reply
-     * @return  string The message-id of the original email
-     */
-    public static function getReferenceMessageID($text_headers)
-    {
-        if (preg_match('/^In-Reply-To: (.*)/mi', $text_headers, $matches)) {
-            return trim($matches[1]);
-        }
-        if (preg_match('/^References: (.+?)(\r?\n\r?\n|\r?\n\r?\S)/smi', $text_headers, $matches)) {
-            $references = explode(' ', self::unfold(trim($matches[1])));
-            $references = Misc::trim($references);
-            // return the first message-id in the list of references
-            return $references[0];
-        }
-
-        return '';
     }
 
     /**
@@ -685,31 +375,6 @@ class Mail_Helper
             'In-Reply-To' => $root_msg_id,
             'References' => $root_msg_id,
         ];
-    }
-
-    /**
-     * Unfolds message headers
-     *
-     * @param   string $input The headers to unfold
-     * @return  string The unfolded headers
-     */
-    public static function unfold($input)
-    {
-        $input = preg_replace("/\r?\n/", "\r\n", $input);
-        $input = preg_replace("/\r\n(\t| )+/", ' ', $input);
-
-        return $input;
-    }
-
-    /**
-     * Folds message headers
-     *
-     * @param   string $input The headers to fold
-     * @return  string The folded headers
-     */
-    public static function fold($input)
-    {
-        return wordwrap($input, 70, "\r\n ");
     }
 
     /**

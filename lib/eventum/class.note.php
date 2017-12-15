@@ -11,6 +11,7 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Attachment\AttachmentManager;
 use Eventum\Db\DatabaseException;
 use Eventum\Mail\MailMessage;
 
@@ -33,7 +34,7 @@ class Note
         $stmt = 'SELECT
                     not_id
                  FROM
-                    {{%note}}
+                    `note`
                  WHERE
                     not_iss_id=? AND
                     not_removed = 0
@@ -63,17 +64,17 @@ class Note
      * Retrieves the details about a given note.
      *
      * @param   int $note_id The note ID
-     * @return  array The note details
+     * @return  bool|array The note details
      */
     public static function getDetails($note_id)
     {
         $stmt = 'SELECT
-                    {{%note}}.*,
+                    `note`.*,
                     not_full_message,
                     usr_full_name
                  FROM
-                    {{%note}},
-                    {{%user}}
+                    `note`,
+                    `user`
                  WHERE
                     not_usr_id=usr_id AND
                     not_id=?';
@@ -117,7 +118,7 @@ class Note
                     not_id,
                     not_iss_id
                 FROM
-                    {{%note}}
+                    `note`
                 WHERE
                     not_iss_id = ? AND
                     not_removed = 0
@@ -153,7 +154,7 @@ class Note
         $stmt = 'SELECT
                     not_full_message
                  FROM
-                    {{%note}}
+                    `note`
                  WHERE
                     not_id=?';
 
@@ -173,7 +174,7 @@ class Note
         $stmt = 'SELECT
                     not_iss_id
                  FROM
-                    {{%note}}
+                    `note`
                  WHERE
                     not_id=?';
         try {
@@ -198,7 +199,7 @@ class Note
         $stmt = "SELECT
                     not_id
                 FROM
-                    {{%note}}
+                    `note`
                 WHERE
                     not_iss_id = ? AND
                     not_removed = 0
@@ -225,7 +226,7 @@ class Note
         $sql = 'SELECT
                     not_unknown_user
                 FROM
-                    {{%note}}
+                    `note`
                  WHERE
                     not_id=?';
         try {
@@ -305,7 +306,7 @@ class Note
             'add_extra_recipients' => false,
 
             'message_id' => null,
-            'cc' => null,
+            'cc' => [],
             'full_message' => null,
             'parent_id' => null,
         ], $options);
@@ -362,7 +363,7 @@ class Note
         }
 
         $stmt = 'INSERT INTO
-                    {{%note}}
+                    `note`
                  SET ' . DB_Helper::buildSet($params);
 
         try {
@@ -410,7 +411,7 @@ class Note
                     not_usr_id,
                     not_is_blocked AS has_blocked_message
                  FROM
-                    {{%note}}
+                    `note`
                  WHERE
                     not_id=?';
 
@@ -419,8 +420,10 @@ class Note
             return -2;
         }
 
+        // Notes are not deleted so a record of the the not_message_id is
+        // preserved to prevent duplicates from being downloaded.
         $stmt = 'UPDATE
-                    {{%note}}
+                    `note`
                  SET
                     not_removed = 1
                  WHERE
@@ -432,13 +435,11 @@ class Note
         }
 
         // also remove any internal-only files associated with this note
-        $stmt = "DELETE FROM
-                    {{%issue_attachment}}
-                 WHERE
-                    iat_not_id=? AND
-                    iat_status='internal'";
-
-        DB_Helper::getInstance()->query($stmt, [$note_id]);
+        $attachment_groups = AttachmentManager::getList($details['not_iss_id'], User::ROLE_USER, $note_id);
+        foreach ($attachment_groups as $group_info) {
+            $group = AttachmentManager::getGroup($group_info['iat_id']);
+            $group->delete(true);
+        }
 
         Issue::markAsUpdated($details['not_iss_id']);
         if ($log) {
@@ -471,8 +472,8 @@ class Note
                     not_is_blocked AS has_blocked_message,
                     usr_full_name
                  FROM
-                    {{%note}},
-                    {{%user}}
+                    `note`,
+                    `user`
                  WHERE
                     not_usr_id=usr_id AND
                     not_iss_id=? AND
@@ -624,8 +625,8 @@ class Note
         $stmt = 'SELECT
                     COUNT(not_id)
                  FROM
-                    {{%note}},
-                    {{%issue}}
+                    `note`,
+                    `issue`
                  WHERE
                     not_iss_id = iss_id AND
                     iss_prj_id = ? AND
@@ -651,7 +652,7 @@ class Note
     public static function setAttachmentFlag($note_id)
     {
         $stmt = 'UPDATE
-                    {{%note}}
+                    `note`
                  SET
                     not_has_attachment=1
                  WHERE
@@ -663,31 +664,6 @@ class Note
         }
 
         return true;
-    }
-
-    /**
-     * Returns the total number of notes associated to the given issue ID.
-     *
-     * @param   string $issue_id The issue ID
-     * @return  int The number of notes
-     * @deprecated method not used
-     */
-    public static function getTotalNotesByIssue($issue_id)
-    {
-        $stmt = 'SELECT
-                    COUNT(*)
-                 FROM
-                    {{%note}}
-                 WHERE
-                    not_iss_id=? AND
-                    not_removed = 0';
-        try {
-            $res = DB_Helper::getInstance()->getOne($stmt, [$issue_id]);
-        } catch (DatabaseException $e) {
-            return 0;
-        }
-
-        return $res;
     }
 
     /**
@@ -705,7 +681,7 @@ class Note
         $stmt = 'SELECT
                     not_iss_id
                  FROM
-                    {{%note}}
+                    `note`
                  WHERE
                     not_message_id=?';
         try {
@@ -731,8 +707,8 @@ class Note
         $sql = 'SELECT
                     parent.not_message_id
                 FROM
-                    {{%note}} child,
-                    {{%note}} parent
+                    `note` child,
+                    `note` parent
                 WHERE
                     parent.not_id = child.not_parent_id AND
                     child.not_message_id = ?';
@@ -764,7 +740,7 @@ class Note
         $stmt = 'SELECT
                     not_id
                  FROM
-                    {{%note}}
+                    `note`
                  WHERE
                     not_message_id=?';
         try {
@@ -792,7 +768,7 @@ class Note
         $stmt = 'SELECT
                     not_message_id
                  FROM
-                    {{%note}}
+                    `note`
                  WHERE
                     not_id=?';
         try {
@@ -819,7 +795,7 @@ class Note
         $sql = 'SELECT
                     count(*)
                 FROM
-                    {{%note}}
+                    `note`
                 WHERE
                     not_message_id = ?';
         try {

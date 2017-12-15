@@ -46,11 +46,9 @@ class AddressHeader
      */
     public static function fromString($addresses)
     {
-        $header = new To();
-
         // avoid exceptions if NULL or empty string passed as input
         if (!$addresses) {
-            return new static($header);
+            return new static(new To());
         }
 
         // fromString expects 7bit input

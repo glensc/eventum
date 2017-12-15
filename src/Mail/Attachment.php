@@ -33,6 +33,9 @@ class Attachment
      * Return true if mail has attachments,
      * inline text messages are not accounted as attachments.
      *
+     * TODO: handle application/pgp-signature, application/ms-tnef?
+     * @see https://github.com/eventum/eventum/blob/v3.2.1/lib/eventum/class.mime_helper.php#L740-L753
+     *
      * @return  bool
      */
     public function hasAttachments()
@@ -118,16 +121,16 @@ class Attachment
 
             if ($ct->getType() == 'multipart/related') {
                 // get attachments from multipart/related
-                $attachment = new self($part);
+                $subpart = new self($part);
 
                 // only include non text/html
                 // this will resemble previous eventum behavior
                 // whether that's correct is another topic
-                foreach ($attachment->getAttachments() as $att) {
-                    if ($att['filetype'] == 'text/html') {
+                foreach ($subpart->getAttachments() as $attachment) {
+                    if ($attachment['filetype'] == 'text/html') {
                         continue;
                     }
-                    $attachments[] = $att;
+                    $attachments[] = $attachment;
                 }
             }
         }

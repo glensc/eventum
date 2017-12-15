@@ -229,8 +229,10 @@ class Misc
             case 'g':
                 $val *= 1024;
             /** @noinspection PhpMissingBreakStatementInspection */
+            // no break
             case 'm':
                 $val *= 1024;
+                // no break
             case 'k':
                 $val *= 1024;
         }
@@ -489,7 +491,7 @@ class Misc
         }
         clearstatcache();
         if (!is_writable($file)) {
-            if (!stristr(PHP_OS, 'win')) {
+            if (stripos(PHP_OS, 'win') === false) {
                 // let's try to change the permissions ourselves
                 @chmod($file, 0755);
                 clearstatcache();
@@ -500,7 +502,7 @@ class Misc
                 return false;
             }
         }
-        if (stristr(PHP_OS, 'win')) {
+        if (stripos(PHP_OS, 'win') !== false) {
             // need to check whether we can really create files in this directory or not
             // since is_writable() is not trustworthy on windows platforms
             if (is_dir($file)) {
@@ -709,5 +711,69 @@ class Misc
         $message = strtr($message, $replacements);
 
         return $message;
+    }
+
+    /**
+     * Method used to output the headers and the binary data for
+     * an attachment file.
+     *
+     * This method never returns to caller.
+     *
+     * @param   $data
+     * @param   $filename
+     * @param   $filetype
+     * @param   $filesize
+     * @param   bool $force_inline If the file should be forced to render in the browser
+     */
+    public static function outputDownload($data, $filename, $filesize, $filetype, $force_inline = false)
+    {
+        if ($force_inline == true) {
+            header('Content-Type: text/plain');
+
+            if (stripos($filetype, 'gzip') !== false) {
+                header('Content-Encoding: gzip');
+            }
+            header('Content-Disposition: inline; filename="' . urlencode($filename) . '"');
+            header('Content-Length: ' . $filesize);
+            echo $data;
+            exit;
+        }
+
+        if (empty($filetype)) {
+            $filetype = 'application/octet-stream';
+        }
+        if (empty($filename)) {
+            $filename = ev_gettext('Untitled');
+        }
+        $filename = rawurlencode($filename);
+        $disposition = self::getAttachmentDisposition($filetype);
+        header('Content-Type: ' . $filetype);
+        header("Content-Disposition: {$disposition}; filename=\"{$filename}\"; filename*=" . APP_CHARSET . "''{$filename}");
+        header("Content-Length: {$filesize}");
+        echo $data;
+        exit;
+    }
+
+    /**
+     * Returns how the download should be displayed.
+     *
+     * @param string $filetype
+     * @return string inline|attachment
+     */
+    public static function getAttachmentDisposition($filetype)
+    {
+        $parts = explode('/', $filetype, 2);
+        if (count($parts) < 2) {
+            return 'attachment';
+        }
+
+        list($type) = $parts;
+
+        // display inline images and text documents
+        if (in_array($type, ['image', 'text'])) {
+            return 'inline';
+        }
+
+        return 'attachment';
     }
 }

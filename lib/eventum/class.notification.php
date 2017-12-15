@@ -11,8 +11,11 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Attachment\AttachmentManager;
 use Eventum\Db\DatabaseException;
 use Eventum\Mail\Helper\AddressHeader;
+use Eventum\Mail\Helper\WarningMessage;
+use Eventum\Mail\MailBuilder;
 use Eventum\Mail\MailMessage;
 
 /**
@@ -60,16 +63,16 @@ class Notification
                     CASE WHEN usr_id <> 0 THEN usr_email ELSE sub_email END AS email
                  FROM
                     (
-                    {{%subscription}}';
+                    `subscription`';
         $params = [];
         if ($type != false) {
             $stmt .= ',
-                    {{%subscription_type}}';
+                    `subscription_type`';
         }
         $stmt .= '
                     )
                  LEFT JOIN
-                    {{%user}}
+                    `user`
                  ON
                     usr_id=sub_usr_id
                  WHERE';
@@ -107,16 +110,16 @@ class Notification
                     CASE WHEN usr_id <> 0 THEN usr_email ELSE sub_email END AS email
                  FROM
                     (
-                    {{%subscription}}';
+                    `subscription`';
         $params = [];
         if ($type != false) {
             $stmt .= ',
-                    {{%subscription_type}}';
+                    `subscription_type`';
         }
         $stmt .= '
                     )
                  LEFT JOIN
-                    {{%user}}
+                    `user`
                  ON
                     usr_id=sub_usr_id
                  WHERE';
@@ -418,15 +421,18 @@ class Notification
             'type_id' => $sup_id,
         ];
 
-        $headers = $mail->getHeadersArray();
-        $body = $mail->getContent();
         foreach ($emails as $to) {
-            // add the warning message about replies being blocked or not
-            $fixed_body = Mail_Helper::addWarningMessage($issue_id, $to, $body, $headers);
-            $headers['To'] = Mime_Helper::encodeAddress($to);
+            $m = clone $mail;
+            // stripHeaders removed To header, add it back
+            $m->getHeaderByName('To');
+            $m->setTo(Mime_Helper::encodeAddress($to));
 
-            $mail = MailMessage::createFromHeaderBody($headers, $fixed_body);
-            Mail_Queue::addMail($mail, $to, $options);
+            // add the warning message about replies being blocked or not
+            $recipient_email = Mail_Helper::getEmailAddress($to);
+            $wm = new WarningMessage($m);
+            $wm->add($issue_id, $recipient_email);
+
+            Mail_Queue::queue($m, $to, $options);
         }
     }
 
@@ -452,8 +458,8 @@ class Notification
                     not_is_blocked,
                     usr_full_name
                  FROM
-                    {{%note}},
-                    {{%user}}
+                    `note`,
+                    `user`
                  WHERE
                     not_id=? AND
                     not_usr_id=usr_id';
@@ -481,43 +487,6 @@ class Notification
     }
 
     /**
-     * Method used to get the details of a given issue and its
-     * associated emails.
-     *
-     * @param   int $issue_id The issue ID
-     * @param   array $sup_ids The list of associated emails
-     * @return  array The issue / emails details
-     * @deprecated method not used
-     */
-    public static function getEmails($issue_id, $sup_ids)
-    {
-        $items = DB_Helper::buildList($sup_ids);
-        $stmt = "SELECT
-                    sup_from,
-                    sup_to,
-                    sup_date,
-                    sup_subject,
-                    sup_has_attachment
-                 FROM
-                    {{%support_email}}
-                 WHERE
-                    sup_id IN ($items)";
-        try {
-            $res = DB_Helper::getInstance()->getAll($stmt, $sup_ids);
-        } catch (DatabaseException $e) {
-            return '';
-        }
-
-        if (count($res) == 0) {
-            return '';
-        }
-        $data = Issue::getDetails($issue_id);
-        $data['emails'] = $res;
-
-        return $data;
-    }
-
-    /**
      * Method used to get the details of a given issue and attachment.
      *
      * @param   int $issue_id The issue ID
@@ -533,8 +502,8 @@ class Notification
                     iat_description,
                     iat_unknown_user
                  FROM
-                    {{%issue_attachment}},
-                    {{%user}}
+                    `issue_attachment`,
+                    `user`
                  WHERE
                     iat_usr_id=usr_id AND
                     iat_iss_id=? AND
@@ -545,7 +514,7 @@ class Notification
             return '';
         }
 
-        $res['files'] = Attachment::getFileList($res['iat_id']);
+        $res['files'] = AttachmentManager::getAttachmentList($res['iat_id']);
         $data = Issue::getDetails($issue_id);
         $data['attachment'] = $res;
 
@@ -562,38 +531,51 @@ class Notification
      */
     public static function getUsersByIssue($issue_id, $type)
     {
+        $prj_id = Issue::getProjectID($issue_id);
         if ($type == 'notes') {
-            $stmt = 'SELECT
+            $stmt = "SELECT
                         DISTINCT sub_usr_id,
                         sub_email
                      FROM
-                        {{%subscription}}
+                        `subscription`,
+                        `user`,
+                        `project_user`
                      WHERE
-                        sub_iss_id=? AND
-                        sub_usr_id IS NOT NULL AND
-                        sub_usr_id <> 0';
+                        usr_id = sub_usr_id AND
+                        pru_usr_id = usr_id AND
+                        pru_prj_id = ? AND
+                        pru_role >= ? AND
+                        usr_status = 'active' AND
+                        sub_iss_id=?";
             $params = [
+                $prj_id,
+                User::ROLE_USER,
                 $issue_id,
             ];
         } else {
-            $stmt = 'SELECT
+            $stmt = "SELECT
                         DISTINCT sub_usr_id,
                         sub_email,
                         pru_role
                      FROM
                         (
-                        {{%subscription}},
-                        {{%subscription_type}}
+                        `subscription`,
+                        `subscription_type`
                         )
                         LEFT JOIN
-                          {{%project_user}}
+                          `project_user`
                           ON
                             sub_usr_id = pru_usr_id AND
                             pru_prj_id = ?
+                        LEFT JOIN
+                          `user`
+                          ON
+                            sub_usr_id = usr_id
                      WHERE
+                        (usr_status = 'active' OR usr_status IS NULL) AND
                         sub_iss_id=? AND
                         sub_id=sbt_sub_id AND
-                        sbt_type=?';
+                        sbt_type=?";
             $params = [
                 Issue::getProjectID($issue_id), $issue_id, $type,
             ];
@@ -814,9 +796,9 @@ class Notification
      * @param string $type The notification type
      * @param int $entry_id The entries id that was changed
      * @param bool $internal_only Whether the notification should only be sent to internal users or not
-     * @param array $extra_recipients
+     * @param string[] $extra_recipients extra recipients to notify (usr_id list)
      */
-    public static function notify($issue_id, $type, $entry_id = null, $internal_only = false, $extra_recipients = null)
+    public static function notify($issue_id, $type, $entry_id, $internal_only, $extra_recipients = [])
     {
         $prj_id = Issue::getProjectID($issue_id);
         $extra = [];
@@ -830,7 +812,7 @@ class Notification
         }
         $emails = [];
         $users = self::getUsersByIssue($issue_id, $type);
-        if ($extra_recipients && (count($extra) > 0)) {
+        if ($extra_recipients && count($extra) > 0) {
             $users = array_merge($users, $extra);
         }
         $user_emails = Project::getUserEmailAssocList(Issue::getProjectID($issue_id), 'active', User::ROLE_CUSTOMER);
@@ -838,18 +820,18 @@ class Notification
 
         foreach ($users as $user) {
             if (empty($user['sub_usr_id'])) {
-                if (($internal_only == false) || (in_array(strtolower($user['sub_email']), array_values($user_emails)))) {
+                if ($internal_only == false || in_array(strtolower($user['sub_email']), array_values($user_emails))) {
                     $email = $user['sub_email'];
                 }
             } else {
                 $prefs = Prefs::get($user['sub_usr_id']);
-                if ((Auth::getUserID() == $user['sub_usr_id']) &&
+                if (Auth::getUserID() == $user['sub_usr_id'] &&
                         ((empty($prefs['receive_copy_of_own_action'][$prj_id])) ||
                             ($prefs['receive_copy_of_own_action'][$prj_id] == false))) {
                     continue;
                 }
                 // if we are only supposed to send email to internal users, check if the role is lower than standard user
-                if (($internal_only == true) && (User::getRoleByUser($user['sub_usr_id'], Issue::getProjectID($issue_id)) < User::ROLE_USER)) {
+                if ($internal_only == true && (User::getRoleByUser($user['sub_usr_id'], Issue::getProjectID($issue_id)) < User::ROLE_USER)) {
                     continue;
                 }
                 if ($type == 'notes' && User::isPartner($user['sub_usr_id']) &&
@@ -872,7 +854,7 @@ class Notification
                 $stmt = 'SELECT
                             iss_customer_contact_id
                          FROM
-                            {{%issue}}
+                            `issue`
                          WHERE
                             iss_id=?';
                 $customer_contact_id = DB_Helper::getInstance()->getOne($stmt, [$issue_id]);
@@ -899,7 +881,9 @@ class Notification
             return;
         }
 
-        $headers = false;
+        $data = [];
+        $headers = [];
+        $subject = null;
         switch ($type) {
             case 'closed':
                 $data = Issue::getDetails($issue_id);
@@ -910,32 +894,36 @@ class Notification
                     $data['reason'] = Support::getEmail($entry_id);
                 }
                 break;
-            case 'updated':
-                // this should not be used anymore
-                return;
+
             case 'notes':
                 $data = self::getNote($issue_id, $entry_id);
                 $headers = [
                     'Message-ID' => $data['note']['not_message_id'],
                 ];
-                if (@$data['note']['reference_msg_id'] != false) {
-                    $headers['In-Reply-To'] = $data['note']['reference_msg_id'];
+                $reference_msg_id = @$data['note']['reference_msg_id'];
+                if ($reference_msg_id) {
+                    $headers['In-Reply-To'] = $reference_msg_id;
                 } else {
                     $headers['In-Reply-To'] = Issue::getRootMessageID($issue_id);
                 }
-                $headers['References'] = Mail_Helper::fold(implode(' ', Mail_Helper::getReferences($issue_id, @$data['note']['reference_msg_id'], 'note')));
+                $headers['References'] = implode(' ', Mail_Helper::getReferences($issue_id, $reference_msg_id, 'note'));
                 $subject = ev_gettext('Note');
                 break;
-            case 'emails':
-                // this should not be used anymore
-                return;
+
             case 'files':
                 $data = self::getAttachment($issue_id, $entry_id);
                 $subject = ev_gettext('File Attached');
                 break;
+
+            case 'updated':
+                // this should not be used anymore
+                return;
+
+            case 'emails':
+                // this should not be used anymore
+                return;
         }
 
-        // FIXME: $data and $subject might be used uninitialized
         self::notifySubscribers($issue_id, $emails, $type, $data, $subject, $internal_only, $entry_id, $headers);
     }
 
@@ -978,7 +966,7 @@ class Notification
      * @param   int $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      * @param   array $headers Any extra headers that need to be added to this email (Default false)
      */
-    public static function notifySubscribers($issue_id, $emails, $type, $data, $subject, $internal_only, $type_id = false, $headers = false)
+    private static function notifySubscribers($issue_id, $emails, $type, $data, $subject, $internal_only, $type_id = null, $headers = [])
     {
         global $_EVENTUM_LAST_NOTIFIED_LIST;
 
@@ -996,9 +984,19 @@ class Notification
         // type of notification is sent out: email, note, blocked_email
         $notify_type = $type;
         $sender_usr_id = false;
-        $threading_headers = Mail_Helper::getBaseThreadingHeaders($issue_id);
+
+        $have_no_threading_headers = empty($headers['Message-ID']) && empty($headers['In-Reply-To']) && empty($headers['References']);
+        $add_headers = [];
+        if ($headers) {
+            $add_headers = $headers;
+        }
+        if (!$add_headers || $have_no_threading_headers) {
+            $add_headers = Mail_Helper::getBaseThreadingHeaders($issue_id);
+        }
+
         $emails = array_unique($emails);
         foreach ($emails as $email) {
+            $sender = null;
             $can_access = true;
             $email_address = Mail_Helper::getEmailAddress($email);
             $recipient_usr_id = User::getUserIDByEmail($email_address);
@@ -1035,16 +1033,6 @@ class Notification
                 Language::set(APP_DEFAULT_LOCALE);
             }
 
-            // send email (use PEAR's classes)
-            $mail = new Mail_Helper();
-            $mail->setTextBody($tpl->getTemplateContents());
-            if ($headers != false) {
-                $mail->setHeaders($headers);
-            }
-            if ($headers == false || ($headers != false && (empty($headers['Message-ID']) && empty($headers['In-Reply-To']) && empty($headers['References'])))) {
-                $mail->setHeaders($threading_headers);
-            }
-
             if ($type == 'notes') {
                 // special handling of blocked messages
                 if ($data['note']['not_is_blocked'] == 1) {
@@ -1068,14 +1056,15 @@ class Notification
                     $pos = strpos($extra_subject, "[#$issue_id] $subject: ");
                     $full_subject = substr($extra_subject, $pos);
                 } else {
-                    $full_subject = "[#$issue_id] $subject: $extra_subject";
+                    // TRANSLATORS: %1 - issue_id, %2: subject, %3: note title
+                    $full_subject = ev_gettext('[#%1$s] %2$s: %3$s', $issue_id, $subject, $extra_subject);
                 }
-            } elseif (($type == 'new_issue') && ($is_assigned)) {
+            } elseif ($type == 'new_issue' && $is_assigned) {
                 // TRANSLATORS: %1 - issue_id, %2: issue summary
                 $full_subject = ev_gettext('[#%1$s] New Issue Assigned: %2$s', $issue_id, $data['iss_summary']);
             } else {
-                $extra_subject = $data['iss_summary'];
-                $full_subject = "[#$issue_id] $subject: $extra_subject";
+                // TRANSLATORS: %1 - issue_id, %2: subject, %3: issue summary
+                $full_subject = ev_gettext('[#%1$s] %2$s: %3$s', $issue_id, $subject, $data['iss_summary']);
             }
 
             if ($notify_type == 'notes' && $sender) {
@@ -1083,7 +1072,28 @@ class Notification
             } else {
                 $from = self::getFixedFromHeader($issue_id, '', 'issue');
             }
-            $mail->send($from, $email, $full_subject, true, $issue_id, $notify_type, $sender_usr_id, $type_id);
+
+            $builder = new MailBuilder();
+            $builder->addTextPart($tpl->getTemplateContents());
+            $builder->getMessage()
+                ->setSubject($full_subject)
+                ->setTo($email)
+                ->setFrom($from);
+
+            $mail = $builder->toMailMessage();
+
+            if ($add_headers) {
+                $mail->addHeaders($add_headers);
+            }
+
+            $options = [
+                'save_email_copy' => true,
+                'issue_id' => $issue_id,
+                'type' => $notify_type,
+                'type_id' => $type_id,
+                'sender_usr_id' => $sender_usr_id,
+            ];
+            Mail_Queue::queue($mail, $email, $options);
 
             $_EVENTUM_LAST_NOTIFIED_LIST[$issue_id][] = $email;
         }
@@ -1111,8 +1121,8 @@ class Notification
                     usr_customer_id,
                     usr_customer_contact_id
                  FROM
-                    {{%user}},
-                    {{%project_user}}
+                    `user`,
+                    `project_user`
                  WHERE
                     pru_prj_id=? AND
                     usr_id=pru_usr_id AND
@@ -1151,8 +1161,8 @@ class Notification
                     usr_full_name,
                     usr_email
                  FROM
-                    {{%user}},
-                    {{%issue_user}}
+                    `user`,
+                    `issue_user`
                  WHERE
                     isu_iss_id=? AND
                     usr_id=isu_usr_id AND
@@ -1185,7 +1195,7 @@ class Notification
         $emails = array_merge($emails, Workflow::getAdditionalEmailAddresses($prj_id, $issue_id, 'new_issue'));
 
         $data = Issue::getDetails($issue_id, true);
-        $data['attachments'] = Attachment::getList($issue_id);
+        $data['attachments'] = AttachmentManager::getList($issue_id);
 
         // notify new issue to irc channel
         $irc_notice = "New Issue #$issue_id (";
@@ -1449,7 +1459,7 @@ class Notification
             $params['ino_target_usr_id'] = $usr_id;
         }
 
-        $stmt = 'INSERT INTO {{%irc_notice}} SET ' . DB_Helper::buildSet($params);
+        $stmt = 'INSERT INTO `irc_notice` SET ' . DB_Helper::buildSet($params);
         DB_Helper::getInstance()->query($stmt, $params);
     }
 
@@ -1530,56 +1540,6 @@ class Notification
     }
 
     /**
-     * Send an email to all issue assignees
-     *
-     * @param   int $issue_id The ID of the issue
-     * @param   string $type The type of notification to send
-     * @param   array $data Any extra data to pass to the template
-     * @deprecated method not used
-     */
-    public static function notifyAssignees($issue_id, $type, $data, $title = '')
-    {
-        $prj_id = Issue::getProjectID($issue_id);
-        $assignees = Issue::getAssignedUserIDs($issue_id);
-        if (!$assignees) {
-            return;
-        }
-
-        // get issue details
-        $issue = Issue::getDetails($issue_id);
-        // open text template
-        $tpl = new Template_Helper();
-        $tpl->setTemplate('notifications/' . $type . '.tpl.text');
-        $tpl->assign([
-            'app_title' => Misc::getToolCaption(),
-            'issue' => $issue,
-            'data' => $data,
-        ]);
-
-        foreach ($assignees as $usr_id) {
-            $usr_email = User::getFromHeader($usr_id);
-            if (!Workflow::shouldEmailAddress($prj_id, Mail_Helper::getEmailAddress($usr_email))) {
-                continue;
-            }
-
-            $subject = "[#$issue_id] $title: " . $issue['iss_summary'];
-            $text_message = $tpl->getTemplateContents();
-
-            // change the current locale
-            Language::set(User::getLang($usr_id));
-
-            $from = self::getFixedFromHeader($issue_id, '', 'issue');
-
-            $options = [
-                'save_email_copy' => true,
-                'type' => $type,
-            ];
-            self::notifyByMail($text_message, $from, $usr_email, $subject, $issue_id, $options);
-        }
-        Language::restore();
-    }
-
-    /**
      * Method used to send an email notification when an issue is
      * assigned to an user.
      *
@@ -1633,30 +1593,6 @@ class Notification
     }
 
     /**
-     * Method used to send the account details of an user.
-     *
-     * @param   int $usr_id The user ID
-     * @deprecated method not used?
-     */
-    public static function notifyAccountDetails($usr_id)
-    {
-        $info = User::getDetails($usr_id);
-        $info['projects'] = Project::getAssocList($usr_id, true, true);
-        // open text template
-        $tpl = new Template_Helper();
-        $tpl->setTemplate('notifications/account_details.tpl.text');
-        $tpl->assign([
-            'app_title' => Misc::getToolCaption(),
-            'user' => $info,
-        ]);
-
-        // TRANSLATORS: %s = APP_SHORT_NAME
-        $subject = ev_gettext('%s: Your User Account Details', APP_SHORT_NAME);
-        $text_message = $tpl->getTemplateContents();
-        self::notifyUserByMail($usr_id, $subject, $text_message);
-    }
-
-    /**
      * Method used to get the list of subscribers for a given issue.
      *
      * @param   int $issue_id The issue ID
@@ -1679,22 +1615,23 @@ class Notification
                     pru_role
                  FROM
                     (
-                    {{%subscription}},
-                    {{%user}}';
+                    `subscription`,
+                    `user`';
 
         if ($type) {
             $stmt .= ',
-                     {{%subscription_type}}';
+                     `subscription_type`';
         }
-        $stmt .= '
+        $stmt .= "
                     )
                     LEFT JOIN
-                        {{%project_user}}
+                        `project_user`
                     ON
                         (sub_usr_id = pru_usr_id AND pru_prj_id = ?)
                  WHERE
                     sub_usr_id=usr_id AND
-                    sub_iss_id=?';
+                    usr_status = 'active' AND
+                    sub_iss_id=?";
         $params = [
             $prj_id, $issue_id,
         ];
@@ -1729,15 +1666,15 @@ class Notification
                         pru_role
                      FROM
                         (
-                        {{%subscription}},
-                        {{%subscription_type}}
+                        `subscription`,
+                        `subscription_type`
                         )
                      LEFT JOIN
-                        {{%user}}
+                        `user`
                      ON
                         usr_email = sub_email
                      LEFT JOIN
-                        {{%project_user}}
+                        `project_user`
                      ON
                         usr_id = pru_usr_id AND
                         pru_prj_id = $prj_id
@@ -1786,7 +1723,7 @@ class Notification
         $stmt = 'SELECT
                     *
                  FROM
-                    {{%subscription}}
+                    `subscription`
                  WHERE
                     sub_id=?';
         try {
@@ -1816,7 +1753,7 @@ class Notification
                     sbt_type,
                     1
                  FROM
-                    {{%subscription_type}}
+                    `subscription_type`
                  WHERE
                     sbt_sub_id=?';
         try {
@@ -1842,7 +1779,7 @@ class Notification
                     sub_usr_id,
                     sub_email
                  FROM
-                    {{%subscription}}
+                    `subscription`
                  WHERE
                     sub_iss_id=?';
         try {
@@ -1876,7 +1813,7 @@ class Notification
         $stmt = 'SELECT
                     COUNT(*)
                  FROM
-                    {{%subscription}}
+                    `subscription`
                  WHERE
                     sub_iss_id=? AND
                     sub_usr_id=?';
@@ -1899,7 +1836,7 @@ class Notification
         $stmt = "SELECT
                     sub_iss_id
                  FROM
-                    {{%subscription}}
+                    `subscription`
                  WHERE
                     sub_id IN ($itemlist)";
         $issue_id = DB_Helper::getInstance()->getOne($stmt, $items);
@@ -1910,13 +1847,13 @@ class Notification
         foreach ($items as $sub_id) {
             $subscriber = self::getSubscriber($sub_id);
             $stmt = 'DELETE FROM
-                        {{%subscription}}
+                        `subscription`
                      WHERE
                         sub_id=?';
             DB_Helper::getInstance()->query($stmt, [$sub_id]);
 
             $stmt = 'DELETE FROM
-                        {{%subscription_type}}
+                        `subscription_type`
                      WHERE
                         sbt_sub_id=?';
             DB_Helper::getInstance()->query($stmt, [$sub_id]);
@@ -1937,7 +1874,7 @@ class Notification
         $stmt = 'SELECT
                     sub_id
                  FROM
-                    {{%subscription}}
+                    `subscription`
                  WHERE
                     sub_iss_id = ? AND';
         $params = [$issue_id];
@@ -1957,7 +1894,7 @@ class Notification
         }
 
         $stmt = 'DELETE FROM
-                    {{%subscription}}
+                    `subscription`
                  WHERE
                     sub_id=?';
         try {
@@ -1967,7 +1904,7 @@ class Notification
         }
 
         $stmt = 'DELETE FROM
-                    {{%subscription_type}}
+                    `subscription_type`
                  WHERE
                     sbt_sub_id=?';
         try {
@@ -2001,7 +1938,7 @@ class Notification
                     sub_usr_id,
                     sub_email
                  FROM
-                    {{%subscription}}
+                    `subscription`
                  WHERE
                     sub_id=?';
         try {
@@ -2032,7 +1969,7 @@ class Notification
         $stmt = 'SELECT
                     sub_id
                  FROM
-                    {{%subscription}}
+                    `subscription`
                  WHERE
                     sub_iss_id = ? AND';
         if ($usr_id) {
@@ -2130,7 +2067,7 @@ class Notification
         $stmt = 'SELECT
                     COUNT(sub_id)
                  FROM
-                    {{%subscription}}
+                    `subscription`
                  WHERE
                     sub_iss_id=? AND
                     sub_usr_id=?';
@@ -2139,7 +2076,7 @@ class Notification
             return -1;
         }
         $stmt = "INSERT INTO
-                    {{%subscription}}
+                    `subscription`
                  (
                     sub_iss_id,
                     sub_usr_id,
@@ -2211,7 +2148,7 @@ class Notification
             $stmt = 'SELECT
                         COUNT(sub_id)
                      FROM
-                        {{%subscription}}
+                        `subscription`
                      WHERE
                         sub_iss_id=? AND
                         sub_email=?';
@@ -2221,7 +2158,7 @@ class Notification
             }
         }
         $stmt = "INSERT INTO
-                    {{%subscription}}
+                    `subscription`
                  (
                     sub_iss_id,
                     sub_usr_id,
@@ -2267,7 +2204,7 @@ class Notification
     public static function addType($sub_id, $type)
     {
         $stmt = 'INSERT INTO
-                    {{%subscription_type}}
+                    `subscription_type`
                  (
                     sbt_sub_id,
                     sbt_type
@@ -2306,7 +2243,7 @@ class Notification
 
         // always set the type of notification to issue-level
         $stmt = "UPDATE
-                    {{%subscription}}
+                    `subscription`
                  SET
                     sub_level='issue',
                     sub_email=?,
@@ -2320,7 +2257,7 @@ class Notification
         }
 
         $stmt = 'DELETE FROM
-                    {{%subscription_type}}
+                    `subscription_type`
                  WHERE
                     sbt_sub_id=?';
         DB_Helper::getInstance()->query($stmt, [$sub_id]);
@@ -2354,11 +2291,15 @@ class Notification
         // change the current locale
         Language::set(User::getLang($usr_id));
 
-        // send email (use PEAR's classes)
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
         $to = Mail_Helper::getFormattedName($info['usr_full_name'], $info['usr_email']);
-        $mail->send(null, $to, $subject);
+
+        $builder = new MailBuilder();
+        $builder->addTextPart($text_message)
+            ->getMessage()
+            ->setSubject($subject)
+            ->setTo($to);
+
+        Mail_Queue::queue($builder, $to);
 
         Language::restore();
     }
@@ -2376,12 +2317,18 @@ class Notification
      */
     public static function notifyByMail($text_message, $from, $to, $subject, $issue_id, $options = [])
     {
-        $type = isset($options['type']) ? $options['type'] : '';
-        $save_email_copy = isset($options['save_email_copy']) ? $options['save_email_copy'] : 0;
+        $builder = new MailBuilder();
+        $builder->addTextPart($text_message)
+            ->getMessage()
+            ->setSubject($subject)
+            ->setFrom($from ?: Setup::get()->smtp->from)
+            ->setTo($to);
 
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
-        $mail->setHeaders(Mail_Helper::getBaseThreadingHeaders($issue_id));
-        $mail->send($from, $to, $subject, $save_email_copy, $issue_id, $type);
+        $mail = $builder->toMailMessage();
+        $mail->addHeaders(Mail_Helper::getBaseThreadingHeaders($issue_id));
+
+        $options['issue_id'] = $issue_id;
+
+        Mail_Queue::queue($mail, $to, $options);
     }
 }

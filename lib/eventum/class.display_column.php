@@ -61,7 +61,7 @@ class Display_Column
         }
         // remove status change date column if no customizations setup
         if (count(Status::getProjectStatusCustomization($prj_id, array_keys(Status::getAssocStatusList($prj_id)))) < 1) {
-            unset($data['sta_change_date']);
+            unset($data['status_action_date']);
         }
 
         foreach ($data as $field => $info) {
@@ -108,7 +108,7 @@ class Display_Column
                     ctd_min_role,
                     ctd_rank
                 FROM
-                    {{%columns_to_display}}
+                    `columns_to_display`
                 WHERE
                     ctd_prj_id = ? AND
                     ctd_page = ?
@@ -201,8 +201,8 @@ class Display_Column
                 'sta_rank' => [
                     'title' => ev_gettext('Status'),
                 ],
-                'sta_change_date' => [
-                    'title' => ev_gettext('Status Change Date'),
+                'status_action_date' => [
+                    'title' => ev_gettext('Status Action Date'),
                 ],
                 'last_action_date' => [
                     'title' => ev_gettext('Last Action Date'),
@@ -217,6 +217,9 @@ class Display_Column
                 ],
                 'iss_expected_resolution_date' => [
                     'title' => ev_gettext('Expected Resolution Date'),
+                ],
+                'iss_status_change_date' => [
+                    'title' => ev_gettext('Status Change Date'),
                 ],
             ],
         ];
@@ -239,7 +242,7 @@ class Display_Column
 
         // delete current entries
         $stmt = 'DELETE FROM
-                    {{%columns_to_display}}
+                    `columns_to_display`
                 WHERE
                     ctd_prj_id = ? AND
                     ctd_page = ?';
@@ -252,7 +255,7 @@ class Display_Column
         $rank = 1;
         foreach ($ranks as $field_name => $requested_rank) {
             $sql = 'INSERT INTO
-                        {{%columns_to_display}}
+                        `columns_to_display`
                     SET
                         ctd_prj_id = ?,
                         ctd_page = ?,
@@ -289,7 +292,7 @@ class Display_Column
                 $min_role = 1;
             }
             $stmt = 'INSERT INTO
-                        {{%columns_to_display}}
+                        `columns_to_display`
                      SET
                         ctd_prj_id = ?,
                         ctd_page = ?,

@@ -26,7 +26,6 @@ use Routing;
 use Setup;
 use Zend;
 use Zend\Mail\AddressList;
-use Zend\Mime;
 
 /**
  * @group mail
@@ -358,14 +357,6 @@ class MailMessageTest extends TestCase
         $this->assertSame(null, $message->getFrom());
     }
 
-    public function testModifyBody()
-    {
-        $message = MailMessage::createFromFile(__DIR__ . '/../data/bug684922.txt');
-
-        $content = Mail_Helper::stripWarningMessage($message->getContent());
-        $message->setContent($content);
-    }
-
     public function testRemoveCc()
     {
         $message = MailMessage::createFromFile(__DIR__ . '/../data/duplicate-from.txt');
@@ -501,20 +492,53 @@ class MailMessageTest extends TestCase
         $this->assertEquals($exp, $mail->getHeaders()->toString());
     }
 
+    public function testAddHeadersMultiValue()
+    {
+        $raw = "Message-ID: <33@JON>\n\n\nbody";
+        $mail = MailMessage::createFromString($raw);
+
+        // References is single value header, must join to string
+        // but do not worry about wordwrap
+        $references = ['a', 'b', str_repeat('de de', 40)];
+        $add_headers = [
+            'References' => implode(' ', $references),
+        ];
+
+        $mail->addHeaders($add_headers);
+        $raw = $mail->getRawContent();
+        $this->assertContains("dede\r\n dede", $raw, 'value has been wrapped');
+    }
+
     /**
      * @test $structure->body getting textual mail body from multipart message
      */
     public function testGetMailBody()
     {
         $filename = __DIR__ . '/../data/multipart-text-html.txt';
-        $message = $this->readFile($filename);
-
-        $structure = Mime_Helper::decode($message, true, true);
-        $body1 = $structure->body;
 
         $mail = MailMessage::createFromFile($filename);
         $body2 = $mail->getMessageBody();
-        $this->assertEquals($body1, $body2);
+        $this->assertEquals("Commit in MAIN\n", $body2);
+    }
+
+    /**
+     * test different access modes or X-Priority header.
+     */
+    public function testXPriority()
+    {
+        $content = $this->readDataFile('duplicate-msgid.txt');
+        $mail = MailMessage::createFromString($content);
+
+        $this->assertEquals('3', $mail->XPriority);
+        $this->assertEquals('3', $mail->xpriority);
+        $this->assertEquals('3', $mail->x_priority);
+        $this->assertEquals('3', $mail->{'x-priority'});
+        $this->assertEquals('3', $mail->{'X-Priority'});
+
+        // this is how optional headers are to be handled
+        $has_priority = $mail->getHeaders()->has('XX-Priority');
+        $priority = $has_priority ? $mail->xpriority : null;
+        $this->assertEquals(null, $priority);
     }
 
     /**
@@ -535,12 +559,8 @@ class MailMessageTest extends TestCase
         ];
         Setup::set(['smtp' => $smtp]);
 
-        // send email (use PEAR's classes)
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
         $from = Setup::get()->smtp->from;
-        $to = $mail->getFormattedName($info['usr_full_name'], $info['usr_email']);
-        $mail->send($from, $to, $subject);
+        $to = Mail_Helper::getFormattedName($info['usr_full_name'], $info['usr_email']);
 
         // the same but with ZF
         $mail = MailMessage::createNew();
@@ -548,30 +568,7 @@ class MailMessageTest extends TestCase
         $mail->setFrom($from);
         $mail->setTo($to);
         $mail->setContent($text_message);
-        Mail_Queue::addMail($mail, $to);
-    }
-
-    /**
-     * Test mail sending with Mail_Helper
-     *
-     * @group db
-     */
-    public function testMailSendMH()
-    {
-        $text_message = 'tere';
-        $issue_id = 1;
-        $from = 'Eventum <support@example.org>';
-        $recipient = 'Eventum <support@example.org>';
-        $subject = '[#1] Issue Created';
-        $msg_id = '<eventum@eventum.example.org>';
-
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
-        $headers = [
-            'Message-ID' => $msg_id,
-        ];
-        $mail->setHeaders($headers);
-        $mail->send($from, $recipient, $subject, 0, $issue_id, 'auto_created_issue');
+        Mail_Queue::queue($mail, $to);
     }
 
     /**
@@ -595,7 +592,7 @@ class MailMessageTest extends TestCase
         $mail->setTo($recipient);
 
         // add($recipient, $headers, $body, $save_email_copy = 0, $issue_id = false, $type = '', $sender_usr_id = false, $type_id = false)
-        Mail_Queue::addMail($mail, $recipient);
+        Mail_Queue::queue($mail, $recipient);
     }
 
     public function testMailFromHeaderBody()
@@ -633,12 +630,6 @@ class MailMessageTest extends TestCase
         $subject = '[#3] Note: Re: pläh';
         $type = 'assignment';
 
-        // send email (use PEAR's classes)
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
-        $mail->setHeaders(Mail_Helper::getBaseThreadingHeaders($issue_id));
-        $mail->send($from, $to, $subject, true, $issue_id, $type);
-
         // using zend\mail
         $mail = MailMessage::createNew();
         $mail->setContent($text_message);
@@ -654,7 +645,7 @@ class MailMessageTest extends TestCase
             'issue_id' => $issue_id,
             'type' => $type,
         ];
-        Mail_Queue::addMail($mail, $to, $options);
+        Mail_Queue::queue($mail, $to, $options);
 
         $mail = new \Zend\Mail\Message();
         $mail->setBody('This is the text of the email.');
@@ -680,32 +671,6 @@ class MailMessageTest extends TestCase
         $mail->addHeaders($headers);
     }
 
-    /**
-     * @see http://framework.zend.com/manual/current/en/modules/zend.mail.message.html
-     * @see http://framework.zend.com/manual/current/en/modules/zend.mail.attachments.html
-     */
-    public function testZendMime()
-    {
-        $textContent = 'textõ';
-        $text = new Zend\Mime\Part($textContent);
-        $text->type = 'text/plain';
-        $text->setCharset('UTF-8');
-
-        $body = new Zend\Mime\Message();
-        $body->addPart($text);
-
-        $message = new Zend\Mail\Message();
-        $message->setBody($body);
-
-//        echo $message->toString();
-
-        $mail = MailMessage::createFromMessage($message);
-//        echo $mail->getRawContent();
-
-        $mail = MailMessage::createNew();
-        $mime = $mail->addMimePart($textContent, 'text/plain', 'UTF-8');
-    }
-
     public function testZFPlainMail()
     {
         $text_message = 'zzzxx';
@@ -714,18 +679,6 @@ class MailMessageTest extends TestCase
         $to = '"Admin User" <admin@example.com>';
         $subject = '[#3] Note: Re: pläh';
         $type = 'assignment';
-
-        // send email (use PEAR's classes)
-        $mail = new Mail_Helper();
-        $mail->setTextBody($text_message);
-        $mail->send($from, $to, $subject);
-
-        // use zend mime
-        $mail = MailMessage::createNew();
-        $mail->setTextPart($text_message);
-        $mail->setFrom($from);
-        $mail->setTo($to);
-        $mail->setSubject($subject);
 
         // use mail builder
         $builder = new MailBuilder();
@@ -742,7 +695,7 @@ class MailMessageTest extends TestCase
             'issue_id' => $issue_id,
             'type' => $type,
         ];
-        Mail_Queue::addMail($mail, $to, $options);
+        Mail_Queue::queue($mail, $to, $options);
     }
 
     /**
@@ -774,10 +727,6 @@ class MailMessageTest extends TestCase
         } catch (PHPUnit_Framework_Error_Notice $e) {
             error_log($e->getMessage());
         }
-
-        // the same handled better in encodeQuotedPrintable
-        $v = Mime_Helper::encodeQuotedPrintable($value);
-//        var_dump($v);
 
         // this works too
         $v = \Zend\Mail\Header\HeaderWrap::mimeEncodeValue($value, 'UTF-8');

@@ -26,12 +26,10 @@ class Mail_Queue
     const MAX_RETRIES = 20;
 
     /**
-     * The method exists here to kill Mail_Helper::send() method.
+     * Adds an email to the outgoing mail queue.
      *
-     * @see Mail_Helper::send()
-     * @param MailBuilder $builder
-     * @param string $to
-     * @param array $options
+     * @param MailBuilder|MailMessage $mail
+     * @param string $recipient The recipient, can be E-Mail header form ("User <email@example.org>")
      * @param array $options Optional options:
      * - string $from From address, defaults to system user
      * - integer $save_email_copy Whether to send a copy of this email to a configurable address or not (eventum_sent@)
@@ -39,45 +37,32 @@ class Mail_Queue
      * - string $type The type of message this is.
      * - integer $sender_usr_id The id of the user sending this email.
      * - integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
-     */
-    public static function queue(MailBuilder $builder, $to, $options = [])
-    {
-        $message = $builder->getMessage();
-        $headers = $message->getHeaders();
-
-        if (!$headers->has('from')) {
-            $from = isset($options['from']) ? $options['from'] : Setup::get()->smtp->from;
-            $message->setFrom($from);
-        }
-
-        self::addMail($builder->toMailMessage(), $to, $options);
-    }
-
-    /**
-     * Adds an email to the outgoing mail queue.
-     *
-     * @param MailMessage $mail The Mail object
-     * @param string $recipient The recipient, can be E-Mail header form ("User <email@example.org>")
-     * @param array $options Optional options:
-     * - integer $save_email_copy Whether to send a copy of this email to a configurable address or not (eventum_sent@)
-     * - integer $issue_id The ID of the issue. If false, email will not be associated with issue.
-     * - string $type The type of message this is.
-     * - integer $sender_usr_id The id of the user sending this email.
-     * - integer $type_id The ID of the event that triggered this notification (issue_id, sup_id, not_id, etc)
      * @return bool true if entry was added to mail queue table
      */
-    public static function addMail(MailMessage $mail, $recipient, array $options = [])
+    public static function queue($mail, $recipient, array $options = [])
     {
+        $prj_id = Auth::getCurrentProject(false);
+
         $save_email_copy = isset($options['save_email_copy']) ? $options['save_email_copy'] : 0;
         $issue_id = isset($options['issue_id']) ? $options['issue_id'] : false;
         $type = isset($options['type']) ? $options['type'] : '';
-        $sender_usr_id = isset($options['sender_usr_id']) ? $options['sender_usr_id'] : null;
         $type_id = isset($options['type_id']) ? $options['type_id'] : false;
+        $sender_usr_id = isset($options['sender_usr_id']) ? $options['sender_usr_id'] : null;
 
-        $prj_id = Auth::getCurrentProject(false);
-        Workflow::modifyMailQueue($prj_id, $recipient, $mail, $issue_id, $type, $sender_usr_id, $type_id);
+        if ($mail instanceof MailBuilder) {
+            $mail = $mail->toMailMessage();
+        }
+        $headers = $mail->getHeaders();
+
+        if (!$headers->has('from')) {
+            $from = isset($options['from']) ? $options['from'] : Setup::get()->smtp->from;
+            $mail->setFrom($from);
+        }
+
+        Workflow::modifyMailQueue($prj_id, $recipient, $mail, $options);
 
         // avoid sending emails out to users with inactive status
+        // TODO: use EventDispatcher to handle this
         $recipient_email = Mail_Helper::getEmailAddress($recipient);
         $usr_id = User::getUserIDByEmail($recipient_email);
         if ($usr_id) {
@@ -89,27 +74,28 @@ class Mail_Queue
         }
 
         $recipient = Mail_Helper::fixAddressQuoting($recipient);
-
         $reminder_addresses = Reminder::_getReminderAlertAddresses();
-        $headers = [];
 
-        $role_id = User::getRoleByUser($usr_id, Issue::getProjectID($issue_id));
-        $is_reminder_address = in_array(Mail_Helper::getEmailAddress($recipient), $reminder_addresses);
-        if ($issue_id && ($usr_id && $role_id != User::ROLE_CUSTOMER) || $is_reminder_address) {
-            $headers += Mail_Helper::getSpecializedHeaders($issue_id, $type);
+        if ($issue_id) {
+            $role_id = User::getRoleByUser($usr_id, Issue::getProjectID($issue_id));
+            $is_reminder_address = in_array(Mail_Helper::getEmailAddress($recipient), $reminder_addresses);
+            if (($usr_id && $role_id != User::ROLE_CUSTOMER) || $is_reminder_address) {
+                Mail_Helper::addSpecializedHeaders($mail, $issue_id, $type);
+            }
         }
 
         // try to prevent triggering absence auto responders
-        $headers['precedence'] = 'bulk'; // the 'classic' way, works with e.g. the unix 'vacation' tool
-        $headers['Auto-submitted'] = 'auto-generated'; // the RFC 3834 way
+        $mail->addHeaders([
+            // the 'classic' way, works with e.g. the unix 'vacation' tool
+            'precedence' => 'bulk',
+            // the RFC 3834 way
+            'Auto-submitted' => 'auto-generated',
+        ]);
 
         // if the Date: header is missing, add it.
-        // FIXME: do in class? or add setDate() method?
-        if (!$mail->getHeaders()->has('Date')) {
-            $headers['Date'] = date('D, j M Y H:i:s O');
+        if (!$headers->has('Date')) {
+            $mail->setDate();
         }
-
-        $mail->addHeaders($headers);
 
         $params = [
             'maq_save_copy' => $save_email_copy,
@@ -130,12 +116,8 @@ class Mail_Queue
             $params['maq_type_id'] = $type_id;
         }
 
-        $stmt = 'INSERT INTO {{%mail_queue}} SET ' . DB_Helper::buildSet($params);
-        try {
-            DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DatabaseException $e) {
-            return false;
-        }
+        $stmt = 'INSERT INTO `mail_queue` SET ' . DB_Helper::buildSet($params);
+        DB_Helper::getInstance()->query($stmt, $params);
 
         return true;
     }
@@ -240,9 +222,6 @@ class Mail_Queue
 
         $transport = new MailTransport();
 
-        // TODO: mail::send wants just bare addresses, do that ourselves
-        $recipient = Mime_Helper::encodeAddress($recipient);
-
         return $transport->send($recipient, $mail);
     }
 
@@ -259,7 +238,7 @@ class Mail_Queue
         $sql = "SELECT
                     maq_id id
                  FROM
-                    {{%mail_queue}}
+                    `mail_queue`
                  WHERE
                     maq_status=?
                  ORDER BY
@@ -287,7 +266,7 @@ class Mail_Queue
         $sql = 'SELECT
                     GROUP_CONCAT(maq_id) ids
                  FROM
-                    {{%mail_queue}}
+                    `mail_queue`
                  WHERE
                     maq_status=?
                  AND
@@ -302,11 +281,7 @@ class Mail_Queue
             $sql .= " LIMIT 0, $limit";
         }
 
-        try {
-            $res = DB_Helper::getInstance()->getAll($sql, [$status]);
-        } catch (DatabaseException $e) {
-            return [];
-        }
+        $res = DB_Helper::getInstance()->getAll($sql, [$status]);
 
         foreach ($res as &$value) {
             $value = explode(',', $value['ids']);
@@ -333,16 +308,11 @@ class Mail_Queue
                     maq_type,
                     maq_usr_id
                  FROM
-                    {{%mail_queue}}
+                    `mail_queue`
                  WHERE
                     maq_id=?';
-        try {
-            $res = DB_Helper::getInstance()->getRow($stmt, [$maq_id]);
-        } catch (DatabaseException $e) {
-            return [];
-        }
 
-        return $res;
+        return DB_Helper::getInstance()->getRow($stmt, [$maq_id]);
     }
 
     /**
@@ -363,16 +333,11 @@ class Mail_Queue
                     maq_type,
                     maq_usr_id
                  FROM
-                    {{%mail_queue}}
+                    `mail_queue`
                  WHERE
                     maq_id IN (' . implode(',', $maq_ids) . ')';
-        try {
-            $res = DB_Helper::getInstance()->getAll($stmt);
-        } catch (DatabaseException $e) {
-            return [];
-        }
 
-        return $res;
+        return DB_Helper::getInstance()->getAll($stmt);
     }
 
     /**
@@ -383,7 +348,7 @@ class Mail_Queue
      */
     private static function getQueueErrorCount($maq_id)
     {
-        $sql = 'select count(*) from {{%mail_queue_log}} where mql_maq_id=? and mql_status=?';
+        $sql = 'select count(*) from `mail_queue_log` where mql_maq_id=? and mql_status=?';
         $res = DB_Helper::getInstance()->getOne($sql, [$maq_id, 'error']);
 
         return (int) $res;
@@ -401,7 +366,7 @@ class Mail_Queue
     private static function _saveStatusLog($maq_id, $status, $server_message)
     {
         $stmt = 'INSERT INTO
-                    {{%mail_queue_log}}
+                    `mail_queue_log`
                  (
                     mql_maq_id,
                     mql_created_date,
@@ -416,14 +381,10 @@ class Mail_Queue
             $status,
             $server_message,
         ];
-        try {
-            DB_Helper::getInstance()->query($stmt, $params);
-        } catch (DatabaseException $e) {
-            return false;
-        }
+        DB_Helper::getInstance()->query($stmt, $params);
 
         $stmt = 'UPDATE
-                    {{%mail_queue}}
+                    `mail_queue`
                  SET
                     maq_status=?
                  WHERE
@@ -449,18 +410,13 @@ class Mail_Queue
                     maq_recipient,
                     maq_subject
                  FROM
-                    {{%mail_queue}}
+                    `mail_queue`
                  WHERE
                     maq_iss_id = ?
                  ORDER BY
                     maq_queued_date ASC';
-        try {
-            $res = DB_Helper::getInstance()->getAll($stmt, [$issue_id]);
-        } catch (DatabaseException $e) {
-            return false;
-        }
 
-        return $res;
+        return DB_Helper::getInstance()->getAll($stmt, [$issue_id]);
     }
 
     /**
@@ -481,16 +437,11 @@ class Mail_Queue
                     maq_headers,
                     maq_body
                  FROM
-                    {{%mail_queue}}
+                    `mail_queue`
                  WHERE
                     maq_id = ?';
-        try {
-            $res = DB_Helper::getInstance()->getRow($stmt, [$maq_id]);
-        } catch (DatabaseException $e) {
-            return false;
-        }
 
-        return $res;
+        return DB_Helper::getInstance()->getRow($stmt, [$maq_id]);
     }
 
     /**
@@ -511,17 +462,13 @@ class Mail_Queue
         $sql = "SELECT
                     maq_recipient
                 FROM
-                    {{%mail_queue}}
+                    `mail_queue`
                 WHERE
                     maq_type IN ($types_list) AND
                     maq_type_id = ?";
         $params = $types;
         $params[] = $type_id;
-        try {
-            $res = DB_Helper::getInstance()->getColumn($sql, $params);
-        } catch (DatabaseException $e) {
-            return false;
-        }
+        $res = DB_Helper::getInstance()->getColumn($sql, $params);
 
         foreach ($res as &$row) {
             // FIXME: what does quote stripping fix here
@@ -534,24 +481,18 @@ class Mail_Queue
     /**
      * Truncates the maq_body field of any emails older then one month.
      *
-     * @return bool
+     * @param string $interval MySQL Interval definition
      */
-    public static function truncate()
+    public static function truncate($interval)
     {
         $sql = "UPDATE
-                    {{%mail_queue}}
+                    `mail_queue`
                 SET
                   maq_body = '',
                   maq_status = 'truncated'
                 WHERE
                     maq_status = 'sent' AND
-                    maq_queued_date <= DATE_SUB(NOW(), INTERVAL 1 MONTH)";
-        try {
-            DB_Helper::getInstance()->query($sql);
-        } catch (DatabaseException $e) {
-            return false;
-        }
-
-        return true;
+                    maq_queued_date <= DATE_SUB(NOW(), INTERVAL $interval)";
+        DB_Helper::getInstance()->query($sql);
     }
 }

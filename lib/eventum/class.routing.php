@@ -13,6 +13,7 @@
 
 use Eventum\Mail\Exception\RoutingException;
 use Eventum\Mail\Helper\AddressHeader;
+use Eventum\Mail\Helper\WarningMessage;
 use Eventum\Mail\MailDumper;
 use Eventum\Mail\MailMessage;
 
@@ -24,27 +25,19 @@ class Routing
     /**
      * Route all mail kinds: emails, notes, drafts (in that order) processing "To:" and "Cc:" headers
      *
-     * @param string &$full_message
+     * @param MailMessage $mail
      * @throws RoutingException in case of failure
      * @return array|bool
      */
-    public static function route(&$full_message)
+    public static function route(MailMessage $mail)
     {
-        self::removeMboxHeader($full_message);
-
-        if (!$full_message) {
-            throw RoutingException::noMessageBodyError();
-        }
-
-        $mail = MailMessage::createFromString($full_message);
-
         $setup = Setup::get();
 
         // create mapping for quickly checking if routing is enabled
         $routing = [
-            'email' => $setup['email_routing']['status'] == 'enabled',
-            'note' => $setup['note_routing']['status'] == 'enabled',
-            'draft' => $setup['draft_routing']['status'] == 'enabled',
+            'email' => $setup['email_routing']['status'] === 'enabled',
+            'note' => $setup['note_routing']['status'] === 'enabled',
+            'draft' => $setup['draft_routing']['status'] === 'enabled',
         ];
 
         $types = ['email', 'note', 'draft'];
@@ -100,7 +93,7 @@ class Routing
 
         // check if the email routing interface is even supposed to be enabled
         $setup = Setup::get();
-        if ($setup['email_routing']['status'] != 'enabled') {
+        if ($setup['email_routing']['status'] !== 'enabled') {
             throw RoutingException::noEmailRouting();
         }
         if (!$setup['email_routing']['address_prefix']) {
@@ -149,19 +142,15 @@ class Routing
         $sender_email = $mail->getSender();
 
         // strip out the warning message sent to staff users
-        if (($setup['email_routing']['status'] == 'enabled') &&
-                ($setup['email_routing']['warning']['status'] == 'enabled')) {
-            $content = Mail_Helper::stripWarningMessage($mail->getContent());
-            // FIXME XXX: this probably will blow up. think of better way
-            $mail->setContent($content);
-        }
+        $wm = new WarningMessage($mail);
+        $wm->remove();
 
         $prj_id = Issue::getProjectID($issue_id);
         AuthCookie::setAuthCookie(APP_SYSTEM_USER_ID);
         AuthCookie::setProjectCookie($prj_id);
 
         // remove certain CC addresses
-        if ($headers->has('Cc') && $setup['smtp']['save_outgoing_email'] == 'yes') {
+        if ($headers->has('Cc') && $setup['smtp']['save_outgoing_email'] === 'yes') {
             $mail->removeFromAddressList('Cc', $setup['smtp']['save_address']);
         }
 
@@ -265,7 +254,7 @@ class Routing
 
         // check if the email routing interface is even supposed to be enabled
         $setup = Setup::get();
-        if ($setup['note_routing']['status'] != 'enabled') {
+        if ($setup['note_routing']['status'] !== 'enabled') {
             throw RoutingException::noEmailRouting();
         }
         if (!$setup['note_routing']['address_prefix']) {
@@ -301,10 +290,11 @@ class Routing
         $sender_email = $mail->getSender();
         $sender_usr_id = User::getUserIDByEmail($sender_email, true);
         $usr_role_id = User::getRoleByUser($sender_usr_id, $prj_id);
+
         // XXX: move this ugly block to Access::can* method
         if ((!$sender_usr_id || $usr_role_id < User::ROLE_USER ||
                 (User::isPartner($sender_usr_id) && !Access::canViewInternalNotes($issue_id, $sender_usr_id))) &&
-                ((!Workflow::canSendNote($prj_id, $issue_id, $sender_email, $structure)))) {
+                ((!Workflow::canSendNote($prj_id, $issue_id, $sender_email, $mail)))) {
             throw RoutingException::noIssuePermission($issue_id);
         }
 
@@ -393,7 +383,7 @@ class Routing
 
         // check if the draft interface is even supposed to be enabled
         $setup = Setup::get();
-        if ($setup['draft_routing']['status'] != 'enabled') {
+        if ($setup['draft_routing']['status'] !== 'enabled') {
             throw RoutingException::noDraftRouting();
         }
         if (!$setup['draft_routing']['address_prefix']) {
@@ -495,11 +485,10 @@ class Routing
      *
      * @param string $message
      * @see https://github.com/eventum/eventum/issues/155
-     * @internal public for testing
      */
     public static function removeMboxHeader(&$message)
     {
-        if (substr($message, 0, 5) != 'From ') {
+        if (substr($message, 0, 5) !== 'From ') {
             return;
         }
 

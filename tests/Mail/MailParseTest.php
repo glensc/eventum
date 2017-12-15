@@ -16,7 +16,6 @@ namespace Eventum\Test\Mail;
 use Eventum\Mail\MailMessage;
 use Eventum\Test\TestCase;
 use Mail_Helper;
-use Mime_Helper;
 use Zend\Mail\Header\GenericHeader;
 use Zend\Mail\Header\To;
 use Zend\Mail\Headers;
@@ -33,19 +32,19 @@ class MailParseTest extends TestCase
     {
         $full_message = $this->readDataFile('encoding.txt');
 
-        $structure = Mime_Helper::decode($full_message, true, true);
+        $mail = MailMessage::createFromString($full_message);
+        $text = $mail->getMessageBody();
         $this->assertEquals(
-            "\npöördumise töötaja.\n<b>Võtame</b> töösse võimalusel.\npöördumisele süsteemis\n\n", $structure->body
+            "\npöördumise töötaja.\n<b>Võtame</b> töösse võimalusel.\npöördumisele süsteemis\n\n", $text
         );
     }
 
     public function testBug684922()
     {
         $message = $this->readDataFile('bug684922.txt');
+        $mail = MailMessage::createFromString($message);
 
-        $structure = Mime_Helper::decode($message, true, true);
-        $message_body = $structure->body;
-        $this->assertEquals('', $message_body);
+        $this->assertEquals('', $mail->getMessageBody());
     }
 
     /**

@@ -17,7 +17,6 @@ use Date_Helper;
 use DateTime;
 use DomainException;
 use Eventum\Mail\Helper\DecodePart;
-use Eventum\Mail\Helper\MimePart;
 use Eventum\Mail\Helper\SanitizeHeaders;
 use InvalidArgumentException;
 use Mime_Helper;
@@ -26,13 +25,11 @@ use Zend\Mail\Address;
 use Zend\Mail\AddressList;
 use Zend\Mail\Header\AbstractAddressList;
 use Zend\Mail\Header\Cc;
-use Zend\Mail\Header\ContentType;
 use Zend\Mail\Header\Date;
 use Zend\Mail\Header\From;
 use Zend\Mail\Header\GenericHeader;
 use Zend\Mail\Header\HeaderInterface;
 use Zend\Mail\Header\MessageId;
-use Zend\Mail\Header\MimeVersion;
 use Zend\Mail\Header\MultipleHeadersInterface;
 use Zend\Mail\Header\Subject;
 use Zend\Mail\Header\To;
@@ -259,7 +256,6 @@ class MailMessage extends Message
      * Returns the text message body.
      *
      * @return string|null The message body
-     * @see Mime_Helper::getMessageBody()
      */
     public function getMessageBody()
     {
@@ -270,7 +266,7 @@ class MailMessage extends Message
             $hasDisposition = $headers->has('Content-Disposition');
             $disposition = $hasDisposition ? $part->getHeaderField('Content-Disposition') : null;
             $filename = $hasDisposition ? $part->getHeaderField('Content-Disposition', 'filename') : null;
-            $is_attachment = $disposition == 'attachment' || $filename;
+            $is_attachment = $disposition === 'attachment' || $filename;
 
             $charset = $part->getHeaderField('Content-Type', 'charset');
 
@@ -280,8 +276,8 @@ class MailMessage extends Message
                         $format = $part->getHeaderField('Content-Type', 'format');
                         $delsp = $part->getHeaderField('Content-Type', 'delsp');
 
-                        $text = Mime_Helper::convertString($part->getContent(), $charset);
-                        if ($format == 'flowed') {
+                        $text = Mime_Helper::convertString((new DecodePart($part))->decode(), $charset);
+                        if ($format === 'flowed') {
                             $text = Mime_Helper::decodeFlowedBodies($text, $delsp);
                         }
                         $parts['text'][] = $text;
@@ -303,10 +299,10 @@ class MailMessage extends Message
 
                 default:
                     // avoid treating forwarded messages as attachments
-                    $is_attachment |= ($disposition == 'inline' && $ctype != 'message/rfc822');
+                    $is_attachment |= ($disposition === 'inline' && $ctype !== 'message/rfc822');
                     // handle inline images
                     $type = current(explode('/', $ctype));
-                    $is_attachment |= $type == 'image';
+                    $is_attachment |= $type === 'image';
 
                     if (!$is_attachment) {
                         $parts['text'][] = $part->getContent();
@@ -323,8 +319,7 @@ class MailMessage extends Message
             $str = implode("\n\n", $parts['html']);
 
             // hack for inotes to prevent content from being displayed all on one line.
-            $str = str_replace('</DIV><DIV>', "\n", $str);
-            $str = str_replace(['<br>', '<br />', '<BR>', '<BR />'], "\n", $str);
+            $str = str_replace(['</DIV><DIV>', '<br>', '<br />', '<BR>', '<BR />'], "\n", $str);
             // XXX: do we also need to do something here about base64 encoding?
             $str = strip_tags($str);
 
@@ -334,26 +329,12 @@ class MailMessage extends Message
             return $str;
         }
 
-        // fallback to read just main part
-        return (new DecodePart($this))->decode();
-    }
-
-    public function addMimePart($content, $type = Mime\Mime::TYPE_TEXT, $charset = APP_CHARSET)
-    {
-        $part = new Mime\Part($content);
-        $part
-            ->setType($type)
-            ->setCharset($charset);
-
-        // parts start from 1 somewhy,
-        // and no easy way to know how many parts there are
-        if (isset($this->parts[1])) {
-            $this->parts[] = $part;
-        } else {
-            $this->parts[1] = $part;
+        if (!$this->isMultipart()) {
+            // fallback to read just main part
+            return (new DecodePart($this))->decode();
         }
 
-        return $part;
+        return '';
     }
 
     /**
@@ -512,13 +493,11 @@ class MailMessage extends Message
      */
     public function getFrom()
     {
-        $addresslist = $this->getAddressListFromHeader('from', From::class);
+        /** @var From $from */
+        $from = $this->getHeader('from');
 
-        // obtain first address from addresses list
-        $addresses = current($addresslist);
-        $address = current($addresses);
-
-        return $address ?: null;
+        // return null not false if header missing
+        return $from->getAddressList()->rewind() ?: null;
     }
 
     /**
@@ -780,68 +759,18 @@ class MailMessage extends Message
     }
 
     /**
-     * Set Body of a message.
+     * Set body of a message.
      *
-     * IMPORTANT: it should not contain any multipart changes,
-     * as then everything will blow up as it is not parsed again.
+     * NOTE: if you have multiparts, you should look into MailBuilder.
      *
-     * @param string|Mime\Message $content
+     * @param string $content
      * @return $this
      */
     public function setContent($content)
     {
-        if ($content instanceof Mime\Message) {
-            // if it's mime message,
-            // build new Mail\Message and obtain it's content
-            // NOTE: this is only partially correct
-            // as main mail headers need to be adjusted as well
-            $message = new Mail\Message();
-            $message->setBody($content);
-
-            /**
-             * this is copied from @see \Zend\Mail\Message::setBody
-             */
-
-            // Get headers, and set Mime-Version header
-            $headers = $this->getHeaders();
-            $this->getHeaderByName('mime-version', MimeVersion::class);
-
-            // Multipart content headers
-            if ($content->isMultiPart()) {
-                $mime = $content->getMime();
-                /** @var ContentType $header */
-                $header = $this->getHeaderByName('content-type', ContentType::class);
-                $header->setType('multipart/mixed');
-                $header->addParameter('boundary', $mime->boundary());
-            } else {
-                // MIME single part headers
-                $parts = $content->getParts();
-                if (!empty($parts)) {
-                    /** @var \Zend\Mime\Part $part */
-                    $part = array_shift($parts);
-                    $headers->addHeaders($part->getHeadersArray("\r\n"));
-                }
-            }
-            $this->content = $message->getBodyText();
-
-            return $this;
-        }
-
         $this->content = $content;
 
         return $this;
-    }
-
-    /**
-     * Create Mime Message with text part and set as content
-     *
-     * @param string $content
-     */
-    public function setTextPart($content)
-    {
-        $body = new Mime\Message();
-        $body->addPart(MimePart::createTextPart($content));
-        $this->setContent($body);
     }
 
     /**
