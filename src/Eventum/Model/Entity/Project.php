@@ -115,14 +115,14 @@ class Project
     /**
      * @var string
      *
-     * @ORM\Column(name="prj_customer_backend", type="string", length=64, nullable=true)
+     * @ORM\Column(name="prj_customer_backend", type="string", length=255, nullable=true)
      */
     private $prjCustomerBackend;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="prj_workflow_backend", type="string", length=64, nullable=true)
+     * @ORM\Column(name="prj_workflow_backend", type="string", length=255, nullable=true)
      */
     private $prjWorkflowBackend;
 

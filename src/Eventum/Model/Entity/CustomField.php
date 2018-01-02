@@ -122,7 +122,7 @@ class CustomField
     /**
      * @var string
      *
-     * @ORM\Column(name="fld_backend", type="string", length=100, nullable=true)
+     * @ORM\Column(name="fld_backend", type="string", length=255, nullable=true)
      */
     private $fldBackend;
 

@@ -36,6 +36,13 @@ class IssueAttachment
     private $iatUsrId;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="iat_min_role", type="integer", nullable=false)
+     */
+    private $iatMinRole;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="iat_created_date", type="datetime", nullable=false)
@@ -55,13 +62,6 @@ class IssueAttachment
      * @ORM\Column(name="iat_unknown_user", type="string", length=255, nullable=true)
      */
     private $iatUnknownUser;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="iat_status", type="string", nullable=false)
-     */
-    private $iatStatus;
 
     /**
      * @var integer
@@ -125,6 +125,29 @@ class IssueAttachment
     public function getIatUsrId()
     {
         return $this->iatUsrId;
+    }
+
+    /**
+     * Set iatMinRole
+     *
+     * @param integer $iatMinRole
+     * @return IssueAttachment
+     */
+    public function setIatMinRole($iatMinRole)
+    {
+        $this->iatMinRole = $iatMinRole;
+
+        return $this;
+    }
+
+    /**
+     * Get iatMinRole
+     *
+     * @return integer 
+     */
+    public function getIatMinRole()
+    {
+        return $this->iatMinRole;
     }
 
     /**
@@ -194,29 +217,6 @@ class IssueAttachment
     public function getIatUnknownUser()
     {
         return $this->iatUnknownUser;
-    }
-
-    /**
-     * Set iatStatus
-     *
-     * @param string $iatStatus
-     * @return IssueAttachment
-     */
-    public function setIatStatus($iatStatus)
-    {
-        $this->iatStatus = $iatStatus;
-
-        return $this;
-    }
-
-    /**
-     * Get iatStatus
-     *
-     * @return string 
-     */
-    public function getIatStatus()
-    {
-        return $this->iatStatus;
     }
 
     /**

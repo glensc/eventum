@@ -73,28 +73,28 @@ class SupportEmail
     /**
      * @var string
      *
-     * @ORM\Column(name="sup_from", type="string", length=255, nullable=false)
+     * @ORM\Column(name="sup_from", type="string", length=4096, nullable=false)
      */
     private $supFrom;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="sup_to", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="sup_to", type="string", length=4096, nullable=false)
      */
     private $supTo;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="sup_cc", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="sup_cc", type="string", length=4096, nullable=false)
      */
     private $supCc;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="sup_subject", type="string", length=255, nullable=false)
+     * @ORM\Column(name="sup_subject", type="string", length=4096, nullable=false)
      */
     private $supSubject;
 

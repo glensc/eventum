@@ -38,7 +38,7 @@ class ProjectUser
     /**
      * @var boolean
      *
-     * @ORM\Column(name="pru_role", type="boolean", nullable=false)
+     * @ORM\Column(name="pru_role", type="boolean", nullable=true)
      */
     private $pruRole;
 

@@ -24,7 +24,7 @@ class PartnerProject
     /**
      * @var string
      *
-     * @ORM\Column(name="pap_par_code", type="string", length=30, nullable=false)
+     * @ORM\Column(name="pap_par_code", type="string", length=255, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */

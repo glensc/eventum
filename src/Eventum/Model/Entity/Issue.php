@@ -260,6 +260,13 @@ class Issue
     private $issLastInternalActionType;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="iss_status_change_date", type="datetime", nullable=true)
+     */
+    private $issStatusChangeDate;
+
+    /**
      * @var boolean
      *
      * @ORM\Column(name="iss_percent_complete", type="boolean", nullable=true)
@@ -279,6 +286,13 @@ class Issue
      * @ORM\Column(name="iss_access_level", type="string", length=150, nullable=false)
      */
     private $issAccessLevel;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="iss_private", type="boolean", nullable=false)
+     */
+    private $issPrivate;
 
 
     /**
@@ -1074,6 +1088,29 @@ class Issue
     }
 
     /**
+     * Set issStatusChangeDate
+     *
+     * @param \DateTime $issStatusChangeDate
+     * @return Issue
+     */
+    public function setIssStatusChangeDate($issStatusChangeDate)
+    {
+        $this->issStatusChangeDate = $issStatusChangeDate;
+
+        return $this;
+    }
+
+    /**
+     * Get issStatusChangeDate
+     *
+     * @return \DateTime 
+     */
+    public function getIssStatusChangeDate()
+    {
+        return $this->issStatusChangeDate;
+    }
+
+    /**
      * Set issPercentComplete
      *
      * @param boolean $issPercentComplete
@@ -1140,5 +1177,28 @@ class Issue
     public function getIssAccessLevel()
     {
         return $this->issAccessLevel;
+    }
+
+    /**
+     * Set issPrivate
+     *
+     * @param boolean $issPrivate
+     * @return Issue
+     */
+    public function setIssPrivate($issPrivate)
+    {
+        $this->issPrivate = $issPrivate;
+
+        return $this;
+    }
+
+    /**
+     * Get issPrivate
+     *
+     * @return boolean 
+     */
+    public function getIssPrivate()
+    {
+        return $this->issPrivate;
     }
 }

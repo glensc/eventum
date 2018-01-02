@@ -94,7 +94,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="usr_external_id", type="string", length=100, nullable=false)
+     * @ORM\Column(name="usr_external_id", type="string", length=255, nullable=true)
      */
     private $usrExternalId;
 
@@ -122,7 +122,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="usr_par_code", type="string", length=30, nullable=true)
+     * @ORM\Column(name="usr_par_code", type="string", length=255, nullable=true)
      */
     private $usrParCode;
 

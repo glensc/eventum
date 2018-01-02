@@ -24,7 +24,7 @@ class IssuePartner
     /**
      * @var string
      *
-     * @ORM\Column(name="ipa_par_code", type="string", length=30, nullable=false)
+     * @ORM\Column(name="ipa_par_code", type="string", length=255, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */

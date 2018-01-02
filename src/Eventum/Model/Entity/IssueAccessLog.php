@@ -36,20 +36,6 @@ class IssueAccessLog
     private $algUsrId;
 
     /**
-     * @var boolean
-     *
-     * @ORM\Column(name="alg_failed", type="boolean", nullable=false)
-     */
-    private $algFailed;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="alg_item_id", type="integer", nullable=true)
-     */
-    private $algItemId;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="alg_created", type="datetime", nullable=false)
@@ -64,11 +50,25 @@ class IssueAccessLog
     private $algIpAddress;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="alg_failed", type="boolean", nullable=false)
+     */
+    private $algFailed;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="alg_item", type="string", length=10, nullable=true)
      */
     private $algItem;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="alg_item_id", type="integer", nullable=true)
+     */
+    private $algItemId;
 
     /**
      * @var string
@@ -135,52 +135,6 @@ class IssueAccessLog
     }
 
     /**
-     * Set algFailed
-     *
-     * @param boolean $algFailed
-     * @return IssueAccessLog
-     */
-    public function setAlgFailed($algFailed)
-    {
-        $this->algFailed = $algFailed;
-
-        return $this;
-    }
-
-    /**
-     * Get algFailed
-     *
-     * @return boolean 
-     */
-    public function getAlgFailed()
-    {
-        return $this->algFailed;
-    }
-
-    /**
-     * Set algItemId
-     *
-     * @param integer $algItemId
-     * @return IssueAccessLog
-     */
-    public function setAlgItemId($algItemId)
-    {
-        $this->algItemId = $algItemId;
-
-        return $this;
-    }
-
-    /**
-     * Get algItemId
-     *
-     * @return integer 
-     */
-    public function getAlgItemId()
-    {
-        return $this->algItemId;
-    }
-
-    /**
      * Set algCreated
      *
      * @param \DateTime $algCreated
@@ -227,6 +181,29 @@ class IssueAccessLog
     }
 
     /**
+     * Set algFailed
+     *
+     * @param boolean $algFailed
+     * @return IssueAccessLog
+     */
+    public function setAlgFailed($algFailed)
+    {
+        $this->algFailed = $algFailed;
+
+        return $this;
+    }
+
+    /**
+     * Get algFailed
+     *
+     * @return boolean 
+     */
+    public function getAlgFailed()
+    {
+        return $this->algFailed;
+    }
+
+    /**
      * Set algItem
      *
      * @param string $algItem
@@ -247,6 +224,29 @@ class IssueAccessLog
     public function getAlgItem()
     {
         return $this->algItem;
+    }
+
+    /**
+     * Set algItemId
+     *
+     * @param integer $algItemId
+     * @return IssueAccessLog
+     */
+    public function setAlgItemId($algItemId)
+    {
+        $this->algItemId = $algItemId;
+
+        return $this;
+    }
+
+    /**
+     * Get algItemId
+     *
+     * @return integer 
+     */
+    public function getAlgItemId()
+    {
+        return $this->algItemId;
     }
 
     /**

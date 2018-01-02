@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ProjectRelease
  *
- * @ORM\Table(name="project_release", uniqueConstraints={@ORM\UniqueConstraint(name="pre_title", columns={"pre_prj_id", "pre_title"})})
+ * @ORM\Table(name="project_release", uniqueConstraints={@ORM\UniqueConstraint(name="pre_title", columns={"pre_prj_id", "pre_title"})}, indexes={@ORM\Index(name="pre_prj_id", columns={"pre_prj_id"})})
  * @ORM\Entity
  */
 class ProjectRelease
