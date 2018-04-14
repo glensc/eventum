@@ -67,8 +67,8 @@ install:
   - composer install --no-interaction --prefer-dist
 
 script:
-  - phpunit --version
-  - phpunit --verbose --exclude-group ldap,imap,logger,mail,api,locale,date,db,crypto
+  - ./vendor/bin/phpunit --version
+  - ./vendor/bin/phpunit --verbose --exclude-group ldap,imap,logger,mail,api,locale,date,db,crypto
 
 notifications:
   irc:
