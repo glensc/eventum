@@ -50,7 +50,7 @@ define('APP_NAME', 'Eventum Tests');
 define('APP_AUTH_BACKEND', 'mysql_auth_backend');
 define('APP_SITE_NAME', 'Eventum');
 
-require_once APP_PATH . '/autoload.php';
+require APP_PATH . '/autoload.php';
 
 // set default timezone
 date_default_timezone_set(APP_DEFAULT_TIMEZONE);
