@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.36-82.0, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.36-82.1, for Linux (x86_64)
 --
 -- Host: localhost    Database: eventum
 -- ------------------------------------------------------
--- Server version	5.6.36-82.0-log
+-- Server version	5.6.36-82.1-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -74,7 +74,7 @@ CREATE TABLE `attachment_path` (
   `is_compressed` tinyint(4) NOT NULL DEFAULT '1',
   `update_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`path_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=236 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=307 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,7 +114,7 @@ CREATE TABLE `commit` (
   `com_commit_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `com_message` mediumtext,
   PRIMARY KEY (`com_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=179235 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=179571 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +134,7 @@ CREATE TABLE `commit_file` (
   `cof_old_version` varchar(40) DEFAULT NULL,
   `cof_new_version` varchar(40) DEFAULT NULL,
   PRIMARY KEY (`cof_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=178154 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=178501 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,15 +195,15 @@ CREATE TABLE `custom_filter` (
   `cst_usr_id` int(10) unsigned NOT NULL DEFAULT '0',
   `cst_prj_id` int(10) unsigned NOT NULL DEFAULT '0',
   `cst_title` varchar(64) NOT NULL DEFAULT '',
-  `cst_iss_pri_id` int(10) unsigned DEFAULT NULL,
-  `cst_iss_sev_id` int(10) unsigned DEFAULT NULL,
+  `cst_priorities` varchar(255) DEFAULT NULL,
+  `cst_severities` varchar(255) DEFAULT NULL,
   `cst_keywords` varchar(64) DEFAULT NULL,
-  `cst_users` varchar(64) DEFAULT NULL,
-  `cst_reporter` int(11) unsigned DEFAULT NULL,
-  `cst_iss_prc_id` int(10) unsigned DEFAULT NULL,
-  `cst_iss_sta_id` int(10) unsigned DEFAULT NULL,
-  `cst_iss_pre_id` int(10) unsigned DEFAULT NULL,
-  `cst_pro_id` int(11) unsigned DEFAULT NULL,
+  `cst_users` varchar(255) DEFAULT NULL,
+  `cst_reporters` varchar(255) DEFAULT NULL,
+  `cst_categories` varchar(255) DEFAULT NULL,
+  `cst_statuses` varchar(255) DEFAULT NULL,
+  `cst_releases` varchar(255) DEFAULT NULL,
+  `cst_products` varchar(255) DEFAULT NULL,
   `cst_show_authorized` char(3) DEFAULT '',
   `cst_show_notification_list` char(3) DEFAULT '',
   `cst_created_date` date DEFAULT NULL,
@@ -421,7 +421,7 @@ CREATE TABLE `history_type` (
   `htt_role` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`htt_id`),
   UNIQUE KEY `htt_name` (`htt_name`)
-) ENGINE=MyISAM AUTO_INCREMENT=75 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=86 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -440,8 +440,9 @@ CREATE TABLE `irc_notice` (
   `ino_status` varchar(8) NOT NULL DEFAULT 'pending',
   `ino_target_usr_id` int(11) unsigned DEFAULT NULL,
   `ino_category` varchar(25) DEFAULT NULL,
-  PRIMARY KEY (`ino_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=385 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`ino_id`),
+  KEY `ino_status` (`ino_status`,`ino_prj_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=753 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -499,7 +500,7 @@ CREATE TABLE `issue` (
   KEY `iss_grp_id` (`iss_grp_id`),
   KEY `iss_duplicated_iss_id` (`iss_duplicated_iss_id`),
   FULLTEXT KEY `ft_issue` (`iss_summary`,`iss_description`)
-) ENGINE=MyISAM AUTO_INCREMENT=88 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=369 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -553,8 +554,8 @@ CREATE TABLE `issue_association` (
   `isa_issue_id` int(10) unsigned NOT NULL DEFAULT '0',
   `isa_associated_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`isa_id`),
-  KEY `isa_issue_id` (`isa_issue_id`,`isa_associated_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=73 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `isa_issue_id` (`isa_issue_id`,`isa_associated_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=161 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -575,7 +576,7 @@ CREATE TABLE `issue_attachment` (
   `iat_not_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`iat_id`),
   KEY `iat_iss_id` (`iat_iss_id`,`iat_usr_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=200 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=233 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -595,7 +596,7 @@ CREATE TABLE `issue_attachment_file` (
   `iaf_created_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`iaf_id`),
   KEY `iaf_iat_id` (`iaf_iat_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=369 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=440 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -609,7 +610,7 @@ CREATE TABLE `issue_attachment_file_path` (
   `iap_iaf_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `iap_flysystem_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`iap_iaf_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=369 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=440 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -649,7 +650,7 @@ CREATE TABLE `issue_commit` (
   `isc_iss_id` int(10) unsigned NOT NULL,
   `isc_com_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`isc_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=108664 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=108971 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -670,7 +671,7 @@ CREATE TABLE `issue_custom_field` (
   KEY `icf_iss_id` (`icf_iss_id`),
   KEY `icf_fld_id` (`icf_fld_id`),
   FULLTEXT KEY `ft_icf_value` (`icf_value`)
-) ENGINE=MyISAM AUTO_INCREMENT=58 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=179 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -694,7 +695,7 @@ CREATE TABLE `issue_history` (
   KEY `his_id` (`his_id`),
   KEY `his_iss_id` (`his_iss_id`),
   KEY `his_created_date` (`his_created_date`)
-) ENGINE=MyISAM AUTO_INCREMENT=161 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1304 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -779,7 +780,7 @@ CREATE TABLE `issue_user_replier` (
   PRIMARY KEY (`iur_id`),
   KEY `iur_usr_id` (`iur_usr_id`),
   KEY `iur_iss_id` (`iur_iss_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=178 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -825,7 +826,7 @@ CREATE TABLE `mail_queue` (
   KEY `maq_status` (`maq_status`),
   KEY `maq_iss_id` (`maq_iss_id`),
   KEY `maq_type` (`maq_type`,`maq_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1138982 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1139243 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -891,7 +892,7 @@ CREATE TABLE `note` (
   KEY `not_message_id` (`not_message_id`),
   KEY `not_parent_id` (`not_parent_id`),
   FULLTEXT KEY `ft_note` (`not_title`,`not_note`)
-) ENGINE=MyISAM AUTO_INCREMENT=8674 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=8684 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1470,6 +1471,24 @@ CREATE TABLE `reminder_triggered_action` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `remote_links`
+--
+
+DROP TABLE IF EXISTS `remote_links`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `remote_links` (
+  `rel_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `rel_gid` varchar(255) CHARACTER SET ascii DEFAULT NULL COMMENT 'Global Id',
+  `rel_relationship` varchar(255) CHARACTER SET ascii NOT NULL COMMENT 'Link relationship type',
+  `rel_url` text CHARACTER SET ascii NOT NULL,
+  `rel_title` varchar(255) NOT NULL,
+  PRIMARY KEY (`rel_id`),
+  KEY `rel_id` (`rel_id`,`rel_gid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `resolution`
 --
 
@@ -1515,7 +1534,7 @@ CREATE TABLE `search_profile` (
   `sep_user_profile` blob NOT NULL,
   PRIMARY KEY (`sep_id`),
   UNIQUE KEY `sep_usr_id` (`sep_usr_id`,`sep_prj_id`,`sep_type`)
-) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1555,7 +1574,7 @@ CREATE TABLE `subscription` (
   `sub_email` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`sub_id`),
   KEY `sub_iss_id` (`sub_iss_id`,`sub_usr_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=223 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=547 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1571,7 +1590,7 @@ CREATE TABLE `subscription_type` (
   `sbt_type` varchar(10) NOT NULL DEFAULT '',
   PRIMARY KEY (`sbt_id`),
   KEY `sbt_sub_id` (`sbt_sub_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=542 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1838 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1603,7 +1622,7 @@ CREATE TABLE `support_email` (
   KEY `sup_removed_2` (`sup_removed`,`sup_ema_id`,`sup_iss_id`),
   KEY `sup_removed_3` (`sup_removed`,`sup_ema_id`,`sup_date`),
   KEY `sup_usr_id` (`sup_usr_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=16344 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=16539 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1739,6 +1758,7 @@ CREATE TABLE `user_preference` (
   `upr_auto_close_popup_window` tinyint(1) DEFAULT '0',
   `upr_relative_date` tinyint(1) DEFAULT '1',
   `upr_collapsed_emails` tinyint(1) DEFAULT '1',
+  `upr_markdown` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`upr_usr_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1786,4 +1806,4 @@ CREATE TABLE `version` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-19 22:08:09
+-- Dump completed on 2019-01-24 20:21:13
