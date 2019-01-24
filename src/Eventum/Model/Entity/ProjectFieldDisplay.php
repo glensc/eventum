@@ -61,7 +61,7 @@ class ProjectFieldDisplay
     /**
      * Get pfdPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPfdPrjId()
     {
@@ -84,7 +84,7 @@ class ProjectFieldDisplay
     /**
      * Get pfdField
      *
-     * @return string 
+     * @return string
      */
     public function getPfdField()
     {
@@ -107,7 +107,7 @@ class ProjectFieldDisplay
     /**
      * Get pfdMinRole
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPfdMinRole()
     {
@@ -130,7 +130,7 @@ class ProjectFieldDisplay
     /**
      * Get pfdRequired
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPfdRequired()
     {

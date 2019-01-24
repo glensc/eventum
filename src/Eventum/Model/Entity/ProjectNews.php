@@ -47,7 +47,7 @@ class ProjectNews
     /**
      * Get prnPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrnPrjId()
     {
@@ -70,7 +70,7 @@ class ProjectNews
     /**
      * Get prnNwsId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrnNwsId()
     {

@@ -54,7 +54,7 @@ class IssuePartner
     /**
      * Get ipaIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIpaIssId()
     {
@@ -77,7 +77,7 @@ class IssuePartner
     /**
      * Get ipaParCode
      *
-     * @return string 
+     * @return string
      */
     public function getIpaParCode()
     {
@@ -100,7 +100,7 @@ class IssuePartner
     /**
      * Get ipaCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIpaCreatedDate()
     {

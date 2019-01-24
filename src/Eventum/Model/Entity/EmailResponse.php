@@ -39,7 +39,7 @@ class EmailResponse
     /**
      * Get ereId
      *
-     * @return integer 
+     * @return integer
      */
     public function getEreId()
     {
@@ -62,7 +62,7 @@ class EmailResponse
     /**
      * Get ereTitle
      *
-     * @return string 
+     * @return string
      */
     public function getEreTitle()
     {
@@ -85,7 +85,7 @@ class EmailResponse
     /**
      * Get ereResponseBody
      *
-     * @return string 
+     * @return string
      */
     public function getEreResponseBody()
     {

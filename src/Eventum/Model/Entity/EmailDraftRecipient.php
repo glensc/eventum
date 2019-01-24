@@ -46,7 +46,7 @@ class EmailDraftRecipient
     /**
      * Get edrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getEdrId()
     {
@@ -69,7 +69,7 @@ class EmailDraftRecipient
     /**
      * Get edrEmdId
      *
-     * @return integer 
+     * @return integer
      */
     public function getEdrEmdId()
     {
@@ -92,7 +92,7 @@ class EmailDraftRecipient
     /**
      * Get edrIsCc
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getEdrIsCc()
     {
@@ -115,7 +115,7 @@ class EmailDraftRecipient
     /**
      * Get edrEmail
      *
-     * @return string 
+     * @return string
      */
     public function getEdrEmail()
     {

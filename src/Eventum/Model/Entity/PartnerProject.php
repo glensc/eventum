@@ -47,7 +47,7 @@ class PartnerProject
     /**
      * Get papPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPapPrjId()
     {
@@ -70,7 +70,7 @@ class PartnerProject
     /**
      * Get papParCode
      *
-     * @return string 
+     * @return string
      */
     public function getPapParCode()
     {

@@ -137,7 +137,7 @@ class Project
     /**
      * Get prjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrjId()
     {
@@ -160,7 +160,7 @@ class Project
     /**
      * Get prjCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getPrjCreatedDate()
     {
@@ -183,7 +183,7 @@ class Project
     /**
      * Get prjTitle
      *
-     * @return string 
+     * @return string
      */
     public function getPrjTitle()
     {
@@ -206,7 +206,7 @@ class Project
     /**
      * Get prjStatus
      *
-     * @return string 
+     * @return string
      */
     public function getPrjStatus()
     {
@@ -229,7 +229,7 @@ class Project
     /**
      * Get prjLeadUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrjLeadUsrId()
     {
@@ -252,7 +252,7 @@ class Project
     /**
      * Get prjInitialStaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrjInitialStaId()
     {
@@ -275,7 +275,7 @@ class Project
     /**
      * Get prjRemoteInvocation
      *
-     * @return string 
+     * @return string
      */
     public function getPrjRemoteInvocation()
     {
@@ -298,7 +298,7 @@ class Project
     /**
      * Get prjAnonymousPost
      *
-     * @return string 
+     * @return string
      */
     public function getPrjAnonymousPost()
     {
@@ -321,7 +321,7 @@ class Project
     /**
      * Get prjAnonymousPostOptions
      *
-     * @return string 
+     * @return string
      */
     public function getPrjAnonymousPostOptions()
     {
@@ -344,7 +344,7 @@ class Project
     /**
      * Get prjOutgoingSenderName
      *
-     * @return string 
+     * @return string
      */
     public function getPrjOutgoingSenderName()
     {
@@ -367,7 +367,7 @@ class Project
     /**
      * Get prjOutgoingSenderEmail
      *
-     * @return string 
+     * @return string
      */
     public function getPrjOutgoingSenderEmail()
     {
@@ -390,7 +390,7 @@ class Project
     /**
      * Get prjSenderFlag
      *
-     * @return string 
+     * @return string
      */
     public function getPrjSenderFlag()
     {
@@ -413,7 +413,7 @@ class Project
     /**
      * Get prjSenderFlagLocation
      *
-     * @return string 
+     * @return string
      */
     public function getPrjSenderFlagLocation()
     {
@@ -436,7 +436,7 @@ class Project
     /**
      * Get prjMailAliases
      *
-     * @return string 
+     * @return string
      */
     public function getPrjMailAliases()
     {
@@ -459,7 +459,7 @@ class Project
     /**
      * Get prjCustomerBackend
      *
-     * @return string 
+     * @return string
      */
     public function getPrjCustomerBackend()
     {
@@ -482,7 +482,7 @@ class Project
     /**
      * Get prjWorkflowBackend
      *
-     * @return string 
+     * @return string
      */
     public function getPrjWorkflowBackend()
     {
@@ -505,7 +505,7 @@ class Project
     /**
      * Get prjSegregateReporter
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPrjSegregateReporter()
     {

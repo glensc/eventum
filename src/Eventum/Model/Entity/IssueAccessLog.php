@@ -81,7 +81,7 @@ class IssueAccessLog
     /**
      * Get algId
      *
-     * @return integer 
+     * @return integer
      */
     public function getAlgId()
     {
@@ -104,7 +104,7 @@ class IssueAccessLog
     /**
      * Get algIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getAlgIssId()
     {
@@ -127,7 +127,7 @@ class IssueAccessLog
     /**
      * Get algUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getAlgUsrId()
     {
@@ -150,7 +150,7 @@ class IssueAccessLog
     /**
      * Get algCreated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getAlgCreated()
     {
@@ -173,7 +173,7 @@ class IssueAccessLog
     /**
      * Get algIpAddress
      *
-     * @return string 
+     * @return string
      */
     public function getAlgIpAddress()
     {
@@ -196,7 +196,7 @@ class IssueAccessLog
     /**
      * Get algFailed
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getAlgFailed()
     {
@@ -219,7 +219,7 @@ class IssueAccessLog
     /**
      * Get algItem
      *
-     * @return string 
+     * @return string
      */
     public function getAlgItem()
     {
@@ -242,7 +242,7 @@ class IssueAccessLog
     /**
      * Get algItemId
      *
-     * @return integer 
+     * @return integer
      */
     public function getAlgItemId()
     {
@@ -265,7 +265,7 @@ class IssueAccessLog
     /**
      * Get algUrl
      *
-     * @return string 
+     * @return string
      */
     public function getAlgUrl()
     {

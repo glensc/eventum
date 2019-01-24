@@ -53,7 +53,7 @@ class Phinxlog
     /**
      * Get version
      *
-     * @return integer 
+     * @return integer
      */
     public function getVersion()
     {
@@ -76,7 +76,7 @@ class Phinxlog
     /**
      * Get migrationName
      *
-     * @return string 
+     * @return string
      */
     public function getMigrationName()
     {
@@ -99,7 +99,7 @@ class Phinxlog
     /**
      * Get startTime
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getStartTime()
     {
@@ -122,7 +122,7 @@ class Phinxlog
     /**
      * Get endTime
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getEndTime()
     {
@@ -145,7 +145,7 @@ class Phinxlog
     /**
      * Get breakpoint
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getBreakpoint()
     {

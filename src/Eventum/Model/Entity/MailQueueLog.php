@@ -53,7 +53,7 @@ class MailQueueLog
     /**
      * Get mqlId
      *
-     * @return integer 
+     * @return integer
      */
     public function getMqlId()
     {
@@ -76,7 +76,7 @@ class MailQueueLog
     /**
      * Get mqlMaqId
      *
-     * @return integer 
+     * @return integer
      */
     public function getMqlMaqId()
     {
@@ -99,7 +99,7 @@ class MailQueueLog
     /**
      * Get mqlCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getMqlCreatedDate()
     {
@@ -122,7 +122,7 @@ class MailQueueLog
     /**
      * Get mqlStatus
      *
-     * @return string 
+     * @return string
      */
     public function getMqlStatus()
     {
@@ -145,7 +145,7 @@ class MailQueueLog
     /**
      * Get mqlServerMessage
      *
-     * @return string 
+     * @return string
      */
     public function getMqlServerMessage()
     {

@@ -39,7 +39,7 @@ class ReminderActionType
     /**
      * Get rmtId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRmtId()
     {
@@ -62,7 +62,7 @@ class ReminderActionType
     /**
      * Get rmtType
      *
-     * @return string 
+     * @return string
      */
     public function getRmtType()
     {
@@ -85,7 +85,7 @@ class ReminderActionType
     /**
      * Get rmtTitle
      *
-     * @return string 
+     * @return string
      */
     public function getRmtTitle()
     {

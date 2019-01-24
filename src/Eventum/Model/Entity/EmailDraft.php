@@ -81,7 +81,7 @@ class EmailDraft
     /**
      * Get emdId
      *
-     * @return integer 
+     * @return integer
      */
     public function getEmdId()
     {
@@ -104,7 +104,7 @@ class EmailDraft
     /**
      * Get emdUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getEmdUsrId()
     {
@@ -127,7 +127,7 @@ class EmailDraft
     /**
      * Get emdIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getEmdIssId()
     {
@@ -150,7 +150,7 @@ class EmailDraft
     /**
      * Get emdSupId
      *
-     * @return integer 
+     * @return integer
      */
     public function getEmdSupId()
     {
@@ -173,7 +173,7 @@ class EmailDraft
     /**
      * Get emdStatus
      *
-     * @return string 
+     * @return string
      */
     public function getEmdStatus()
     {
@@ -196,7 +196,7 @@ class EmailDraft
     /**
      * Get emdUpdatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getEmdUpdatedDate()
     {
@@ -219,7 +219,7 @@ class EmailDraft
     /**
      * Get emdSubject
      *
-     * @return string 
+     * @return string
      */
     public function getEmdSubject()
     {
@@ -242,7 +242,7 @@ class EmailDraft
     /**
      * Get emdBody
      *
-     * @return string 
+     * @return string
      */
     public function getEmdBody()
     {
@@ -265,7 +265,7 @@ class EmailDraft
     /**
      * Get emdUnknownUser
      *
-     * @return string 
+     * @return string
      */
     public function getEmdUnknownUser()
     {

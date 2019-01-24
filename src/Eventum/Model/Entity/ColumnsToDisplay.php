@@ -70,7 +70,7 @@ class ColumnsToDisplay
     /**
      * Get ctdPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCtdPrjId()
     {
@@ -93,7 +93,7 @@ class ColumnsToDisplay
     /**
      * Get ctdPage
      *
-     * @return string 
+     * @return string
      */
     public function getCtdPage()
     {
@@ -116,7 +116,7 @@ class ColumnsToDisplay
     /**
      * Get ctdField
      *
-     * @return string 
+     * @return string
      */
     public function getCtdField()
     {
@@ -139,7 +139,7 @@ class ColumnsToDisplay
     /**
      * Get ctdMinRole
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getCtdMinRole()
     {
@@ -162,7 +162,7 @@ class ColumnsToDisplay
     /**
      * Get ctdRank
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getCtdRank()
     {

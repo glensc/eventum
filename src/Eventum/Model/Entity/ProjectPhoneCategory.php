@@ -39,7 +39,7 @@ class ProjectPhoneCategory
     /**
      * Get phcId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPhcId()
     {
@@ -62,7 +62,7 @@ class ProjectPhoneCategory
     /**
      * Get phcPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPhcPrjId()
     {
@@ -85,7 +85,7 @@ class ProjectPhoneCategory
     /**
      * Get phcTitle
      *
-     * @return string 
+     * @return string
      */
     public function getPhcTitle()
     {

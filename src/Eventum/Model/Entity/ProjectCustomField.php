@@ -39,7 +39,7 @@ class ProjectCustomField
     /**
      * Get pcfId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPcfId()
     {
@@ -62,7 +62,7 @@ class ProjectCustomField
     /**
      * Get pcfPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPcfPrjId()
     {
@@ -85,7 +85,7 @@ class ProjectCustomField
     /**
      * Get pcfFldId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPcfFldId()
     {

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * IrcNotice
  *
- * @ORM\Table(name="irc_notice")
+ * @ORM\Table(name="irc_notice", indexes={@ORM\Index(name="ino_status", columns={"ino_status", "ino_prj_id"})})
  * @ORM\Entity
  */
 class IrcNotice
@@ -74,7 +74,7 @@ class IrcNotice
     /**
      * Get inoId
      *
-     * @return integer 
+     * @return integer
      */
     public function getInoId()
     {
@@ -97,7 +97,7 @@ class IrcNotice
     /**
      * Get inoPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getInoPrjId()
     {
@@ -120,7 +120,7 @@ class IrcNotice
     /**
      * Get inoIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getInoIssId()
     {
@@ -143,7 +143,7 @@ class IrcNotice
     /**
      * Get inoCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getInoCreatedDate()
     {
@@ -166,7 +166,7 @@ class IrcNotice
     /**
      * Get inoMessage
      *
-     * @return string 
+     * @return string
      */
     public function getInoMessage()
     {
@@ -189,7 +189,7 @@ class IrcNotice
     /**
      * Get inoStatus
      *
-     * @return string 
+     * @return string
      */
     public function getInoStatus()
     {
@@ -212,7 +212,7 @@ class IrcNotice
     /**
      * Get inoTargetUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getInoTargetUsrId()
     {
@@ -235,7 +235,7 @@ class IrcNotice
     /**
      * Get inoCategory
      *
-     * @return string 
+     * @return string
      */
     public function getInoCategory()
     {

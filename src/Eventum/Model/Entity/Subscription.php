@@ -60,7 +60,7 @@ class Subscription
     /**
      * Get subId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSubId()
     {
@@ -83,7 +83,7 @@ class Subscription
     /**
      * Get subIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSubIssId()
     {
@@ -106,7 +106,7 @@ class Subscription
     /**
      * Get subUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSubUsrId()
     {
@@ -129,7 +129,7 @@ class Subscription
     /**
      * Get subCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getSubCreatedDate()
     {
@@ -152,7 +152,7 @@ class Subscription
     /**
      * Get subLevel
      *
-     * @return string 
+     * @return string
      */
     public function getSubLevel()
     {
@@ -175,7 +175,7 @@ class Subscription
     /**
      * Get subEmail
      *
-     * @return string 
+     * @return string
      */
     public function getSubEmail()
     {

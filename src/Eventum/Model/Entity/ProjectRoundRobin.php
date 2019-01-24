@@ -46,7 +46,7 @@ class ProjectRoundRobin
     /**
      * Get prrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrrId()
     {
@@ -69,7 +69,7 @@ class ProjectRoundRobin
     /**
      * Get prrPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrrPrjId()
     {
@@ -92,7 +92,7 @@ class ProjectRoundRobin
     /**
      * Get prrBlackoutStart
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getPrrBlackoutStart()
     {
@@ -115,7 +115,7 @@ class ProjectRoundRobin
     /**
      * Get prrBlackoutEnd
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getPrrBlackoutEnd()
     {

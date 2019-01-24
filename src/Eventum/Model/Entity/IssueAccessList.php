@@ -46,7 +46,7 @@ class IssueAccessList
     /**
      * Get ialId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIalId()
     {
@@ -69,7 +69,7 @@ class IssueAccessList
     /**
      * Get ialIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIalIssId()
     {
@@ -92,7 +92,7 @@ class IssueAccessList
     /**
      * Get ialUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIalUsrId()
     {
@@ -115,7 +115,7 @@ class IssueAccessList
     /**
      * Get ialCreated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIalCreated()
     {

@@ -47,7 +47,7 @@ class FaqSupportLevel
     /**
      * Get fslFaqId
      *
-     * @return integer 
+     * @return integer
      */
     public function getFslFaqId()
     {
@@ -70,7 +70,7 @@ class FaqSupportLevel
     /**
      * Get fslSupportLevelId
      *
-     * @return string 
+     * @return string
      */
     public function getFslSupportLevelId()
     {

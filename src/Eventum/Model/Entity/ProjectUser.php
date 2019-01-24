@@ -46,7 +46,7 @@ class ProjectUser
     /**
      * Get pruId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPruId()
     {
@@ -69,7 +69,7 @@ class ProjectUser
     /**
      * Get pruPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPruPrjId()
     {
@@ -92,7 +92,7 @@ class ProjectUser
     /**
      * Get pruUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPruUsrId()
     {
@@ -115,7 +115,7 @@ class ProjectUser
     /**
      * Get pruRole
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPruRole()
     {

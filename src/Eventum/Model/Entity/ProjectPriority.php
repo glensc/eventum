@@ -53,7 +53,7 @@ class ProjectPriority
     /**
      * Get priId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPriId()
     {
@@ -76,7 +76,7 @@ class ProjectPriority
     /**
      * Get priPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPriPrjId()
     {
@@ -99,7 +99,7 @@ class ProjectPriority
     /**
      * Get priTitle
      *
-     * @return string 
+     * @return string
      */
     public function getPriTitle()
     {
@@ -122,7 +122,7 @@ class ProjectPriority
     /**
      * Get priRank
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPriRank()
     {
@@ -145,7 +145,7 @@ class ProjectPriority
     /**
      * Get priIcon
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPriIcon()
     {

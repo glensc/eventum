@@ -116,7 +116,7 @@ class MailQueue
     /**
      * Get maqId
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaqId()
     {
@@ -139,7 +139,7 @@ class MailQueue
     /**
      * Get maqIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaqIssId()
     {
@@ -162,7 +162,7 @@ class MailQueue
     /**
      * Get maqQueuedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getMaqQueuedDate()
     {
@@ -185,7 +185,7 @@ class MailQueue
     /**
      * Get maqStatus
      *
-     * @return string 
+     * @return string
      */
     public function getMaqStatus()
     {
@@ -208,7 +208,7 @@ class MailQueue
     /**
      * Get maqSaveCopy
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getMaqSaveCopy()
     {
@@ -231,7 +231,7 @@ class MailQueue
     /**
      * Get maqSenderIpAddress
      *
-     * @return string 
+     * @return string
      */
     public function getMaqSenderIpAddress()
     {
@@ -254,7 +254,7 @@ class MailQueue
     /**
      * Get maqRecipient
      *
-     * @return string 
+     * @return string
      */
     public function getMaqRecipient()
     {
@@ -277,7 +277,7 @@ class MailQueue
     /**
      * Get maqSubject
      *
-     * @return string 
+     * @return string
      */
     public function getMaqSubject()
     {
@@ -300,7 +300,7 @@ class MailQueue
     /**
      * Get maqMessageId
      *
-     * @return string 
+     * @return string
      */
     public function getMaqMessageId()
     {
@@ -323,7 +323,7 @@ class MailQueue
     /**
      * Get maqHeaders
      *
-     * @return string 
+     * @return string
      */
     public function getMaqHeaders()
     {
@@ -346,7 +346,7 @@ class MailQueue
     /**
      * Get maqBody
      *
-     * @return string 
+     * @return string
      */
     public function getMaqBody()
     {
@@ -369,7 +369,7 @@ class MailQueue
     /**
      * Get maqUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaqUsrId()
     {
@@ -392,7 +392,7 @@ class MailQueue
     /**
      * Get maqType
      *
-     * @return string 
+     * @return string
      */
     public function getMaqType()
     {
@@ -415,7 +415,7 @@ class MailQueue
     /**
      * Get maqTypeId
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaqTypeId()
     {

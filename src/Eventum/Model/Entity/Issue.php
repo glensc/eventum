@@ -298,7 +298,7 @@ class Issue
     /**
      * Get issId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssId()
     {
@@ -321,7 +321,7 @@ class Issue
     /**
      * Get issCustomerId
      *
-     * @return string 
+     * @return string
      */
     public function getIssCustomerId()
     {
@@ -344,7 +344,7 @@ class Issue
     /**
      * Get issCustomerContactId
      *
-     * @return string 
+     * @return string
      */
     public function getIssCustomerContactId()
     {
@@ -367,7 +367,7 @@ class Issue
     /**
      * Get issCustomerContractId
      *
-     * @return string 
+     * @return string
      */
     public function getIssCustomerContractId()
     {
@@ -390,7 +390,7 @@ class Issue
     /**
      * Get issUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssUsrId()
     {
@@ -413,7 +413,7 @@ class Issue
     /**
      * Get issGrpId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssGrpId()
     {
@@ -436,7 +436,7 @@ class Issue
     /**
      * Get issPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssPrjId()
     {
@@ -459,7 +459,7 @@ class Issue
     /**
      * Get issPrcId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssPrcId()
     {
@@ -482,7 +482,7 @@ class Issue
     /**
      * Get issPreId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssPreId()
     {
@@ -505,7 +505,7 @@ class Issue
     /**
      * Get issPriId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssPriId()
     {
@@ -528,7 +528,7 @@ class Issue
     /**
      * Get issSevId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssSevId()
     {
@@ -551,7 +551,7 @@ class Issue
     /**
      * Get issStaId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getIssStaId()
     {
@@ -574,7 +574,7 @@ class Issue
     /**
      * Get issResId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssResId()
     {
@@ -597,7 +597,7 @@ class Issue
     /**
      * Get issDuplicatedIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIssDuplicatedIssId()
     {
@@ -620,7 +620,7 @@ class Issue
     /**
      * Get issCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssCreatedDate()
     {
@@ -643,7 +643,7 @@ class Issue
     /**
      * Get issUpdatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssUpdatedDate()
     {
@@ -666,7 +666,7 @@ class Issue
     /**
      * Get issLastResponseDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssLastResponseDate()
     {
@@ -689,7 +689,7 @@ class Issue
     /**
      * Get issFirstResponseDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssFirstResponseDate()
     {
@@ -712,7 +712,7 @@ class Issue
     /**
      * Get issClosedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssClosedDate()
     {
@@ -735,7 +735,7 @@ class Issue
     /**
      * Get issLastCustomerActionDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssLastCustomerActionDate()
     {
@@ -758,7 +758,7 @@ class Issue
     /**
      * Get issExpectedResolutionDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssExpectedResolutionDate()
     {
@@ -781,7 +781,7 @@ class Issue
     /**
      * Get issSummary
      *
-     * @return string 
+     * @return string
      */
     public function getIssSummary()
     {
@@ -804,7 +804,7 @@ class Issue
     /**
      * Get issDescription
      *
-     * @return string 
+     * @return string
      */
     public function getIssDescription()
     {
@@ -827,7 +827,7 @@ class Issue
     /**
      * Get issDevTime
      *
-     * @return float 
+     * @return float
      */
     public function getIssDevTime()
     {
@@ -850,7 +850,7 @@ class Issue
     /**
      * Get issDeveloperEstTime
      *
-     * @return float 
+     * @return float
      */
     public function getIssDeveloperEstTime()
     {
@@ -873,7 +873,7 @@ class Issue
     /**
      * Get issContactPersonLname
      *
-     * @return string 
+     * @return string
      */
     public function getIssContactPersonLname()
     {
@@ -896,7 +896,7 @@ class Issue
     /**
      * Get issContactPersonFname
      *
-     * @return string 
+     * @return string
      */
     public function getIssContactPersonFname()
     {
@@ -919,7 +919,7 @@ class Issue
     /**
      * Get issContactEmail
      *
-     * @return string 
+     * @return string
      */
     public function getIssContactEmail()
     {
@@ -942,7 +942,7 @@ class Issue
     /**
      * Get issContactPhone
      *
-     * @return string 
+     * @return string
      */
     public function getIssContactPhone()
     {
@@ -965,7 +965,7 @@ class Issue
     /**
      * Get issContactTimezone
      *
-     * @return string 
+     * @return string
      */
     public function getIssContactTimezone()
     {
@@ -988,7 +988,7 @@ class Issue
     /**
      * Get issTriggerReminders
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getIssTriggerReminders()
     {
@@ -1011,7 +1011,7 @@ class Issue
     /**
      * Get issLastPublicActionDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssLastPublicActionDate()
     {
@@ -1034,7 +1034,7 @@ class Issue
     /**
      * Get issLastPublicActionType
      *
-     * @return string 
+     * @return string
      */
     public function getIssLastPublicActionType()
     {
@@ -1057,7 +1057,7 @@ class Issue
     /**
      * Get issLastInternalActionDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssLastInternalActionDate()
     {
@@ -1080,7 +1080,7 @@ class Issue
     /**
      * Get issLastInternalActionType
      *
-     * @return string 
+     * @return string
      */
     public function getIssLastInternalActionType()
     {
@@ -1103,7 +1103,7 @@ class Issue
     /**
      * Get issStatusChangeDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIssStatusChangeDate()
     {
@@ -1126,7 +1126,7 @@ class Issue
     /**
      * Get issPercentComplete
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getIssPercentComplete()
     {
@@ -1149,7 +1149,7 @@ class Issue
     /**
      * Get issRootMessageId
      *
-     * @return string 
+     * @return string
      */
     public function getIssRootMessageId()
     {
@@ -1172,7 +1172,7 @@ class Issue
     /**
      * Get issAccessLevel
      *
-     * @return string 
+     * @return string
      */
     public function getIssAccessLevel()
     {
@@ -1195,7 +1195,7 @@ class Issue
     /**
      * Get issPrivate
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getIssPrivate()
     {

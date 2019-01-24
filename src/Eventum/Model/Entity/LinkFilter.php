@@ -53,7 +53,7 @@ class LinkFilter
     /**
      * Get lfiId
      *
-     * @return integer 
+     * @return integer
      */
     public function getLfiId()
     {
@@ -76,7 +76,7 @@ class LinkFilter
     /**
      * Get lfiPattern
      *
-     * @return string 
+     * @return string
      */
     public function getLfiPattern()
     {
@@ -99,7 +99,7 @@ class LinkFilter
     /**
      * Get lfiReplacement
      *
-     * @return string 
+     * @return string
      */
     public function getLfiReplacement()
     {
@@ -122,7 +122,7 @@ class LinkFilter
     /**
      * Get lfiUsrRole
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getLfiUsrRole()
     {
@@ -145,7 +145,7 @@ class LinkFilter
     /**
      * Get lfiDescription
      *
-     * @return string 
+     * @return string
      */
     public function getLfiDescription()
     {

@@ -74,7 +74,7 @@ class ReminderLevelCondition
     /**
      * Get rlcId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRlcId()
     {
@@ -97,7 +97,7 @@ class ReminderLevelCondition
     /**
      * Get rlcRmaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRlcRmaId()
     {
@@ -120,7 +120,7 @@ class ReminderLevelCondition
     /**
      * Get rlcRmfId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRlcRmfId()
     {
@@ -143,7 +143,7 @@ class ReminderLevelCondition
     /**
      * Get rlcRmoId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRlcRmoId()
     {
@@ -166,7 +166,7 @@ class ReminderLevelCondition
     /**
      * Get rlcCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getRlcCreatedDate()
     {
@@ -189,7 +189,7 @@ class ReminderLevelCondition
     /**
      * Get rlcLastUpdatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getRlcLastUpdatedDate()
     {
@@ -212,7 +212,7 @@ class ReminderLevelCondition
     /**
      * Get rlcValue
      *
-     * @return string 
+     * @return string
      */
     public function getRlcValue()
     {
@@ -235,7 +235,7 @@ class ReminderLevelCondition
     /**
      * Get rlcComparisonRmfId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRlcComparisonRmfId()
     {

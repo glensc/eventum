@@ -130,7 +130,7 @@ class User
     /**
      * Get usrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getUsrId()
     {
@@ -153,7 +153,7 @@ class User
     /**
      * Get usrCustomerId
      *
-     * @return string 
+     * @return string
      */
     public function getUsrCustomerId()
     {
@@ -176,7 +176,7 @@ class User
     /**
      * Get usrCustomerContactId
      *
-     * @return string 
+     * @return string
      */
     public function getUsrCustomerContactId()
     {
@@ -199,7 +199,7 @@ class User
     /**
      * Get usrCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUsrCreatedDate()
     {
@@ -222,7 +222,7 @@ class User
     /**
      * Get usrStatus
      *
-     * @return string 
+     * @return string
      */
     public function getUsrStatus()
     {
@@ -245,7 +245,7 @@ class User
     /**
      * Get usrPassword
      *
-     * @return string 
+     * @return string
      */
     public function getUsrPassword()
     {
@@ -268,7 +268,7 @@ class User
     /**
      * Get usrFullName
      *
-     * @return string 
+     * @return string
      */
     public function getUsrFullName()
     {
@@ -291,7 +291,7 @@ class User
     /**
      * Get usrEmail
      *
-     * @return string 
+     * @return string
      */
     public function getUsrEmail()
     {
@@ -314,7 +314,7 @@ class User
     /**
      * Get usrSmsEmail
      *
-     * @return string 
+     * @return string
      */
     public function getUsrSmsEmail()
     {
@@ -337,7 +337,7 @@ class User
     /**
      * Get usrClockedIn
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUsrClockedIn()
     {
@@ -360,7 +360,7 @@ class User
     /**
      * Get usrLang
      *
-     * @return string 
+     * @return string
      */
     public function getUsrLang()
     {
@@ -383,7 +383,7 @@ class User
     /**
      * Get usrExternalId
      *
-     * @return string 
+     * @return string
      */
     public function getUsrExternalId()
     {
@@ -406,7 +406,7 @@ class User
     /**
      * Get usrLastLogin
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUsrLastLogin()
     {
@@ -429,7 +429,7 @@ class User
     /**
      * Get usrLastFailedLogin
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUsrLastFailedLogin()
     {
@@ -452,7 +452,7 @@ class User
     /**
      * Get usrFailedLogins
      *
-     * @return integer 
+     * @return integer
      */
     public function getUsrFailedLogins()
     {
@@ -475,7 +475,7 @@ class User
     /**
      * Get usrParCode
      *
-     * @return string 
+     * @return string
      */
     public function getUsrParCode()
     {

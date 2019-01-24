@@ -32,7 +32,7 @@ class IssueAttachmentFilePath
     /**
      * Get iapIafId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIapIafId()
     {
@@ -55,7 +55,7 @@ class IssueAttachmentFilePath
     /**
      * Get iapFlysystemPath
      *
-     * @return string 
+     * @return string
      */
     public function getIapFlysystemPath()
     {

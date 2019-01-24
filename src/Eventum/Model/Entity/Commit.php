@@ -88,7 +88,7 @@ class Commit
     /**
      * Get comId
      *
-     * @return integer 
+     * @return integer
      */
     public function getComId()
     {
@@ -111,7 +111,7 @@ class Commit
     /**
      * Get comScmName
      *
-     * @return string 
+     * @return string
      */
     public function getComScmName()
     {
@@ -134,7 +134,7 @@ class Commit
     /**
      * Get comProjectName
      *
-     * @return string 
+     * @return string
      */
     public function getComProjectName()
     {
@@ -157,7 +157,7 @@ class Commit
     /**
      * Get comChangeset
      *
-     * @return string 
+     * @return string
      */
     public function getComChangeset()
     {
@@ -180,7 +180,7 @@ class Commit
     /**
      * Get comBranch
      *
-     * @return string 
+     * @return string
      */
     public function getComBranch()
     {
@@ -203,7 +203,7 @@ class Commit
     /**
      * Get comAuthorEmail
      *
-     * @return string 
+     * @return string
      */
     public function getComAuthorEmail()
     {
@@ -226,7 +226,7 @@ class Commit
     /**
      * Get comAuthorName
      *
-     * @return string 
+     * @return string
      */
     public function getComAuthorName()
     {
@@ -249,7 +249,7 @@ class Commit
     /**
      * Get comUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getComUsrId()
     {
@@ -272,7 +272,7 @@ class Commit
     /**
      * Get comCommitDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getComCommitDate()
     {
@@ -295,7 +295,7 @@ class Commit
     /**
      * Get comMessage
      *
-     * @return string 
+     * @return string
      */
     public function getComMessage()
     {

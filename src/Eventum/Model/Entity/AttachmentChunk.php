@@ -54,7 +54,7 @@ class AttachmentChunk
     /**
      * Get pathId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPathId()
     {
@@ -77,7 +77,7 @@ class AttachmentChunk
     /**
      * Get chunkNo
      *
-     * @return integer 
+     * @return integer
      */
     public function getChunkNo()
     {
@@ -100,7 +100,7 @@ class AttachmentChunk
     /**
      * Get content
      *
-     * @return string 
+     * @return string
      */
     public function getContent()
     {

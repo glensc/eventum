@@ -53,7 +53,7 @@ class CustomerAccountManager
     /**
      * Get camId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCamId()
     {
@@ -76,7 +76,7 @@ class CustomerAccountManager
     /**
      * Get camPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCamPrjId()
     {
@@ -99,7 +99,7 @@ class CustomerAccountManager
     /**
      * Get camCustomerId
      *
-     * @return string 
+     * @return string
      */
     public function getCamCustomerId()
     {
@@ -122,7 +122,7 @@ class CustomerAccountManager
     /**
      * Get camUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCamUsrId()
     {
@@ -145,7 +145,7 @@ class CustomerAccountManager
     /**
      * Get camType
      *
-     * @return string 
+     * @return string
      */
     public function getCamType()
     {

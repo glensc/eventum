@@ -74,7 +74,7 @@ class CommitFile
     /**
      * Get cofId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCofId()
     {
@@ -97,7 +97,7 @@ class CommitFile
     /**
      * Get cofComId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCofComId()
     {
@@ -120,7 +120,7 @@ class CommitFile
     /**
      * Get cofFilename
      *
-     * @return string 
+     * @return string
      */
     public function getCofFilename()
     {
@@ -143,7 +143,7 @@ class CommitFile
     /**
      * Get cofAdded
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getCofAdded()
     {
@@ -166,7 +166,7 @@ class CommitFile
     /**
      * Get cofModified
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getCofModified()
     {
@@ -189,7 +189,7 @@ class CommitFile
     /**
      * Get cofRemoved
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getCofRemoved()
     {
@@ -212,7 +212,7 @@ class CommitFile
     /**
      * Get cofOldVersion
      *
-     * @return string 
+     * @return string
      */
     public function getCofOldVersion()
     {
@@ -235,7 +235,7 @@ class CommitFile
     /**
      * Get cofNewVersion
      *
-     * @return string 
+     * @return string
      */
     public function getCofNewVersion()
     {

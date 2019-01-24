@@ -43,18 +43,18 @@ class CustomFilter
     private $cstTitle;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="cst_iss_pri_id", type="integer", nullable=true)
+     * @ORM\Column(name="cst_priorities", type="string", length=255, nullable=true)
      */
-    private $cstIssPriId;
+    private $cstPriorities;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="cst_iss_sev_id", type="integer", nullable=true)
+     * @ORM\Column(name="cst_severities", type="string", length=255, nullable=true)
      */
-    private $cstIssSevId;
+    private $cstSeverities;
 
     /**
      * @var string
@@ -66,44 +66,44 @@ class CustomFilter
     /**
      * @var string
      *
-     * @ORM\Column(name="cst_users", type="string", length=64, nullable=true)
+     * @ORM\Column(name="cst_users", type="string", length=255, nullable=true)
      */
     private $cstUsers;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="cst_reporter", type="integer", nullable=true)
+     * @ORM\Column(name="cst_reporters", type="string", length=255, nullable=true)
      */
-    private $cstReporter;
+    private $cstReporters;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="cst_iss_prc_id", type="integer", nullable=true)
+     * @ORM\Column(name="cst_categories", type="string", length=255, nullable=true)
      */
-    private $cstIssPrcId;
+    private $cstCategories;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="cst_iss_sta_id", type="integer", nullable=true)
+     * @ORM\Column(name="cst_statuses", type="string", length=255, nullable=true)
      */
-    private $cstIssStaId;
+    private $cstStatuses;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="cst_iss_pre_id", type="integer", nullable=true)
+     * @ORM\Column(name="cst_releases", type="string", length=255, nullable=true)
      */
-    private $cstIssPreId;
+    private $cstReleases;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="cst_pro_id", type="integer", nullable=true)
+     * @ORM\Column(name="cst_products", type="string", length=255, nullable=true)
      */
-    private $cstProId;
+    private $cstProducts;
 
     /**
      * @var string
@@ -312,7 +312,7 @@ class CustomFilter
     /**
      * Get cstId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstId()
     {
@@ -335,7 +335,7 @@ class CustomFilter
     /**
      * Get cstUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstUsrId()
     {
@@ -358,7 +358,7 @@ class CustomFilter
     /**
      * Get cstPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstPrjId()
     {
@@ -381,7 +381,7 @@ class CustomFilter
     /**
      * Get cstTitle
      *
-     * @return string 
+     * @return string
      */
     public function getCstTitle()
     {
@@ -389,49 +389,49 @@ class CustomFilter
     }
 
     /**
-     * Set cstIssPriId
+     * Set cstPriorities
      *
-     * @param integer $cstIssPriId
+     * @param string $cstPriorities
      * @return CustomFilter
      */
-    public function setCstIssPriId($cstIssPriId)
+    public function setCstPriorities($cstPriorities)
     {
-        $this->cstIssPriId = $cstIssPriId;
+        $this->cstPriorities = $cstPriorities;
 
         return $this;
     }
 
     /**
-     * Get cstIssPriId
+     * Get cstPriorities
      *
-     * @return integer 
+     * @return string
      */
-    public function getCstIssPriId()
+    public function getCstPriorities()
     {
-        return $this->cstIssPriId;
+        return $this->cstPriorities;
     }
 
     /**
-     * Set cstIssSevId
+     * Set cstSeverities
      *
-     * @param integer $cstIssSevId
+     * @param string $cstSeverities
      * @return CustomFilter
      */
-    public function setCstIssSevId($cstIssSevId)
+    public function setCstSeverities($cstSeverities)
     {
-        $this->cstIssSevId = $cstIssSevId;
+        $this->cstSeverities = $cstSeverities;
 
         return $this;
     }
 
     /**
-     * Get cstIssSevId
+     * Get cstSeverities
      *
-     * @return integer 
+     * @return string
      */
-    public function getCstIssSevId()
+    public function getCstSeverities()
     {
-        return $this->cstIssSevId;
+        return $this->cstSeverities;
     }
 
     /**
@@ -450,7 +450,7 @@ class CustomFilter
     /**
      * Get cstKeywords
      *
-     * @return string 
+     * @return string
      */
     public function getCstKeywords()
     {
@@ -473,7 +473,7 @@ class CustomFilter
     /**
      * Get cstUsers
      *
-     * @return string 
+     * @return string
      */
     public function getCstUsers()
     {
@@ -481,118 +481,118 @@ class CustomFilter
     }
 
     /**
-     * Set cstReporter
+     * Set cstReporters
      *
-     * @param integer $cstReporter
+     * @param string $cstReporters
      * @return CustomFilter
      */
-    public function setCstReporter($cstReporter)
+    public function setCstReporters($cstReporters)
     {
-        $this->cstReporter = $cstReporter;
+        $this->cstReporters = $cstReporters;
 
         return $this;
     }
 
     /**
-     * Get cstReporter
+     * Get cstReporters
      *
-     * @return integer 
+     * @return string
      */
-    public function getCstReporter()
+    public function getCstReporters()
     {
-        return $this->cstReporter;
+        return $this->cstReporters;
     }
 
     /**
-     * Set cstIssPrcId
+     * Set cstCategories
      *
-     * @param integer $cstIssPrcId
+     * @param string $cstCategories
      * @return CustomFilter
      */
-    public function setCstIssPrcId($cstIssPrcId)
+    public function setCstCategories($cstCategories)
     {
-        $this->cstIssPrcId = $cstIssPrcId;
+        $this->cstCategories = $cstCategories;
 
         return $this;
     }
 
     /**
-     * Get cstIssPrcId
+     * Get cstCategories
      *
-     * @return integer 
+     * @return string
      */
-    public function getCstIssPrcId()
+    public function getCstCategories()
     {
-        return $this->cstIssPrcId;
+        return $this->cstCategories;
     }
 
     /**
-     * Set cstIssStaId
+     * Set cstStatuses
      *
-     * @param integer $cstIssStaId
+     * @param string $cstStatuses
      * @return CustomFilter
      */
-    public function setCstIssStaId($cstIssStaId)
+    public function setCstStatuses($cstStatuses)
     {
-        $this->cstIssStaId = $cstIssStaId;
+        $this->cstStatuses = $cstStatuses;
 
         return $this;
     }
 
     /**
-     * Get cstIssStaId
+     * Get cstStatuses
      *
-     * @return integer 
+     * @return string
      */
-    public function getCstIssStaId()
+    public function getCstStatuses()
     {
-        return $this->cstIssStaId;
+        return $this->cstStatuses;
     }
 
     /**
-     * Set cstIssPreId
+     * Set cstReleases
      *
-     * @param integer $cstIssPreId
+     * @param string $cstReleases
      * @return CustomFilter
      */
-    public function setCstIssPreId($cstIssPreId)
+    public function setCstReleases($cstReleases)
     {
-        $this->cstIssPreId = $cstIssPreId;
+        $this->cstReleases = $cstReleases;
 
         return $this;
     }
 
     /**
-     * Get cstIssPreId
+     * Get cstReleases
      *
-     * @return integer 
+     * @return string
      */
-    public function getCstIssPreId()
+    public function getCstReleases()
     {
-        return $this->cstIssPreId;
+        return $this->cstReleases;
     }
 
     /**
-     * Set cstProId
+     * Set cstProducts
      *
-     * @param integer $cstProId
+     * @param string $cstProducts
      * @return CustomFilter
      */
-    public function setCstProId($cstProId)
+    public function setCstProducts($cstProducts)
     {
-        $this->cstProId = $cstProId;
+        $this->cstProducts = $cstProducts;
 
         return $this;
     }
 
     /**
-     * Get cstProId
+     * Get cstProducts
      *
-     * @return integer 
+     * @return string
      */
-    public function getCstProId()
+    public function getCstProducts()
     {
-        return $this->cstProId;
+        return $this->cstProducts;
     }
 
     /**
@@ -611,7 +611,7 @@ class CustomFilter
     /**
      * Get cstShowAuthorized
      *
-     * @return string 
+     * @return string
      */
     public function getCstShowAuthorized()
     {
@@ -634,7 +634,7 @@ class CustomFilter
     /**
      * Get cstShowNotificationList
      *
-     * @return string 
+     * @return string
      */
     public function getCstShowNotificationList()
     {
@@ -657,7 +657,7 @@ class CustomFilter
     /**
      * Get cstCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstCreatedDate()
     {
@@ -680,7 +680,7 @@ class CustomFilter
     /**
      * Get cstCreatedDateFilterType
      *
-     * @return string 
+     * @return string
      */
     public function getCstCreatedDateFilterType()
     {
@@ -703,7 +703,7 @@ class CustomFilter
     /**
      * Get cstCreatedDateTimePeriod
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstCreatedDateTimePeriod()
     {
@@ -726,7 +726,7 @@ class CustomFilter
     /**
      * Get cstCreatedDateEnd
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstCreatedDateEnd()
     {
@@ -749,7 +749,7 @@ class CustomFilter
     /**
      * Get cstUpdatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstUpdatedDate()
     {
@@ -772,7 +772,7 @@ class CustomFilter
     /**
      * Get cstUpdatedDateFilterType
      *
-     * @return string 
+     * @return string
      */
     public function getCstUpdatedDateFilterType()
     {
@@ -795,7 +795,7 @@ class CustomFilter
     /**
      * Get cstUpdatedDateTimePeriod
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstUpdatedDateTimePeriod()
     {
@@ -818,7 +818,7 @@ class CustomFilter
     /**
      * Get cstUpdatedDateEnd
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstUpdatedDateEnd()
     {
@@ -841,7 +841,7 @@ class CustomFilter
     /**
      * Get cstLastResponseDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstLastResponseDate()
     {
@@ -864,7 +864,7 @@ class CustomFilter
     /**
      * Get cstLastResponseDateFilterType
      *
-     * @return string 
+     * @return string
      */
     public function getCstLastResponseDateFilterType()
     {
@@ -887,7 +887,7 @@ class CustomFilter
     /**
      * Get cstLastResponseDateTimePeriod
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstLastResponseDateTimePeriod()
     {
@@ -910,7 +910,7 @@ class CustomFilter
     /**
      * Get cstLastResponseDateEnd
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstLastResponseDateEnd()
     {
@@ -933,7 +933,7 @@ class CustomFilter
     /**
      * Get cstFirstResponseDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstFirstResponseDate()
     {
@@ -956,7 +956,7 @@ class CustomFilter
     /**
      * Get cstFirstResponseDateFilterType
      *
-     * @return string 
+     * @return string
      */
     public function getCstFirstResponseDateFilterType()
     {
@@ -979,7 +979,7 @@ class CustomFilter
     /**
      * Get cstFirstResponseDateTimePeriod
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstFirstResponseDateTimePeriod()
     {
@@ -1002,7 +1002,7 @@ class CustomFilter
     /**
      * Get cstFirstResponseDateEnd
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstFirstResponseDateEnd()
     {
@@ -1025,7 +1025,7 @@ class CustomFilter
     /**
      * Get cstClosedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstClosedDate()
     {
@@ -1048,7 +1048,7 @@ class CustomFilter
     /**
      * Get cstClosedDateFilterType
      *
-     * @return string 
+     * @return string
      */
     public function getCstClosedDateFilterType()
     {
@@ -1071,7 +1071,7 @@ class CustomFilter
     /**
      * Get cstClosedDateTimePeriod
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstClosedDateTimePeriod()
     {
@@ -1094,7 +1094,7 @@ class CustomFilter
     /**
      * Get cstClosedDateEnd
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCstClosedDateEnd()
     {
@@ -1117,7 +1117,7 @@ class CustomFilter
     /**
      * Get cstRows
      *
-     * @return string 
+     * @return string
      */
     public function getCstRows()
     {
@@ -1140,7 +1140,7 @@ class CustomFilter
     /**
      * Get cstSortBy
      *
-     * @return string 
+     * @return string
      */
     public function getCstSortBy()
     {
@@ -1163,7 +1163,7 @@ class CustomFilter
     /**
      * Get cstSortOrder
      *
-     * @return string 
+     * @return string
      */
     public function getCstSortOrder()
     {
@@ -1186,7 +1186,7 @@ class CustomFilter
     /**
      * Get cstHideClosed
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstHideClosed()
     {
@@ -1209,7 +1209,7 @@ class CustomFilter
     /**
      * Get cstIsGlobal
      *
-     * @return integer 
+     * @return integer
      */
     public function getCstIsGlobal()
     {
@@ -1232,7 +1232,7 @@ class CustomFilter
     /**
      * Get cstSearchType
      *
-     * @return string 
+     * @return string
      */
     public function getCstSearchType()
     {
@@ -1255,7 +1255,7 @@ class CustomFilter
     /**
      * Get cstCustomField
      *
-     * @return string 
+     * @return string
      */
     public function getCstCustomField()
     {

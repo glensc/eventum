@@ -39,7 +39,7 @@ class HistoryType
     /**
      * Get httId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getHttId()
     {
@@ -62,7 +62,7 @@ class HistoryType
     /**
      * Get httName
      *
-     * @return string 
+     * @return string
      */
     public function getHttName()
     {
@@ -85,7 +85,7 @@ class HistoryType
     /**
      * Get httRole
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getHttRole()
     {

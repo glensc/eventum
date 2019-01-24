@@ -39,7 +39,7 @@ class IssueQuarantine
     /**
      * Get iquIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIquIssId()
     {
@@ -62,7 +62,7 @@ class IssueQuarantine
     /**
      * Get iquExpiration
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIquExpiration()
     {
@@ -85,7 +85,7 @@ class IssueQuarantine
     /**
      * Get iquStatus
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getIquStatus()
     {

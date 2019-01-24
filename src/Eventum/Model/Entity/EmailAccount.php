@@ -109,7 +109,7 @@ class EmailAccount
     /**
      * Get emaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getEmaId()
     {
@@ -132,7 +132,7 @@ class EmailAccount
     /**
      * Get emaPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getEmaPrjId()
     {
@@ -155,7 +155,7 @@ class EmailAccount
     /**
      * Get emaType
      *
-     * @return string 
+     * @return string
      */
     public function getEmaType()
     {
@@ -178,7 +178,7 @@ class EmailAccount
     /**
      * Get emaFolder
      *
-     * @return string 
+     * @return string
      */
     public function getEmaFolder()
     {
@@ -201,7 +201,7 @@ class EmailAccount
     /**
      * Get emaHostname
      *
-     * @return string 
+     * @return string
      */
     public function getEmaHostname()
     {
@@ -224,7 +224,7 @@ class EmailAccount
     /**
      * Get emaPort
      *
-     * @return string 
+     * @return string
      */
     public function getEmaPort()
     {
@@ -247,7 +247,7 @@ class EmailAccount
     /**
      * Get emaUsername
      *
-     * @return string 
+     * @return string
      */
     public function getEmaUsername()
     {
@@ -270,7 +270,7 @@ class EmailAccount
     /**
      * Get emaPassword
      *
-     * @return string 
+     * @return string
      */
     public function getEmaPassword()
     {
@@ -293,7 +293,7 @@ class EmailAccount
     /**
      * Get emaGetOnlyNew
      *
-     * @return integer 
+     * @return integer
      */
     public function getEmaGetOnlyNew()
     {
@@ -316,7 +316,7 @@ class EmailAccount
     /**
      * Get emaLeaveCopy
      *
-     * @return integer 
+     * @return integer
      */
     public function getEmaLeaveCopy()
     {
@@ -339,7 +339,7 @@ class EmailAccount
     /**
      * Get emaIssueAutoCreation
      *
-     * @return string 
+     * @return string
      */
     public function getEmaIssueAutoCreation()
     {
@@ -362,7 +362,7 @@ class EmailAccount
     /**
      * Get emaIssueAutoCreationOptions
      *
-     * @return string 
+     * @return string
      */
     public function getEmaIssueAutoCreationOptions()
     {
@@ -385,7 +385,7 @@ class EmailAccount
     /**
      * Get emaUseRouting
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getEmaUseRouting()
     {

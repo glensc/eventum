@@ -47,7 +47,7 @@ class ProjectGroup
     /**
      * Get pgrPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPgrPrjId()
     {
@@ -70,7 +70,7 @@ class ProjectGroup
     /**
      * Get pgrGrpId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPgrGrpId()
     {

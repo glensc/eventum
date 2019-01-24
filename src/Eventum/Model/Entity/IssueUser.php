@@ -61,7 +61,7 @@ class IssueUser
     /**
      * Get isuIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIsuIssId()
     {
@@ -84,7 +84,7 @@ class IssueUser
     /**
      * Get isuUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIsuUsrId()
     {
@@ -107,7 +107,7 @@ class IssueUser
     /**
      * Get isuAssignedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIsuAssignedDate()
     {
@@ -130,7 +130,7 @@ class IssueUser
     /**
      * Get isuOrder
      *
-     * @return integer 
+     * @return integer
      */
     public function getIsuOrder()
     {

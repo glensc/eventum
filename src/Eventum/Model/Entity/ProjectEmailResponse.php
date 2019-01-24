@@ -47,7 +47,7 @@ class ProjectEmailResponse
     /**
      * Get perPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPerPrjId()
     {
@@ -70,7 +70,7 @@ class ProjectEmailResponse
     /**
      * Get perEreId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPerEreId()
     {

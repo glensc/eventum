@@ -46,7 +46,7 @@ class CustomFieldOption
     /**
      * Get cfoId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCfoId()
     {
@@ -69,7 +69,7 @@ class CustomFieldOption
     /**
      * Get cfoFldId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCfoFldId()
     {
@@ -92,7 +92,7 @@ class CustomFieldOption
     /**
      * Get cfoRank
      *
-     * @return integer 
+     * @return integer
      */
     public function getCfoRank()
     {
@@ -115,7 +115,7 @@ class CustomFieldOption
     /**
      * Get cfoValue
      *
-     * @return string 
+     * @return string
      */
     public function getCfoValue()
     {

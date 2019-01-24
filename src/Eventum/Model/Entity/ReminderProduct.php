@@ -39,7 +39,7 @@ class ReminderProduct
     /**
      * Get rprId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRprId()
     {
@@ -62,7 +62,7 @@ class ReminderProduct
     /**
      * Get rprRemId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRprRemId()
     {
@@ -85,7 +85,7 @@ class ReminderProduct
     /**
      * Get rprProId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRprProId()
     {

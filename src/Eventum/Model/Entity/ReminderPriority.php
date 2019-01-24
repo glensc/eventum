@@ -39,7 +39,7 @@ class ReminderPriority
     /**
      * Get repId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRepId()
     {
@@ -62,7 +62,7 @@ class ReminderPriority
     /**
      * Get repRemId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRepRemId()
     {
@@ -85,7 +85,7 @@ class ReminderPriority
     /**
      * Get repPriId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRepPriId()
     {

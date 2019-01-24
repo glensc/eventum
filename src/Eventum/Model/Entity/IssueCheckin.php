@@ -95,7 +95,7 @@ class IssueCheckin
     /**
      * Get iscId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIscId()
     {
@@ -118,7 +118,7 @@ class IssueCheckin
     /**
      * Get iscIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIscIssId()
     {
@@ -141,7 +141,7 @@ class IssueCheckin
     /**
      * Get iscCommitid
      *
-     * @return string 
+     * @return string
      */
     public function getIscCommitid()
     {
@@ -164,7 +164,7 @@ class IssueCheckin
     /**
      * Get iscReponame
      *
-     * @return string 
+     * @return string
      */
     public function getIscReponame()
     {
@@ -187,7 +187,7 @@ class IssueCheckin
     /**
      * Get iscModule
      *
-     * @return string 
+     * @return string
      */
     public function getIscModule()
     {
@@ -210,7 +210,7 @@ class IssueCheckin
     /**
      * Get iscFilename
      *
-     * @return string 
+     * @return string
      */
     public function getIscFilename()
     {
@@ -233,7 +233,7 @@ class IssueCheckin
     /**
      * Get iscOldVersion
      *
-     * @return string 
+     * @return string
      */
     public function getIscOldVersion()
     {
@@ -256,7 +256,7 @@ class IssueCheckin
     /**
      * Get iscNewVersion
      *
-     * @return string 
+     * @return string
      */
     public function getIscNewVersion()
     {
@@ -279,7 +279,7 @@ class IssueCheckin
     /**
      * Get iscCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIscCreatedDate()
     {
@@ -302,7 +302,7 @@ class IssueCheckin
     /**
      * Get iscUsername
      *
-     * @return string 
+     * @return string
      */
     public function getIscUsername()
     {
@@ -325,7 +325,7 @@ class IssueCheckin
     /**
      * Get iscCommitMsg
      *
-     * @return string 
+     * @return string
      */
     public function getIscCommitMsg()
     {

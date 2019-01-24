@@ -46,7 +46,7 @@ class TimeTrackingCategory
     /**
      * Get ttcId
      *
-     * @return integer 
+     * @return integer
      */
     public function getTtcId()
     {
@@ -69,7 +69,7 @@ class TimeTrackingCategory
     /**
      * Get ttcPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getTtcPrjId()
     {
@@ -92,7 +92,7 @@ class TimeTrackingCategory
     /**
      * Get ttcTitle
      *
-     * @return string 
+     * @return string
      */
     public function getTtcTitle()
     {
@@ -115,7 +115,7 @@ class TimeTrackingCategory
     /**
      * Get ttcCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getTtcCreatedDate()
     {

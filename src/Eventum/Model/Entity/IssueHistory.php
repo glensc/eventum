@@ -81,7 +81,7 @@ class IssueHistory
     /**
      * Get hisId
      *
-     * @return integer 
+     * @return integer
      */
     public function getHisId()
     {
@@ -104,7 +104,7 @@ class IssueHistory
     /**
      * Get hisIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getHisIssId()
     {
@@ -127,7 +127,7 @@ class IssueHistory
     /**
      * Get hisUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getHisUsrId()
     {
@@ -150,7 +150,7 @@ class IssueHistory
     /**
      * Get hisHttId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getHisHttId()
     {
@@ -173,7 +173,7 @@ class IssueHistory
     /**
      * Get hisIsHidden
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getHisIsHidden()
     {
@@ -196,7 +196,7 @@ class IssueHistory
     /**
      * Get hisCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getHisCreatedDate()
     {
@@ -219,7 +219,7 @@ class IssueHistory
     /**
      * Get hisSummary
      *
-     * @return string 
+     * @return string
      */
     public function getHisSummary()
     {
@@ -242,7 +242,7 @@ class IssueHistory
     /**
      * Get hisContext
      *
-     * @return string 
+     * @return string
      */
     public function getHisContext()
     {
@@ -265,7 +265,7 @@ class IssueHistory
     /**
      * Get hisMinRole
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getHisMinRole()
     {

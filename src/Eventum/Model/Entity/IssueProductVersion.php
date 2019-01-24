@@ -46,7 +46,7 @@ class IssueProductVersion
     /**
      * Get ipvId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIpvId()
     {
@@ -69,7 +69,7 @@ class IssueProductVersion
     /**
      * Get ipvIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIpvIssId()
     {
@@ -92,7 +92,7 @@ class IssueProductVersion
     /**
      * Get ipvProId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIpvProId()
     {
@@ -115,7 +115,7 @@ class IssueProductVersion
     /**
      * Get ipvVersion
      *
-     * @return string 
+     * @return string
      */
     public function getIpvVersion()
     {

@@ -39,7 +39,7 @@ class ReminderOperator
     /**
      * Get rmoId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRmoId()
     {
@@ -62,7 +62,7 @@ class ReminderOperator
     /**
      * Get rmoTitle
      *
-     * @return string 
+     * @return string
      */
     public function getRmoTitle()
     {
@@ -85,7 +85,7 @@ class ReminderOperator
     /**
      * Get rmoSqlRepresentation
      *
-     * @return string 
+     * @return string
      */
     public function getRmoSqlRepresentation()
     {

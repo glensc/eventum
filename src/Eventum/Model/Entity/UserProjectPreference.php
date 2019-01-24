@@ -68,7 +68,7 @@ class UserProjectPreference
     /**
      * Get uppUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getUppUsrId()
     {
@@ -91,7 +91,7 @@ class UserProjectPreference
     /**
      * Get uppPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getUppPrjId()
     {
@@ -114,7 +114,7 @@ class UserProjectPreference
     /**
      * Get uppReceiveAssignedEmail
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUppReceiveAssignedEmail()
     {
@@ -137,7 +137,7 @@ class UserProjectPreference
     /**
      * Get uppReceiveNewIssueEmail
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUppReceiveNewIssueEmail()
     {
@@ -160,7 +160,7 @@ class UserProjectPreference
     /**
      * Get uppReceiveCopyOfOwnAction
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUppReceiveCopyOfOwnAction()
     {

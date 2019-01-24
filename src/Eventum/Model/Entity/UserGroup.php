@@ -54,7 +54,7 @@ class UserGroup
     /**
      * Get ugrUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getUgrUsrId()
     {
@@ -77,7 +77,7 @@ class UserGroup
     /**
      * Get ugrGrpId
      *
-     * @return integer 
+     * @return integer
      */
     public function getUgrGrpId()
     {
@@ -100,7 +100,7 @@ class UserGroup
     /**
      * Get ugrCreated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUgrCreated()
     {

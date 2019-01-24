@@ -74,7 +74,7 @@ class Faq
     /**
      * Get faqId
      *
-     * @return integer 
+     * @return integer
      */
     public function getFaqId()
     {
@@ -97,7 +97,7 @@ class Faq
     /**
      * Get faqPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getFaqPrjId()
     {
@@ -120,7 +120,7 @@ class Faq
     /**
      * Get faqUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getFaqUsrId()
     {
@@ -143,7 +143,7 @@ class Faq
     /**
      * Get faqCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getFaqCreatedDate()
     {
@@ -166,7 +166,7 @@ class Faq
     /**
      * Get faqUpdatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getFaqUpdatedDate()
     {
@@ -189,7 +189,7 @@ class Faq
     /**
      * Get faqTitle
      *
-     * @return string 
+     * @return string
      */
     public function getFaqTitle()
     {
@@ -212,7 +212,7 @@ class Faq
     /**
      * Get faqMessage
      *
-     * @return string 
+     * @return string
      */
     public function getFaqMessage()
     {
@@ -235,7 +235,7 @@ class Faq
     /**
      * Get faqRank
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getFaqRank()
     {

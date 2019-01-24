@@ -46,7 +46,7 @@ class IssueUserReplier
     /**
      * Get iurId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIurId()
     {
@@ -69,7 +69,7 @@ class IssueUserReplier
     /**
      * Get iurIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIurIssId()
     {
@@ -92,7 +92,7 @@ class IssueUserReplier
     /**
      * Get iurUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIurUsrId()
     {
@@ -115,7 +115,7 @@ class IssueUserReplier
     /**
      * Get iurEmail
      *
-     * @return string 
+     * @return string
      */
     public function getIurEmail()
     {

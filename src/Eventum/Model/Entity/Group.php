@@ -46,7 +46,7 @@ class Group
     /**
      * Get grpId
      *
-     * @return integer 
+     * @return integer
      */
     public function getGrpId()
     {
@@ -69,7 +69,7 @@ class Group
     /**
      * Get grpName
      *
-     * @return string 
+     * @return string
      */
     public function getGrpName()
     {
@@ -92,7 +92,7 @@ class Group
     /**
      * Get grpDescription
      *
-     * @return string 
+     * @return string
      */
     public function getGrpDescription()
     {
@@ -115,7 +115,7 @@ class Group
     /**
      * Get grpManagerUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getGrpManagerUsrId()
     {

@@ -39,7 +39,7 @@ class ProjectCategory
     /**
      * Get prcId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrcId()
     {
@@ -62,7 +62,7 @@ class ProjectCategory
     /**
      * Get prcPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrcPrjId()
     {
@@ -85,7 +85,7 @@ class ProjectCategory
     /**
      * Get prcTitle
      *
-     * @return string 
+     * @return string
      */
     public function getPrcTitle()
     {

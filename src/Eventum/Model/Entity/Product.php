@@ -60,7 +60,7 @@ class Product
     /**
      * Get proId
      *
-     * @return integer 
+     * @return integer
      */
     public function getProId()
     {
@@ -83,7 +83,7 @@ class Product
     /**
      * Get proTitle
      *
-     * @return string 
+     * @return string
      */
     public function getProTitle()
     {
@@ -106,7 +106,7 @@ class Product
     /**
      * Get proVersionHowto
      *
-     * @return string 
+     * @return string
      */
     public function getProVersionHowto()
     {
@@ -129,7 +129,7 @@ class Product
     /**
      * Get proRank
      *
-     * @return integer 
+     * @return integer
      */
     public function getProRank()
     {
@@ -152,7 +152,7 @@ class Product
     /**
      * Get proRemoved
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getProRemoved()
     {
@@ -175,7 +175,7 @@ class Product
     /**
      * Get proEmail
      *
-     * @return string 
+     * @return string
      */
     public function getProEmail()
     {

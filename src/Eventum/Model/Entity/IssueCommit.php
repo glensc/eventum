@@ -39,7 +39,7 @@ class IssueCommit
     /**
      * Get iscId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIscId()
     {
@@ -62,7 +62,7 @@ class IssueCommit
     /**
      * Get iscIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIscIssId()
     {
@@ -85,7 +85,7 @@ class IssueCommit
     /**
      * Get iscComId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIscComId()
     {

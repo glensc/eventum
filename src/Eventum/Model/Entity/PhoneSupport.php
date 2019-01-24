@@ -116,7 +116,7 @@ class PhoneSupport
     /**
      * Get phsId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPhsId()
     {
@@ -139,7 +139,7 @@ class PhoneSupport
     /**
      * Get phsUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPhsUsrId()
     {
@@ -162,7 +162,7 @@ class PhoneSupport
     /**
      * Get phsIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPhsIssId()
     {
@@ -185,7 +185,7 @@ class PhoneSupport
     /**
      * Get phsTtrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPhsTtrId()
     {
@@ -208,7 +208,7 @@ class PhoneSupport
     /**
      * Get phsCallFromLname
      *
-     * @return string 
+     * @return string
      */
     public function getPhsCallFromLname()
     {
@@ -231,7 +231,7 @@ class PhoneSupport
     /**
      * Get phsCallFromFname
      *
-     * @return string 
+     * @return string
      */
     public function getPhsCallFromFname()
     {
@@ -254,7 +254,7 @@ class PhoneSupport
     /**
      * Get phsCallToLname
      *
-     * @return string 
+     * @return string
      */
     public function getPhsCallToLname()
     {
@@ -277,7 +277,7 @@ class PhoneSupport
     /**
      * Get phsCallToFname
      *
-     * @return string 
+     * @return string
      */
     public function getPhsCallToFname()
     {
@@ -300,7 +300,7 @@ class PhoneSupport
     /**
      * Get phsCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getPhsCreatedDate()
     {
@@ -323,7 +323,7 @@ class PhoneSupport
     /**
      * Get phsType
      *
-     * @return string 
+     * @return string
      */
     public function getPhsType()
     {
@@ -346,7 +346,7 @@ class PhoneSupport
     /**
      * Get phsPhoneNumber
      *
-     * @return string 
+     * @return string
      */
     public function getPhsPhoneNumber()
     {
@@ -369,7 +369,7 @@ class PhoneSupport
     /**
      * Get phsPhoneType
      *
-     * @return string 
+     * @return string
      */
     public function getPhsPhoneType()
     {
@@ -392,7 +392,7 @@ class PhoneSupport
     /**
      * Get phsPhcId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPhsPhcId()
     {
@@ -415,7 +415,7 @@ class PhoneSupport
     /**
      * Get phsDescription
      *
-     * @return string 
+     * @return string
      */
     public function getPhsDescription()
     {

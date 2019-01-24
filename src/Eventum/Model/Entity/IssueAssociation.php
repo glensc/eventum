@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * IssueAssociation
  *
- * @ORM\Table(name="issue_association", indexes={@ORM\Index(name="isa_issue_id", columns={"isa_issue_id", "isa_associated_id"})})
+ * @ORM\Table(name="issue_association", uniqueConstraints={@ORM\UniqueConstraint(name="isa_issue_id", columns={"isa_issue_id", "isa_associated_id"})})
  * @ORM\Entity
  */
 class IssueAssociation
@@ -39,7 +39,7 @@ class IssueAssociation
     /**
      * Get isaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIsaId()
     {
@@ -62,7 +62,7 @@ class IssueAssociation
     /**
      * Get isaIssueId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIsaIssueId()
     {
@@ -85,7 +85,7 @@ class IssueAssociation
     /**
      * Get isaAssociatedId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIsaAssociatedId()
     {

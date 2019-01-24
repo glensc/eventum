@@ -60,7 +60,7 @@ class ReminderRequirement
     /**
      * Get rerId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRerId()
     {
@@ -83,7 +83,7 @@ class ReminderRequirement
     /**
      * Get rerRemId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRerRemId()
     {
@@ -106,7 +106,7 @@ class ReminderRequirement
     /**
      * Get rerIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRerIssId()
     {
@@ -129,7 +129,7 @@ class ReminderRequirement
     /**
      * Get rerSupportLevelId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRerSupportLevelId()
     {
@@ -152,7 +152,7 @@ class ReminderRequirement
     /**
      * Get rerCustomerId
      *
-     * @return string 
+     * @return string
      */
     public function getRerCustomerId()
     {
@@ -175,7 +175,7 @@ class ReminderRequirement
     /**
      * Get rerTriggerAllIssues
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRerTriggerAllIssues()
     {

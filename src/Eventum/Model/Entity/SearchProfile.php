@@ -53,7 +53,7 @@ class SearchProfile
     /**
      * Get sepId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSepId()
     {
@@ -76,7 +76,7 @@ class SearchProfile
     /**
      * Get sepUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSepUsrId()
     {
@@ -99,7 +99,7 @@ class SearchProfile
     /**
      * Get sepPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSepPrjId()
     {
@@ -122,7 +122,7 @@ class SearchProfile
     /**
      * Get sepType
      *
-     * @return string 
+     * @return string
      */
     public function getSepType()
     {
@@ -145,7 +145,7 @@ class SearchProfile
     /**
      * Get sepUserProfile
      *
-     * @return string 
+     * @return string
      */
     public function getSepUserProfile()
     {

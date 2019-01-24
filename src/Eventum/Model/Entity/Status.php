@@ -60,7 +60,7 @@ class Status
     /**
      * Get staId
      *
-     * @return integer 
+     * @return integer
      */
     public function getStaId()
     {
@@ -83,7 +83,7 @@ class Status
     /**
      * Get staTitle
      *
-     * @return string 
+     * @return string
      */
     public function getStaTitle()
     {
@@ -106,7 +106,7 @@ class Status
     /**
      * Get staAbbreviation
      *
-     * @return string 
+     * @return string
      */
     public function getStaAbbreviation()
     {
@@ -129,7 +129,7 @@ class Status
     /**
      * Get staRank
      *
-     * @return integer 
+     * @return integer
      */
     public function getStaRank()
     {
@@ -152,7 +152,7 @@ class Status
     /**
      * Get staColor
      *
-     * @return string 
+     * @return string
      */
     public function getStaColor()
     {
@@ -175,7 +175,7 @@ class Status
     /**
      * Get staIsClosed
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getStaIsClosed()
     {

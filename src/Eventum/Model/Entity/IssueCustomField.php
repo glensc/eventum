@@ -60,7 +60,7 @@ class IssueCustomField
     /**
      * Get icfId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIcfId()
     {
@@ -83,7 +83,7 @@ class IssueCustomField
     /**
      * Get icfIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIcfIssId()
     {
@@ -106,7 +106,7 @@ class IssueCustomField
     /**
      * Get icfFldId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIcfFldId()
     {
@@ -129,7 +129,7 @@ class IssueCustomField
     /**
      * Get icfValue
      *
-     * @return string 
+     * @return string
      */
     public function getIcfValue()
     {
@@ -152,7 +152,7 @@ class IssueCustomField
     /**
      * Get icfValueInteger
      *
-     * @return integer 
+     * @return integer
      */
     public function getIcfValueInteger()
     {
@@ -175,7 +175,7 @@ class IssueCustomField
     /**
      * Get icfValueDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIcfValueDate()
     {

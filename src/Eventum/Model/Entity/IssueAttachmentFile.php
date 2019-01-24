@@ -67,7 +67,7 @@ class IssueAttachmentFile
     /**
      * Get iafId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIafId()
     {
@@ -90,7 +90,7 @@ class IssueAttachmentFile
     /**
      * Get iafIatId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIafIatId()
     {
@@ -113,7 +113,7 @@ class IssueAttachmentFile
     /**
      * Get iafFile
      *
-     * @return string 
+     * @return string
      */
     public function getIafFile()
     {
@@ -136,7 +136,7 @@ class IssueAttachmentFile
     /**
      * Get iafFilename
      *
-     * @return string 
+     * @return string
      */
     public function getIafFilename()
     {
@@ -159,7 +159,7 @@ class IssueAttachmentFile
     /**
      * Get iafFiletype
      *
-     * @return string 
+     * @return string
      */
     public function getIafFiletype()
     {
@@ -182,7 +182,7 @@ class IssueAttachmentFile
     /**
      * Get iafFilesize
      *
-     * @return string 
+     * @return string
      */
     public function getIafFilesize()
     {
@@ -205,7 +205,7 @@ class IssueAttachmentFile
     /**
      * Get iafCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIafCreatedDate()
     {

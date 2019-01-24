@@ -60,7 +60,7 @@ class CustomerNote
     /**
      * Get cnoId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCnoId()
     {
@@ -83,7 +83,7 @@ class CustomerNote
     /**
      * Get cnoPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getCnoPrjId()
     {
@@ -106,7 +106,7 @@ class CustomerNote
     /**
      * Get cnoCustomerId
      *
-     * @return string 
+     * @return string
      */
     public function getCnoCustomerId()
     {
@@ -129,7 +129,7 @@ class CustomerNote
     /**
      * Get cnoCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCnoCreatedDate()
     {
@@ -152,7 +152,7 @@ class CustomerNote
     /**
      * Get cnoUpdatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCnoUpdatedDate()
     {
@@ -175,7 +175,7 @@ class CustomerNote
     /**
      * Get cnoNote
      *
-     * @return string 
+     * @return string
      */
     public function getCnoNote()
     {

@@ -46,7 +46,7 @@ class ReminderHistory
     /**
      * Get rmhId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRmhId()
     {
@@ -69,7 +69,7 @@ class ReminderHistory
     /**
      * Get rmhIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRmhIssId()
     {
@@ -92,7 +92,7 @@ class ReminderHistory
     /**
      * Get rmhRmaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRmhRmaId()
     {
@@ -115,7 +115,7 @@ class ReminderHistory
     /**
      * Get rmhCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getRmhCreatedDate()
     {

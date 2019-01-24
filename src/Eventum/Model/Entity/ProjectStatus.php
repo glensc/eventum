@@ -39,7 +39,7 @@ class ProjectStatus
     /**
      * Get prsId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrsId()
     {
@@ -62,7 +62,7 @@ class ProjectStatus
     /**
      * Get prsPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrsPrjId()
     {
@@ -85,7 +85,7 @@ class ProjectStatus
     /**
      * Get prsStaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrsStaId()
     {

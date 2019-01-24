@@ -60,7 +60,7 @@ class ApiToken
     /**
      * Get aptId
      *
-     * @return integer 
+     * @return integer
      */
     public function getAptId()
     {
@@ -83,7 +83,7 @@ class ApiToken
     /**
      * Get aptUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getAptUsrId()
     {
@@ -106,7 +106,7 @@ class ApiToken
     /**
      * Get aptCreated
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getAptCreated()
     {
@@ -129,7 +129,7 @@ class ApiToken
     /**
      * Get aptExpires
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getAptExpires()
     {
@@ -152,7 +152,7 @@ class ApiToken
     /**
      * Get aptStatus
      *
-     * @return string 
+     * @return string
      */
     public function getAptStatus()
     {
@@ -175,7 +175,7 @@ class ApiToken
     /**
      * Get aptToken
      *
-     * @return string 
+     * @return string
      */
     public function getAptToken()
     {

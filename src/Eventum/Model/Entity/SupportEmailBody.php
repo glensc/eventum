@@ -39,7 +39,7 @@ class SupportEmailBody
     /**
      * Get sebSupId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSebSupId()
     {
@@ -62,7 +62,7 @@ class SupportEmailBody
     /**
      * Get sebBody
      *
-     * @return string 
+     * @return string
      */
     public function getSebBody()
     {
@@ -85,7 +85,7 @@ class SupportEmailBody
     /**
      * Get sebFullEmail
      *
-     * @return string 
+     * @return string
      */
     public function getSebFullEmail()
     {

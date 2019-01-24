@@ -32,7 +32,7 @@ class ReminderTriggeredAction
     /**
      * Get rtaIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRtaIssId()
     {
@@ -55,7 +55,7 @@ class ReminderTriggeredAction
     /**
      * Get rtaRmaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRtaRmaId()
     {

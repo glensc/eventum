@@ -39,7 +39,7 @@ class ReminderSeverity
     /**
      * Get rmsId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRmsId()
     {
@@ -62,7 +62,7 @@ class ReminderSeverity
     /**
      * Get rmsRemId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRmsRemId()
     {
@@ -85,7 +85,7 @@ class ReminderSeverity
     /**
      * Get rmsSevId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRmsSevId()
     {

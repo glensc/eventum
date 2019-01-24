@@ -109,7 +109,7 @@ class Note
     /**
      * Get notId
      *
-     * @return integer 
+     * @return integer
      */
     public function getNotId()
     {
@@ -132,7 +132,7 @@ class Note
     /**
      * Get notIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getNotIssId()
     {
@@ -155,7 +155,7 @@ class Note
     /**
      * Get notCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getNotCreatedDate()
     {
@@ -178,7 +178,7 @@ class Note
     /**
      * Get notUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getNotUsrId()
     {
@@ -201,7 +201,7 @@ class Note
     /**
      * Get notTitle
      *
-     * @return string 
+     * @return string
      */
     public function getNotTitle()
     {
@@ -224,7 +224,7 @@ class Note
     /**
      * Get notNote
      *
-     * @return string 
+     * @return string
      */
     public function getNotNote()
     {
@@ -247,7 +247,7 @@ class Note
     /**
      * Get notFullMessage
      *
-     * @return string 
+     * @return string
      */
     public function getNotFullMessage()
     {
@@ -270,7 +270,7 @@ class Note
     /**
      * Get notParentId
      *
-     * @return integer 
+     * @return integer
      */
     public function getNotParentId()
     {
@@ -293,7 +293,7 @@ class Note
     /**
      * Get notUnknownUser
      *
-     * @return string 
+     * @return string
      */
     public function getNotUnknownUser()
     {
@@ -316,7 +316,7 @@ class Note
     /**
      * Get notHasAttachment
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getNotHasAttachment()
     {
@@ -339,7 +339,7 @@ class Note
     /**
      * Get notMessageId
      *
-     * @return string 
+     * @return string
      */
     public function getNotMessageId()
     {
@@ -362,7 +362,7 @@ class Note
     /**
      * Get notRemoved
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getNotRemoved()
     {
@@ -385,7 +385,7 @@ class Note
     /**
      * Get notIsBlocked
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getNotIsBlocked()
     {

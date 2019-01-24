@@ -46,7 +46,7 @@ class Resolution
     /**
      * Get resId
      *
-     * @return integer 
+     * @return integer
      */
     public function getResId()
     {
@@ -69,7 +69,7 @@ class Resolution
     /**
      * Get resTitle
      *
-     * @return string 
+     * @return string
      */
     public function getResTitle()
     {
@@ -92,7 +92,7 @@ class Resolution
     /**
      * Get resCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getResCreatedDate()
     {
@@ -115,7 +115,7 @@ class Resolution
     /**
      * Get resRank
      *
-     * @return integer 
+     * @return integer
      */
     public function getResRank()
     {

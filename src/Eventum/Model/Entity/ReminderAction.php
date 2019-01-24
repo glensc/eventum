@@ -88,7 +88,7 @@ class ReminderAction
     /**
      * Get rmaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRmaId()
     {
@@ -111,7 +111,7 @@ class ReminderAction
     /**
      * Get rmaRemId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRmaRemId()
     {
@@ -134,7 +134,7 @@ class ReminderAction
     /**
      * Get rmaRmtId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRmaRmtId()
     {
@@ -157,7 +157,7 @@ class ReminderAction
     /**
      * Get rmaCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getRmaCreatedDate()
     {
@@ -180,7 +180,7 @@ class ReminderAction
     /**
      * Get rmaLastUpdatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getRmaLastUpdatedDate()
     {
@@ -203,7 +203,7 @@ class ReminderAction
     /**
      * Get rmaTitle
      *
-     * @return string 
+     * @return string
      */
     public function getRmaTitle()
     {
@@ -226,7 +226,7 @@ class ReminderAction
     /**
      * Get rmaRank
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRmaRank()
     {
@@ -249,7 +249,7 @@ class ReminderAction
     /**
      * Get rmaAlertIrc
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRmaAlertIrc()
     {
@@ -272,7 +272,7 @@ class ReminderAction
     /**
      * Get rmaAlertGroupLeader
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRmaAlertGroupLeader()
     {
@@ -295,7 +295,7 @@ class ReminderAction
     /**
      * Get rmaBoilerplate
      *
-     * @return string 
+     * @return string
      */
     public function getRmaBoilerplate()
     {

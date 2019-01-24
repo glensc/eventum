@@ -53,7 +53,7 @@ class ProjectSeverity
     /**
      * Get sevId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSevId()
     {
@@ -76,7 +76,7 @@ class ProjectSeverity
     /**
      * Get sevPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSevPrjId()
     {
@@ -99,7 +99,7 @@ class ProjectSeverity
     /**
      * Get sevTitle
      *
-     * @return string 
+     * @return string
      */
     public function getSevTitle()
     {
@@ -122,7 +122,7 @@ class ProjectSeverity
     /**
      * Get sevDescription
      *
-     * @return string 
+     * @return string
      */
     public function getSevDescription()
     {
@@ -145,7 +145,7 @@ class ProjectSeverity
     /**
      * Get sevRank
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getSevRank()
     {

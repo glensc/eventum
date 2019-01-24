@@ -74,7 +74,7 @@ class AttachmentPath
     /**
      * Get pathId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPathId()
     {
@@ -97,7 +97,7 @@ class AttachmentPath
     /**
      * Get type
      *
-     * @return string 
+     * @return string
      */
     public function getType()
     {
@@ -120,7 +120,7 @@ class AttachmentPath
     /**
      * Get path
      *
-     * @return string 
+     * @return string
      */
     public function getPath()
     {
@@ -143,7 +143,7 @@ class AttachmentPath
     /**
      * Get mimetype
      *
-     * @return string 
+     * @return string
      */
     public function getMimetype()
     {
@@ -166,7 +166,7 @@ class AttachmentPath
     /**
      * Get visibility
      *
-     * @return string 
+     * @return string
      */
     public function getVisibility()
     {
@@ -189,7 +189,7 @@ class AttachmentPath
     /**
      * Get size
      *
-     * @return integer 
+     * @return integer
      */
     public function getSize()
     {
@@ -212,7 +212,7 @@ class AttachmentPath
     /**
      * Get isCompressed
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getIsCompressed()
     {
@@ -235,7 +235,7 @@ class AttachmentPath
     /**
      * Get updateTs
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdateTs()
     {

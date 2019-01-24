@@ -67,7 +67,7 @@ class TimeTracking
     /**
      * Get ttrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getTtrId()
     {
@@ -90,7 +90,7 @@ class TimeTracking
     /**
      * Get ttrTtcId
      *
-     * @return integer 
+     * @return integer
      */
     public function getTtrTtcId()
     {
@@ -113,7 +113,7 @@ class TimeTracking
     /**
      * Get ttrIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getTtrIssId()
     {
@@ -136,7 +136,7 @@ class TimeTracking
     /**
      * Get ttrUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getTtrUsrId()
     {
@@ -159,7 +159,7 @@ class TimeTracking
     /**
      * Get ttrCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getTtrCreatedDate()
     {
@@ -182,7 +182,7 @@ class TimeTracking
     /**
      * Get ttrTimeSpent
      *
-     * @return integer 
+     * @return integer
      */
     public function getTtrTimeSpent()
     {
@@ -205,7 +205,7 @@ class TimeTracking
     /**
      * Get ttrSummary
      *
-     * @return string 
+     * @return string
      */
     public function getTtrSummary()
     {

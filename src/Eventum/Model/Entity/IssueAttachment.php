@@ -74,7 +74,7 @@ class IssueAttachment
     /**
      * Get iatId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIatId()
     {
@@ -97,7 +97,7 @@ class IssueAttachment
     /**
      * Get iatIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIatIssId()
     {
@@ -120,7 +120,7 @@ class IssueAttachment
     /**
      * Get iatUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIatUsrId()
     {
@@ -143,7 +143,7 @@ class IssueAttachment
     /**
      * Get iatMinRole
      *
-     * @return integer 
+     * @return integer
      */
     public function getIatMinRole()
     {
@@ -166,7 +166,7 @@ class IssueAttachment
     /**
      * Get iatCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getIatCreatedDate()
     {
@@ -189,7 +189,7 @@ class IssueAttachment
     /**
      * Get iatDescription
      *
-     * @return string 
+     * @return string
      */
     public function getIatDescription()
     {
@@ -212,7 +212,7 @@ class IssueAttachment
     /**
      * Get iatUnknownUser
      *
-     * @return string 
+     * @return string
      */
     public function getIatUnknownUser()
     {
@@ -235,7 +235,7 @@ class IssueAttachment
     /**
      * Get iatNotId
      *
-     * @return integer 
+     * @return integer
      */
     public function getIatNotId()
     {

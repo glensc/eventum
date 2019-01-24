@@ -47,7 +47,7 @@ class ProjectLinkFilter
     /**
      * Get plfPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPlfPrjId()
     {
@@ -70,7 +70,7 @@ class ProjectLinkFilter
     /**
      * Get plfLfiId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPlfLfiId()
     {

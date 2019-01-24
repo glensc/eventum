@@ -39,7 +39,7 @@ class SubscriptionType
     /**
      * Get sbtId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSbtId()
     {
@@ -62,7 +62,7 @@ class SubscriptionType
     /**
      * Get sbtSubId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSbtSubId()
     {
@@ -85,7 +85,7 @@ class SubscriptionType
     /**
      * Get sbtType
      *
-     * @return string 
+     * @return string
      */
     public function getSbtType()
     {

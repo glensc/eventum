@@ -116,7 +116,7 @@ class SupportEmail
     /**
      * Get supId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSupId()
     {
@@ -139,7 +139,7 @@ class SupportEmail
     /**
      * Get supEmaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSupEmaId()
     {
@@ -162,7 +162,7 @@ class SupportEmail
     /**
      * Get supParentId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSupParentId()
     {
@@ -185,7 +185,7 @@ class SupportEmail
     /**
      * Get supIssId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSupIssId()
     {
@@ -208,7 +208,7 @@ class SupportEmail
     /**
      * Get supUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getSupUsrId()
     {
@@ -231,7 +231,7 @@ class SupportEmail
     /**
      * Get supCustomerId
      *
-     * @return string 
+     * @return string
      */
     public function getSupCustomerId()
     {
@@ -254,7 +254,7 @@ class SupportEmail
     /**
      * Get supMessageId
      *
-     * @return string 
+     * @return string
      */
     public function getSupMessageId()
     {
@@ -277,7 +277,7 @@ class SupportEmail
     /**
      * Get supDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getSupDate()
     {
@@ -300,7 +300,7 @@ class SupportEmail
     /**
      * Get supFrom
      *
-     * @return string 
+     * @return string
      */
     public function getSupFrom()
     {
@@ -323,7 +323,7 @@ class SupportEmail
     /**
      * Get supTo
      *
-     * @return string 
+     * @return string
      */
     public function getSupTo()
     {
@@ -346,7 +346,7 @@ class SupportEmail
     /**
      * Get supCc
      *
-     * @return string 
+     * @return string
      */
     public function getSupCc()
     {
@@ -369,7 +369,7 @@ class SupportEmail
     /**
      * Get supSubject
      *
-     * @return string 
+     * @return string
      */
     public function getSupSubject()
     {
@@ -392,7 +392,7 @@ class SupportEmail
     /**
      * Get supHasAttachment
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getSupHasAttachment()
     {
@@ -415,7 +415,7 @@ class SupportEmail
     /**
      * Get supRemoved
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getSupRemoved()
     {

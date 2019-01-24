@@ -53,7 +53,7 @@ class ProjectStatusDate
     /**
      * Get psdId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPsdId()
     {
@@ -76,7 +76,7 @@ class ProjectStatusDate
     /**
      * Get psdPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPsdPrjId()
     {
@@ -99,7 +99,7 @@ class ProjectStatusDate
     /**
      * Get psdStaId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPsdStaId()
     {
@@ -122,7 +122,7 @@ class ProjectStatusDate
     /**
      * Get psdDateField
      *
-     * @return string 
+     * @return string
      */
     public function getPsdDateField()
     {
@@ -145,7 +145,7 @@ class ProjectStatusDate
     /**
      * Get psdLabel
      *
-     * @return string 
+     * @return string
      */
     public function getPsdLabel()
     {

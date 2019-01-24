@@ -137,7 +137,7 @@ class CustomField
     /**
      * Get fldId
      *
-     * @return integer 
+     * @return integer
      */
     public function getFldId()
     {
@@ -160,7 +160,7 @@ class CustomField
     /**
      * Get fldTitle
      *
-     * @return string 
+     * @return string
      */
     public function getFldTitle()
     {
@@ -183,7 +183,7 @@ class CustomField
     /**
      * Get fldDescription
      *
-     * @return string 
+     * @return string
      */
     public function getFldDescription()
     {
@@ -206,7 +206,7 @@ class CustomField
     /**
      * Get fldType
      *
-     * @return string 
+     * @return string
      */
     public function getFldType()
     {
@@ -229,7 +229,7 @@ class CustomField
     /**
      * Get fldReportForm
      *
-     * @return integer 
+     * @return integer
      */
     public function getFldReportForm()
     {
@@ -252,7 +252,7 @@ class CustomField
     /**
      * Get fldReportFormRequired
      *
-     * @return integer 
+     * @return integer
      */
     public function getFldReportFormRequired()
     {
@@ -275,7 +275,7 @@ class CustomField
     /**
      * Get fldAnonymousForm
      *
-     * @return integer 
+     * @return integer
      */
     public function getFldAnonymousForm()
     {
@@ -298,7 +298,7 @@ class CustomField
     /**
      * Get fldAnonymousFormRequired
      *
-     * @return integer 
+     * @return integer
      */
     public function getFldAnonymousFormRequired()
     {
@@ -321,7 +321,7 @@ class CustomField
     /**
      * Get fldCloseForm
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getFldCloseForm()
     {
@@ -344,7 +344,7 @@ class CustomField
     /**
      * Get fldCloseFormRequired
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getFldCloseFormRequired()
     {
@@ -367,7 +367,7 @@ class CustomField
     /**
      * Get fldEditFormRequired
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getFldEditFormRequired()
     {
@@ -390,7 +390,7 @@ class CustomField
     /**
      * Get fldListDisplay
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getFldListDisplay()
     {
@@ -413,7 +413,7 @@ class CustomField
     /**
      * Get fldMinRole
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getFldMinRole()
     {
@@ -436,7 +436,7 @@ class CustomField
     /**
      * Get fldMinRoleEdit
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getFldMinRoleEdit()
     {
@@ -459,7 +459,7 @@ class CustomField
     /**
      * Get fldRank
      *
-     * @return integer 
+     * @return integer
      */
     public function getFldRank()
     {
@@ -482,7 +482,7 @@ class CustomField
     /**
      * Get fldBackend
      *
-     * @return string 
+     * @return string
      */
     public function getFldBackend()
     {
@@ -505,7 +505,7 @@ class CustomField
     /**
      * Get fldOrderBy
      *
-     * @return string 
+     * @return string
      */
     public function getFldOrderBy()
     {

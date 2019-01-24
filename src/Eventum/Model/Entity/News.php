@@ -60,7 +60,7 @@ class News
     /**
      * Get nwsId
      *
-     * @return integer 
+     * @return integer
      */
     public function getNwsId()
     {
@@ -83,7 +83,7 @@ class News
     /**
      * Get nwsUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getNwsUsrId()
     {
@@ -106,7 +106,7 @@ class News
     /**
      * Get nwsCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getNwsCreatedDate()
     {
@@ -129,7 +129,7 @@ class News
     /**
      * Get nwsTitle
      *
-     * @return string 
+     * @return string
      */
     public function getNwsTitle()
     {
@@ -152,7 +152,7 @@ class News
     /**
      * Get nwsMessage
      *
-     * @return string 
+     * @return string
      */
     public function getNwsMessage()
     {
@@ -175,7 +175,7 @@ class News
     /**
      * Get nwsStatus
      *
-     * @return string 
+     * @return string
      */
     public function getNwsStatus()
     {

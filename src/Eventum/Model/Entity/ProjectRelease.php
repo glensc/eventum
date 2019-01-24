@@ -53,7 +53,7 @@ class ProjectRelease
     /**
      * Get preId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPreId()
     {
@@ -76,7 +76,7 @@ class ProjectRelease
     /**
      * Get prePrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getPrePrjId()
     {
@@ -99,7 +99,7 @@ class ProjectRelease
     /**
      * Get preTitle
      *
-     * @return string 
+     * @return string
      */
     public function getPreTitle()
     {
@@ -122,7 +122,7 @@ class ProjectRelease
     /**
      * Get preScheduledDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getPreScheduledDate()
     {
@@ -145,7 +145,7 @@ class ProjectRelease
     /**
      * Get preStatus
      *
-     * @return string 
+     * @return string
      */
     public function getPreStatus()
     {

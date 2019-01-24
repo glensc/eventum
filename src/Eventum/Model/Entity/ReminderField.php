@@ -53,7 +53,7 @@ class ReminderField
     /**
      * Get rmfId
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRmfId()
     {
@@ -76,7 +76,7 @@ class ReminderField
     /**
      * Get rmfTitle
      *
-     * @return string 
+     * @return string
      */
     public function getRmfTitle()
     {
@@ -99,7 +99,7 @@ class ReminderField
     /**
      * Get rmfSqlField
      *
-     * @return string 
+     * @return string
      */
     public function getRmfSqlField()
     {
@@ -122,7 +122,7 @@ class ReminderField
     /**
      * Get rmfSqlRepresentation
      *
-     * @return string 
+     * @return string
      */
     public function getRmfSqlRepresentation()
     {
@@ -145,7 +145,7 @@ class ReminderField
     /**
      * Get rmfAllowColumnCompare
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRmfAllowColumnCompare()
     {

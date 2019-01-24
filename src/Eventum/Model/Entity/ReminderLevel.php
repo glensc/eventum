@@ -67,7 +67,7 @@ class ReminderLevel
     /**
      * Get remId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRemId()
     {
@@ -90,7 +90,7 @@ class ReminderLevel
     /**
      * Get remCreatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getRemCreatedDate()
     {
@@ -113,7 +113,7 @@ class ReminderLevel
     /**
      * Get remRank
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRemRank()
     {
@@ -136,7 +136,7 @@ class ReminderLevel
     /**
      * Get remLastUpdatedDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getRemLastUpdatedDate()
     {
@@ -159,7 +159,7 @@ class ReminderLevel
     /**
      * Get remTitle
      *
-     * @return string 
+     * @return string
      */
     public function getRemTitle()
     {
@@ -182,7 +182,7 @@ class ReminderLevel
     /**
      * Get remPrjId
      *
-     * @return integer 
+     * @return integer
      */
     public function getRemPrjId()
     {
@@ -205,7 +205,7 @@ class ReminderLevel
     /**
      * Get remSkipWeekend
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRemSkipWeekend()
     {

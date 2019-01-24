@@ -91,11 +91,18 @@ class UserPreference
      */
     private $uprCollapsedEmails;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="upr_markdown", type="boolean", nullable=true)
+     */
+    private $uprMarkdown;
+
 
     /**
      * Get uprUsrId
      *
-     * @return integer 
+     * @return integer
      */
     public function getUprUsrId()
     {
@@ -118,7 +125,7 @@ class UserPreference
     /**
      * Get uprTimezone
      *
-     * @return string 
+     * @return string
      */
     public function getUprTimezone()
     {
@@ -141,7 +148,7 @@ class UserPreference
     /**
      * Get uprWeekFirstday
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUprWeekFirstday()
     {
@@ -164,7 +171,7 @@ class UserPreference
     /**
      * Get uprListRefreshRate
      *
-     * @return integer 
+     * @return integer
      */
     public function getUprListRefreshRate()
     {
@@ -187,7 +194,7 @@ class UserPreference
     /**
      * Get uprEmailRefreshRate
      *
-     * @return integer 
+     * @return integer
      */
     public function getUprEmailRefreshRate()
     {
@@ -210,7 +217,7 @@ class UserPreference
     /**
      * Get uprEmailSignature
      *
-     * @return string 
+     * @return string
      */
     public function getUprEmailSignature()
     {
@@ -233,7 +240,7 @@ class UserPreference
     /**
      * Get uprAutoAppendEmailSig
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUprAutoAppendEmailSig()
     {
@@ -256,7 +263,7 @@ class UserPreference
     /**
      * Get uprAutoAppendNoteSig
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUprAutoAppendNoteSig()
     {
@@ -279,7 +286,7 @@ class UserPreference
     /**
      * Get uprAutoClosePopupWindow
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUprAutoClosePopupWindow()
     {
@@ -302,7 +309,7 @@ class UserPreference
     /**
      * Get uprRelativeDate
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUprRelativeDate()
     {
@@ -325,10 +332,33 @@ class UserPreference
     /**
      * Get uprCollapsedEmails
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUprCollapsedEmails()
     {
         return $this->uprCollapsedEmails;
+    }
+
+    /**
+     * Set uprMarkdown
+     *
+     * @param boolean $uprMarkdown
+     * @return UserPreference
+     */
+    public function setUprMarkdown($uprMarkdown)
+    {
+        $this->uprMarkdown = $uprMarkdown;
+
+        return $this;
+    }
+
+    /**
+     * Get uprMarkdown
+     *
+     * @return boolean
+     */
+    public function getUprMarkdown()
+    {
+        return $this->uprMarkdown;
     }
 }
