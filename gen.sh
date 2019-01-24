@@ -1,7 +1,8 @@
 #!/bin/sh
 set -xe
 
-#cat 54_scm_tables.sql |sed -re 's,\{\{%(.+)\}\},`\1`,' |mysql e
+mysqladmin drop -f e
+mysqladmin create e
 mysql e < schema.sql
 # PHP Fatal error:  Uncaught exception 'Doctrine\ORM\Mapping\MappingException' with message 'Table round_robin_user has no primary key. Doctrine does not support reverse engineering from tables that don't have a primary key.' in /home/glen/scm/eventum/doctrine2/vendor/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DatabaseDriver.php:288
 #mysql -s -e 'drop table issue_association' e

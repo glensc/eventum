@@ -1471,13 +1471,13 @@ CREATE TABLE `reminder_triggered_action` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `remote_links`
+-- Table structure for table `remote_link`
 --
 
-DROP TABLE IF EXISTS `remote_links`;
+DROP TABLE IF EXISTS `remote_link`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `remote_links` (
+CREATE TABLE `remote_link` (
   `rel_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `rel_gid` varchar(255) CHARACTER SET ascii DEFAULT NULL COMMENT 'Global Id',
   `rel_relationship` varchar(255) CHARACTER SET ascii NOT NULL COMMENT 'Link relationship type',
@@ -1806,4 +1806,4 @@ CREATE TABLE `version` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-01-24 20:21:13
+-- Dump completed on 2019-01-24 21:27:20

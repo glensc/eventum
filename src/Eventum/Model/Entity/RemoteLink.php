@@ -5,12 +5,12 @@ namespace Eventum\Model\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * RemoteLinks
+ * RemoteLink
  *
- * @ORM\Table(name="remote_links", indexes={@ORM\Index(name="rel_id", columns={"rel_id", "rel_gid"})})
+ * @ORM\Table(name="remote_link", indexes={@ORM\Index(name="rel_id", columns={"rel_id", "rel_gid"})})
  * @ORM\Entity
  */
-class RemoteLinks
+class RemoteLink
 {
     /**
      * @var integer
@@ -64,7 +64,7 @@ class RemoteLinks
      * Set relGid
      *
      * @param string $relGid
-     * @return RemoteLinks
+     * @return RemoteLink
      */
     public function setRelGid($relGid)
     {
@@ -87,7 +87,7 @@ class RemoteLinks
      * Set relRelationship
      *
      * @param string $relRelationship
-     * @return RemoteLinks
+     * @return RemoteLink
      */
     public function setRelRelationship($relRelationship)
     {
@@ -110,7 +110,7 @@ class RemoteLinks
      * Set relUrl
      *
      * @param string $relUrl
-     * @return RemoteLinks
+     * @return RemoteLink
      */
     public function setRelUrl($relUrl)
     {
@@ -133,7 +133,7 @@ class RemoteLinks
      * Set relTitle
      *
      * @param string $relTitle
-     * @return RemoteLinks
+     * @return RemoteLink
      */
     public function setRelTitle($relTitle)
     {
