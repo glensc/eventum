@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ApiToken
  *
- * @ORM\Table(name="api_token", indexes={@ORM\Index(name="apt_token", columns={"apt_token"})})
+ * @ORM\Table(name="api_token", indexes={@ORM\Index(name="apt_usr_id", columns={"apt_usr_id", "apt_status"}), @ORM\Index(name="apt_token", columns={"apt_token"})})
  * @ORM\Entity
  */
 class ApiToken
@@ -36,13 +36,6 @@ class ApiToken
     private $aptCreated;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="apt_expires", type="datetime", nullable=false)
-     */
-    private $aptExpires;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="apt_status", type="string", length=10, nullable=false)
@@ -52,7 +45,7 @@ class ApiToken
     /**
      * @var string
      *
-     * @ORM\Column(name="apt_token", type="string", length=255, nullable=false)
+     * @ORM\Column(name="apt_token", type="string", length=32, nullable=false)
      */
     private $aptToken;
 
@@ -111,29 +104,6 @@ class ApiToken
     public function getAptCreated()
     {
         return $this->aptCreated;
-    }
-
-    /**
-     * Set aptExpires
-     *
-     * @param \DateTime $aptExpires
-     * @return ApiToken
-     */
-    public function setAptExpires($aptExpires)
-    {
-        $this->aptExpires = $aptExpires;
-
-        return $this;
-    }
-
-    /**
-     * Get aptExpires
-     *
-     * @return \DateTime
-     */
-    public function getAptExpires()
-    {
-        return $this->aptExpires;
     }
 
     /**

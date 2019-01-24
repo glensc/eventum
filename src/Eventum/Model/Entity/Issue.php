@@ -287,13 +287,6 @@ class Issue
      */
     private $issAccessLevel;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="iss_private", type="boolean", nullable=false)
-     */
-    private $issPrivate;
-
 
     /**
      * Get issId
@@ -1177,28 +1170,5 @@ class Issue
     public function getIssAccessLevel()
     {
         return $this->issAccessLevel;
-    }
-
-    /**
-     * Set issPrivate
-     *
-     * @param boolean $issPrivate
-     * @return Issue
-     */
-    public function setIssPrivate($issPrivate)
-    {
-        $this->issPrivate = $issPrivate;
-
-        return $this;
-    }
-
-    /**
-     * Get issPrivate
-     *
-     * @return boolean
-     */
-    public function getIssPrivate()
-    {
-        return $this->issPrivate;
     }
 }

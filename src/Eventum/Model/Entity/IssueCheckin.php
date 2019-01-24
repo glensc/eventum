@@ -87,7 +87,7 @@ class IssueCheckin
     /**
      * @var string
      *
-     * @ORM\Column(name="isc_commit_msg", type="text", length=16777215, nullable=true)
+     * @ORM\Column(name="isc_commit_msg", type="text", length=65535, nullable=true)
      */
     private $iscCommitMsg;
 

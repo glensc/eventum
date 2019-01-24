@@ -59,7 +59,7 @@ class IssueHistory
     /**
      * @var string
      *
-     * @ORM\Column(name="his_summary", type="text", length=16777215, nullable=false)
+     * @ORM\Column(name="his_summary", type="text", length=65535, nullable=false)
      */
     private $hisSummary;
 

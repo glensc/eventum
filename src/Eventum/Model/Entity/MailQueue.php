@@ -80,7 +80,7 @@ class MailQueue
     /**
      * @var string
      *
-     * @ORM\Column(name="maq_headers", type="text", length=16777215, nullable=false)
+     * @ORM\Column(name="maq_headers", type="text", length=65535, nullable=false)
      */
     private $maqHeaders;
 
@@ -92,18 +92,18 @@ class MailQueue
     private $maqBody;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="maq_usr_id", type="integer", nullable=true)
-     */
-    private $maqUsrId;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="maq_type", type="string", length=30, nullable=true)
      */
     private $maqType;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="maq_usr_id", type="integer", nullable=true)
+     */
+    private $maqUsrId;
 
     /**
      * @var integer
@@ -354,29 +354,6 @@ class MailQueue
     }
 
     /**
-     * Set maqUsrId
-     *
-     * @param integer $maqUsrId
-     * @return MailQueue
-     */
-    public function setMaqUsrId($maqUsrId)
-    {
-        $this->maqUsrId = $maqUsrId;
-
-        return $this;
-    }
-
-    /**
-     * Get maqUsrId
-     *
-     * @return integer
-     */
-    public function getMaqUsrId()
-    {
-        return $this->maqUsrId;
-    }
-
-    /**
      * Set maqType
      *
      * @param string $maqType
@@ -397,6 +374,29 @@ class MailQueue
     public function getMaqType()
     {
         return $this->maqType;
+    }
+
+    /**
+     * Set maqUsrId
+     *
+     * @param integer $maqUsrId
+     * @return MailQueue
+     */
+    public function setMaqUsrId($maqUsrId)
+    {
+        $this->maqUsrId = $maqUsrId;
+
+        return $this;
+    }
+
+    /**
+     * Get maqUsrId
+     *
+     * @return integer
+     */
+    public function getMaqUsrId()
+    {
+        return $this->maqUsrId;
     }
 
     /**

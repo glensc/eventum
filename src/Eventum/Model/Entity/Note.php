@@ -59,7 +59,7 @@ class Note
     /**
      * @var string
      *
-     * @ORM\Column(name="not_full_message", type="text", nullable=true)
+     * @ORM\Column(name="not_full_message", type="blob", nullable=true)
      */
     private $notFullMessage;
 

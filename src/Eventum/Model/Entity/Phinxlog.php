@@ -31,14 +31,14 @@ class Phinxlog
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="start_time", type="datetime", nullable=false)
+     * @ORM\Column(name="start_time", type="datetime", nullable=true)
      */
     private $startTime;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="end_time", type="datetime", nullable=false)
+     * @ORM\Column(name="end_time", type="datetime", nullable=true)
      */
     private $endTime;
 
