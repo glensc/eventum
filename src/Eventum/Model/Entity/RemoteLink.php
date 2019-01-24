@@ -22,6 +22,13 @@ class RemoteLink
     private $relId;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="rel_iss_id", type="integer", nullable=false)
+     */
+    private $relIssId;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="rel_gid", type="string", length=255, nullable=true)
@@ -58,6 +65,29 @@ class RemoteLink
     public function getRelId()
     {
         return $this->relId;
+    }
+
+    /**
+     * Set relIssId
+     *
+     * @param integer $relIssId
+     * @return RemoteLink
+     */
+    public function setRelIssId($relIssId)
+    {
+        $this->relIssId = $relIssId;
+
+        return $this;
+    }
+
+    /**
+     * Get relIssId
+     *
+     * @return integer
+     */
+    public function getRelIssId()
+    {
+        return $this->relIssId;
     }
 
     /**

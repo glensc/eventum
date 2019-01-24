@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.6.42, for osx10.14 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.10, for osx10.9 (x86_64)
 --
 -- Host: localhost    Database: e
 -- ------------------------------------------------------
@@ -1455,6 +1455,7 @@ DROP TABLE IF EXISTS `remote_link`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `remote_link` (
   `rel_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `rel_iss_id` int(11) unsigned NOT NULL,
   `rel_gid` varchar(255) CHARACTER SET ascii DEFAULT NULL COMMENT 'Global Id',
   `rel_relationship` varchar(255) CHARACTER SET ascii NOT NULL COMMENT 'Link relationship type',
   `rel_url` text CHARACTER SET ascii NOT NULL,
@@ -1687,21 +1688,6 @@ CREATE TABLE `user_group` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `user_logins`
---
-
-DROP TABLE IF EXISTS `user_logins`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_logins` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `created` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `user_preference`
 --
 
@@ -1751,4 +1737,4 @@ CREATE TABLE `user_project_preference` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-01-24 22:01:36
+-- Dump completed on 2019-01-24 22:11:01
