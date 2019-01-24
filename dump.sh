@@ -4,4 +4,8 @@ set -xeu
 # prefer mysql 5.6 on brew enabled systems
 PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
 
-exec mysqldump -d eventum > schema.sql
+mysqldump -d eventum > schema.sql
+
+mysqladmin drop -f e
+mysqladmin create e
+mysql e < schema.sql
