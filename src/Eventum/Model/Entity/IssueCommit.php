@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueCommit
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="isc_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,24 +33,23 @@ class IssueCommit
     private $iscId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="isc_iss_id", type="integer", nullable=false)
      */
     private $iscIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="isc_com_id", type="integer", nullable=false)
      */
     private $iscComId;
 
-
     /**
      * Get iscId
      *
-     * @return integer
+     * @return int
      */
     public function getIscId()
     {
@@ -49,7 +59,7 @@ class IssueCommit
     /**
      * Set iscIssId
      *
-     * @param integer $iscIssId
+     * @param int $iscIssId
      * @return IssueCommit
      */
     public function setIscIssId($iscIssId)
@@ -62,7 +72,7 @@ class IssueCommit
     /**
      * Get iscIssId
      *
-     * @return integer
+     * @return int
      */
     public function getIscIssId()
     {
@@ -72,7 +82,7 @@ class IssueCommit
     /**
      * Set iscComId
      *
-     * @param integer $iscComId
+     * @param int $iscComId
      * @return IssueCommit
      */
     public function setIscComId($iscComId)
@@ -85,7 +95,7 @@ class IssueCommit
     /**
      * Get iscComId
      *
-     * @return integer
+     * @return int
      */
     public function getIscComId()
     {

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ReminderField
 {
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rmf_id", type="boolean", nullable=false)
      * @ORM\Id
@@ -43,17 +54,16 @@ class ReminderField
     private $rmfSqlRepresentation;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rmf_allow_column_compare", type="boolean", nullable=true)
      */
     private $rmfAllowColumnCompare;
 
-
     /**
      * Get rmfId
      *
-     * @return boolean
+     * @return bool
      */
     public function getRmfId()
     {
@@ -132,7 +142,7 @@ class ReminderField
     /**
      * Set rmfAllowColumnCompare
      *
-     * @param boolean $rmfAllowColumnCompare
+     * @param bool $rmfAllowColumnCompare
      * @return ReminderField
      */
     public function setRmfAllowColumnCompare($rmfAllowColumnCompare)
@@ -145,7 +155,7 @@ class ReminderField
     /**
      * Get rmfAllowColumnCompare
      *
-     * @return boolean
+     * @return bool
      */
     public function getRmfAllowColumnCompare()
     {

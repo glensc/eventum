@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class TimeTrackingCategory
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ttc_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class TimeTrackingCategory
     private $ttcId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ttc_prj_id", type="integer", nullable=false)
      */
@@ -42,11 +53,10 @@ class TimeTrackingCategory
      */
     private $ttcCreatedDate;
 
-
     /**
      * Get ttcId
      *
-     * @return integer
+     * @return int
      */
     public function getTtcId()
     {
@@ -56,7 +66,7 @@ class TimeTrackingCategory
     /**
      * Set ttcPrjId
      *
-     * @param integer $ttcPrjId
+     * @param int $ttcPrjId
      * @return TimeTrackingCategory
      */
     public function setTtcPrjId($ttcPrjId)
@@ -69,7 +79,7 @@ class TimeTrackingCategory
     /**
      * Get ttcPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getTtcPrjId()
     {

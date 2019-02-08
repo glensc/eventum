@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Product
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pro_id", type="integer", nullable=false)
      * @ORM\Id
@@ -36,14 +47,14 @@ class Product
     private $proVersionHowto;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pro_rank", type="integer", nullable=false)
      */
     private $proRank;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="pro_removed", type="boolean", nullable=false)
      */
@@ -56,11 +67,10 @@ class Product
      */
     private $proEmail;
 
-
     /**
      * Get proId
      *
-     * @return integer
+     * @return int
      */
     public function getProId()
     {
@@ -116,7 +126,7 @@ class Product
     /**
      * Set proRank
      *
-     * @param integer $proRank
+     * @param int $proRank
      * @return Product
      */
     public function setProRank($proRank)
@@ -129,7 +139,7 @@ class Product
     /**
      * Get proRank
      *
-     * @return integer
+     * @return int
      */
     public function getProRank()
     {
@@ -139,7 +149,7 @@ class Product
     /**
      * Set proRemoved
      *
-     * @param boolean $proRemoved
+     * @param bool $proRemoved
      * @return Product
      */
     public function setProRemoved($proRemoved)
@@ -152,7 +162,7 @@ class Product
     /**
      * Get proRemoved
      *
-     * @return boolean
+     * @return bool
      */
     public function getProRemoved()
     {

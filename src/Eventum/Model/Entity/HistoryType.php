@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class HistoryType
 {
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="htt_id", type="boolean", nullable=false)
      * @ORM\Id
@@ -29,17 +40,16 @@ class HistoryType
     private $httName;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="htt_role", type="boolean", nullable=true)
      */
     private $httRole;
 
-
     /**
      * Get httId
      *
-     * @return boolean
+     * @return bool
      */
     public function getHttId()
     {
@@ -72,7 +82,7 @@ class HistoryType
     /**
      * Set httRole
      *
-     * @param boolean $httRole
+     * @param bool $httRole
      * @return HistoryType
      */
     public function setHttRole($httRole)
@@ -85,7 +95,7 @@ class HistoryType
     /**
      * Get httRole
      *
-     * @return boolean
+     * @return bool
      */
     public function getHttRole()
     {

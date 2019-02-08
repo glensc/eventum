@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueAttachment
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iat_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,21 +33,21 @@ class IssueAttachment
     private $iatId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iat_iss_id", type="integer", nullable=false)
      */
     private $iatIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iat_usr_id", type="integer", nullable=false)
      */
     private $iatUsrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iat_min_role", type="integer", nullable=false)
      */
@@ -64,17 +75,16 @@ class IssueAttachment
     private $iatUnknownUser;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iat_not_id", type="integer", nullable=true)
      */
     private $iatNotId;
 
-
     /**
      * Get iatId
      *
-     * @return integer
+     * @return int
      */
     public function getIatId()
     {
@@ -84,7 +94,7 @@ class IssueAttachment
     /**
      * Set iatIssId
      *
-     * @param integer $iatIssId
+     * @param int $iatIssId
      * @return IssueAttachment
      */
     public function setIatIssId($iatIssId)
@@ -97,7 +107,7 @@ class IssueAttachment
     /**
      * Get iatIssId
      *
-     * @return integer
+     * @return int
      */
     public function getIatIssId()
     {
@@ -107,7 +117,7 @@ class IssueAttachment
     /**
      * Set iatUsrId
      *
-     * @param integer $iatUsrId
+     * @param int $iatUsrId
      * @return IssueAttachment
      */
     public function setIatUsrId($iatUsrId)
@@ -120,7 +130,7 @@ class IssueAttachment
     /**
      * Get iatUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getIatUsrId()
     {
@@ -130,7 +140,7 @@ class IssueAttachment
     /**
      * Set iatMinRole
      *
-     * @param integer $iatMinRole
+     * @param int $iatMinRole
      * @return IssueAttachment
      */
     public function setIatMinRole($iatMinRole)
@@ -143,7 +153,7 @@ class IssueAttachment
     /**
      * Get iatMinRole
      *
-     * @return integer
+     * @return int
      */
     public function getIatMinRole()
     {
@@ -222,7 +232,7 @@ class IssueAttachment
     /**
      * Set iatNotId
      *
-     * @param integer $iatNotId
+     * @param int $iatNotId
      * @return IssueAttachment
      */
     public function setIatNotId($iatNotId)
@@ -235,7 +245,7 @@ class IssueAttachment
     /**
      * Get iatNotId
      *
-     * @return integer
+     * @return int
      */
     public function getIatNotId()
     {

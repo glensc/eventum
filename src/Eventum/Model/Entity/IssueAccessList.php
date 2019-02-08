@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueAccessList
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ial_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class IssueAccessList
     private $ialId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ial_iss_id", type="integer", nullable=false)
      */
     private $ialIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ial_usr_id", type="integer", nullable=false)
      */
@@ -42,11 +53,10 @@ class IssueAccessList
      */
     private $ialCreated;
 
-
     /**
      * Get ialId
      *
-     * @return integer
+     * @return int
      */
     public function getIalId()
     {
@@ -56,7 +66,7 @@ class IssueAccessList
     /**
      * Set ialIssId
      *
-     * @param integer $ialIssId
+     * @param int $ialIssId
      * @return IssueAccessList
      */
     public function setIalIssId($ialIssId)
@@ -69,7 +79,7 @@ class IssueAccessList
     /**
      * Get ialIssId
      *
-     * @return integer
+     * @return int
      */
     public function getIalIssId()
     {
@@ -79,7 +89,7 @@ class IssueAccessList
     /**
      * Set ialUsrId
      *
-     * @param integer $ialUsrId
+     * @param int $ialUsrId
      * @return IssueAccessList
      */
     public function setIalUsrId($ialUsrId)
@@ -92,7 +102,7 @@ class IssueAccessList
     /**
      * Get ialUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getIalUsrId()
     {

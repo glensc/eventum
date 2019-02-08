@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectCustomField
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pcf_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,24 +33,23 @@ class ProjectCustomField
     private $pcfId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pcf_prj_id", type="integer", nullable=false)
      */
     private $pcfPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pcf_fld_id", type="integer", nullable=false)
      */
     private $pcfFldId;
 
-
     /**
      * Get pcfId
      *
-     * @return integer
+     * @return int
      */
     public function getPcfId()
     {
@@ -49,7 +59,7 @@ class ProjectCustomField
     /**
      * Set pcfPrjId
      *
-     * @param integer $pcfPrjId
+     * @param int $pcfPrjId
      * @return ProjectCustomField
      */
     public function setPcfPrjId($pcfPrjId)
@@ -62,7 +72,7 @@ class ProjectCustomField
     /**
      * Get pcfPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPcfPrjId()
     {
@@ -72,7 +82,7 @@ class ProjectCustomField
     /**
      * Set pcfFldId
      *
-     * @param integer $pcfFldId
+     * @param int $pcfFldId
      * @return ProjectCustomField
      */
     public function setPcfFldId($pcfFldId)
@@ -85,7 +95,7 @@ class ProjectCustomField
     /**
      * Get pcfFldId
      *
-     * @return integer
+     * @return int
      */
     public function getPcfFldId()
     {

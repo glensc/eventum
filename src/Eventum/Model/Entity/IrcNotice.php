@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IrcNotice
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ino_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class IrcNotice
     private $inoId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ino_prj_id", type="integer", nullable=false)
      */
     private $inoPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ino_iss_id", type="integer", nullable=false)
      */
@@ -57,7 +68,7 @@ class IrcNotice
     private $inoStatus;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ino_target_usr_id", type="integer", nullable=true)
      */
@@ -70,11 +81,10 @@ class IrcNotice
      */
     private $inoCategory;
 
-
     /**
      * Get inoId
      *
-     * @return integer
+     * @return int
      */
     public function getInoId()
     {
@@ -84,7 +94,7 @@ class IrcNotice
     /**
      * Set inoPrjId
      *
-     * @param integer $inoPrjId
+     * @param int $inoPrjId
      * @return IrcNotice
      */
     public function setInoPrjId($inoPrjId)
@@ -97,7 +107,7 @@ class IrcNotice
     /**
      * Get inoPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getInoPrjId()
     {
@@ -107,7 +117,7 @@ class IrcNotice
     /**
      * Set inoIssId
      *
-     * @param integer $inoIssId
+     * @param int $inoIssId
      * @return IrcNotice
      */
     public function setInoIssId($inoIssId)
@@ -120,7 +130,7 @@ class IrcNotice
     /**
      * Get inoIssId
      *
-     * @return integer
+     * @return int
      */
     public function getInoIssId()
     {
@@ -199,7 +209,7 @@ class IrcNotice
     /**
      * Set inoTargetUsrId
      *
-     * @param integer $inoTargetUsrId
+     * @param int $inoTargetUsrId
      * @return IrcNotice
      */
     public function setInoTargetUsrId($inoTargetUsrId)
@@ -212,7 +222,7 @@ class IrcNotice
     /**
      * Get inoTargetUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getInoTargetUsrId()
     {

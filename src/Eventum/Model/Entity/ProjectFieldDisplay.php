@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectFieldDisplay
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pfd_prj_id", type="integer", nullable=false)
      * @ORM\Id
@@ -31,24 +42,23 @@ class ProjectFieldDisplay
     private $pfdField;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="pfd_min_role", type="boolean", nullable=false)
      */
     private $pfdMinRole;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="pfd_required", type="boolean", nullable=false)
      */
     private $pfdRequired;
 
-
     /**
      * Set pfdPrjId
      *
-     * @param integer $pfdPrjId
+     * @param int $pfdPrjId
      * @return ProjectFieldDisplay
      */
     public function setPfdPrjId($pfdPrjId)
@@ -61,7 +71,7 @@ class ProjectFieldDisplay
     /**
      * Get pfdPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPfdPrjId()
     {
@@ -94,7 +104,7 @@ class ProjectFieldDisplay
     /**
      * Set pfdMinRole
      *
-     * @param boolean $pfdMinRole
+     * @param bool $pfdMinRole
      * @return ProjectFieldDisplay
      */
     public function setPfdMinRole($pfdMinRole)
@@ -107,7 +117,7 @@ class ProjectFieldDisplay
     /**
      * Get pfdMinRole
      *
-     * @return boolean
+     * @return bool
      */
     public function getPfdMinRole()
     {
@@ -117,7 +127,7 @@ class ProjectFieldDisplay
     /**
      * Set pfdRequired
      *
-     * @param boolean $pfdRequired
+     * @param bool $pfdRequired
      * @return ProjectFieldDisplay
      */
     public function setPfdRequired($pfdRequired)
@@ -130,7 +140,7 @@ class ProjectFieldDisplay
     /**
      * Get pfdRequired
      *
-     * @return boolean
+     * @return bool
      */
     public function getPfdRequired()
     {

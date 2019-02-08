@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectNews
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prn_prj_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class ProjectNews
     private $prnPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prn_nws_id", type="integer", nullable=false)
      * @ORM\Id
@@ -30,11 +41,10 @@ class ProjectNews
      */
     private $prnNwsId;
 
-
     /**
      * Set prnPrjId
      *
-     * @param integer $prnPrjId
+     * @param int $prnPrjId
      * @return ProjectNews
      */
     public function setPrnPrjId($prnPrjId)
@@ -47,7 +57,7 @@ class ProjectNews
     /**
      * Get prnPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPrnPrjId()
     {
@@ -57,7 +67,7 @@ class ProjectNews
     /**
      * Set prnNwsId
      *
-     * @param integer $prnNwsId
+     * @param int $prnNwsId
      * @return ProjectNews
      */
     public function setPrnNwsId($prnNwsId)
@@ -70,7 +80,7 @@ class ProjectNews
     /**
      * Get prnNwsId
      *
-     * @return integer
+     * @return int
      */
     public function getPrnNwsId()
     {

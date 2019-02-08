@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueUserReplier
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iur_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class IssueUserReplier
     private $iurId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iur_iss_id", type="integer", nullable=false)
      */
     private $iurIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iur_usr_id", type="integer", nullable=false)
      */
@@ -42,11 +53,10 @@ class IssueUserReplier
      */
     private $iurEmail;
 
-
     /**
      * Get iurId
      *
-     * @return integer
+     * @return int
      */
     public function getIurId()
     {
@@ -56,7 +66,7 @@ class IssueUserReplier
     /**
      * Set iurIssId
      *
-     * @param integer $iurIssId
+     * @param int $iurIssId
      * @return IssueUserReplier
      */
     public function setIurIssId($iurIssId)
@@ -69,7 +79,7 @@ class IssueUserReplier
     /**
      * Get iurIssId
      *
-     * @return integer
+     * @return int
      */
     public function getIurIssId()
     {
@@ -79,7 +89,7 @@ class IssueUserReplier
     /**
      * Set iurUsrId
      *
-     * @param integer $iurUsrId
+     * @param int $iurUsrId
      * @return IssueUserReplier
      */
     public function setIurUsrId($iurUsrId)
@@ -92,7 +102,7 @@ class IssueUserReplier
     /**
      * Get iurUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getIurUsrId()
     {

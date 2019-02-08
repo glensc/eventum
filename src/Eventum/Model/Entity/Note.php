@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Note
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="not_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class Note
     private $notId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="not_iss_id", type="integer", nullable=false)
      */
@@ -36,7 +47,7 @@ class Note
     private $notCreatedDate;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="not_usr_id", type="integer", nullable=false)
      */
@@ -64,7 +75,7 @@ class Note
     private $notFullMessage;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="not_parent_id", type="integer", nullable=true)
      */
@@ -78,7 +89,7 @@ class Note
     private $notUnknownUser;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="not_has_attachment", type="boolean", nullable=false)
      */
@@ -92,24 +103,23 @@ class Note
     private $notMessageId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="not_removed", type="boolean", nullable=false)
      */
     private $notRemoved;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="not_is_blocked", type="boolean", nullable=false)
      */
     private $notIsBlocked;
 
-
     /**
      * Get notId
      *
-     * @return integer
+     * @return int
      */
     public function getNotId()
     {
@@ -119,7 +129,7 @@ class Note
     /**
      * Set notIssId
      *
-     * @param integer $notIssId
+     * @param int $notIssId
      * @return Note
      */
     public function setNotIssId($notIssId)
@@ -132,7 +142,7 @@ class Note
     /**
      * Get notIssId
      *
-     * @return integer
+     * @return int
      */
     public function getNotIssId()
     {
@@ -165,7 +175,7 @@ class Note
     /**
      * Set notUsrId
      *
-     * @param integer $notUsrId
+     * @param int $notUsrId
      * @return Note
      */
     public function setNotUsrId($notUsrId)
@@ -178,7 +188,7 @@ class Note
     /**
      * Get notUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getNotUsrId()
     {
@@ -257,7 +267,7 @@ class Note
     /**
      * Set notParentId
      *
-     * @param integer $notParentId
+     * @param int $notParentId
      * @return Note
      */
     public function setNotParentId($notParentId)
@@ -270,7 +280,7 @@ class Note
     /**
      * Get notParentId
      *
-     * @return integer
+     * @return int
      */
     public function getNotParentId()
     {
@@ -303,7 +313,7 @@ class Note
     /**
      * Set notHasAttachment
      *
-     * @param boolean $notHasAttachment
+     * @param bool $notHasAttachment
      * @return Note
      */
     public function setNotHasAttachment($notHasAttachment)
@@ -316,7 +326,7 @@ class Note
     /**
      * Get notHasAttachment
      *
-     * @return boolean
+     * @return bool
      */
     public function getNotHasAttachment()
     {
@@ -349,7 +359,7 @@ class Note
     /**
      * Set notRemoved
      *
-     * @param boolean $notRemoved
+     * @param bool $notRemoved
      * @return Note
      */
     public function setNotRemoved($notRemoved)
@@ -362,7 +372,7 @@ class Note
     /**
      * Get notRemoved
      *
-     * @return boolean
+     * @return bool
      */
     public function getNotRemoved()
     {
@@ -372,7 +382,7 @@ class Note
     /**
      * Set notIsBlocked
      *
-     * @param boolean $notIsBlocked
+     * @param bool $notIsBlocked
      * @return Note
      */
     public function setNotIsBlocked($notIsBlocked)
@@ -385,7 +395,7 @@ class Note
     /**
      * Get notIsBlocked
      *
-     * @return boolean
+     * @return bool
      */
     public function getNotIsBlocked()
     {

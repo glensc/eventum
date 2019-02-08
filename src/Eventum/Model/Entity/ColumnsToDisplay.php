@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ColumnsToDisplay
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ctd_prj_id", type="integer", nullable=false)
      * @ORM\Id
@@ -40,24 +51,23 @@ class ColumnsToDisplay
     private $ctdField;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="ctd_min_role", type="boolean", nullable=false)
      */
     private $ctdMinRole;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="ctd_rank", type="boolean", nullable=false)
      */
     private $ctdRank;
 
-
     /**
      * Set ctdPrjId
      *
-     * @param integer $ctdPrjId
+     * @param int $ctdPrjId
      * @return ColumnsToDisplay
      */
     public function setCtdPrjId($ctdPrjId)
@@ -70,7 +80,7 @@ class ColumnsToDisplay
     /**
      * Get ctdPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getCtdPrjId()
     {
@@ -126,7 +136,7 @@ class ColumnsToDisplay
     /**
      * Set ctdMinRole
      *
-     * @param boolean $ctdMinRole
+     * @param bool $ctdMinRole
      * @return ColumnsToDisplay
      */
     public function setCtdMinRole($ctdMinRole)
@@ -139,7 +149,7 @@ class ColumnsToDisplay
     /**
      * Get ctdMinRole
      *
-     * @return boolean
+     * @return bool
      */
     public function getCtdMinRole()
     {
@@ -149,7 +159,7 @@ class ColumnsToDisplay
     /**
      * Set ctdRank
      *
-     * @param boolean $ctdRank
+     * @param bool $ctdRank
      * @return ColumnsToDisplay
      */
     public function setCtdRank($ctdRank)
@@ -162,7 +172,7 @@ class ColumnsToDisplay
     /**
      * Get ctdRank
      *
-     * @return boolean
+     * @return bool
      */
     public function getCtdRank()
     {

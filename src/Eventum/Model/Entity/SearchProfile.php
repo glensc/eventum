@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class SearchProfile
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sep_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class SearchProfile
     private $sepId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sep_usr_id", type="integer", nullable=false)
      */
     private $sepUsrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sep_prj_id", type="integer", nullable=false)
      */
@@ -49,11 +60,10 @@ class SearchProfile
      */
     private $sepUserProfile;
 
-
     /**
      * Get sepId
      *
-     * @return integer
+     * @return int
      */
     public function getSepId()
     {
@@ -63,7 +73,7 @@ class SearchProfile
     /**
      * Set sepUsrId
      *
-     * @param integer $sepUsrId
+     * @param int $sepUsrId
      * @return SearchProfile
      */
     public function setSepUsrId($sepUsrId)
@@ -76,7 +86,7 @@ class SearchProfile
     /**
      * Get sepUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getSepUsrId()
     {
@@ -86,7 +96,7 @@ class SearchProfile
     /**
      * Set sepPrjId
      *
-     * @param integer $sepPrjId
+     * @param int $sepPrjId
      * @return SearchProfile
      */
     public function setSepPrjId($sepPrjId)
@@ -99,7 +109,7 @@ class SearchProfile
     /**
      * Get sepPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getSepPrjId()
     {

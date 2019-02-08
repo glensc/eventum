@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class UserGroup
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ugr_usr_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class UserGroup
     private $ugrUsrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ugr_grp_id", type="integer", nullable=false)
      * @ORM\Id
@@ -37,11 +48,10 @@ class UserGroup
      */
     private $ugrCreated;
 
-
     /**
      * Set ugrUsrId
      *
-     * @param integer $ugrUsrId
+     * @param int $ugrUsrId
      * @return UserGroup
      */
     public function setUgrUsrId($ugrUsrId)
@@ -54,7 +64,7 @@ class UserGroup
     /**
      * Get ugrUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getUgrUsrId()
     {
@@ -64,7 +74,7 @@ class UserGroup
     /**
      * Set ugrGrpId
      *
-     * @param integer $ugrGrpId
+     * @param int $ugrGrpId
      * @return UserGroup
      */
     public function setUgrGrpId($ugrGrpId)
@@ -77,7 +87,7 @@ class UserGroup
     /**
      * Get ugrGrpId
      *
-     * @return integer
+     * @return int
      */
     public function getUgrGrpId()
     {

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ReminderProduct
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rpr_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,24 +33,23 @@ class ReminderProduct
     private $rprId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rpr_rem_id", type="integer", nullable=false)
      */
     private $rprRemId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rpr_pro_id", type="integer", nullable=false)
      */
     private $rprProId;
 
-
     /**
      * Get rprId
      *
-     * @return integer
+     * @return int
      */
     public function getRprId()
     {
@@ -49,7 +59,7 @@ class ReminderProduct
     /**
      * Set rprRemId
      *
-     * @param integer $rprRemId
+     * @param int $rprRemId
      * @return ReminderProduct
      */
     public function setRprRemId($rprRemId)
@@ -62,7 +72,7 @@ class ReminderProduct
     /**
      * Get rprRemId
      *
-     * @return integer
+     * @return int
      */
     public function getRprRemId()
     {
@@ -72,7 +82,7 @@ class ReminderProduct
     /**
      * Set rprProId
      *
-     * @param integer $rprProId
+     * @param int $rprProId
      * @return ReminderProduct
      */
     public function setRprProId($rprProId)
@@ -85,7 +95,7 @@ class ReminderProduct
     /**
      * Get rprProId
      *
-     * @return integer
+     * @return int
      */
     public function getRprProId()
     {

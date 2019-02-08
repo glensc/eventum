@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectPriority
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pri_id", type="smallint", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class ProjectPriority
     private $priId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pri_prj_id", type="integer", nullable=false)
      */
@@ -36,24 +47,23 @@ class ProjectPriority
     private $priTitle;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="pri_rank", type="boolean", nullable=false)
      */
     private $priRank;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="pri_icon", type="boolean", nullable=false)
      */
     private $priIcon;
 
-
     /**
      * Get priId
      *
-     * @return integer
+     * @return int
      */
     public function getPriId()
     {
@@ -63,7 +73,7 @@ class ProjectPriority
     /**
      * Set priPrjId
      *
-     * @param integer $priPrjId
+     * @param int $priPrjId
      * @return ProjectPriority
      */
     public function setPriPrjId($priPrjId)
@@ -76,7 +86,7 @@ class ProjectPriority
     /**
      * Get priPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPriPrjId()
     {
@@ -109,7 +119,7 @@ class ProjectPriority
     /**
      * Set priRank
      *
-     * @param boolean $priRank
+     * @param bool $priRank
      * @return ProjectPriority
      */
     public function setPriRank($priRank)
@@ -122,7 +132,7 @@ class ProjectPriority
     /**
      * Get priRank
      *
-     * @return boolean
+     * @return bool
      */
     public function getPriRank()
     {
@@ -132,7 +142,7 @@ class ProjectPriority
     /**
      * Set priIcon
      *
-     * @param boolean $priIcon
+     * @param bool $priIcon
      * @return ProjectPriority
      */
     public function setPriIcon($priIcon)
@@ -145,7 +155,7 @@ class ProjectPriority
     /**
      * Get priIcon
      *
-     * @return boolean
+     * @return bool
      */
     public function getPriIcon()
     {

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class CustomerNote
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cno_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class CustomerNote
     private $cnoId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cno_prj_id", type="integer", nullable=false)
      */
@@ -56,11 +67,10 @@ class CustomerNote
      */
     private $cnoNote;
 
-
     /**
      * Get cnoId
      *
-     * @return integer
+     * @return int
      */
     public function getCnoId()
     {
@@ -70,7 +80,7 @@ class CustomerNote
     /**
      * Set cnoPrjId
      *
-     * @param integer $cnoPrjId
+     * @param int $cnoPrjId
      * @return CustomerNote
      */
     public function setCnoPrjId($cnoPrjId)
@@ -83,7 +93,7 @@ class CustomerNote
     /**
      * Get cnoPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getCnoPrjId()
     {

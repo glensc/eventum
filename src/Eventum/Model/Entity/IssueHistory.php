@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueHistory
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="his_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,28 +33,28 @@ class IssueHistory
     private $hisId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="his_iss_id", type="integer", nullable=false)
      */
     private $hisIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="his_usr_id", type="integer", nullable=false)
      */
     private $hisUsrId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="his_htt_id", type="boolean", nullable=false)
      */
     private $hisHttId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="his_is_hidden", type="boolean", nullable=false)
      */
@@ -71,17 +82,16 @@ class IssueHistory
     private $hisContext;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="his_min_role", type="boolean", nullable=false)
      */
     private $hisMinRole;
 
-
     /**
      * Get hisId
      *
-     * @return integer
+     * @return int
      */
     public function getHisId()
     {
@@ -91,7 +101,7 @@ class IssueHistory
     /**
      * Set hisIssId
      *
-     * @param integer $hisIssId
+     * @param int $hisIssId
      * @return IssueHistory
      */
     public function setHisIssId($hisIssId)
@@ -104,7 +114,7 @@ class IssueHistory
     /**
      * Get hisIssId
      *
-     * @return integer
+     * @return int
      */
     public function getHisIssId()
     {
@@ -114,7 +124,7 @@ class IssueHistory
     /**
      * Set hisUsrId
      *
-     * @param integer $hisUsrId
+     * @param int $hisUsrId
      * @return IssueHistory
      */
     public function setHisUsrId($hisUsrId)
@@ -127,7 +137,7 @@ class IssueHistory
     /**
      * Get hisUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getHisUsrId()
     {
@@ -137,7 +147,7 @@ class IssueHistory
     /**
      * Set hisHttId
      *
-     * @param boolean $hisHttId
+     * @param bool $hisHttId
      * @return IssueHistory
      */
     public function setHisHttId($hisHttId)
@@ -150,7 +160,7 @@ class IssueHistory
     /**
      * Get hisHttId
      *
-     * @return boolean
+     * @return bool
      */
     public function getHisHttId()
     {
@@ -160,7 +170,7 @@ class IssueHistory
     /**
      * Set hisIsHidden
      *
-     * @param boolean $hisIsHidden
+     * @param bool $hisIsHidden
      * @return IssueHistory
      */
     public function setHisIsHidden($hisIsHidden)
@@ -173,7 +183,7 @@ class IssueHistory
     /**
      * Get hisIsHidden
      *
-     * @return boolean
+     * @return bool
      */
     public function getHisIsHidden()
     {
@@ -252,7 +262,7 @@ class IssueHistory
     /**
      * Set hisMinRole
      *
-     * @param boolean $hisMinRole
+     * @param bool $hisMinRole
      * @return IssueHistory
      */
     public function setHisMinRole($hisMinRole)
@@ -265,7 +275,7 @@ class IssueHistory
     /**
      * Get hisMinRole
      *
-     * @return boolean
+     * @return bool
      */
     public function getHisMinRole()
     {

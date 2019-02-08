@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueAttachmentFilePath
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iap_iaf_id", type="integer", nullable=false)
      * @ORM\Id
@@ -28,11 +39,10 @@ class IssueAttachmentFilePath
      */
     private $iapFlysystemPath;
 
-
     /**
      * Get iapIafId
      *
-     * @return integer
+     * @return int
      */
     public function getIapIafId()
     {

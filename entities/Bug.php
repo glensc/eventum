@@ -1,6 +1,15 @@
 <?php
 
-
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Bug
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer", precision=0, scale=0, nullable=false, unique=false)
      * @ORM\Id
@@ -88,7 +97,7 @@ class Bug
     /**
      * Get id
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -111,7 +120,7 @@ class Bug
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -134,7 +143,7 @@ class Bug
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -157,7 +166,7 @@ class Bug
     /**
      * Get status
      *
-     * @return string 
+     * @return string
      */
     public function getStatus()
     {
@@ -180,7 +189,7 @@ class Bug
     /**
      * Get engineer
      *
-     * @return \User 
+     * @return \User
      */
     public function getEngineer()
     {
@@ -203,7 +212,7 @@ class Bug
     /**
      * Get reporter
      *
-     * @return \User 
+     * @return \User
      */
     public function getReporter()
     {
@@ -236,7 +245,7 @@ class Bug
     /**
      * Get products
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getProducts()
     {

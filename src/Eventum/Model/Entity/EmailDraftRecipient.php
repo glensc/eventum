@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class EmailDraftRecipient
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="edr_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class EmailDraftRecipient
     private $edrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="edr_emd_id", type="integer", nullable=false)
      */
     private $edrEmdId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="edr_is_cc", type="boolean", nullable=false)
      */
@@ -42,11 +53,10 @@ class EmailDraftRecipient
      */
     private $edrEmail;
 
-
     /**
      * Get edrId
      *
-     * @return integer
+     * @return int
      */
     public function getEdrId()
     {
@@ -56,7 +66,7 @@ class EmailDraftRecipient
     /**
      * Set edrEmdId
      *
-     * @param integer $edrEmdId
+     * @param int $edrEmdId
      * @return EmailDraftRecipient
      */
     public function setEdrEmdId($edrEmdId)
@@ -69,7 +79,7 @@ class EmailDraftRecipient
     /**
      * Get edrEmdId
      *
-     * @return integer
+     * @return int
      */
     public function getEdrEmdId()
     {
@@ -79,7 +89,7 @@ class EmailDraftRecipient
     /**
      * Set edrIsCc
      *
-     * @param boolean $edrIsCc
+     * @param bool $edrIsCc
      * @return EmailDraftRecipient
      */
     public function setEdrIsCc($edrIsCc)
@@ -92,7 +102,7 @@ class EmailDraftRecipient
     /**
      * Get edrIsCc
      *
-     * @return boolean
+     * @return bool
      */
     public function getEdrIsCc()
     {

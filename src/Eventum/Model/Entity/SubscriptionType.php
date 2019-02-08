@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class SubscriptionType
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sbt_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class SubscriptionType
     private $sbtId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sbt_sub_id", type="integer", nullable=false)
      */
@@ -35,11 +46,10 @@ class SubscriptionType
      */
     private $sbtType;
 
-
     /**
      * Get sbtId
      *
-     * @return integer
+     * @return int
      */
     public function getSbtId()
     {
@@ -49,7 +59,7 @@ class SubscriptionType
     /**
      * Set sbtSubId
      *
-     * @param integer $sbtSubId
+     * @param int $sbtSubId
      * @return SubscriptionType
      */
     public function setSbtSubId($sbtSubId)
@@ -62,7 +72,7 @@ class SubscriptionType
     /**
      * Get sbtSubId
      *
-     * @return integer
+     * @return int
      */
     public function getSbtSubId()
     {

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ReminderAction
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rma_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class ReminderAction
     private $rmaId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rma_rem_id", type="integer", nullable=false)
      */
     private $rmaRemId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rma_rmt_id", type="boolean", nullable=false)
      */
@@ -57,21 +68,21 @@ class ReminderAction
     private $rmaTitle;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rma_rank", type="boolean", nullable=false)
      */
     private $rmaRank;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rma_alert_irc", type="boolean", nullable=false)
      */
     private $rmaAlertIrc;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rma_alert_group_leader", type="boolean", nullable=false)
      */
@@ -84,11 +95,10 @@ class ReminderAction
      */
     private $rmaBoilerplate;
 
-
     /**
      * Get rmaId
      *
-     * @return integer
+     * @return int
      */
     public function getRmaId()
     {
@@ -98,7 +108,7 @@ class ReminderAction
     /**
      * Set rmaRemId
      *
-     * @param integer $rmaRemId
+     * @param int $rmaRemId
      * @return ReminderAction
      */
     public function setRmaRemId($rmaRemId)
@@ -111,7 +121,7 @@ class ReminderAction
     /**
      * Get rmaRemId
      *
-     * @return integer
+     * @return int
      */
     public function getRmaRemId()
     {
@@ -121,7 +131,7 @@ class ReminderAction
     /**
      * Set rmaRmtId
      *
-     * @param boolean $rmaRmtId
+     * @param bool $rmaRmtId
      * @return ReminderAction
      */
     public function setRmaRmtId($rmaRmtId)
@@ -134,7 +144,7 @@ class ReminderAction
     /**
      * Get rmaRmtId
      *
-     * @return boolean
+     * @return bool
      */
     public function getRmaRmtId()
     {
@@ -213,7 +223,7 @@ class ReminderAction
     /**
      * Set rmaRank
      *
-     * @param boolean $rmaRank
+     * @param bool $rmaRank
      * @return ReminderAction
      */
     public function setRmaRank($rmaRank)
@@ -226,7 +236,7 @@ class ReminderAction
     /**
      * Get rmaRank
      *
-     * @return boolean
+     * @return bool
      */
     public function getRmaRank()
     {
@@ -236,7 +246,7 @@ class ReminderAction
     /**
      * Set rmaAlertIrc
      *
-     * @param boolean $rmaAlertIrc
+     * @param bool $rmaAlertIrc
      * @return ReminderAction
      */
     public function setRmaAlertIrc($rmaAlertIrc)
@@ -249,7 +259,7 @@ class ReminderAction
     /**
      * Get rmaAlertIrc
      *
-     * @return boolean
+     * @return bool
      */
     public function getRmaAlertIrc()
     {
@@ -259,7 +269,7 @@ class ReminderAction
     /**
      * Set rmaAlertGroupLeader
      *
-     * @param boolean $rmaAlertGroupLeader
+     * @param bool $rmaAlertGroupLeader
      * @return ReminderAction
      */
     public function setRmaAlertGroupLeader($rmaAlertGroupLeader)
@@ -272,7 +282,7 @@ class ReminderAction
     /**
      * Get rmaAlertGroupLeader
      *
-     * @return boolean
+     * @return bool
      */
     public function getRmaAlertGroupLeader()
     {

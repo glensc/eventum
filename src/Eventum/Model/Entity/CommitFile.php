@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class CommitFile
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cof_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class CommitFile
     private $cofId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cof_com_id", type="integer", nullable=false)
      */
@@ -36,21 +47,21 @@ class CommitFile
     private $cofFilename;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="cof_added", type="boolean", nullable=false)
      */
     private $cofAdded;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="cof_modified", type="boolean", nullable=false)
      */
     private $cofModified;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="cof_removed", type="boolean", nullable=false)
      */
@@ -70,11 +81,10 @@ class CommitFile
      */
     private $cofNewVersion;
 
-
     /**
      * Get cofId
      *
-     * @return integer
+     * @return int
      */
     public function getCofId()
     {
@@ -84,7 +94,7 @@ class CommitFile
     /**
      * Set cofComId
      *
-     * @param integer $cofComId
+     * @param int $cofComId
      * @return CommitFile
      */
     public function setCofComId($cofComId)
@@ -97,7 +107,7 @@ class CommitFile
     /**
      * Get cofComId
      *
-     * @return integer
+     * @return int
      */
     public function getCofComId()
     {
@@ -130,7 +140,7 @@ class CommitFile
     /**
      * Set cofAdded
      *
-     * @param boolean $cofAdded
+     * @param bool $cofAdded
      * @return CommitFile
      */
     public function setCofAdded($cofAdded)
@@ -143,7 +153,7 @@ class CommitFile
     /**
      * Get cofAdded
      *
-     * @return boolean
+     * @return bool
      */
     public function getCofAdded()
     {
@@ -153,7 +163,7 @@ class CommitFile
     /**
      * Set cofModified
      *
-     * @param boolean $cofModified
+     * @param bool $cofModified
      * @return CommitFile
      */
     public function setCofModified($cofModified)
@@ -166,7 +176,7 @@ class CommitFile
     /**
      * Get cofModified
      *
-     * @return boolean
+     * @return bool
      */
     public function getCofModified()
     {
@@ -176,7 +186,7 @@ class CommitFile
     /**
      * Set cofRemoved
      *
-     * @param boolean $cofRemoved
+     * @param bool $cofRemoved
      * @return CommitFile
      */
     public function setCofRemoved($cofRemoved)
@@ -189,7 +199,7 @@ class CommitFile
     /**
      * Get cofRemoved
      *
-     * @return boolean
+     * @return bool
      */
     public function getCofRemoved()
     {

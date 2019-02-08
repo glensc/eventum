@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class SupportEmail
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sup_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,28 +33,28 @@ class SupportEmail
     private $supId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sup_ema_id", type="integer", nullable=false)
      */
     private $supEmaId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sup_parent_id", type="integer", nullable=false)
      */
     private $supParentId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sup_iss_id", type="integer", nullable=true)
      */
     private $supIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sup_usr_id", type="integer", nullable=true)
      */
@@ -99,24 +110,23 @@ class SupportEmail
     private $supSubject;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="sup_has_attachment", type="boolean", nullable=false)
      */
     private $supHasAttachment;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="sup_removed", type="boolean", nullable=false)
      */
     private $supRemoved;
 
-
     /**
      * Get supId
      *
-     * @return integer
+     * @return int
      */
     public function getSupId()
     {
@@ -126,7 +136,7 @@ class SupportEmail
     /**
      * Set supEmaId
      *
-     * @param integer $supEmaId
+     * @param int $supEmaId
      * @return SupportEmail
      */
     public function setSupEmaId($supEmaId)
@@ -139,7 +149,7 @@ class SupportEmail
     /**
      * Get supEmaId
      *
-     * @return integer
+     * @return int
      */
     public function getSupEmaId()
     {
@@ -149,7 +159,7 @@ class SupportEmail
     /**
      * Set supParentId
      *
-     * @param integer $supParentId
+     * @param int $supParentId
      * @return SupportEmail
      */
     public function setSupParentId($supParentId)
@@ -162,7 +172,7 @@ class SupportEmail
     /**
      * Get supParentId
      *
-     * @return integer
+     * @return int
      */
     public function getSupParentId()
     {
@@ -172,7 +182,7 @@ class SupportEmail
     /**
      * Set supIssId
      *
-     * @param integer $supIssId
+     * @param int $supIssId
      * @return SupportEmail
      */
     public function setSupIssId($supIssId)
@@ -185,7 +195,7 @@ class SupportEmail
     /**
      * Get supIssId
      *
-     * @return integer
+     * @return int
      */
     public function getSupIssId()
     {
@@ -195,7 +205,7 @@ class SupportEmail
     /**
      * Set supUsrId
      *
-     * @param integer $supUsrId
+     * @param int $supUsrId
      * @return SupportEmail
      */
     public function setSupUsrId($supUsrId)
@@ -208,7 +218,7 @@ class SupportEmail
     /**
      * Get supUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getSupUsrId()
     {
@@ -379,7 +389,7 @@ class SupportEmail
     /**
      * Set supHasAttachment
      *
-     * @param boolean $supHasAttachment
+     * @param bool $supHasAttachment
      * @return SupportEmail
      */
     public function setSupHasAttachment($supHasAttachment)
@@ -392,7 +402,7 @@ class SupportEmail
     /**
      * Get supHasAttachment
      *
-     * @return boolean
+     * @return bool
      */
     public function getSupHasAttachment()
     {
@@ -402,7 +412,7 @@ class SupportEmail
     /**
      * Set supRemoved
      *
-     * @param boolean $supRemoved
+     * @param bool $supRemoved
      * @return SupportEmail
      */
     public function setSupRemoved($supRemoved)
@@ -415,7 +425,7 @@ class SupportEmail
     /**
      * Get supRemoved
      *
-     * @return boolean
+     * @return bool
      */
     public function getSupRemoved()
     {

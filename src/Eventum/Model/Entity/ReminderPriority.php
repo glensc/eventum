@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ReminderPriority
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rep_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,24 +33,23 @@ class ReminderPriority
     private $repId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rep_rem_id", type="integer", nullable=false)
      */
     private $repRemId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rep_pri_id", type="integer", nullable=false)
      */
     private $repPriId;
 
-
     /**
      * Get repId
      *
-     * @return integer
+     * @return int
      */
     public function getRepId()
     {
@@ -49,7 +59,7 @@ class ReminderPriority
     /**
      * Set repRemId
      *
-     * @param integer $repRemId
+     * @param int $repRemId
      * @return ReminderPriority
      */
     public function setRepRemId($repRemId)
@@ -62,7 +72,7 @@ class ReminderPriority
     /**
      * Get repRemId
      *
-     * @return integer
+     * @return int
      */
     public function getRepRemId()
     {
@@ -72,7 +82,7 @@ class ReminderPriority
     /**
      * Set repPriId
      *
-     * @param integer $repPriId
+     * @param int $repPriId
      * @return ReminderPriority
      */
     public function setRepPriId($repPriId)
@@ -85,7 +95,7 @@ class ReminderPriority
     /**
      * Get repPriId
      *
-     * @return integer
+     * @return int
      */
     public function getRepPriId()
     {

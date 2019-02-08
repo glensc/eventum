@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ReminderRequirement
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rer_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,21 +33,21 @@ class ReminderRequirement
     private $rerId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rer_rem_id", type="integer", nullable=false)
      */
     private $rerRemId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rer_iss_id", type="integer", nullable=true)
      */
     private $rerIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rer_support_level_id", type="integer", nullable=true)
      */
@@ -50,17 +61,16 @@ class ReminderRequirement
     private $rerCustomerId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rer_trigger_all_issues", type="boolean", nullable=false)
      */
     private $rerTriggerAllIssues;
 
-
     /**
      * Get rerId
      *
-     * @return integer
+     * @return int
      */
     public function getRerId()
     {
@@ -70,7 +80,7 @@ class ReminderRequirement
     /**
      * Set rerRemId
      *
-     * @param integer $rerRemId
+     * @param int $rerRemId
      * @return ReminderRequirement
      */
     public function setRerRemId($rerRemId)
@@ -83,7 +93,7 @@ class ReminderRequirement
     /**
      * Get rerRemId
      *
-     * @return integer
+     * @return int
      */
     public function getRerRemId()
     {
@@ -93,7 +103,7 @@ class ReminderRequirement
     /**
      * Set rerIssId
      *
-     * @param integer $rerIssId
+     * @param int $rerIssId
      * @return ReminderRequirement
      */
     public function setRerIssId($rerIssId)
@@ -106,7 +116,7 @@ class ReminderRequirement
     /**
      * Get rerIssId
      *
-     * @return integer
+     * @return int
      */
     public function getRerIssId()
     {
@@ -116,7 +126,7 @@ class ReminderRequirement
     /**
      * Set rerSupportLevelId
      *
-     * @param integer $rerSupportLevelId
+     * @param int $rerSupportLevelId
      * @return ReminderRequirement
      */
     public function setRerSupportLevelId($rerSupportLevelId)
@@ -129,7 +139,7 @@ class ReminderRequirement
     /**
      * Get rerSupportLevelId
      *
-     * @return integer
+     * @return int
      */
     public function getRerSupportLevelId()
     {
@@ -162,7 +172,7 @@ class ReminderRequirement
     /**
      * Set rerTriggerAllIssues
      *
-     * @param boolean $rerTriggerAllIssues
+     * @param bool $rerTriggerAllIssues
      * @return ReminderRequirement
      */
     public function setRerTriggerAllIssues($rerTriggerAllIssues)
@@ -175,7 +185,7 @@ class ReminderRequirement
     /**
      * Get rerTriggerAllIssues
      *
-     * @return boolean
+     * @return bool
      */
     public function getRerTriggerAllIssues()
     {

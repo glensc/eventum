@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PhoneSupport
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="phs_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,21 +33,21 @@ class PhoneSupport
     private $phsId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="phs_usr_id", type="integer", nullable=false)
      */
     private $phsUsrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="phs_iss_id", type="integer", nullable=false)
      */
     private $phsIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="phs_ttr_id", type="integer", nullable=true)
      */
@@ -99,7 +110,7 @@ class PhoneSupport
     private $phsPhoneType;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="phs_phc_id", type="integer", nullable=false)
      */
@@ -112,11 +123,10 @@ class PhoneSupport
      */
     private $phsDescription;
 
-
     /**
      * Get phsId
      *
-     * @return integer
+     * @return int
      */
     public function getPhsId()
     {
@@ -126,7 +136,7 @@ class PhoneSupport
     /**
      * Set phsUsrId
      *
-     * @param integer $phsUsrId
+     * @param int $phsUsrId
      * @return PhoneSupport
      */
     public function setPhsUsrId($phsUsrId)
@@ -139,7 +149,7 @@ class PhoneSupport
     /**
      * Get phsUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getPhsUsrId()
     {
@@ -149,7 +159,7 @@ class PhoneSupport
     /**
      * Set phsIssId
      *
-     * @param integer $phsIssId
+     * @param int $phsIssId
      * @return PhoneSupport
      */
     public function setPhsIssId($phsIssId)
@@ -162,7 +172,7 @@ class PhoneSupport
     /**
      * Get phsIssId
      *
-     * @return integer
+     * @return int
      */
     public function getPhsIssId()
     {
@@ -172,7 +182,7 @@ class PhoneSupport
     /**
      * Set phsTtrId
      *
-     * @param integer $phsTtrId
+     * @param int $phsTtrId
      * @return PhoneSupport
      */
     public function setPhsTtrId($phsTtrId)
@@ -185,7 +195,7 @@ class PhoneSupport
     /**
      * Get phsTtrId
      *
-     * @return integer
+     * @return int
      */
     public function getPhsTtrId()
     {
@@ -379,7 +389,7 @@ class PhoneSupport
     /**
      * Set phsPhcId
      *
-     * @param integer $phsPhcId
+     * @param int $phsPhcId
      * @return PhoneSupport
      */
     public function setPhsPhcId($phsPhcId)
@@ -392,7 +402,7 @@ class PhoneSupport
     /**
      * Get phsPhcId
      *
-     * @return integer
+     * @return int
      */
     public function getPhsPhcId()
     {

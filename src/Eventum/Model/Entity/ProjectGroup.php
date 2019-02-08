@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectGroup
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pgr_prj_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class ProjectGroup
     private $pgrPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pgr_grp_id", type="integer", nullable=false)
      * @ORM\Id
@@ -30,11 +41,10 @@ class ProjectGroup
      */
     private $pgrGrpId;
 
-
     /**
      * Set pgrPrjId
      *
-     * @param integer $pgrPrjId
+     * @param int $pgrPrjId
      * @return ProjectGroup
      */
     public function setPgrPrjId($pgrPrjId)
@@ -47,7 +57,7 @@ class ProjectGroup
     /**
      * Get pgrPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPgrPrjId()
     {
@@ -57,7 +67,7 @@ class ProjectGroup
     /**
      * Set pgrGrpId
      *
-     * @param integer $pgrGrpId
+     * @param int $pgrGrpId
      * @return ProjectGroup
      */
     public function setPgrGrpId($pgrGrpId)
@@ -70,7 +80,7 @@ class ProjectGroup
     /**
      * Get pgrGrpId
      *
-     * @return integer
+     * @return int
      */
     public function getPgrGrpId()
     {

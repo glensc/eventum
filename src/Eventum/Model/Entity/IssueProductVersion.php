@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueProductVersion
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ipv_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class IssueProductVersion
     private $ipvId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ipv_iss_id", type="integer", nullable=false)
      */
     private $ipvIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ipv_pro_id", type="integer", nullable=false)
      */
@@ -42,11 +53,10 @@ class IssueProductVersion
      */
     private $ipvVersion;
 
-
     /**
      * Get ipvId
      *
-     * @return integer
+     * @return int
      */
     public function getIpvId()
     {
@@ -56,7 +66,7 @@ class IssueProductVersion
     /**
      * Set ipvIssId
      *
-     * @param integer $ipvIssId
+     * @param int $ipvIssId
      * @return IssueProductVersion
      */
     public function setIpvIssId($ipvIssId)
@@ -69,7 +79,7 @@ class IssueProductVersion
     /**
      * Get ipvIssId
      *
-     * @return integer
+     * @return int
      */
     public function getIpvIssId()
     {
@@ -79,7 +89,7 @@ class IssueProductVersion
     /**
      * Set ipvProId
      *
-     * @param integer $ipvProId
+     * @param int $ipvProId
      * @return IssueProductVersion
      */
     public function setIpvProId($ipvProId)
@@ -92,7 +102,7 @@ class IssueProductVersion
     /**
      * Get ipvProId
      *
-     * @return integer
+     * @return int
      */
     public function getIpvProId()
     {

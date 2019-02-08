@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class AttachmentPath
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="path_id", type="integer", nullable=false)
      * @ORM\Id
@@ -50,14 +61,14 @@ class AttachmentPath
     private $visibility;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="size", type="integer", nullable=true)
      */
     private $size;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="is_compressed", type="boolean", nullable=false)
      */
@@ -70,11 +81,10 @@ class AttachmentPath
      */
     private $updateTs;
 
-
     /**
      * Get pathId
      *
-     * @return integer
+     * @return int
      */
     public function getPathId()
     {
@@ -176,7 +186,7 @@ class AttachmentPath
     /**
      * Set size
      *
-     * @param integer $size
+     * @param int $size
      * @return AttachmentPath
      */
     public function setSize($size)
@@ -189,7 +199,7 @@ class AttachmentPath
     /**
      * Get size
      *
-     * @return integer
+     * @return int
      */
     public function getSize()
     {
@@ -199,7 +209,7 @@ class AttachmentPath
     /**
      * Set isCompressed
      *
-     * @param boolean $isCompressed
+     * @param bool $isCompressed
      * @return AttachmentPath
      */
     public function setIsCompressed($isCompressed)
@@ -212,7 +222,7 @@ class AttachmentPath
     /**
      * Get isCompressed
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsCompressed()
     {

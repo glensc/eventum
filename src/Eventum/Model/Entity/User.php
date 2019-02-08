@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="usr_id", type="integer", nullable=false)
      * @ORM\Id
@@ -78,7 +89,7 @@ class User
     private $usrSmsEmail;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="usr_clocked_in", type="boolean", nullable=true)
      */
@@ -113,7 +124,7 @@ class User
     private $usrLastFailedLogin;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="usr_failed_logins", type="integer", nullable=false)
      */
@@ -126,11 +137,10 @@ class User
      */
     private $usrParCode;
 
-
     /**
      * Get usrId
      *
-     * @return integer
+     * @return int
      */
     public function getUsrId()
     {
@@ -324,7 +334,7 @@ class User
     /**
      * Set usrClockedIn
      *
-     * @param boolean $usrClockedIn
+     * @param bool $usrClockedIn
      * @return User
      */
     public function setUsrClockedIn($usrClockedIn)
@@ -337,7 +347,7 @@ class User
     /**
      * Get usrClockedIn
      *
-     * @return boolean
+     * @return bool
      */
     public function getUsrClockedIn()
     {
@@ -439,7 +449,7 @@ class User
     /**
      * Set usrFailedLogins
      *
-     * @param integer $usrFailedLogins
+     * @param int $usrFailedLogins
      * @return User
      */
     public function setUsrFailedLogins($usrFailedLogins)
@@ -452,7 +462,7 @@ class User
     /**
      * Get usrFailedLogins
      *
-     * @return integer
+     * @return int
      */
     public function getUsrFailedLogins()
     {

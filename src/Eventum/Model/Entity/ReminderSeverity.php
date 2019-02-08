@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ReminderSeverity
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rms_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,24 +33,23 @@ class ReminderSeverity
     private $rmsId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rms_rem_id", type="integer", nullable=false)
      */
     private $rmsRemId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rms_sev_id", type="integer", nullable=false)
      */
     private $rmsSevId;
 
-
     /**
      * Get rmsId
      *
-     * @return integer
+     * @return int
      */
     public function getRmsId()
     {
@@ -49,7 +59,7 @@ class ReminderSeverity
     /**
      * Set rmsRemId
      *
-     * @param integer $rmsRemId
+     * @param int $rmsRemId
      * @return ReminderSeverity
      */
     public function setRmsRemId($rmsRemId)
@@ -62,7 +72,7 @@ class ReminderSeverity
     /**
      * Get rmsRemId
      *
-     * @return integer
+     * @return int
      */
     public function getRmsRemId()
     {
@@ -72,7 +82,7 @@ class ReminderSeverity
     /**
      * Set rmsSevId
      *
-     * @param integer $rmsSevId
+     * @param int $rmsSevId
      * @return ReminderSeverity
      */
     public function setRmsSevId($rmsSevId)
@@ -85,7 +95,7 @@ class ReminderSeverity
     /**
      * Get rmsSevId
      *
-     * @return integer
+     * @return int
      */
     public function getRmsSevId()
     {

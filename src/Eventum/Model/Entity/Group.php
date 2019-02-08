@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Group
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="grp_id", type="integer", nullable=false)
      * @ORM\Id
@@ -36,17 +47,16 @@ class Group
     private $grpDescription;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="grp_manager_usr_id", type="integer", nullable=false)
      */
     private $grpManagerUsrId;
 
-
     /**
      * Get grpId
      *
-     * @return integer
+     * @return int
      */
     public function getGrpId()
     {
@@ -102,7 +112,7 @@ class Group
     /**
      * Set grpManagerUsrId
      *
-     * @param integer $grpManagerUsrId
+     * @param int $grpManagerUsrId
      * @return Group
      */
     public function setGrpManagerUsrId($grpManagerUsrId)
@@ -115,7 +125,7 @@ class Group
     /**
      * Get grpManagerUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getGrpManagerUsrId()
     {

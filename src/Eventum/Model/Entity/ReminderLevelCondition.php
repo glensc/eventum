@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ReminderLevelCondition
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rlc_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,21 +33,21 @@ class ReminderLevelCondition
     private $rlcId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rlc_rma_id", type="integer", nullable=false)
      */
     private $rlcRmaId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rlc_rmf_id", type="boolean", nullable=false)
      */
     private $rlcRmfId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rlc_rmo_id", type="boolean", nullable=false)
      */
@@ -64,17 +75,16 @@ class ReminderLevelCondition
     private $rlcValue;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rlc_comparison_rmf_id", type="boolean", nullable=true)
      */
     private $rlcComparisonRmfId;
 
-
     /**
      * Get rlcId
      *
-     * @return integer
+     * @return int
      */
     public function getRlcId()
     {
@@ -84,7 +94,7 @@ class ReminderLevelCondition
     /**
      * Set rlcRmaId
      *
-     * @param integer $rlcRmaId
+     * @param int $rlcRmaId
      * @return ReminderLevelCondition
      */
     public function setRlcRmaId($rlcRmaId)
@@ -97,7 +107,7 @@ class ReminderLevelCondition
     /**
      * Get rlcRmaId
      *
-     * @return integer
+     * @return int
      */
     public function getRlcRmaId()
     {
@@ -107,7 +117,7 @@ class ReminderLevelCondition
     /**
      * Set rlcRmfId
      *
-     * @param boolean $rlcRmfId
+     * @param bool $rlcRmfId
      * @return ReminderLevelCondition
      */
     public function setRlcRmfId($rlcRmfId)
@@ -120,7 +130,7 @@ class ReminderLevelCondition
     /**
      * Get rlcRmfId
      *
-     * @return boolean
+     * @return bool
      */
     public function getRlcRmfId()
     {
@@ -130,7 +140,7 @@ class ReminderLevelCondition
     /**
      * Set rlcRmoId
      *
-     * @param boolean $rlcRmoId
+     * @param bool $rlcRmoId
      * @return ReminderLevelCondition
      */
     public function setRlcRmoId($rlcRmoId)
@@ -143,7 +153,7 @@ class ReminderLevelCondition
     /**
      * Get rlcRmoId
      *
-     * @return boolean
+     * @return bool
      */
     public function getRlcRmoId()
     {
@@ -222,7 +232,7 @@ class ReminderLevelCondition
     /**
      * Set rlcComparisonRmfId
      *
-     * @param boolean $rlcComparisonRmfId
+     * @param bool $rlcComparisonRmfId
      * @return ReminderLevelCondition
      */
     public function setRlcComparisonRmfId($rlcComparisonRmfId)
@@ -235,7 +245,7 @@ class ReminderLevelCondition
     /**
      * Get rlcComparisonRmfId
      *
-     * @return boolean
+     * @return bool
      */
     public function getRlcComparisonRmfId()
     {

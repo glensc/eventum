@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectSeverity
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sev_id", type="smallint", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class ProjectSeverity
     private $sevId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sev_prj_id", type="integer", nullable=false)
      */
@@ -43,17 +54,16 @@ class ProjectSeverity
     private $sevDescription;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="sev_rank", type="boolean", nullable=false)
      */
     private $sevRank;
 
-
     /**
      * Get sevId
      *
-     * @return integer
+     * @return int
      */
     public function getSevId()
     {
@@ -63,7 +73,7 @@ class ProjectSeverity
     /**
      * Set sevPrjId
      *
-     * @param integer $sevPrjId
+     * @param int $sevPrjId
      * @return ProjectSeverity
      */
     public function setSevPrjId($sevPrjId)
@@ -76,7 +86,7 @@ class ProjectSeverity
     /**
      * Get sevPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getSevPrjId()
     {
@@ -132,7 +142,7 @@ class ProjectSeverity
     /**
      * Set sevRank
      *
-     * @param boolean $sevRank
+     * @param bool $sevRank
      * @return ProjectSeverity
      */
     public function setSevRank($sevRank)
@@ -145,7 +155,7 @@ class ProjectSeverity
     /**
      * Get sevRank
      *
-     * @return boolean
+     * @return bool
      */
     public function getSevRank()
     {

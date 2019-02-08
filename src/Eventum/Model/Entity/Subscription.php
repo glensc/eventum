@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Subscription
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sub_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class Subscription
     private $subId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sub_iss_id", type="integer", nullable=false)
      */
     private $subIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="sub_usr_id", type="integer", nullable=true)
      */
@@ -56,11 +67,10 @@ class Subscription
      */
     private $subEmail;
 
-
     /**
      * Get subId
      *
-     * @return integer
+     * @return int
      */
     public function getSubId()
     {
@@ -70,7 +80,7 @@ class Subscription
     /**
      * Set subIssId
      *
-     * @param integer $subIssId
+     * @param int $subIssId
      * @return Subscription
      */
     public function setSubIssId($subIssId)
@@ -83,7 +93,7 @@ class Subscription
     /**
      * Get subIssId
      *
-     * @return integer
+     * @return int
      */
     public function getSubIssId()
     {
@@ -93,7 +103,7 @@ class Subscription
     /**
      * Set subUsrId
      *
-     * @param integer $subUsrId
+     * @param int $subUsrId
      * @return Subscription
      */
     public function setSubUsrId($subUsrId)
@@ -106,7 +116,7 @@ class Subscription
     /**
      * Get subUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getSubUsrId()
     {

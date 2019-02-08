@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Issue
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_id", type="integer", nullable=false)
      * @ORM\Id
@@ -43,70 +54,70 @@ class Issue
     private $issCustomerContractId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_usr_id", type="integer", nullable=false)
      */
     private $issUsrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_grp_id", type="integer", nullable=true)
      */
     private $issGrpId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_prj_id", type="integer", nullable=false)
      */
     private $issPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_prc_id", type="integer", nullable=false)
      */
     private $issPrcId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_pre_id", type="integer", nullable=false)
      */
     private $issPreId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_pri_id", type="smallint", nullable=false)
      */
     private $issPriId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_sev_id", type="integer", nullable=false)
      */
     private $issSevId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="iss_sta_id", type="boolean", nullable=false)
      */
     private $issStaId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_res_id", type="integer", nullable=true)
      */
     private $issResId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="iss_duplicated_iss_id", type="integer", nullable=true)
      */
@@ -225,7 +236,7 @@ class Issue
     private $issContactTimezone;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="iss_trigger_reminders", type="boolean", nullable=true)
      */
@@ -267,7 +278,7 @@ class Issue
     private $issStatusChangeDate;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="iss_percent_complete", type="boolean", nullable=true)
      */
@@ -287,11 +298,10 @@ class Issue
      */
     private $issAccessLevel;
 
-
     /**
      * Get issId
      *
-     * @return integer
+     * @return int
      */
     public function getIssId()
     {
@@ -370,7 +380,7 @@ class Issue
     /**
      * Set issUsrId
      *
-     * @param integer $issUsrId
+     * @param int $issUsrId
      * @return Issue
      */
     public function setIssUsrId($issUsrId)
@@ -383,7 +393,7 @@ class Issue
     /**
      * Get issUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getIssUsrId()
     {
@@ -393,7 +403,7 @@ class Issue
     /**
      * Set issGrpId
      *
-     * @param integer $issGrpId
+     * @param int $issGrpId
      * @return Issue
      */
     public function setIssGrpId($issGrpId)
@@ -406,7 +416,7 @@ class Issue
     /**
      * Get issGrpId
      *
-     * @return integer
+     * @return int
      */
     public function getIssGrpId()
     {
@@ -416,7 +426,7 @@ class Issue
     /**
      * Set issPrjId
      *
-     * @param integer $issPrjId
+     * @param int $issPrjId
      * @return Issue
      */
     public function setIssPrjId($issPrjId)
@@ -429,7 +439,7 @@ class Issue
     /**
      * Get issPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getIssPrjId()
     {
@@ -439,7 +449,7 @@ class Issue
     /**
      * Set issPrcId
      *
-     * @param integer $issPrcId
+     * @param int $issPrcId
      * @return Issue
      */
     public function setIssPrcId($issPrcId)
@@ -452,7 +462,7 @@ class Issue
     /**
      * Get issPrcId
      *
-     * @return integer
+     * @return int
      */
     public function getIssPrcId()
     {
@@ -462,7 +472,7 @@ class Issue
     /**
      * Set issPreId
      *
-     * @param integer $issPreId
+     * @param int $issPreId
      * @return Issue
      */
     public function setIssPreId($issPreId)
@@ -475,7 +485,7 @@ class Issue
     /**
      * Get issPreId
      *
-     * @return integer
+     * @return int
      */
     public function getIssPreId()
     {
@@ -485,7 +495,7 @@ class Issue
     /**
      * Set issPriId
      *
-     * @param integer $issPriId
+     * @param int $issPriId
      * @return Issue
      */
     public function setIssPriId($issPriId)
@@ -498,7 +508,7 @@ class Issue
     /**
      * Get issPriId
      *
-     * @return integer
+     * @return int
      */
     public function getIssPriId()
     {
@@ -508,7 +518,7 @@ class Issue
     /**
      * Set issSevId
      *
-     * @param integer $issSevId
+     * @param int $issSevId
      * @return Issue
      */
     public function setIssSevId($issSevId)
@@ -521,7 +531,7 @@ class Issue
     /**
      * Get issSevId
      *
-     * @return integer
+     * @return int
      */
     public function getIssSevId()
     {
@@ -531,7 +541,7 @@ class Issue
     /**
      * Set issStaId
      *
-     * @param boolean $issStaId
+     * @param bool $issStaId
      * @return Issue
      */
     public function setIssStaId($issStaId)
@@ -544,7 +554,7 @@ class Issue
     /**
      * Get issStaId
      *
-     * @return boolean
+     * @return bool
      */
     public function getIssStaId()
     {
@@ -554,7 +564,7 @@ class Issue
     /**
      * Set issResId
      *
-     * @param integer $issResId
+     * @param int $issResId
      * @return Issue
      */
     public function setIssResId($issResId)
@@ -567,7 +577,7 @@ class Issue
     /**
      * Get issResId
      *
-     * @return integer
+     * @return int
      */
     public function getIssResId()
     {
@@ -577,7 +587,7 @@ class Issue
     /**
      * Set issDuplicatedIssId
      *
-     * @param integer $issDuplicatedIssId
+     * @param int $issDuplicatedIssId
      * @return Issue
      */
     public function setIssDuplicatedIssId($issDuplicatedIssId)
@@ -590,7 +600,7 @@ class Issue
     /**
      * Get issDuplicatedIssId
      *
-     * @return integer
+     * @return int
      */
     public function getIssDuplicatedIssId()
     {
@@ -968,7 +978,7 @@ class Issue
     /**
      * Set issTriggerReminders
      *
-     * @param boolean $issTriggerReminders
+     * @param bool $issTriggerReminders
      * @return Issue
      */
     public function setIssTriggerReminders($issTriggerReminders)
@@ -981,7 +991,7 @@ class Issue
     /**
      * Get issTriggerReminders
      *
-     * @return boolean
+     * @return bool
      */
     public function getIssTriggerReminders()
     {
@@ -1106,7 +1116,7 @@ class Issue
     /**
      * Set issPercentComplete
      *
-     * @param boolean $issPercentComplete
+     * @param bool $issPercentComplete
      * @return Issue
      */
     public function setIssPercentComplete($issPercentComplete)
@@ -1119,7 +1129,7 @@ class Issue
     /**
      * Get issPercentComplete
      *
-     * @return boolean
+     * @return bool
      */
     public function getIssPercentComplete()
     {

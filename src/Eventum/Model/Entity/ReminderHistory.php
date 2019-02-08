@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ReminderHistory
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rmh_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class ReminderHistory
     private $rmhId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rmh_iss_id", type="integer", nullable=false)
      */
     private $rmhIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rmh_rma_id", type="integer", nullable=false)
      */
@@ -42,11 +53,10 @@ class ReminderHistory
      */
     private $rmhCreatedDate;
 
-
     /**
      * Get rmhId
      *
-     * @return integer
+     * @return int
      */
     public function getRmhId()
     {
@@ -56,7 +66,7 @@ class ReminderHistory
     /**
      * Set rmhIssId
      *
-     * @param integer $rmhIssId
+     * @param int $rmhIssId
      * @return ReminderHistory
      */
     public function setRmhIssId($rmhIssId)
@@ -69,7 +79,7 @@ class ReminderHistory
     /**
      * Get rmhIssId
      *
-     * @return integer
+     * @return int
      */
     public function getRmhIssId()
     {
@@ -79,7 +89,7 @@ class ReminderHistory
     /**
      * Set rmhRmaId
      *
-     * @param integer $rmhRmaId
+     * @param int $rmhRmaId
      * @return ReminderHistory
      */
     public function setRmhRmaId($rmhRmaId)
@@ -92,7 +102,7 @@ class ReminderHistory
     /**
      * Get rmhRmaId
      *
-     * @return integer
+     * @return int
      */
     public function getRmhRmaId()
     {

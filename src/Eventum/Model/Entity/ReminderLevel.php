@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ReminderLevel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rem_id", type="integer", nullable=false)
      * @ORM\Id
@@ -29,7 +40,7 @@ class ReminderLevel
     private $remCreatedDate;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rem_rank", type="boolean", nullable=false)
      */
@@ -50,24 +61,23 @@ class ReminderLevel
     private $remTitle;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="rem_prj_id", type="integer", nullable=false)
      */
     private $remPrjId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="rem_skip_weekend", type="boolean", nullable=false)
      */
     private $remSkipWeekend;
 
-
     /**
      * Get remId
      *
-     * @return integer
+     * @return int
      */
     public function getRemId()
     {
@@ -100,7 +110,7 @@ class ReminderLevel
     /**
      * Set remRank
      *
-     * @param boolean $remRank
+     * @param bool $remRank
      * @return ReminderLevel
      */
     public function setRemRank($remRank)
@@ -113,7 +123,7 @@ class ReminderLevel
     /**
      * Get remRank
      *
-     * @return boolean
+     * @return bool
      */
     public function getRemRank()
     {
@@ -169,7 +179,7 @@ class ReminderLevel
     /**
      * Set remPrjId
      *
-     * @param integer $remPrjId
+     * @param int $remPrjId
      * @return ReminderLevel
      */
     public function setRemPrjId($remPrjId)
@@ -182,7 +192,7 @@ class ReminderLevel
     /**
      * Get remPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getRemPrjId()
     {
@@ -192,7 +202,7 @@ class ReminderLevel
     /**
      * Set remSkipWeekend
      *
-     * @param boolean $remSkipWeekend
+     * @param bool $remSkipWeekend
      * @return ReminderLevel
      */
     public function setRemSkipWeekend($remSkipWeekend)
@@ -205,7 +215,7 @@ class ReminderLevel
     /**
      * Get remSkipWeekend
      *
-     * @return boolean
+     * @return bool
      */
     public function getRemSkipWeekend()
     {

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class CustomFilter
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class CustomFilter
     private $cstId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_usr_id", type="integer", nullable=false)
      */
     private $cstUsrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_prj_id", type="integer", nullable=false)
      */
@@ -134,7 +145,7 @@ class CustomFilter
     private $cstCreatedDateFilterType;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_created_date_time_period", type="smallint", nullable=true)
      */
@@ -162,7 +173,7 @@ class CustomFilter
     private $cstUpdatedDateFilterType;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_updated_date_time_period", type="smallint", nullable=true)
      */
@@ -190,7 +201,7 @@ class CustomFilter
     private $cstLastResponseDateFilterType;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_last_response_date_time_period", type="smallint", nullable=true)
      */
@@ -218,7 +229,7 @@ class CustomFilter
     private $cstFirstResponseDateFilterType;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_first_response_date_time_period", type="smallint", nullable=true)
      */
@@ -246,7 +257,7 @@ class CustomFilter
     private $cstClosedDateFilterType;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_closed_date_time_period", type="smallint", nullable=true)
      */
@@ -281,14 +292,14 @@ class CustomFilter
     private $cstSortOrder;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_hide_closed", type="integer", nullable=true)
      */
     private $cstHideClosed;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cst_is_global", type="integer", nullable=true)
      */
@@ -308,11 +319,10 @@ class CustomFilter
      */
     private $cstCustomField;
 
-
     /**
      * Get cstId
      *
-     * @return integer
+     * @return int
      */
     public function getCstId()
     {
@@ -322,7 +332,7 @@ class CustomFilter
     /**
      * Set cstUsrId
      *
-     * @param integer $cstUsrId
+     * @param int $cstUsrId
      * @return CustomFilter
      */
     public function setCstUsrId($cstUsrId)
@@ -335,7 +345,7 @@ class CustomFilter
     /**
      * Get cstUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getCstUsrId()
     {
@@ -345,7 +355,7 @@ class CustomFilter
     /**
      * Set cstPrjId
      *
-     * @param integer $cstPrjId
+     * @param int $cstPrjId
      * @return CustomFilter
      */
     public function setCstPrjId($cstPrjId)
@@ -358,7 +368,7 @@ class CustomFilter
     /**
      * Get cstPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getCstPrjId()
     {
@@ -690,7 +700,7 @@ class CustomFilter
     /**
      * Set cstCreatedDateTimePeriod
      *
-     * @param integer $cstCreatedDateTimePeriod
+     * @param int $cstCreatedDateTimePeriod
      * @return CustomFilter
      */
     public function setCstCreatedDateTimePeriod($cstCreatedDateTimePeriod)
@@ -703,7 +713,7 @@ class CustomFilter
     /**
      * Get cstCreatedDateTimePeriod
      *
-     * @return integer
+     * @return int
      */
     public function getCstCreatedDateTimePeriod()
     {
@@ -782,7 +792,7 @@ class CustomFilter
     /**
      * Set cstUpdatedDateTimePeriod
      *
-     * @param integer $cstUpdatedDateTimePeriod
+     * @param int $cstUpdatedDateTimePeriod
      * @return CustomFilter
      */
     public function setCstUpdatedDateTimePeriod($cstUpdatedDateTimePeriod)
@@ -795,7 +805,7 @@ class CustomFilter
     /**
      * Get cstUpdatedDateTimePeriod
      *
-     * @return integer
+     * @return int
      */
     public function getCstUpdatedDateTimePeriod()
     {
@@ -874,7 +884,7 @@ class CustomFilter
     /**
      * Set cstLastResponseDateTimePeriod
      *
-     * @param integer $cstLastResponseDateTimePeriod
+     * @param int $cstLastResponseDateTimePeriod
      * @return CustomFilter
      */
     public function setCstLastResponseDateTimePeriod($cstLastResponseDateTimePeriod)
@@ -887,7 +897,7 @@ class CustomFilter
     /**
      * Get cstLastResponseDateTimePeriod
      *
-     * @return integer
+     * @return int
      */
     public function getCstLastResponseDateTimePeriod()
     {
@@ -966,7 +976,7 @@ class CustomFilter
     /**
      * Set cstFirstResponseDateTimePeriod
      *
-     * @param integer $cstFirstResponseDateTimePeriod
+     * @param int $cstFirstResponseDateTimePeriod
      * @return CustomFilter
      */
     public function setCstFirstResponseDateTimePeriod($cstFirstResponseDateTimePeriod)
@@ -979,7 +989,7 @@ class CustomFilter
     /**
      * Get cstFirstResponseDateTimePeriod
      *
-     * @return integer
+     * @return int
      */
     public function getCstFirstResponseDateTimePeriod()
     {
@@ -1058,7 +1068,7 @@ class CustomFilter
     /**
      * Set cstClosedDateTimePeriod
      *
-     * @param integer $cstClosedDateTimePeriod
+     * @param int $cstClosedDateTimePeriod
      * @return CustomFilter
      */
     public function setCstClosedDateTimePeriod($cstClosedDateTimePeriod)
@@ -1071,7 +1081,7 @@ class CustomFilter
     /**
      * Get cstClosedDateTimePeriod
      *
-     * @return integer
+     * @return int
      */
     public function getCstClosedDateTimePeriod()
     {
@@ -1173,7 +1183,7 @@ class CustomFilter
     /**
      * Set cstHideClosed
      *
-     * @param integer $cstHideClosed
+     * @param int $cstHideClosed
      * @return CustomFilter
      */
     public function setCstHideClosed($cstHideClosed)
@@ -1186,7 +1196,7 @@ class CustomFilter
     /**
      * Get cstHideClosed
      *
-     * @return integer
+     * @return int
      */
     public function getCstHideClosed()
     {
@@ -1196,7 +1206,7 @@ class CustomFilter
     /**
      * Set cstIsGlobal
      *
-     * @param integer $cstIsGlobal
+     * @param int $cstIsGlobal
      * @return CustomFilter
      */
     public function setCstIsGlobal($cstIsGlobal)
@@ -1209,7 +1219,7 @@ class CustomFilter
     /**
      * Get cstIsGlobal
      *
-     * @return integer
+     * @return int
      */
     public function getCstIsGlobal()
     {

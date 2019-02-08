@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueAssociation
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="isa_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,24 +33,23 @@ class IssueAssociation
     private $isaId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="isa_issue_id", type="integer", nullable=false)
      */
     private $isaIssueId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="isa_associated_id", type="integer", nullable=false)
      */
     private $isaAssociatedId;
 
-
     /**
      * Get isaId
      *
-     * @return integer
+     * @return int
      */
     public function getIsaId()
     {
@@ -49,7 +59,7 @@ class IssueAssociation
     /**
      * Set isaIssueId
      *
-     * @param integer $isaIssueId
+     * @param int $isaIssueId
      * @return IssueAssociation
      */
     public function setIsaIssueId($isaIssueId)
@@ -62,7 +72,7 @@ class IssueAssociation
     /**
      * Get isaIssueId
      *
-     * @return integer
+     * @return int
      */
     public function getIsaIssueId()
     {
@@ -72,7 +82,7 @@ class IssueAssociation
     /**
      * Set isaAssociatedId
      *
-     * @param integer $isaAssociatedId
+     * @param int $isaAssociatedId
      * @return IssueAssociation
      */
     public function setIsaAssociatedId($isaAssociatedId)
@@ -85,7 +95,7 @@ class IssueAssociation
     /**
      * Get isaAssociatedId
      *
-     * @return integer
+     * @return int
      */
     public function getIsaAssociatedId()
     {

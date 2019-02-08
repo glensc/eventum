@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class EmailAccount
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ema_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class EmailAccount
     private $emaId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ema_prj_id", type="integer", nullable=false)
      */
@@ -71,14 +82,14 @@ class EmailAccount
     private $emaPassword;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ema_get_only_new", type="integer", nullable=false)
      */
     private $emaGetOnlyNew;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ema_leave_copy", type="integer", nullable=false)
      */
@@ -99,17 +110,16 @@ class EmailAccount
     private $emaIssueAutoCreationOptions;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="ema_use_routing", type="boolean", nullable=true)
      */
     private $emaUseRouting;
 
-
     /**
      * Get emaId
      *
-     * @return integer
+     * @return int
      */
     public function getEmaId()
     {
@@ -119,7 +129,7 @@ class EmailAccount
     /**
      * Set emaPrjId
      *
-     * @param integer $emaPrjId
+     * @param int $emaPrjId
      * @return EmailAccount
      */
     public function setEmaPrjId($emaPrjId)
@@ -132,7 +142,7 @@ class EmailAccount
     /**
      * Get emaPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getEmaPrjId()
     {
@@ -280,7 +290,7 @@ class EmailAccount
     /**
      * Set emaGetOnlyNew
      *
-     * @param integer $emaGetOnlyNew
+     * @param int $emaGetOnlyNew
      * @return EmailAccount
      */
     public function setEmaGetOnlyNew($emaGetOnlyNew)
@@ -293,7 +303,7 @@ class EmailAccount
     /**
      * Get emaGetOnlyNew
      *
-     * @return integer
+     * @return int
      */
     public function getEmaGetOnlyNew()
     {
@@ -303,7 +313,7 @@ class EmailAccount
     /**
      * Set emaLeaveCopy
      *
-     * @param integer $emaLeaveCopy
+     * @param int $emaLeaveCopy
      * @return EmailAccount
      */
     public function setEmaLeaveCopy($emaLeaveCopy)
@@ -316,7 +326,7 @@ class EmailAccount
     /**
      * Get emaLeaveCopy
      *
-     * @return integer
+     * @return int
      */
     public function getEmaLeaveCopy()
     {
@@ -372,7 +382,7 @@ class EmailAccount
     /**
      * Set emaUseRouting
      *
-     * @param boolean $emaUseRouting
+     * @param bool $emaUseRouting
      * @return EmailAccount
      */
     public function setEmaUseRouting($emaUseRouting)
@@ -385,7 +395,7 @@ class EmailAccount
     /**
      * Get emaUseRouting
      *
-     * @return boolean
+     * @return bool
      */
     public function getEmaUseRouting()
     {

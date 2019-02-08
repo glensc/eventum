@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Faq
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="faq_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class Faq
     private $faqId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="faq_prj_id", type="integer", nullable=false)
      */
     private $faqPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="faq_usr_id", type="integer", nullable=false)
      */
@@ -64,17 +75,16 @@ class Faq
     private $faqMessage;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="faq_rank", type="boolean", nullable=false)
      */
     private $faqRank;
 
-
     /**
      * Get faqId
      *
-     * @return integer
+     * @return int
      */
     public function getFaqId()
     {
@@ -84,7 +94,7 @@ class Faq
     /**
      * Set faqPrjId
      *
-     * @param integer $faqPrjId
+     * @param int $faqPrjId
      * @return Faq
      */
     public function setFaqPrjId($faqPrjId)
@@ -97,7 +107,7 @@ class Faq
     /**
      * Get faqPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getFaqPrjId()
     {
@@ -107,7 +117,7 @@ class Faq
     /**
      * Set faqUsrId
      *
-     * @param integer $faqUsrId
+     * @param int $faqUsrId
      * @return Faq
      */
     public function setFaqUsrId($faqUsrId)
@@ -120,7 +130,7 @@ class Faq
     /**
      * Get faqUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getFaqUsrId()
     {
@@ -222,7 +232,7 @@ class Faq
     /**
      * Set faqRank
      *
-     * @param boolean $faqRank
+     * @param bool $faqRank
      * @return Faq
      */
     public function setFaqRank($faqRank)
@@ -235,7 +245,7 @@ class Faq
     /**
      * Get faqRank
      *
-     * @return boolean
+     * @return bool
      */
     public function getFaqRank()
     {

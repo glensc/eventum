@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueUser
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="isu_iss_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class IssueUser
     private $isuIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="isu_usr_id", type="integer", nullable=false)
      * @ORM\Id
@@ -38,17 +49,16 @@ class IssueUser
     private $isuAssignedDate;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="isu_order", type="integer", nullable=false)
      */
     private $isuOrder;
 
-
     /**
      * Set isuIssId
      *
-     * @param integer $isuIssId
+     * @param int $isuIssId
      * @return IssueUser
      */
     public function setIsuIssId($isuIssId)
@@ -61,7 +71,7 @@ class IssueUser
     /**
      * Get isuIssId
      *
-     * @return integer
+     * @return int
      */
     public function getIsuIssId()
     {
@@ -71,7 +81,7 @@ class IssueUser
     /**
      * Set isuUsrId
      *
-     * @param integer $isuUsrId
+     * @param int $isuUsrId
      * @return IssueUser
      */
     public function setIsuUsrId($isuUsrId)
@@ -84,7 +94,7 @@ class IssueUser
     /**
      * Get isuUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getIsuUsrId()
     {
@@ -117,7 +127,7 @@ class IssueUser
     /**
      * Set isuOrder
      *
-     * @param integer $isuOrder
+     * @param int $isuOrder
      * @return IssueUser
      */
     public function setIsuOrder($isuOrder)
@@ -130,7 +140,7 @@ class IssueUser
     /**
      * Get isuOrder
      *
-     * @return integer
+     * @return int
      */
     public function getIsuOrder()
     {

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectStatusDate
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="psd_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class ProjectStatusDate
     private $psdId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="psd_prj_id", type="integer", nullable=false)
      */
     private $psdPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="psd_sta_id", type="integer", nullable=false)
      */
@@ -49,11 +60,10 @@ class ProjectStatusDate
      */
     private $psdLabel;
 
-
     /**
      * Get psdId
      *
-     * @return integer
+     * @return int
      */
     public function getPsdId()
     {
@@ -63,7 +73,7 @@ class ProjectStatusDate
     /**
      * Set psdPrjId
      *
-     * @param integer $psdPrjId
+     * @param int $psdPrjId
      * @return ProjectStatusDate
      */
     public function setPsdPrjId($psdPrjId)
@@ -76,7 +86,7 @@ class ProjectStatusDate
     /**
      * Get psdPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPsdPrjId()
     {
@@ -86,7 +96,7 @@ class ProjectStatusDate
     /**
      * Set psdStaId
      *
-     * @param integer $psdStaId
+     * @param int $psdStaId
      * @return ProjectStatusDate
      */
     public function setPsdStaId($psdStaId)
@@ -99,7 +109,7 @@ class ProjectStatusDate
     /**
      * Get psdStaId
      *
-     * @return integer
+     * @return int
      */
     public function getPsdStaId()
     {

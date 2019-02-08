@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class TimeTracking
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ttr_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,21 +33,21 @@ class TimeTracking
     private $ttrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ttr_ttc_id", type="integer", nullable=false)
      */
     private $ttrTtcId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ttr_iss_id", type="integer", nullable=false)
      */
     private $ttrIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ttr_usr_id", type="integer", nullable=false)
      */
@@ -50,7 +61,7 @@ class TimeTracking
     private $ttrCreatedDate;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ttr_time_spent", type="integer", nullable=false)
      */
@@ -63,11 +74,10 @@ class TimeTracking
      */
     private $ttrSummary;
 
-
     /**
      * Get ttrId
      *
-     * @return integer
+     * @return int
      */
     public function getTtrId()
     {
@@ -77,7 +87,7 @@ class TimeTracking
     /**
      * Set ttrTtcId
      *
-     * @param integer $ttrTtcId
+     * @param int $ttrTtcId
      * @return TimeTracking
      */
     public function setTtrTtcId($ttrTtcId)
@@ -90,7 +100,7 @@ class TimeTracking
     /**
      * Get ttrTtcId
      *
-     * @return integer
+     * @return int
      */
     public function getTtrTtcId()
     {
@@ -100,7 +110,7 @@ class TimeTracking
     /**
      * Set ttrIssId
      *
-     * @param integer $ttrIssId
+     * @param int $ttrIssId
      * @return TimeTracking
      */
     public function setTtrIssId($ttrIssId)
@@ -113,7 +123,7 @@ class TimeTracking
     /**
      * Get ttrIssId
      *
-     * @return integer
+     * @return int
      */
     public function getTtrIssId()
     {
@@ -123,7 +133,7 @@ class TimeTracking
     /**
      * Set ttrUsrId
      *
-     * @param integer $ttrUsrId
+     * @param int $ttrUsrId
      * @return TimeTracking
      */
     public function setTtrUsrId($ttrUsrId)
@@ -136,7 +146,7 @@ class TimeTracking
     /**
      * Get ttrUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getTtrUsrId()
     {
@@ -169,7 +179,7 @@ class TimeTracking
     /**
      * Set ttrTimeSpent
      *
-     * @param integer $ttrTimeSpent
+     * @param int $ttrTimeSpent
      * @return TimeTracking
      */
     public function setTtrTimeSpent($ttrTimeSpent)
@@ -182,7 +192,7 @@ class TimeTracking
     /**
      * Get ttrTimeSpent
      *
-     * @return integer
+     * @return int
      */
     public function getTtrTimeSpent()
     {

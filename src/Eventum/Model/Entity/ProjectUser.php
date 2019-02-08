@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectUser
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pru_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,31 +33,30 @@ class ProjectUser
     private $pruId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pru_prj_id", type="integer", nullable=false)
      */
     private $pruPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="pru_usr_id", type="integer", nullable=false)
      */
     private $pruUsrId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="pru_role", type="boolean", nullable=false)
      */
     private $pruRole;
 
-
     /**
      * Get pruId
      *
-     * @return integer
+     * @return int
      */
     public function getPruId()
     {
@@ -56,7 +66,7 @@ class ProjectUser
     /**
      * Set pruPrjId
      *
-     * @param integer $pruPrjId
+     * @param int $pruPrjId
      * @return ProjectUser
      */
     public function setPruPrjId($pruPrjId)
@@ -69,7 +79,7 @@ class ProjectUser
     /**
      * Get pruPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPruPrjId()
     {
@@ -79,7 +89,7 @@ class ProjectUser
     /**
      * Set pruUsrId
      *
-     * @param integer $pruUsrId
+     * @param int $pruUsrId
      * @return ProjectUser
      */
     public function setPruUsrId($pruUsrId)
@@ -92,7 +102,7 @@ class ProjectUser
     /**
      * Get pruUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getPruUsrId()
     {
@@ -102,7 +112,7 @@ class ProjectUser
     /**
      * Set pruRole
      *
-     * @param boolean $pruRole
+     * @param bool $pruRole
      * @return ProjectUser
      */
     public function setPruRole($pruRole)
@@ -115,7 +125,7 @@ class ProjectUser
     /**
      * Get pruRole
      *
-     * @return boolean
+     * @return bool
      */
     public function getPruRole()
     {

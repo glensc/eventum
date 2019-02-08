@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectEmailResponse
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="per_prj_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class ProjectEmailResponse
     private $perPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="per_ere_id", type="integer", nullable=false)
      * @ORM\Id
@@ -30,11 +41,10 @@ class ProjectEmailResponse
      */
     private $perEreId;
 
-
     /**
      * Set perPrjId
      *
-     * @param integer $perPrjId
+     * @param int $perPrjId
      * @return ProjectEmailResponse
      */
     public function setPerPrjId($perPrjId)
@@ -47,7 +57,7 @@ class ProjectEmailResponse
     /**
      * Get perPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPerPrjId()
     {
@@ -57,7 +67,7 @@ class ProjectEmailResponse
     /**
      * Set perEreId
      *
-     * @param integer $perEreId
+     * @param int $perEreId
      * @return ProjectEmailResponse
      */
     public function setPerEreId($perEreId)
@@ -70,7 +80,7 @@ class ProjectEmailResponse
     /**
      * Get perEreId
      *
-     * @return integer
+     * @return int
      */
     public function getPerEreId()
     {

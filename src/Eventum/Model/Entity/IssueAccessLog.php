@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class IssueAccessLog
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="alg_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,28 +33,28 @@ class IssueAccessLog
     private $algId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="alg_iss_id", type="integer", nullable=false)
      */
     private $algIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="alg_usr_id", type="integer", nullable=false)
      */
     private $algUsrId;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="alg_failed", type="boolean", nullable=false)
      */
     private $algFailed;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="alg_item_id", type="integer", nullable=true)
      */
@@ -77,11 +88,10 @@ class IssueAccessLog
      */
     private $algUrl;
 
-
     /**
      * Get algId
      *
-     * @return integer
+     * @return int
      */
     public function getAlgId()
     {
@@ -91,7 +101,7 @@ class IssueAccessLog
     /**
      * Set algIssId
      *
-     * @param integer $algIssId
+     * @param int $algIssId
      * @return IssueAccessLog
      */
     public function setAlgIssId($algIssId)
@@ -104,7 +114,7 @@ class IssueAccessLog
     /**
      * Get algIssId
      *
-     * @return integer
+     * @return int
      */
     public function getAlgIssId()
     {
@@ -114,7 +124,7 @@ class IssueAccessLog
     /**
      * Set algUsrId
      *
-     * @param integer $algUsrId
+     * @param int $algUsrId
      * @return IssueAccessLog
      */
     public function setAlgUsrId($algUsrId)
@@ -127,7 +137,7 @@ class IssueAccessLog
     /**
      * Get algUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getAlgUsrId()
     {
@@ -137,7 +147,7 @@ class IssueAccessLog
     /**
      * Set algFailed
      *
-     * @param boolean $algFailed
+     * @param bool $algFailed
      * @return IssueAccessLog
      */
     public function setAlgFailed($algFailed)
@@ -150,7 +160,7 @@ class IssueAccessLog
     /**
      * Get algFailed
      *
-     * @return boolean
+     * @return bool
      */
     public function getAlgFailed()
     {
@@ -160,7 +170,7 @@ class IssueAccessLog
     /**
      * Set algItemId
      *
-     * @param integer $algItemId
+     * @param int $algItemId
      * @return IssueAccessLog
      */
     public function setAlgItemId($algItemId)
@@ -173,7 +183,7 @@ class IssueAccessLog
     /**
      * Get algItemId
      *
-     * @return integer
+     * @return int
      */
     public function getAlgItemId()
     {

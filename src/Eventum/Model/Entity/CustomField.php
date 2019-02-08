@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class CustomField
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="fld_id", type="integer", nullable=false)
      * @ORM\Id
@@ -43,77 +54,77 @@ class CustomField
     private $fldType;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="fld_report_form", type="integer", nullable=false)
      */
     private $fldReportForm;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="fld_report_form_required", type="integer", nullable=false)
      */
     private $fldReportFormRequired;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="fld_anonymous_form", type="integer", nullable=false)
      */
     private $fldAnonymousForm;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="fld_anonymous_form_required", type="integer", nullable=false)
      */
     private $fldAnonymousFormRequired;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="fld_close_form", type="boolean", nullable=false)
      */
     private $fldCloseForm;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="fld_close_form_required", type="boolean", nullable=false)
      */
     private $fldCloseFormRequired;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="fld_edit_form_required", type="boolean", nullable=false)
      */
     private $fldEditFormRequired;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="fld_list_display", type="boolean", nullable=false)
      */
     private $fldListDisplay;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="fld_min_role", type="boolean", nullable=false)
      */
     private $fldMinRole;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="fld_min_role_edit", type="boolean", nullable=false)
      */
     private $fldMinRoleEdit;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="fld_rank", type="smallint", nullable=false)
      */
@@ -133,11 +144,10 @@ class CustomField
      */
     private $fldOrderBy;
 
-
     /**
      * Get fldId
      *
-     * @return integer
+     * @return int
      */
     public function getFldId()
     {
@@ -216,7 +226,7 @@ class CustomField
     /**
      * Set fldReportForm
      *
-     * @param integer $fldReportForm
+     * @param int $fldReportForm
      * @return CustomField
      */
     public function setFldReportForm($fldReportForm)
@@ -229,7 +239,7 @@ class CustomField
     /**
      * Get fldReportForm
      *
-     * @return integer
+     * @return int
      */
     public function getFldReportForm()
     {
@@ -239,7 +249,7 @@ class CustomField
     /**
      * Set fldReportFormRequired
      *
-     * @param integer $fldReportFormRequired
+     * @param int $fldReportFormRequired
      * @return CustomField
      */
     public function setFldReportFormRequired($fldReportFormRequired)
@@ -252,7 +262,7 @@ class CustomField
     /**
      * Get fldReportFormRequired
      *
-     * @return integer
+     * @return int
      */
     public function getFldReportFormRequired()
     {
@@ -262,7 +272,7 @@ class CustomField
     /**
      * Set fldAnonymousForm
      *
-     * @param integer $fldAnonymousForm
+     * @param int $fldAnonymousForm
      * @return CustomField
      */
     public function setFldAnonymousForm($fldAnonymousForm)
@@ -275,7 +285,7 @@ class CustomField
     /**
      * Get fldAnonymousForm
      *
-     * @return integer
+     * @return int
      */
     public function getFldAnonymousForm()
     {
@@ -285,7 +295,7 @@ class CustomField
     /**
      * Set fldAnonymousFormRequired
      *
-     * @param integer $fldAnonymousFormRequired
+     * @param int $fldAnonymousFormRequired
      * @return CustomField
      */
     public function setFldAnonymousFormRequired($fldAnonymousFormRequired)
@@ -298,7 +308,7 @@ class CustomField
     /**
      * Get fldAnonymousFormRequired
      *
-     * @return integer
+     * @return int
      */
     public function getFldAnonymousFormRequired()
     {
@@ -308,7 +318,7 @@ class CustomField
     /**
      * Set fldCloseForm
      *
-     * @param boolean $fldCloseForm
+     * @param bool $fldCloseForm
      * @return CustomField
      */
     public function setFldCloseForm($fldCloseForm)
@@ -321,7 +331,7 @@ class CustomField
     /**
      * Get fldCloseForm
      *
-     * @return boolean
+     * @return bool
      */
     public function getFldCloseForm()
     {
@@ -331,7 +341,7 @@ class CustomField
     /**
      * Set fldCloseFormRequired
      *
-     * @param boolean $fldCloseFormRequired
+     * @param bool $fldCloseFormRequired
      * @return CustomField
      */
     public function setFldCloseFormRequired($fldCloseFormRequired)
@@ -344,7 +354,7 @@ class CustomField
     /**
      * Get fldCloseFormRequired
      *
-     * @return boolean
+     * @return bool
      */
     public function getFldCloseFormRequired()
     {
@@ -354,7 +364,7 @@ class CustomField
     /**
      * Set fldEditFormRequired
      *
-     * @param boolean $fldEditFormRequired
+     * @param bool $fldEditFormRequired
      * @return CustomField
      */
     public function setFldEditFormRequired($fldEditFormRequired)
@@ -367,7 +377,7 @@ class CustomField
     /**
      * Get fldEditFormRequired
      *
-     * @return boolean
+     * @return bool
      */
     public function getFldEditFormRequired()
     {
@@ -377,7 +387,7 @@ class CustomField
     /**
      * Set fldListDisplay
      *
-     * @param boolean $fldListDisplay
+     * @param bool $fldListDisplay
      * @return CustomField
      */
     public function setFldListDisplay($fldListDisplay)
@@ -390,7 +400,7 @@ class CustomField
     /**
      * Get fldListDisplay
      *
-     * @return boolean
+     * @return bool
      */
     public function getFldListDisplay()
     {
@@ -400,7 +410,7 @@ class CustomField
     /**
      * Set fldMinRole
      *
-     * @param boolean $fldMinRole
+     * @param bool $fldMinRole
      * @return CustomField
      */
     public function setFldMinRole($fldMinRole)
@@ -413,7 +423,7 @@ class CustomField
     /**
      * Get fldMinRole
      *
-     * @return boolean
+     * @return bool
      */
     public function getFldMinRole()
     {
@@ -423,7 +433,7 @@ class CustomField
     /**
      * Set fldMinRoleEdit
      *
-     * @param boolean $fldMinRoleEdit
+     * @param bool $fldMinRoleEdit
      * @return CustomField
      */
     public function setFldMinRoleEdit($fldMinRoleEdit)
@@ -436,7 +446,7 @@ class CustomField
     /**
      * Get fldMinRoleEdit
      *
-     * @return boolean
+     * @return bool
      */
     public function getFldMinRoleEdit()
     {
@@ -446,7 +456,7 @@ class CustomField
     /**
      * Set fldRank
      *
-     * @param integer $fldRank
+     * @param int $fldRank
      * @return CustomField
      */
     public function setFldRank($fldRank)
@@ -459,7 +469,7 @@ class CustomField
     /**
      * Get fldRank
      *
-     * @return integer
+     * @return int
      */
     public function getFldRank()
     {

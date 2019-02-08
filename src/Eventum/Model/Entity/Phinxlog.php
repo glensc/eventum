@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Phinxlog
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="version", type="bigint", nullable=false)
      * @ORM\Id
@@ -43,17 +54,16 @@ class Phinxlog
     private $endTime;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="breakpoint", type="boolean", nullable=false)
      */
     private $breakpoint;
 
-
     /**
      * Get version
      *
-     * @return integer
+     * @return int
      */
     public function getVersion()
     {
@@ -132,7 +142,7 @@ class Phinxlog
     /**
      * Set breakpoint
      *
-     * @param boolean $breakpoint
+     * @param bool $breakpoint
      * @return Phinxlog
      */
     public function setBreakpoint($breakpoint)
@@ -145,7 +155,7 @@ class Phinxlog
     /**
      * Get breakpoint
      *
-     * @return boolean
+     * @return bool
      */
     public function getBreakpoint()
     {

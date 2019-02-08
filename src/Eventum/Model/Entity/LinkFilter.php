@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class LinkFilter
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="lfi_id", type="integer", nullable=false)
      * @ORM\Id
@@ -36,7 +47,7 @@ class LinkFilter
     private $lfiReplacement;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="lfi_usr_role", type="boolean", nullable=false)
      */
@@ -49,11 +60,10 @@ class LinkFilter
      */
     private $lfiDescription;
 
-
     /**
      * Get lfiId
      *
-     * @return integer
+     * @return int
      */
     public function getLfiId()
     {
@@ -109,7 +119,7 @@ class LinkFilter
     /**
      * Set lfiUsrRole
      *
-     * @param boolean $lfiUsrRole
+     * @param bool $lfiUsrRole
      * @return LinkFilter
      */
     public function setLfiUsrRole($lfiUsrRole)
@@ -122,7 +132,7 @@ class LinkFilter
     /**
      * Get lfiUsrRole
      *
-     * @return boolean
+     * @return bool
      */
     public function getLfiUsrRole()
     {

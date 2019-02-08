@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectCategory
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prc_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class ProjectCategory
     private $prcId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prc_prj_id", type="integer", nullable=false)
      */
@@ -35,11 +46,10 @@ class ProjectCategory
      */
     private $prcTitle;
 
-
     /**
      * Get prcId
      *
-     * @return integer
+     * @return int
      */
     public function getPrcId()
     {
@@ -49,7 +59,7 @@ class ProjectCategory
     /**
      * Set prcPrjId
      *
-     * @param integer $prcPrjId
+     * @param int $prcPrjId
      * @return ProjectCategory
      */
     public function setPrcPrjId($prcPrjId)
@@ -62,7 +72,7 @@ class ProjectCategory
     /**
      * Get prcPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPrcPrjId()
     {

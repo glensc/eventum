@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ProjectStatus
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prs_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,24 +33,23 @@ class ProjectStatus
     private $prsId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prs_prj_id", type="integer", nullable=false)
      */
     private $prsPrjId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prs_sta_id", type="integer", nullable=false)
      */
     private $prsStaId;
 
-
     /**
      * Get prsId
      *
-     * @return integer
+     * @return int
      */
     public function getPrsId()
     {
@@ -49,7 +59,7 @@ class ProjectStatus
     /**
      * Set prsPrjId
      *
-     * @param integer $prsPrjId
+     * @param int $prsPrjId
      * @return ProjectStatus
      */
     public function setPrsPrjId($prsPrjId)
@@ -62,7 +72,7 @@ class ProjectStatus
     /**
      * Get prsPrjId
      *
-     * @return integer
+     * @return int
      */
     public function getPrsPrjId()
     {
@@ -72,7 +82,7 @@ class ProjectStatus
     /**
      * Set prsStaId
      *
-     * @param integer $prsStaId
+     * @param int $prsStaId
      * @return ProjectStatus
      */
     public function setPrsStaId($prsStaId)
@@ -85,7 +95,7 @@ class ProjectStatus
     /**
      * Get prsStaId
      *
-     * @return integer
+     * @return int
      */
     public function getPrsStaId()
     {

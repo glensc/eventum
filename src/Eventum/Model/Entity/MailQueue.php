@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class MailQueue
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="maq_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +33,7 @@ class MailQueue
     private $maqId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="maq_iss_id", type="integer", nullable=true)
      */
@@ -43,7 +54,7 @@ class MailQueue
     private $maqStatus;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="maq_save_copy", type="boolean", nullable=false)
      */
@@ -99,24 +110,23 @@ class MailQueue
     private $maqType;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="maq_usr_id", type="integer", nullable=true)
      */
     private $maqUsrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="maq_type_id", type="integer", nullable=true)
      */
     private $maqTypeId;
 
-
     /**
      * Get maqId
      *
-     * @return integer
+     * @return int
      */
     public function getMaqId()
     {
@@ -126,7 +136,7 @@ class MailQueue
     /**
      * Set maqIssId
      *
-     * @param integer $maqIssId
+     * @param int $maqIssId
      * @return MailQueue
      */
     public function setMaqIssId($maqIssId)
@@ -139,7 +149,7 @@ class MailQueue
     /**
      * Get maqIssId
      *
-     * @return integer
+     * @return int
      */
     public function getMaqIssId()
     {
@@ -195,7 +205,7 @@ class MailQueue
     /**
      * Set maqSaveCopy
      *
-     * @param boolean $maqSaveCopy
+     * @param bool $maqSaveCopy
      * @return MailQueue
      */
     public function setMaqSaveCopy($maqSaveCopy)
@@ -208,7 +218,7 @@ class MailQueue
     /**
      * Get maqSaveCopy
      *
-     * @return boolean
+     * @return bool
      */
     public function getMaqSaveCopy()
     {
@@ -379,7 +389,7 @@ class MailQueue
     /**
      * Set maqUsrId
      *
-     * @param integer $maqUsrId
+     * @param int $maqUsrId
      * @return MailQueue
      */
     public function setMaqUsrId($maqUsrId)
@@ -392,7 +402,7 @@ class MailQueue
     /**
      * Get maqUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getMaqUsrId()
     {
@@ -402,7 +412,7 @@ class MailQueue
     /**
      * Set maqTypeId
      *
-     * @param integer $maqTypeId
+     * @param int $maqTypeId
      * @return MailQueue
      */
     public function setMaqTypeId($maqTypeId)
@@ -415,7 +425,7 @@ class MailQueue
     /**
      * Get maqTypeId
      *
-     * @return integer
+     * @return int
      */
     public function getMaqTypeId()
     {

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class EmailDraft
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="emd_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,21 +33,21 @@ class EmailDraft
     private $emdId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="emd_usr_id", type="integer", nullable=false)
      */
     private $emdUsrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="emd_iss_id", type="integer", nullable=false)
      */
     private $emdIssId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="emd_sup_id", type="integer", nullable=true)
      */
@@ -77,11 +88,10 @@ class EmailDraft
      */
     private $emdUnknownUser;
 
-
     /**
      * Get emdId
      *
-     * @return integer
+     * @return int
      */
     public function getEmdId()
     {
@@ -91,7 +101,7 @@ class EmailDraft
     /**
      * Set emdUsrId
      *
-     * @param integer $emdUsrId
+     * @param int $emdUsrId
      * @return EmailDraft
      */
     public function setEmdUsrId($emdUsrId)
@@ -104,7 +114,7 @@ class EmailDraft
     /**
      * Get emdUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getEmdUsrId()
     {
@@ -114,7 +124,7 @@ class EmailDraft
     /**
      * Set emdIssId
      *
-     * @param integer $emdIssId
+     * @param int $emdIssId
      * @return EmailDraft
      */
     public function setEmdIssId($emdIssId)
@@ -127,7 +137,7 @@ class EmailDraft
     /**
      * Get emdIssId
      *
-     * @return integer
+     * @return int
      */
     public function getEmdIssId()
     {
@@ -137,7 +147,7 @@ class EmailDraft
     /**
      * Set emdSupId
      *
-     * @param integer $emdSupId
+     * @param int $emdSupId
      * @return EmailDraft
      */
     public function setEmdSupId($emdSupId)
@@ -150,7 +160,7 @@ class EmailDraft
     /**
      * Get emdSupId
      *
-     * @return integer
+     * @return int
      */
     public function getEmdSupId()
     {

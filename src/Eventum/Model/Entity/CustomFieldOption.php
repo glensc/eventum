@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class CustomFieldOption
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cfo_id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +33,14 @@ class CustomFieldOption
     private $cfoId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cfo_fld_id", type="integer", nullable=false)
      */
     private $cfoFldId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="cfo_rank", type="integer", nullable=false)
      */
@@ -42,11 +53,10 @@ class CustomFieldOption
      */
     private $cfoValue;
 
-
     /**
      * Get cfoId
      *
-     * @return integer
+     * @return int
      */
     public function getCfoId()
     {
@@ -56,7 +66,7 @@ class CustomFieldOption
     /**
      * Set cfoFldId
      *
-     * @param integer $cfoFldId
+     * @param int $cfoFldId
      * @return CustomFieldOption
      */
     public function setCfoFldId($cfoFldId)
@@ -69,7 +79,7 @@ class CustomFieldOption
     /**
      * Get cfoFldId
      *
-     * @return integer
+     * @return int
      */
     public function getCfoFldId()
     {
@@ -79,7 +89,7 @@ class CustomFieldOption
     /**
      * Set cfoRank
      *
-     * @param integer $cfoRank
+     * @param int $cfoRank
      * @return CustomFieldOption
      */
     public function setCfoRank($cfoRank)
@@ -92,7 +102,7 @@ class CustomFieldOption
     /**
      * Get cfoRank
      *
-     * @return integer
+     * @return int
      */
     public function getCfoRank()
     {

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Eventum (Issue Tracking System) package.
+ *
+ * @copyright (c) Eventum Team
+ * @license GNU General Public License, version 2 or later (GPL-2+)
+ *
+ * For the full copyright and license information,
+ * please see the COPYING and AUTHORS files
+ * that were distributed with this source code.
+ */
+
 namespace Eventum\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Project
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prj_id", type="integer", nullable=false)
      * @ORM\Id
@@ -43,14 +54,14 @@ class Project
     private $prjStatus;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prj_lead_usr_id", type="integer", nullable=false)
      */
     private $prjLeadUsrId;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="prj_initial_sta_id", type="integer", nullable=false)
      */
@@ -127,17 +138,16 @@ class Project
     private $prjWorkflowBackend;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="prj_segregate_reporter", type="boolean", nullable=true)
      */
     private $prjSegregateReporter;
 
-
     /**
      * Get prjId
      *
-     * @return integer
+     * @return int
      */
     public function getPrjId()
     {
@@ -216,7 +226,7 @@ class Project
     /**
      * Set prjLeadUsrId
      *
-     * @param integer $prjLeadUsrId
+     * @param int $prjLeadUsrId
      * @return Project
      */
     public function setPrjLeadUsrId($prjLeadUsrId)
@@ -229,7 +239,7 @@ class Project
     /**
      * Get prjLeadUsrId
      *
-     * @return integer
+     * @return int
      */
     public function getPrjLeadUsrId()
     {
@@ -239,7 +249,7 @@ class Project
     /**
      * Set prjInitialStaId
      *
-     * @param integer $prjInitialStaId
+     * @param int $prjInitialStaId
      * @return Project
      */
     public function setPrjInitialStaId($prjInitialStaId)
@@ -252,7 +262,7 @@ class Project
     /**
      * Get prjInitialStaId
      *
-     * @return integer
+     * @return int
      */
     public function getPrjInitialStaId()
     {
@@ -492,7 +502,7 @@ class Project
     /**
      * Set prjSegregateReporter
      *
-     * @param boolean $prjSegregateReporter
+     * @param bool $prjSegregateReporter
      * @return Project
      */
     public function setPrjSegregateReporter($prjSegregateReporter)
@@ -505,7 +515,7 @@ class Project
     /**
      * Get prjSegregateReporter
      *
-     * @return boolean
+     * @return bool
      */
     public function getPrjSegregateReporter()
     {
