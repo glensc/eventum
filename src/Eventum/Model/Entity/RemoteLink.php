@@ -40,6 +40,20 @@ class RemoteLink
     private $relIssId;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="rel_created_date", type="datetime", nullable=false)
+     */
+    private $relCreatedDate;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="rel_updated_date", type="datetime", nullable=false)
+     */
+    private $relUpdatedDate;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="rel_gid", type="string", length=255, nullable=true)
@@ -49,9 +63,9 @@ class RemoteLink
     /**
      * @var string
      *
-     * @ORM\Column(name="rel_relationship", type="string", length=255, nullable=false)
+     * @ORM\Column(name="rel_relation", type="string", length=255, nullable=false)
      */
-    private $relRelationship;
+    private $relRelation;
 
     /**
      * @var string
@@ -101,6 +115,52 @@ class RemoteLink
     }
 
     /**
+     * Set relCreatedDate
+     *
+     * @param \DateTime $relCreatedDate
+     * @return RemoteLink
+     */
+    public function setRelCreatedDate($relCreatedDate)
+    {
+        $this->relCreatedDate = $relCreatedDate;
+
+        return $this;
+    }
+
+    /**
+     * Get relCreatedDate
+     *
+     * @return \DateTime
+     */
+    public function getRelCreatedDate()
+    {
+        return $this->relCreatedDate;
+    }
+
+    /**
+     * Set relUpdatedDate
+     *
+     * @param \DateTime $relUpdatedDate
+     * @return RemoteLink
+     */
+    public function setRelUpdatedDate($relUpdatedDate)
+    {
+        $this->relUpdatedDate = $relUpdatedDate;
+
+        return $this;
+    }
+
+    /**
+     * Get relUpdatedDate
+     *
+     * @return \DateTime
+     */
+    public function getRelUpdatedDate()
+    {
+        return $this->relUpdatedDate;
+    }
+
+    /**
      * Set relGid
      *
      * @param string $relGid
@@ -124,26 +184,26 @@ class RemoteLink
     }
 
     /**
-     * Set relRelationship
+     * Set relRelation
      *
-     * @param string $relRelationship
+     * @param string $relRelation
      * @return RemoteLink
      */
-    public function setRelRelationship($relRelationship)
+    public function setRelRelation($relRelation)
     {
-        $this->relRelationship = $relRelationship;
+        $this->relRelation = $relRelation;
 
         return $this;
     }
 
     /**
-     * Get relRelationship
+     * Get relRelation
      *
      * @return string
      */
-    public function getRelRelationship()
+    public function getRelRelation()
     {
-        return $this->relRelationship;
+        return $this->relRelation;
     }
 
     /**

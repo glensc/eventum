@@ -1456,8 +1456,10 @@ DROP TABLE IF EXISTS `remote_link`;
 CREATE TABLE `remote_link` (
   `rel_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `rel_iss_id` int(11) unsigned NOT NULL,
+  `rel_created_date` datetime NOT NULL,
+  `rel_updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `rel_gid` varchar(255) CHARACTER SET ascii DEFAULT NULL COMMENT 'Global Id',
-  `rel_relationship` varchar(255) CHARACTER SET ascii NOT NULL COMMENT 'Link relationship type',
+  `rel_relation` varchar(255) CHARACTER SET ascii NOT NULL COMMENT 'Link relationship type',
   `rel_url` text CHARACTER SET ascii NOT NULL,
   `rel_title` varchar(255) NOT NULL,
   PRIMARY KEY (`rel_id`),
