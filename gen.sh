@@ -12,3 +12,4 @@ mysql -s -e 'drop table if exists version' e
 
 rm -rf src/Eventum/Model/Entity
 php doctrine.entity.generator.php
+php-cs-fixer fix
