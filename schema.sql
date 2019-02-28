@@ -1,6 +1,6 @@
--- MySQL dump 10.13  Distrib 5.7.10, for osx10.9 (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.42, for osx10.14 (x86_64)
 --
--- Host: localhost    Database: e
+-- Host: localhost    Database: eventum
 -- ------------------------------------------------------
 -- Server version	5.7.24-log
 
@@ -585,9 +585,10 @@ CREATE TABLE `issue_attachment_file` (
   `iaf_filetype` varchar(255) DEFAULT NULL,
   `iaf_filesize` varchar(32) NOT NULL DEFAULT '',
   `iaf_created_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `iaf_flysystem_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`iaf_id`),
   KEY `iaf_iat_id` (`iaf_iat_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1671,7 +1672,22 @@ CREATE TABLE `user` (
   `usr_par_code` varchar(255) CHARACTER SET ascii DEFAULT NULL,
   PRIMARY KEY (`usr_id`),
   UNIQUE KEY `usr_email` (`usr_email`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_alias`
+--
+
+DROP TABLE IF EXISTS `user_alias`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_alias` (
+  `ual_usr_id` int(11) unsigned NOT NULL,
+  `ual_email` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  UNIQUE KEY `ual_email` (`ual_email`),
+  KEY `ual_usr_id` (`ual_usr_id`,`ual_email`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1698,17 +1714,18 @@ DROP TABLE IF EXISTS `user_preference`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_preference` (
   `upr_usr_id` int(11) unsigned NOT NULL,
-  `upr_timezone` varchar(100) NOT NULL,
+  `upr_timezone` varchar(100) CHARACTER SET latin1 NOT NULL,
   `upr_week_firstday` tinyint(1) NOT NULL DEFAULT '0',
   `upr_list_refresh_rate` int(5) DEFAULT '5',
   `upr_email_refresh_rate` int(5) DEFAULT '5',
-  `upr_email_signature` longtext,
+  `upr_email_signature` longtext CHARACTER SET latin1,
   `upr_auto_append_email_sig` tinyint(1) DEFAULT '0',
   `upr_auto_append_note_sig` tinyint(1) DEFAULT '0',
   `upr_auto_close_popup_window` tinyint(1) DEFAULT '0',
   `upr_relative_date` tinyint(1) DEFAULT '1',
   `upr_collapsed_emails` tinyint(1) DEFAULT '1',
   `upr_markdown` tinyint(1) DEFAULT '0',
+  `upr_issue_navigation` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`upr_usr_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1739,4 +1756,4 @@ CREATE TABLE `user_project_preference` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-01-24 22:11:01
+-- Dump completed on 2019-03-01  0:06:44

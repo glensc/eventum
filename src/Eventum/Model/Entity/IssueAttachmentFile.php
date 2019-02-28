@@ -75,6 +75,13 @@ class IssueAttachmentFile
     private $iafCreatedDate;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="iaf_flysystem_path", type="string", length=255, nullable=true)
+     */
+    private $iafFlysystemPath;
+
+    /**
      * Get iafId
      *
      * @return int
@@ -220,5 +227,28 @@ class IssueAttachmentFile
     public function getIafCreatedDate()
     {
         return $this->iafCreatedDate;
+    }
+
+    /**
+     * Set iafFlysystemPath
+     *
+     * @param string $iafFlysystemPath
+     * @return IssueAttachmentFile
+     */
+    public function setIafFlysystemPath($iafFlysystemPath)
+    {
+        $this->iafFlysystemPath = $iafFlysystemPath;
+
+        return $this;
+    }
+
+    /**
+     * Get iafFlysystemPath
+     *
+     * @return string
+     */
+    public function getIafFlysystemPath()
+    {
+        return $this->iafFlysystemPath;
     }
 }

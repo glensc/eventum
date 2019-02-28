@@ -110,6 +110,13 @@ class UserPreference
     private $uprMarkdown;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="upr_issue_navigation", type="boolean", nullable=false)
+     */
+    private $uprIssueNavigation;
+
+    /**
      * Get uprUsrId
      *
      * @return int
@@ -370,5 +377,28 @@ class UserPreference
     public function getUprMarkdown()
     {
         return $this->uprMarkdown;
+    }
+
+    /**
+     * Set uprIssueNavigation
+     *
+     * @param bool $uprIssueNavigation
+     * @return UserPreference
+     */
+    public function setUprIssueNavigation($uprIssueNavigation)
+    {
+        $this->uprIssueNavigation = $uprIssueNavigation;
+
+        return $this;
+    }
+
+    /**
+     * Get uprIssueNavigation
+     *
+     * @return bool
+     */
+    public function getUprIssueNavigation()
+    {
+        return $this->uprIssueNavigation;
     }
 }
