@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.6.42, for osx10.14 (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.43, for osx10.14 (x86_64)
 --
 -- Host: localhost    Database: eventum
 -- ------------------------------------------------------
@@ -413,7 +413,7 @@ CREATE TABLE `history_type` (
   `htt_role` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`htt_id`),
   UNIQUE KEY `htt_name` (`htt_name`)
-) ENGINE=MyISAM AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -588,7 +588,7 @@ CREATE TABLE `issue_attachment_file` (
   `iaf_flysystem_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`iaf_id`),
   KEY `iaf_iat_id` (`iaf_iat_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -994,7 +994,7 @@ CREATE TABLE `project` (
   PRIMARY KEY (`prj_id`),
   UNIQUE KEY `prj_title` (`prj_title`),
   KEY `prj_lead_usr_id` (`prj_lead_usr_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1011,7 +1011,7 @@ CREATE TABLE `project_category` (
   PRIMARY KEY (`prc_id`),
   UNIQUE KEY `uniq_category` (`prc_prj_id`,`prc_title`),
   KEY `prc_prj_id` (`prc_prj_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1117,7 +1117,7 @@ CREATE TABLE `project_phone_category` (
   PRIMARY KEY (`phc_id`),
   UNIQUE KEY `uniq_category` (`phc_prj_id`,`phc_title`),
   KEY `phc_prj_id` (`phc_prj_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1135,7 +1135,7 @@ CREATE TABLE `project_priority` (
   `pri_icon` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`pri_id`),
   UNIQUE KEY `pri_title` (`pri_title`,`pri_prj_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1153,7 +1153,7 @@ CREATE TABLE `project_release` (
   `pre_status` enum('available','unavailable') NOT NULL DEFAULT 'available',
   PRIMARY KEY (`pre_id`),
   UNIQUE KEY `pre_title` (`pre_prj_id`,`pre_title`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1188,7 +1188,7 @@ CREATE TABLE `project_severity` (
   `sev_rank` tinyint(1) NOT NULL,
   PRIMARY KEY (`sev_id`),
   UNIQUE KEY `sev_title` (`sev_title`,`sev_prj_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1204,7 +1204,7 @@ CREATE TABLE `project_status` (
   `prs_sta_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`prs_id`),
   KEY `prs_prj_id` (`prs_prj_id`,`prs_sta_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1239,7 +1239,7 @@ CREATE TABLE `project_user` (
   `pru_role` tinyint(1) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`pru_id`),
   UNIQUE KEY `pru_prj_id` (`pru_prj_id`,`pru_usr_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1278,7 +1278,7 @@ CREATE TABLE `reminder_action_type` (
   PRIMARY KEY (`rmt_id`),
   UNIQUE KEY `rmt_type` (`rmt_type`),
   UNIQUE KEY `rmt_title` (`rmt_title`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1296,7 +1296,7 @@ CREATE TABLE `reminder_field` (
   `rmf_allow_column_compare` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`rmf_id`),
   UNIQUE KEY `rmf_title` (`rmf_title`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1367,7 +1367,7 @@ CREATE TABLE `reminder_operator` (
   `rmo_sql_representation` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`rmo_id`),
   UNIQUE KEY `rmo_title` (`rmo_title`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1521,7 +1521,7 @@ CREATE TABLE `status` (
   UNIQUE KEY `sta_abbreviation` (`sta_abbreviation`),
   KEY `sta_rank` (`sta_rank`),
   KEY `sta_is_closed` (`sta_is_closed`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1643,7 +1643,7 @@ CREATE TABLE `time_tracking_category` (
   `ttc_created_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`ttc_id`),
   KEY `ttc_title` (`ttc_prj_id`,`ttc_title`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1672,7 +1672,7 @@ CREATE TABLE `user` (
   `usr_par_code` varchar(255) CHARACTER SET ascii DEFAULT NULL,
   PRIMARY KEY (`usr_id`),
   UNIQUE KEY `usr_email` (`usr_email`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1756,4 +1756,4 @@ CREATE TABLE `user_project_preference` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-01  0:06:44
+-- Dump completed on 2019-03-05 18:46:34
