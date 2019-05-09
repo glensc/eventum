@@ -38,7 +38,7 @@ class ForgotPasswordController
         return $this->render($this->tpl_name);
     }
 
-    private function resetPasswordAction(string $email): int
+    private function resetPasswordAction(?string $email): int
     {
         if (!$email) {
             return 4;
