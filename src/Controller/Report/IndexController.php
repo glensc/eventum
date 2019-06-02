@@ -13,29 +13,27 @@
 
 namespace Eventum\Controller\Report;
 
-use Access;
-use Auth;
+use Eventum\Controller\Traits\AccessTrait;
 use Eventum\Controller\Traits\RedirectResponseTrait;
 use Eventum\Controller\Traits\SmartyResponseTrait;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Security;
 
 class IndexController
 {
     use RedirectResponseTrait;
     use SmartyResponseTrait;
+    use AccessTrait;
 
     /** @var string */
     protected $tpl_name = 'reports/index.tpl.html';
-    /** @var  int */
-    private $usr_id;
 
-    public function indexAction(): Response
+    public function indexAction(Security $security): Response
     {
-        Auth::checkAuthentication();
-
-        $this->usr_id = Auth::getUserID();
-
-        if (!Access::canAccessReports($this->usr_id)) {
+        try {
+            $this->requireAccess($security, 'reports');
+        } catch (AccessDeniedException $e) {
             return $this->redirect(APP_RELATIVE_URL . 'main.php');
         }
 
