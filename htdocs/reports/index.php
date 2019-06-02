@@ -11,7 +11,12 @@
  * that were distributed with this source code.
  */
 
+use Eventum\Kernel;
+
 require_once __DIR__ . '/../../init.php';
 
-$controller = new Eventum\Controller\Report\IndexController();
-$controller->run();
+/**
+ * @see \Eventum\Controller\Report\IndexController
+ */
+
+Kernel::handleRequest('reports');

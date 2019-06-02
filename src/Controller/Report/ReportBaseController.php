@@ -49,7 +49,7 @@ abstract class ReportBaseController extends BaseController
      * @param string $field
      * @return bool
      */
-    protected function hasDate($field)
+    protected function hasDate(string $field): bool
     {
         $request = $this->getRequest();
 

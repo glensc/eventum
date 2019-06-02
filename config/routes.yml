@@ -45,6 +45,11 @@ setup:
     methods: GET|POST
     controller: Eventum\Controller\Setup\SetupController::defaultAction
 
+reports:
+    path: /reports
+    methods: GET
+    controller: Eventum\Controller\Report\IndexController::indexAction
+
 front:
     path: /front
     controller: Eventum\Controller\FrontController::indexAction

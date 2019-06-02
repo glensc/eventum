@@ -15,43 +15,30 @@ namespace Eventum\Controller\Report;
 
 use Access;
 use Auth;
+use Eventum\Controller\Traits\RedirectResponseTrait;
+use Eventum\Controller\Traits\SmartyResponseTrait;
+use Symfony\Component\HttpFoundation\Response;
 
-class IndexController extends ReportBaseController
+class IndexController
 {
+    use RedirectResponseTrait;
+    use SmartyResponseTrait;
+
     /** @var string */
     protected $tpl_name = 'reports/index.tpl.html';
+    /** @var  int */
+    private $usr_id;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure(): void
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function canAccess(): bool
+    public function indexAction(): Response
     {
         Auth::checkAuthentication();
-        if (!Access::canAccessReports(Auth::getUserID())) {
-            $this->redirect(APP_RELATIVE_URL . 'main.php');
+
+        $this->usr_id = Auth::getUserID();
+
+        if (!Access::canAccessReports($this->usr_id)) {
+            return $this->redirect(APP_RELATIVE_URL . 'main.php');
         }
 
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function defaultAction(): void
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function prepareTemplate(): void
-    {
+        return $this->render($this->tpl_name);
     }
 }
