@@ -35,12 +35,12 @@ class Constants
         $this->options = $resolver->resolve($options);
     }
 
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    public static function initialize()
+    public static function initialize(): void
     {
         $constants = (new static())->getOptions();
 
@@ -51,35 +51,35 @@ class Constants
         }
     }
 
-    private function configureOptions(OptionsResolver $resolver)
+    private function configureOptions(OptionsResolver $resolver): void
     {
         $defaults = [
             'APP_PATH' => dirname(__DIR__, 2),
-            'APP_CONFIG_PATH' => function (Options $options) {
+            'APP_CONFIG_PATH' => static function (Options $options) {
                 return $options['APP_PATH'] . '/config';
             },
-            'APP_INC_PATH' => function (Options $options) {
+            'APP_INC_PATH' => static function (Options $options) {
                 return $options['APP_PATH'] . '/lib/eventum';
             },
-            'APP_SETUP_FILE' => function (Options $options) {
+            'APP_SETUP_FILE' => static function (Options $options) {
                 return $options['APP_CONFIG_PATH'] . '/setup.php';
             },
-            'APP_VAR_PATH' => function (Options $options) {
+            'APP_VAR_PATH' => static function (Options $options) {
                 return $options['APP_PATH'] . '/var';
             },
-            'APP_TPL_PATH' => function (Options $options) {
+            'APP_TPL_PATH' => static function (Options $options) {
                 return $options['APP_PATH'] . '/templates';
             },
-            'APP_TPL_COMPILE_PATH' => function (Options $options) {
+            'APP_TPL_COMPILE_PATH' => static function (Options $options) {
                 return $options['APP_VAR_PATH'] . '/cache';
             },
-            'APP_LOCKS_PATH' => function (Options $options) {
+            'APP_LOCKS_PATH' => static function (Options $options) {
                 return $options['APP_VAR_PATH'] . '/lock';
             },
-            'APP_LOG_PATH' => function (Options $options) {
+            'APP_LOG_PATH' => static function (Options $options) {
                 return $options['APP_VAR_PATH'] . '/log';
             },
-            'APP_ERROR_LOG' => function (Options $options) {
+            'APP_ERROR_LOG' => static function (Options $options) {
                 return $options['APP_LOG_PATH'] . '/errors.log';
             },
         ];

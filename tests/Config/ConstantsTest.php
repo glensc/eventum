@@ -18,7 +18,7 @@ use Eventum\Test\TestCase;
 
 class ConstantsTest extends TestCase
 {
-    public function test1()
+    public function test1(): void
     {
         Constants::initialize();
     }
