@@ -84,7 +84,7 @@ class LdapConnection
         }
 
         $user = new UserEntry($entry, $this->config);
-        if ($user->getUid() !== $uid && !in_array($uid, $user->getEmails())) {
+        if ($user->getUid() !== $uid && !in_array($uid, $user->getEmails(), true)) {
             throw new AuthException("Found wrong user: {$user->getDn()}. Is your user filter correct?");
         }
 
