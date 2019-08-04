@@ -84,7 +84,7 @@ class Misc
      * @param array $preserveKeys
      * @return array
      */
-    public static function filterKeys($input, $preserveKeys = [])
+    public static function filterKeys($input, $preserveKeys = []): array
     {
         return array_intersect_key($input, array_flip($preserveKeys));
     }
