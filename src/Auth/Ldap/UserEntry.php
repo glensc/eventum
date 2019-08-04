@@ -51,67 +51,43 @@ class UserEntry
         $this->contact_id = Misc::trim($contact_id) ?: null;
     }
 
-    /**
-     * @return string
-     */
-    public function getDn()
+    public function getDn(): string
     {
         return $this->dn;
     }
 
-    /**
-     * @param string $dn
-     * @return UserEntry
-     */
-    public function setDn($dn)
+    public function setDn(string $dn): self
     {
         $this->dn = $dn;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getUid()
+    public function getUid(): string
     {
         return $this->uid;
     }
 
-    /**
-     * @param string $uid
-     * @return UserEntry
-     */
-    public function setUid($uid)
+    public function setUid(string $uid): self
     {
         $this->uid = $uid;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFullName()
+    public function getFullName(): string
     {
         return $this->full_name;
     }
 
-    /**
-     * @param string $full_name
-     * @return UserEntry
-     */
-    public function setFullName($full_name)
+    public function setFullName(string $full_name): self
     {
         $this->full_name = $full_name;
 
         return $this;
     }
 
-    /**
-     * @return string[]
-     */
-    public function getEmails()
+    public function getEmails(): array
     {
         return $this->emails;
     }
@@ -120,45 +96,31 @@ class UserEntry
      * @param string[] $emails
      * @return UserEntry
      */
-    public function setEmails($emails)
+    public function setEmails(array $emails): self
     {
         $this->emails = $emails;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCustomerId()
+    public function getCustomerId(): ?int
     {
         return $this->customer_id;
     }
 
-    /**
-     * @param int $customer_id
-     * @return UserEntry
-     */
-    public function setCustomerId($customer_id)
+    public function setCustomerId(?int $customer_id): self
     {
         $this->customer_id = $customer_id;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getContactId()
+    public function getContactId(): ?int
     {
         return $this->contact_id;
     }
 
-    /**
-     * @param int $contact_id
-     * @return UserEntry
-     */
-    public function setContactId($contact_id)
+    public function setContactId(?int $contact_id): self
     {
         $this->contact_id = $contact_id;
 
@@ -167,12 +129,8 @@ class UserEntry
 
     /**
      * Fetches a attribute value from an LDAP entry.
-     *
-     * @param Entry $entry
-     * @param string $attribute
-     * @return string|null
      */
-    private function getAttributeValue(Entry $entry, $attribute)
+    private function getAttributeValue(Entry $entry, string $attribute): ?string
     {
         if (!$entry->hasAttribute($attribute)) {
             return null;
