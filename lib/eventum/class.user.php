@@ -33,6 +33,9 @@ class User
     public const ROLE_ADMINISTRATOR = 7;
     public const ROLE_NEVER_DISPLAY = 9;
 
+    public const USER_STATUS_ACTIVE = 'active';
+    public const USER_STATUS_INACTIVE = 'inactive';
+
     // definition of roles
     private static $roles = [
         self::ROLE_VIEWER => 'Viewer',
@@ -865,9 +868,6 @@ class User
         return $res;
     }
 
-    const USER_STATUS_ACTIVE = 'active';
-    const USER_STATUS_INACTIVE = 'inactive';
-
     /**
      * Method used to change the status of users, making them inactive
      * or active.
@@ -879,7 +879,7 @@ class User
     public static function changeStatus($usr_ids, $status)
     {
         // check if the user being inactivated is the last one
-        if ($status == self::USER_STATUS_INACTIVE) {
+        if ($status === self::USER_STATUS_INACTIVE) {
             $stmt = 'SELECT
                     COUNT(*)
                  FROM
