@@ -74,7 +74,7 @@ class LdapConnection
      * @param string $uid login or email
      * @return UserEntry|null
      */
-    public function findUser($uid)
+    public function findUser($uid): ?UserEntry
     {
         $filter = $this->getUserFilter($uid);
 
@@ -138,7 +138,7 @@ class LdapConnection
      * @throws AuthException
      * @return Entry|null
      */
-    private function searchOne($dn, $filter, array $options = [])
+    private function searchOne($dn, $filter, array $options = []): ?Entry
     {
         $options['maxItems'] = 1;
         $entries = $this->search($dn, $filter, $options);
@@ -159,9 +159,9 @@ class LdapConnection
      * Get list of DN's to try to bind user
      *
      * @param string $uid
-     * @return array
+     * @return string[]
      */
-    private function getUserBindDNs($uid)
+    private function getUserBindDNs($uid): array
     {
         $username = $this->ldap->escape($uid, '', LdapInterface::ESCAPE_DN);
         $userdn = str_replace('%UID%', $username, $this->config['userdn']);
@@ -175,7 +175,7 @@ class LdapConnection
      * @param string $username
      * @return string
      */
-    private function getUserFilter($username)
+    private function getUserFilter($username): string
     {
         if (strpos($username, '@') === false) {
             $uid_key = 'uid';
@@ -199,7 +199,7 @@ class LdapConnection
      *
      * @return array
      */
-    private function getConnectionConfig()
+    private function getConnectionConfig(): array
     {
         return [
             'host' => $this->config['host'],
