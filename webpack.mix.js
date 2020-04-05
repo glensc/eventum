@@ -32,6 +32,9 @@ mix.scripts([
     'htdocs/js/main.js',
     'htdocs/js/page.js',
 ], 'htdocs/js/all.js');
+
+mix.js('res/js/app.js', 'htdocs/js/app.js');
+
 mix.scripts([
     'htdocs/components/jquery/jquery.js',
     'htdocs/components/jquery-blockui/jquery.blockUI.js',

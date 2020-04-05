@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "cross-env": "^5.1",
+    "jquery": "<1.10",
     "laravel-mix": "^5.0.4"
   }
 }
