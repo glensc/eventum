@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SupportEmail
  *
- * @ORM\Table(name="support_email", indexes={@ORM\Index(name="sup_parent_id", columns={"sup_parent_id"}), @ORM\Index(name="sup_ema_id", columns={"sup_ema_id"}), @ORM\Index(name="sup_removed", columns={"sup_removed"}), @ORM\Index(name="sup_removed_2", columns={"sup_removed", "sup_ema_id", "sup_iss_id"}), @ORM\Index(name="sup_removed_3", columns={"sup_removed", "sup_ema_id", "sup_date"}), @ORM\Index(name="sup_usr_id", columns={"sup_usr_id"})})
+ * @ORM\Table(name="support_email", indexes={@ORM\Index(name="sup_parent_id", columns={"sup_parent_id"}), @ORM\Index(name="sup_ema_id", columns={"sup_ema_id"}), @ORM\Index(name="sup_removed", columns={"sup_removed"}), @ORM\Index(name="sup_removed_2", columns={"sup_removed", "sup_ema_id", "sup_iss_id"}), @ORM\Index(name="sup_removed_3", columns={"sup_removed", "sup_ema_id", "sup_date"}), @ORM\Index(name="sup_usr_id", columns={"sup_usr_id"}), @ORM\Index(name="sup_message_id", columns={"sup_message_id"})})
  * @ORM\Entity
  */
 class SupportEmail
@@ -84,7 +84,7 @@ class SupportEmail
     /**
      * @var string
      *
-     * @ORM\Column(name="sup_from", type="string", length=4096, nullable=false)
+     * @ORM\Column(name="sup_from", type="string", length=2048, nullable=false)
      */
     private $supFrom;
 

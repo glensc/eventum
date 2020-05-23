@@ -44,21 +44,21 @@ class UserProjectPreference
     /**
      * @var bool
      *
-     * @ORM\Column(name="upp_receive_assigned_email", type="boolean", nullable=true)
+     * @ORM\Column(name="upp_receive_assigned_email", type="boolean", nullable=false)
      */
     private $uppReceiveAssignedEmail;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="upp_receive_new_issue_email", type="boolean", nullable=true)
+     * @ORM\Column(name="upp_receive_new_issue_email", type="boolean", nullable=false)
      */
     private $uppReceiveNewIssueEmail;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="upp_receive_copy_of_own_action", type="boolean", nullable=true)
+     * @ORM\Column(name="upp_receive_copy_of_own_action", type="boolean", nullable=false)
      */
     private $uppReceiveCopyOfOwnAction;
 

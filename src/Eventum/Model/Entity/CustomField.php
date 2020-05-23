@@ -35,14 +35,14 @@ class CustomField
     /**
      * @var string
      *
-     * @ORM\Column(name="fld_title", type="string", length=32, nullable=false)
+     * @ORM\Column(name="fld_title", type="string", length=255, nullable=false)
      */
     private $fldTitle;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="fld_description", type="string", length=64, nullable=true)
+     * @ORM\Column(name="fld_description", type="string", length=255, nullable=true)
      */
     private $fldDescription;
 

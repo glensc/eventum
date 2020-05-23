@@ -49,14 +49,14 @@ class UserPreference
     /**
      * @var int
      *
-     * @ORM\Column(name="upr_list_refresh_rate", type="integer", nullable=true)
+     * @ORM\Column(name="upr_list_refresh_rate", type="integer", nullable=false)
      */
     private $uprListRefreshRate;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="upr_email_refresh_rate", type="integer", nullable=true)
+     * @ORM\Column(name="upr_email_refresh_rate", type="integer", nullable=false)
      */
     private $uprEmailRefreshRate;
 
@@ -70,44 +70,37 @@ class UserPreference
     /**
      * @var bool
      *
-     * @ORM\Column(name="upr_auto_append_email_sig", type="boolean", nullable=true)
+     * @ORM\Column(name="upr_auto_append_email_sig", type="boolean", nullable=false)
      */
     private $uprAutoAppendEmailSig;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="upr_auto_append_note_sig", type="boolean", nullable=true)
+     * @ORM\Column(name="upr_auto_append_note_sig", type="boolean", nullable=false)
      */
     private $uprAutoAppendNoteSig;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="upr_auto_close_popup_window", type="boolean", nullable=true)
+     * @ORM\Column(name="upr_auto_close_popup_window", type="boolean", nullable=false)
      */
     private $uprAutoClosePopupWindow;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="upr_relative_date", type="boolean", nullable=true)
+     * @ORM\Column(name="upr_relative_date", type="boolean", nullable=false)
      */
     private $uprRelativeDate;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="upr_collapsed_emails", type="boolean", nullable=true)
+     * @ORM\Column(name="upr_collapsed_emails", type="boolean", nullable=false)
      */
     private $uprCollapsedEmails;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="upr_markdown", type="boolean", nullable=true)
-     */
-    private $uprMarkdown;
 
     /**
      * @var bool
@@ -354,29 +347,6 @@ class UserPreference
     public function getUprCollapsedEmails()
     {
         return $this->uprCollapsedEmails;
-    }
-
-    /**
-     * Set uprMarkdown
-     *
-     * @param bool $uprMarkdown
-     * @return UserPreference
-     */
-    public function setUprMarkdown($uprMarkdown)
-    {
-        $this->uprMarkdown = $uprMarkdown;
-
-        return $this;
-    }
-
-    /**
-     * Get uprMarkdown
-     *
-     * @return bool
-     */
-    public function getUprMarkdown()
-    {
-        return $this->uprMarkdown;
     }
 
     /**
