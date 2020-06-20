@@ -1,0 +1,12 @@
+monolog:
+  handlers:
+    deprecation:
+      type: stream
+      path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
+    deprecation_filter:
+      type: filter
+      handler: deprecation
+      max_level: info
+      channels: ["php"]
+
+# vim:ts=2:sw=2:et
