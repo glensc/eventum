@@ -106,7 +106,8 @@
         "sentry/sentry": "^1.7",
         "symfony/browser-kit": "^4.2",
         "symfony/phpunit-bridge": "^5.0",
-        "symfony/thanks": "^1.0"
+        "symfony/thanks": "^1.0",
+        "symplify/easy-coding-standard": "^8.1"
     },
     "suggest": {
         "ext-imap": "Support for fetching mail over IMAP/POP3"
