@@ -41,6 +41,7 @@ class EventumLegacyAdapter implements AdapterInterface
                  WHERE
                     iap_iaf_id = iaf_id AND
                     iaf_id=?';
+
         return DB_Helper::getInstance()->getRow($sql, [$path]);
     }
 

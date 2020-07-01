@@ -106,6 +106,7 @@ class TimeTrackingController extends BaseController
         $ttc_id = $post->getInt('category');
         $time_spent = $post->getInt('time_spent');
         $summary = $post->get('summary');
+
         return Time_Tracking::addTimeEntry($this->issue_id, $ttc_id, $time_spent, $date, $summary);
     }
 

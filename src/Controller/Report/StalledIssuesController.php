@@ -82,6 +82,7 @@ class StalledIssuesController extends ReportBaseController
                 $assign_options["grp:$grp_id"] = 'Group: ' . $grp_name;
             }
         }
+
         return $assign_options + Project::getUserAssocList($this->prj_id, 'active', User::ROLE_USER);
     }
 

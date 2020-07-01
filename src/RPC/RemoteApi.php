@@ -522,6 +522,7 @@ class RemoteApi
         if (!$crm) {
             throw new RemoteApiException("Customer Integration not enabled for project $prj_id");
         }
+
         return $crm->lookup($field, $value, []);
     }
 
@@ -680,6 +681,7 @@ class RemoteApi
     public function getNoteListing($issue_id)
     {
         AuthCookie::setProjectCookie(Issue::getProjectID($issue_id));
+
         return Note::getListing($issue_id);
     }
 

@@ -167,6 +167,7 @@ class Converter
         $result = $this->convertCustomField($icf->customField);
 
         $value = $icf->getValue();
+
         return $result + [
             '_icf' => $icf,
             'value' => $value,
