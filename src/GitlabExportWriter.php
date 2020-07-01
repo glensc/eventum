@@ -18,7 +18,7 @@ class GitlabExportWriter
     /**
      * https://gitlab.com/help/user/project/settings/import_export.md#version-history
      */
-    const EXPORT_VERSION = '0.2.2';
+    public const EXPORT_VERSION = '0.2.2';
 
     /** @var string */
     private $export_version;
@@ -28,12 +28,12 @@ class GitlabExportWriter
         $this->export_version = $export_version;
     }
 
-    public function export($path)
+    public function export($path): void
     {
         $this->writeVersion($path);
     }
 
-    private function writeVersion($path)
+    private function writeVersion($path): void
     {
         file_put_contents($path . '/VERSION', $this->export_version);
     }

@@ -17,7 +17,7 @@ final class Translation
 {
     private const CHARSET = 'UTF-8';
 
-    public static function init(string $domain, string $path = null): void
+    public static function init(string $domain, ?string $path = null): void
     {
         bindtextdomain($domain, $path);
         bind_textdomain_codeset($domain, self::CHARSET);

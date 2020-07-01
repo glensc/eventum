@@ -60,7 +60,7 @@ class ProcessMailMessage
     /** @var int */
     private $prj_id;
 
-    public function __construct(ImapConnection $connection, LoggerInterface $logger = null)
+    public function __construct(ImapConnection $connection, ?LoggerInterface $logger = null)
     {
         $info = $connection->getOptions();
         $this->logger = $logger ?: new NullLogger();

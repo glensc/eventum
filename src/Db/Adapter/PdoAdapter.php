@@ -23,11 +23,11 @@ use UnexpectedValueException;
 
 class PdoAdapter implements AdapterInterface
 {
-    const DEFAULT_DRIVER = 'mysql';
+    public const DEFAULT_DRIVER = 'mysql';
 
-    const PDO_EXT_MISSING_ERROR = 'The PDO extension is required for this adapter but the extension is not loaded';
+    public const PDO_EXT_MISSING_ERROR = 'The PDO extension is required for this adapter but the extension is not loaded';
 
-    const PDO_DRIVER_MISSING_ERROR = 'The %s driver is not currently installed';
+    public const PDO_DRIVER_MISSING_ERROR = 'The %s driver is not currently installed';
 
     /** @var PDO */
     private $db;

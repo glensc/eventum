@@ -21,7 +21,7 @@ class RequirementNotSatisfiedException extends RuntimeException
     /** @var string[] */
     private $errors;
 
-    public function __construct(array $errors, Throwable $previous = null)
+    public function __construct(array $errors, ?Throwable $previous = null)
     {
         parent::__construct('Requirements not satisfied', 0, $previous);
         $this->errors = $errors;

@@ -152,7 +152,7 @@ class ScmRepository
      * @param CommitFile $cf
      * @return string The parsed URL
      */
-    private function getUrl(string $key, Commit $commit, CommitFile $cf = null): string
+    private function getUrl(string $key, Commit $commit, ?CommitFile $cf = null): string
     {
         // $url will be null if key doesn't exist, so no need to check it
         $url = $this->config[$key];

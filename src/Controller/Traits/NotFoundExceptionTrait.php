@@ -27,7 +27,7 @@ trait NotFoundExceptionTrait
      *
      *     throw $this->createNotFoundException('Page not found!');
      */
-    final protected function createNotFoundException(string $message = 'Not Found', \Exception $previous = null): NotFoundHttpException
+    final protected function createNotFoundException(string $message = 'Not Found', ?\Exception $previous = null): NotFoundHttpException
     {
         return new NotFoundHttpException($message, $previous);
     }

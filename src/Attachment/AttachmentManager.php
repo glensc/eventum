@@ -41,7 +41,7 @@ class AttachmentManager
      *
      * @see cleanupAbandonedFiles()
      */
-    const ATTACHMENT_EXPIRE_TIME = 86400;
+    public const ATTACHMENT_EXPIRE_TIME = 86400;
 
     /**
      * Adds multiple files to attachment_file table

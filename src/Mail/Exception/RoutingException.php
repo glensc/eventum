@@ -18,19 +18,19 @@ use Exception;
 class RoutingException extends Exception
 {
     /** data format error */
-    const EX_DATAERR = 65;
+    public const EX_DATAERR = 65;
 
     /** cannot open input */
-    const EX_NOINPUT = 66;
+    public const EX_NOINPUT = 66;
 
     /** addressee unknown */
-    const EX_NOUSER = 67;
+    public const EX_NOUSER = 67;
 
     /** permission denied */
-    const EX_NOPERM = 77;
+    public const EX_NOPERM = 77;
 
     /** configuration error */
-    const EX_CONFIG = 78;
+    public const EX_CONFIG = 78;
 
     public static function noMessageBodyError()
     {

@@ -999,7 +999,7 @@ class RemoteApi
      * @access protected
      * @since 3.4.2
      */
-    public function markEventSent($prj_id, $ino_id)
+    public function markEventSent($prj_id, $ino_id): void
     {
         // restrict access to admin user
         $usr_id = Auth::getUserID();
@@ -1221,7 +1221,7 @@ class RemoteApi
      * @throws RemoteApiException on errors
      * @since 3.2.2 moved to RemoteApi class
      */
-    private static function updateIssueStatus($issue_id, $usr_id, $new_status)
+    private static function updateIssueStatus($issue_id, $usr_id, $new_status): void
     {
         if (!Access::canChangeStatus($issue_id, $usr_id)) {
             throw new RemoteApiException("User has no access to update issue #$issue_id");
@@ -1407,7 +1407,7 @@ class RemoteApi
      * @param   int $issue_id The issue ID
      * @since 3.2.2
      */
-    private function checkIssueAssignment($issue_id)
+    private function checkIssueAssignment($issue_id): void
     {
         // check if the current user is allowed to change the given issue
         $may_change_issue = $this->mayChangeIssue($issue_id);

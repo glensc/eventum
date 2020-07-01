@@ -24,39 +24,39 @@ class NullAdapter implements AdapterInterface
     {
     }
 
-    public function getAll($query, $params = [], $fetchMode = AdapterInterface::DB_FETCHMODE_ASSOC)
+    public function getAll($query, $params = [], $fetchMode = AdapterInterface::DB_FETCHMODE_ASSOC): void
     {
     }
 
-    public function fetchAssoc($query, $params = [], $fetchMode = AdapterInterface::DB_FETCHMODE_DEFAULT)
+    public function fetchAssoc($query, $params = [], $fetchMode = AdapterInterface::DB_FETCHMODE_DEFAULT): void
     {
     }
 
-    public function getColumn($query, $params = [])
+    public function getColumn($query, $params = []): void
     {
     }
 
-    public function getOne($query, $params = [])
+    public function getOne($query, $params = []): void
     {
     }
 
-    public function getPair($query, $params = [])
+    public function getPair($query, $params = []): void
     {
     }
 
-    public function getRow($query, $params = [], $fetchMode = AdapterInterface::DB_FETCHMODE_ASSOC)
+    public function getRow($query, $params = [], $fetchMode = AdapterInterface::DB_FETCHMODE_ASSOC): void
     {
     }
 
-    public function escapeSimple($str)
+    public function escapeSimple($str): void
     {
     }
 
-    public function query($query, $params = [])
+    public function query($query, $params = []): void
     {
     }
 
-    public function quoteIdentifier($str)
+    public function quoteIdentifier($str): void
     {
     }
 }

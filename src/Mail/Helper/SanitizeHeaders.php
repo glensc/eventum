@@ -26,7 +26,7 @@ class SanitizeHeaders
     /**
      * Namespace for Header classes
      */
-    const HEADER_NS = '\\Zend\\Mail\\Header\\';
+    public const HEADER_NS = '\\Zend\\Mail\\Header\\';
 
     /**
      * Sanitize Mail headers:

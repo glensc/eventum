@@ -25,7 +25,7 @@ final class WorkflowEvents
      * @since 3.2.1
      * @deprecated since 3.5.0 use new constant
      */
-    const CONFIG_CRYPTO_UPGRADE = SystemEvents::CONFIG_CRYPTO_UPGRADE;
+    public const CONFIG_CRYPTO_UPGRADE = SystemEvents::CONFIG_CRYPTO_UPGRADE;
 
     /**
      * Downgrade config: remove all EncryptedValue elements.
@@ -33,5 +33,5 @@ final class WorkflowEvents
      * @since 3.2.1
      * @deprecated since 3.5.0 use new constant
      */
-    const CONFIG_CRYPTO_DOWNGRADE = SystemEvents::CONFIG_CRYPTO_DOWNGRADE;
+    public const CONFIG_CRYPTO_DOWNGRADE = SystemEvents::CONFIG_CRYPTO_DOWNGRADE;
 }

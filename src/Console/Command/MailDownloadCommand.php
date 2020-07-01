@@ -49,7 +49,7 @@ class MailDownloadCommand extends SymfonyCommand
      */
     private $limit = 0;
 
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(?LoggerInterface $logger = null)
     {
         $logger = $logger ?: $this->getLogger();
         $this->logger = $logger;

@@ -18,11 +18,11 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class MessagesHelper
 {
-    const MSG_INFO = 'info';
-    const MSG_WARNING = 'warning';
-    const MSG_ERROR = 'error';
-    const MSG_HTML_BOX = 'html_box';
-    const MSG_NOTE_BOX = 'note_box';
+    public const MSG_INFO = 'info';
+    public const MSG_WARNING = 'warning';
+    public const MSG_ERROR = 'error';
+    public const MSG_HTML_BOX = 'html_box';
+    public const MSG_NOTE_BOX = 'note_box';
 
     /** @var FlashBagInterface */
     private $flashBag;

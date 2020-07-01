@@ -25,17 +25,17 @@ interface AdapterInterface
     /**
      * Indicates the current default fetch mode should be used
      */
-    const DB_FETCHMODE_DEFAULT = 0;
+    public const DB_FETCHMODE_DEFAULT = 0;
 
     /**
      * Column data indexed by numbers, ordered from 0 and up
      */
-    const DB_FETCHMODE_ORDERED = 1;
+    public const DB_FETCHMODE_ORDERED = 1;
 
     /**
      * Column data indexed by column names
      */
-    const DB_FETCHMODE_ASSOC = 2;
+    public const DB_FETCHMODE_ASSOC = 2;
 
     /**
      * Escapes a string according to the current DBMS's standards

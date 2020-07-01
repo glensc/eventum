@@ -106,7 +106,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     /**
      * @see \Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface::start
      */
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         $data = [
             // you might translate this message

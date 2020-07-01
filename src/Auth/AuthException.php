@@ -31,7 +31,7 @@ class AuthException extends AuthenticationException
     // use message that's most suitable
     public const UNKNOWN_ERROR = 3;
 
-    public function __construct($message = 'Unknown error', $code = 0, Throwable $previous = null)
+    public function __construct($message = 'Unknown error', $code = 0, ?Throwable $previous = null)
     {
         parent::__construct($message, $code ?: self::UNKNOWN_ERROR, $previous);
     }
