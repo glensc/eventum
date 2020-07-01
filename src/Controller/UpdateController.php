@@ -277,10 +277,10 @@ class UpdateController extends BaseController
         }
 
         if ($priorities
-            && ((!isset($issue_fields_display['priority']))
+            && (!isset($issue_fields_display['priority'])
                 || ($issue_fields_display['priority'] != false))
         ) {
-            if ((isset($issue_fields_display['priority']['min_role']))
+            if (isset($issue_fields_display['priority']['min_role'])
                 && ($issue_fields_display['priority']['min_role'] > User::ROLE_CUSTOMER)
             ) {
                 $bgcolor = $internalColor;
@@ -310,7 +310,7 @@ class UpdateController extends BaseController
             ];
         }
 
-        if ((!isset($issue_fields_display['percent_complete']))
+        if (!isset($issue_fields_display['percent_complete'])
             || ($issue_fields_display['percent_complete'] != false)
         ) {
             $columns[0][] = [
@@ -361,7 +361,7 @@ class UpdateController extends BaseController
             'field' => 'associated_issues',
         ];
 
-        if ((!isset($issue_fields_display['expected_resolution']))
+        if (!isset($issue_fields_display['expected_resolution'])
             || ($issue_fields_display['expected_resolution'] != false)
         ) {
             $columns[1][] = [
@@ -370,7 +370,7 @@ class UpdateController extends BaseController
             ];
         }
 
-        if ((!isset($issue_fields_display['estimated_dev_time']))
+        if (!isset($issue_fields_display['estimated_dev_time'])
             || ($issue_fields_display['estimated_dev_time'] != false)
         ) {
             $columns[1][] = [

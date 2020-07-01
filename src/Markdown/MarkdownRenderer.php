@@ -36,8 +36,6 @@ final class MarkdownRenderer implements MarkdownRendererInterface
         }
 
         $html = $this->converter->convertToHtml($text);
-        $html = $this->purifier->purify($html);
-
-        return $html;
+        return $this->purifier->purify($html);
     }
 }

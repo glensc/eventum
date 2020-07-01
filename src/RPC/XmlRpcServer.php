@@ -240,7 +240,7 @@ class XmlRpcServer
      */
     private function getFunctionDecorator($method, $public, $pdesc)
     {
-        $function = function ($message) use ($method, $public, $pdesc) {
+        return function ($message) use ($method, $public, $pdesc) {
             /** @var PhpXmlRpc\Request $message */
             $params = [];
             $n = $message->getNumParams();
@@ -254,8 +254,6 @@ class XmlRpcServer
 
             return $this->handle($method, $params, $public);
         };
-
-        return $function;
     }
 
     /**

@@ -44,7 +44,7 @@ class IssueRepository extends EntityRepository
             $a = $ca->getCommitDate()->getTimestamp();
             $b = $cb->getCommitDate()->getTimestamp();
 
-            return ($a < $b) ? -1 : (($a > $b) ? 1 : 0);
+            return $a < $b ? -1 : ($a > $b ? 1 : 0);
         };
 
         uasort($res, $sorter);

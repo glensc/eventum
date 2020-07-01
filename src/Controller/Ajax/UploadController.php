@@ -52,7 +52,7 @@ class UploadController extends AjaxBaseController
         } catch (Throwable $e) {
             $code = $e->getCode();
             $res = [
-                'error' => $code ? $code : -1,
+                'error' => $code ?: -1,
                 'message' => $e->getMessage(),
             ];
             $this->logger->error($e);

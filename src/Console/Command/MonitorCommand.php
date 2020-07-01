@@ -215,7 +215,7 @@ class MonitorCommand extends SymfonyCommand
     {
         $total_space = disk_total_space($partition);
         $free_space = disk_free_space($partition);
-        $free_percentage = ($free_space * 100) / $total_space;
+        $free_percentage = $free_space * 100 / $total_space;
         if ($free_percentage < $low_limit) {
             $this->error(
                 ev_gettext('ERROR: Almost no free disk space left (percentage left: %.2f%%)', $free_percentage)

@@ -51,21 +51,21 @@ abstract class AbstractMigration extends PhinxAbstractMigration
     /**
      * MySQL Engine
      *
-     * @var $engine
+     * @var
      */
     protected $engine;
 
     /**
      * MySQL Charset
      *
-     * @var $string
+     * @var
      */
     protected $charset;
 
     /**
      * MySQL Collation
      *
-     * @var $string
+     * @var
      */
     protected $collation;
 

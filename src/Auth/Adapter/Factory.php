@@ -32,9 +32,7 @@ abstract class Factory
         $reflection = new ReflectionClass($className);
 
         /** @var AdapterInterface $adapter */
-        $adapter = $reflection->newInstanceArgs($arguments);
-
-        return $adapter;
+        return $reflection->newInstanceArgs($arguments);
     }
 
     /**

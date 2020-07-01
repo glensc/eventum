@@ -88,8 +88,6 @@ class IssueExport
             throw new RuntimeException("Can't open {$this->fileName} for writing");
         }
 
-        $writer = new CsvWriter($delimiter = ',', $enclosure = '"', $stream, $utf8Encoding = false, $prependHeaderRow = true);
-
-        return $writer;
+        return new CsvWriter($delimiter = ',', $enclosure = '"', $stream, $utf8Encoding = false, $prependHeaderRow = true);
     }
 }

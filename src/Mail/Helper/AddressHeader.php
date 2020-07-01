@@ -79,7 +79,7 @@ class AddressHeader
         $res = [];
         foreach ($this->header->getAddressList() as $address) {
             $name = $address->getName();
-            $res[] = $name ? $name : $address->getEmail();
+            $res[] = $name ?: $address->getEmail();
         }
 
         return $res;

@@ -124,14 +124,12 @@ class MailTransport
             $options['connection_config']['password' ] = $setup['password'];
         }
 
-        $spec = [
+        return [
             /**
              * @see \Zend\Mail\Transport\Factory::$classMap
              */
             'type' => $setup['type'] ?: 'smtp',
             'options' => $options,
         ];
-
-        return $spec;
     }
 }

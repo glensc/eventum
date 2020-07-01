@@ -103,7 +103,7 @@ class ListController extends BaseController
         if ($rows === 'ALL') {
             $this->rows = $rows ?: $this->default_pager_size;
         } else {
-            $this->rows = ((int)$rows) ?: $this->default_pager_size;
+            $this->rows = (int)$rows ?: $this->default_pager_size;
         }
 
         $this->options_override = [];

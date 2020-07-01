@@ -53,11 +53,11 @@ class ImapResource
      */
     public function isSeen(): bool
     {
-        return (
+        return 
             $this->overview->seen
             || $this->overview->deleted
             || $this->overview->answered
-        );
+        ;
     }
 
     /**

@@ -167,15 +167,13 @@ class Converter
         $result = $this->convertCustomField($icf->customField);
 
         $value = $icf->getValue();
-        $result += [
+        return $result + [
             '_icf' => $icf,
             'value' => $value,
             'icf_value' => $icf->getStringValue(),
             'icf_value_date' => $icf->getDate(),
             'icf_value_integer' => $icf->getIntegerValue(),
         ];
-
-        return $result;
     }
 
     private function convertCustomField(CustomField $field): array

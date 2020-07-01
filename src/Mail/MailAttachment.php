@@ -160,8 +160,6 @@ class MailAttachment
 
         // handle inline images
         $type = current(explode('/', $ctype));
-        $is_attachment |= $type === 'image';
-
-        return $is_attachment;
+        return $is_attachment | $type === 'image';
     }
 }

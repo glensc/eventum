@@ -489,13 +489,11 @@ class RemoteApi
         }
         AttachmentManager::attachFiles($issue_id, $usr_id, $iaf_ids, $min_role, $file_description);
 
-        $res = [
+        return [
             'usr_id' => $usr_id,
             'iaf_id' => $iaf_id,
             'filesize' => $filesize,
         ];
-
-        return $res;
     }
 
     /**
@@ -524,9 +522,7 @@ class RemoteApi
         if (!$crm) {
             throw new RemoteApiException("Customer Integration not enabled for project $prj_id");
         }
-        $res = $crm->lookup($field, $value, []);
-
-        return $res;
+        return $crm->lookup($field, $value, []);
     }
 
     /**
@@ -588,9 +584,7 @@ class RemoteApi
      */
     public function getClosedAbbreviationAssocList($prj_id)
     {
-        $res = Status::getClosedAbbreviationAssocList($prj_id);
-
-        return $res;
+        return Status::getClosedAbbreviationAssocList($prj_id);
     }
 
     /**
@@ -601,9 +595,7 @@ class RemoteApi
      */
     public function getAbbreviationAssocList($prj_id, $show_closed)
     {
-        $res = Status::getAbbreviationAssocList($prj_id, $show_closed);
-
-        return $res;
+        return Status::getAbbreviationAssocList($prj_id, $show_closed);
     }
 
     /**
@@ -688,9 +680,7 @@ class RemoteApi
     public function getNoteListing($issue_id)
     {
         AuthCookie::setProjectCookie(Issue::getProjectID($issue_id));
-        $notes = Note::getListing($issue_id);
-
-        return $notes;
+        return Note::getListing($issue_id);
     }
 
     /**
@@ -813,12 +803,12 @@ class RemoteApi
         $prj_id = Auth::getCurrentProject();
 
         // figure out the correct week
-        if ((empty($start)) || (empty($end))) {
+        if (empty($start) || (empty($end))) {
             $start = date('U') - (Date_Helper::DAY * (date('w') - 1));
             if ($week > 0) {
-                $start = ($start - (Date_Helper::WEEK * $week));
+                $start = $start - (Date_Helper::WEEK * $week);
             }
-            $end = date('Y-m-d', ($start + (Date_Helper::DAY * 6)));
+            $end = date('Y-m-d', $start + (Date_Helper::DAY * 6));
             $start = date('Y-m-d', $start);
         }
 

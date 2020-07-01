@@ -103,7 +103,7 @@ class PostController extends BaseController
     /**
      * only list those projects that are allowing anonymous reporting of new issues
      *
-     * @param array
+     * @param array $prj_id
      */
     private function getAnonymousProjects(?int $prj_id = null): array
     {

@@ -41,9 +41,7 @@ class EventumLegacyAdapter implements AdapterInterface
                  WHERE
                     iap_iaf_id = iaf_id AND
                     iaf_id=?';
-        $res = DB_Helper::getInstance()->getRow($sql, [$path]);
-
-        return $res;
+        return DB_Helper::getInstance()->getRow($sql, [$path]);
     }
 
     /**
@@ -105,7 +103,7 @@ class EventumLegacyAdapter implements AdapterInterface
     {
         $attachment = $this->getAttachment($path);
 
-        $data = [
+        return [
             'type' => 'file',
             'path' => $path,
             'size' => $attachment['iaf_filesize'],
@@ -113,8 +111,6 @@ class EventumLegacyAdapter implements AdapterInterface
             'timestamp' => $attachment['iaf_created_date'], // TODO: Change to timestamp?
             'visibility' => self::VISIBILITY_PRIVATE, // Not actually used
         ];
-
-        return $data;
     }
 
     /**

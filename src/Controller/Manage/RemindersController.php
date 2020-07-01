@@ -177,9 +177,7 @@ class RemindersController extends ManageBaseController
         // TODO: use array_search instead of array_flip x2
         $reveresed = array_flip($priorities);
         unset($reveresed['Not Prioritized']);
-        $priorities = array_flip($reveresed);
-
-        return $priorities;
+        return array_flip($reveresed);
     }
 
     /**

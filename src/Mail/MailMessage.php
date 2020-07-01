@@ -435,9 +435,7 @@ class MailMessage extends Message
         // NOTE: Subject header is always present,
         // so it's safe to call this without checking for header presence
         /** @var Subject $subject */
-        $subject = $this->getHeader('Subject');
-
-        return $subject;
+        return $this->getHeader('Subject');
     }
 
     /**
@@ -533,7 +531,7 @@ class MailMessage extends Message
 
         $headers = $this->headers;
         foreach ($headerlist as $name => $value) {
-            /** @var $header GenericHeader */
+            /** @var GenericHeader $header */
             if ($headers->has($name)) {
                 $header = $headers->get($name);
                 if ($header instanceof MessageId) {
@@ -734,7 +732,7 @@ class MailMessage extends Message
     public function getHeadersArray($format = HeaderInterface::FORMAT_ENCODED)
     {
         $headers = [];
-        /* @var $header HeaderInterface */
+        /** @var HeaderInterface $header */
         foreach ($this->getHeaders() as $header) {
             if ($header instanceof MultipleHeadersInterface) {
                 $name = $header->getFieldName();

@@ -100,7 +100,7 @@ class WeeklyController extends ReportBaseController
                     return 0;
                 }
 
-                return ($a['it_spent'] < $b['it_spent']) ? 1 : -1;
+                return $a['it_spent'] < $b['it_spent'] ? 1 : -1;
             };
             usort($data['issues']['closed'], $sort_function);
             usort($data['issues']['other'], $sort_function);
