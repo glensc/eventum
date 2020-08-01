@@ -14,6 +14,7 @@
 namespace Eventum\ServiceProvider;
 
 use DB_Helper;
+use Eventum\Config\ConfigLoader;
 use Eventum\EventDispatcher\EventManager;
 use Eventum\Extension\ExtensionManager;
 use Eventum\Mail\MessageIdGenerator;
@@ -33,7 +34,10 @@ class ServiceProvider implements ServiceProviderInterface
         };
 
         $app['config'] = static function () {
-            return Setup::get();
+            $path = Setup::getSetupFile();
+            $loader = new ConfigLoader($path);
+
+            return $loader->load();
         };
 
         $app['db'] = static function () {

@@ -38,7 +38,7 @@ class Setup
     {
         static $config;
         if (!$config) {
-            $config = self::initialize();
+            $config = ServiceContainer::getConfig();
         }
 
         return $config;
@@ -297,19 +297,6 @@ class Setup
     }
 
     /**
-     * Initialize config object, load it from setup files, merge defaults.
-     */
-    private static function initialize(): Config
-    {
-        $loader = new ConfigPersistence();
-
-        $config = new Config(self::getDefaults(), true);
-        $config->merge(new Config($loader->load(self::getSetupFile())));
-
-        return $config;
-    }
-
-    /**
      * Save config to filesystem
      *
      * @param string $path
@@ -323,81 +310,5 @@ class Setup
         } catch (IOException $e) {
             throw new RuntimeException($e->getMessage(), -2);
         }
-    }
-
-    /**
-     * Method used to get the system-wide defaults.
-     *
-     * @return array of the default preferences
-     */
-    private static function getDefaults(): array
-    {
-        $appPath = dirname(__DIR__, 2);
-
-        // at minimum should define top level array elements
-        // so that fluent access works without errors and notices
-        $defaults = [
-            'relative_url' => '/',
-            'monitor' => [
-                'diskcheck' => [
-                    'status' => 'enabled',
-                    'partition' => $appPath,
-                ],
-                'paths' => [
-                    'status' => 'enabled',
-                ],
-                'ircbot' => [
-                    'status' => 'enabled',
-                ],
-            ],
-
-            'scm' => [],
-            'smtp' => [],
-            'ldap' => [],
-
-            'email_error' => [
-                'subject' => '%extra.short_name%: %message%',
-            ],
-
-            'email_routing' => [
-                'warning' => [],
-            ],
-            'note_routing' => [],
-            'draft_routing' => [],
-
-            'subject_based_routing' => [],
-
-            'email_reminder' => [],
-
-            'extensions' => [],
-
-            'xhgui' => [
-                // https://github.com/eventum/eventum/pull/519
-                'status' => 'disabled',
-            ],
-
-            'sentry' => [
-                'status' => 'disabled',
-                // dsn consists of: 'https://<key>@<domain>/<project>'
-                'key' => '',
-                'project' => '',
-                'domain' => '',
-            ],
-
-            'handle_clock_in' => 'enabled',
-
-            // default expiry: 5 minutes
-            'issue_lock' => 300,
-
-            'relative_date' => 'enabled',
-            'audit_trail' => 'disabled',
-
-            'attachments' => [
-                'default_adapter' => 'pdo',
-                'adapters' => [],
-            ],
-        ];
-
-        return $defaults;
     }
 }
