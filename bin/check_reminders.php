@@ -13,10 +13,9 @@
 
 require_once __DIR__ . '/../init.php';
 
-use Eventum\Console\Application;
 use Eventum\Console\Command\ReminderCheckCommand as Command;
+use Eventum\ServiceContainer;
 
-$app = new Application();
-$app->command(Command::USAGE, Command::class);
-$app->setDefaultCommand(Command::DEFAULT_COMMAND, true);
+$app = ServiceContainer::getApplication();
+$app->setDefaultCommand('eventum:' . Command::DEFAULT_COMMAND, true);
 $app->run();

@@ -20,12 +20,11 @@
  * WARNING: Migrating data is a risky business. Make sure you have EVERYTHING backed up before you begin this process.
  */
 
-use Eventum\Console\Application;
 use Eventum\Console\Command\AttachmentMigrateCommand as Command;
+use Eventum\ServiceContainer;
 
 require_once __DIR__ . '/../init.php';
 
-$app = new Application();
-$app->command(Command::USAGE, Command::class);
-$app->setDefaultCommand(Command::DEFAULT_COMMAND, true);
+$app = ServiceContainer::getApplication();
+$app->setDefaultCommand('eventum:' . Command::DEFAULT_COMMAND, true);
 $app->run();
