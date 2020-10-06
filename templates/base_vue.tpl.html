@@ -8,29 +8,23 @@
 <!DOCTYPE html>
 <html>
 <head data-rel-url="{$core.rel_url}">
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=8" />
-  <link rel="shortcut icon" href="{$core.rel_url}favicon.ico" type="image/x-icon" />
+  <meta charset=utf-8>
+  <meta http-equiv=X-UA-Compatible content="IE=edge">
+  <meta name=viewport content="width=device-width,initial-scale=1">
+  <!--[if IE]><link rel="shortcut icon" href="{$core.rel_url}favicon.ico" type="image/x-icon" /><![endif]-->
   <link rel="search" type="application/opensearchdescription+xml" href="{$core.rel_url}opensearch.php" title="{t}Eventum Issues search{/t}" />
   <title>{if $title != '' or isset($extra_title)}{$extra_title|default:$title} - {/if}{$core.app_setup.tool_caption|default:$core.app_title}</title>
-
-  <!-- development version, includes helpful console warnings -->
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
-<body>
 
-<div id="eventum">
-  {{ message }}
-</div>
+  <body>
+  <noscript>
+    <strong>
+      We're sorry but vue doesn't work properly without JavaScript enabled. Please enable it to continue.
+    </strong>
+  </noscript>
 
-<script type="text/javascript">
-  const app = new Vue({
-    el: '#eventum',
-    data: {
-      message: 'Hello Vue!'
-    }
-  })
-</script>
-
+  <div id="eventum"></div>
+  <script type="text/javascript" src="{asset path='js/vue.js'}"></script>
 </body>
+
 </html>
