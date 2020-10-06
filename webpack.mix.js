@@ -35,6 +35,9 @@ mix.js([
     'res/assets/scripts/app.js',
 ], 'htdocs/js/app.js');
 
+
+mix.js('res/assets/scripts/vue.js', 'htdocs/js/vue.js');
+
 mix.sass('res/assets/sass/jquery-ui.scss', 'htdocs/css/jquery-ui.css');
 mix.scripts([
     // core.js
