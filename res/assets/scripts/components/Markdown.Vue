@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { Vue } from 'vue-property-decorator';
+import Vue from 'vue';
 import Editor from 'v-markdown-editor'
 
 Vue.use(Editor);
