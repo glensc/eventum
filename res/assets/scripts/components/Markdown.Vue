@@ -7,6 +7,7 @@
 <script>
 import Vue from 'vue';
 import Editor from 'v-markdown-editor'
+import 'v-markdown-editor/dist/v-markdown-editor.css';
 
 Vue.use(Editor);
 
