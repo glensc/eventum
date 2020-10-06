@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <markdown-editor :options="options"></markdown-editor>
+        <markdown-editor height="auto" :options="options"></markdown-editor>
     </div>
 </template>
 
