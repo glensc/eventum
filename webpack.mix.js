@@ -37,6 +37,7 @@ mix.js([
 
 
 mix.js('res/assets/scripts/vue.js', 'htdocs/js/vue.js');
+mix.styles('node_modules/v-markdown-editor/dist/v-markdown-editor.css', 'htdocs/css/markdown.css');
 
 mix.sass('res/assets/sass/jquery-ui.scss', 'htdocs/css/jquery-ui.css');
 mix.scripts([

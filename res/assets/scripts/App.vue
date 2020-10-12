@@ -1,5 +1,7 @@
 <template>
-    <div id="eventum"></div>
+    <div id="eventum">
+        <markdown></markdown>
+    </div>
 </template>
 
 <script lang="ts">

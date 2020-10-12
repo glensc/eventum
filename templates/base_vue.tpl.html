@@ -14,6 +14,8 @@
   <!--[if IE]><link rel="shortcut icon" href="{$core.rel_url}favicon.ico" type="image/x-icon" /><![endif]-->
   <link rel="search" type="application/opensearchdescription+xml" href="{$core.rel_url}opensearch.php" title="{t}Eventum Issues search{/t}" />
   <title>{if $title != '' or isset($extra_title)}{$extra_title|default:$title} - {/if}{$core.app_setup.tool_caption|default:$core.app_title}</title>
+  <link rel="stylesheet" type="text/css" media="screen" href="{asset path='css/markdown.css'}">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" rel="stylesheet">
 </head>
 
   <body>
