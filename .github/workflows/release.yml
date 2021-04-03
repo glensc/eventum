@@ -2,7 +2,7 @@ name: "Build release"
 on:
   workflow_run:
     workflows:
-      - "Tests"
+      - "ci"
     branches:
       - "*"
     types:
