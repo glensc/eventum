@@ -12,13 +12,13 @@ jobs:
   release:
     name: Build release
     runs-on: ubuntu-20.04
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout eventum/eventum code
         uses: actions/checkout@v2
 
       - name: Build release tarball
         run: |
+          echo  ${{ github.event.workflow_run.conclusion }}
           docker build . -f bin/releng/Dockerfile -t releng --target=releng
           docker run -v $(pwd):/app releng bin/releng/dist.sh
 
