@@ -74,7 +74,8 @@ class MailBuilderTest extends TestCase
 
         $this->assertStringStartsWith('text/plain', $mail->getHeaders()->get('Content-Type')->getFieldValue());
         $this->assertEquals(0, $mail->countParts());
-        $this->assertEquals($body, $mail->getMessageBody());
+        $expected = "Hello, bödi tekst\r\n\r\nBye";
+        $this->assertEquals($expected, $mail->getMessageBody());
     }
 
     public function testMimeMessageAttachment(): void
