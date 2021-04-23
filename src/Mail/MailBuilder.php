@@ -14,43 +14,36 @@
 namespace Eventum\Mail;
 
 use Eventum\Attachment\Attachment;
-use Eventum\Mail\Helper\MimePart;
-use Laminas\Mail;
 use Laminas\Mail\Address;
-use Laminas\Mime;
+use Symfony\Component\Mime\Email;
 
 /**
- * Helper to combine of Mail\Message, Mime\Message and MailMessage
+ * Helper use Symfony MIME to build messages and convert to MailMessage
  */
 class MailBuilder
 {
-    private const ENCODING = 'UTF-8';
-
-    /** @var Mail\Message */
-    private $message;
-
-    /** @var Mime\Message */
-    private $mime;
+    /** @var Email */
+    private $email;
 
     public function __construct()
     {
-        $this->message = new Mail\Message();
-        $this->message->setEncoding(self::ENCODING);
-
-        $this->mime = new Mime\Message();
+        $this->email = new Email();
     }
 
-    public function getMessage(): Mail\Message
+    /**
+     * @deprecated this method does nothing
+     */
+    public function getMessage(): self
     {
-        return $this->message;
+        return $this;
     }
 
     public function setFrom($from): self
     {
         if ($from instanceof Address) {
-            $this->message->setFrom($from->getEmail(), $from->getName());
+            $this->email->from($from->toString());
         } else {
-            $this->message->setFrom($from);
+            $this->email->from($from);
         }
 
         return $this;
@@ -59,9 +52,9 @@ class MailBuilder
     public function setTo($to): self
     {
         if ($to instanceof Address) {
-            $this->message->setTo($to->getEmail(), $to->getName());
+            $this->email->to($to->toString());
         } else {
-            $this->message->setTo($to);
+            $this->email->to($to);
         }
 
         return $this;
@@ -76,7 +69,7 @@ class MailBuilder
 
     public function setSubject(string $subject): self
     {
-        $this->message->setSubject($subject);
+        $this->email->subject($subject);
 
         return $this;
     }
@@ -86,7 +79,7 @@ class MailBuilder
      */
     public function addTextPart(string $text): self
     {
-        $this->mime->addPart(MimePart::createTextPart($text));
+        $this->email->text($text);
 
         return $this;
     }
@@ -96,12 +89,11 @@ class MailBuilder
      */
     public function addAttachment(Attachment $attachment): self
     {
-        $part = MimePart::createAttachmentPart(
+        $this->email->attach(
             $attachment->getFileContents(),
+            $attachment->filename,
             $attachment->filetype,
-            $attachment->filename
         );
-        $this->mime->addPart($part);
 
         return $this;
     }
@@ -114,8 +106,8 @@ class MailBuilder
      */
     public function toMailMessage(): MailMessage
     {
-        $this->message->setBody($this->mime);
+        $content = $this->email->toString();
 
-        return MailMessage::createFromMessage($this->message);
+        return MailMessage::createFromString($content);
     }
 }
