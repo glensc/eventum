@@ -87,7 +87,7 @@ jobs:
         run: docker logs ${{ job.services.mysql.id }}
         if: always()
 
-  release:
+  build-release:
     name: Build release
     runs-on: ubuntu-20.04
     needs: test
@@ -178,6 +178,31 @@ jobs:
           name: docker-${{ steps.vars.outputs.version }}
           path: eventum-docker-*.tar
           if-no-files-found: error
+
+  publish-release:
+    name: Create Release
+    runs-on: ubuntu-20.04
+    needs: build-release
+
+    steps:
+      - name: Checkout eventum/eventum code
+        uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: release
+
+      - name: Generate Release notes
+        run: bin/releng/gh-changelog.sh
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: eventum-*.tar.xz
+          replacesArtifacts: false
+          bodyFile: RELEASE_NOTES.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          prerelease: true
 
   # https://github.com/fastify/github-action-merge-dependabot
   automerge:
