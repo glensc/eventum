@@ -6,6 +6,7 @@ on:
       - "docs/**"
     branches:
       - master
+      - gh-release
     tags:
       - snapshot
       - v*
