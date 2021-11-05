@@ -11,21 +11,23 @@
  * that were distributed with this source code.
  */
 
+final class Query
+{
+    /**
+     * @\Siler\GraphQL\Annotation\Field()
+     */
+    public static function hello($root, $args, $context, $info): string
+    {
+        return 'Hello, World!';
+    }
+}
+
 use Siler\GraphQL;
 use Siler\Route;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$type_defs = file_get_contents(__DIR__ . '/../res/graphql/schema.graphql');
-$resolvers = [
-    'Query' => [
-        'hello' => static function ($root, $args, $context, $info) {
-            return 'Hello, World!';
-        },
-    ],
-];
-
-$schema = GraphQL\schema($type_defs, $resolvers);
+$schema = GraphQL\annotated([Query::class]);
 
 Route\post('/graphql', function () use ($schema) {
     return GraphQL\init($schema);
