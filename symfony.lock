@@ -149,6 +149,9 @@
     "league/mime-type-detection": {
         "version": "1.4.0"
     },
+    "leocavalcante/siler": {
+        "version": "v1.7.9"
+    },
     "maximebf/debugbar": {
         "version": "v1.16.3"
     },
