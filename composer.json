@@ -88,6 +88,7 @@
         "symfony/var-dumper": "^4.4",
         "symfony/var-exporter": "^4.2",
         "theorchard/monolog-cascade": "^0.5.0",
+        "webonyx/graphql-php": "^14.11",
         "willdurand/email-reply-parser": "^2.7.0",
         "xemlock/htmlpurifier-html5": "^0.1.10"
     },
