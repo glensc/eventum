@@ -78,12 +78,11 @@ jobs:
           context: docker
           load: true
           build-args: |
-            APP_VERSION=${{ steps.vars.outputs.version }}
             BUILDTYPE=local
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: |
-            type=docker,dest=out2
+            type=docker,dest=eventum-docker-${{ steps.vars.outputs.version }}.tar
 
       - name: Export docker image
         env:
@@ -93,7 +92,6 @@ jobs:
           file out*
           IMAGE=$REGISTRY/${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           docker history --human=false $IMAGE
-          docker save $IMAGE -o eventum-docker-$APP_VERSION.tar
 
       - uses: actions/upload-artifact@v2
         with:
