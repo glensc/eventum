@@ -83,7 +83,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: |
-            type=local,dest=out1
             type=docker,dest=out2
 
       - name: Export docker image
