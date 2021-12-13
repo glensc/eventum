@@ -41,26 +41,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Build release tarball
-        uses: docker/build-push-action@v2
-        env:
-          APP_VERSION: ${{ steps.vars.outputs.version }}
-        with:
-          context: .
-          file: bin/releng/Dockerfile
-          build-args: |
-            APP_VERSION=${{ env.APP_VERSION }}
-          platforms: linux/amd64
-          target: out
-          outputs: |
-            type=local,dest=out
-
-      - name: Compress release
+      - name: Download a release
         run: |
-          mv out/eventum-*.tar .
-          ls -lh eventum-*.tar
-          xz -9e eventum-*.tar
-          ls -lh eventum-*.tar.xz
+          wget https://github.com/eventum/eventum/releases/download/snapshot/eventum-3.10.9-51-gd44b4ec8e.tar.xz
 
       # https://github.com/actions/upload-artifact
       - uses: actions/upload-artifact@v2
