@@ -87,8 +87,13 @@ jobs:
         env:
           APP_VERSION: ${{ steps.vars.outputs.version }}
         run: |
+          echo 1
           cat <<EOF
-          fromJSON(steps.meta.outputs.json).tags
+          ${{ fromJSON(steps.meta.outputs.json).tags }}
+          EOF
+          echo 2§
+          cat <<EOF
+          ${{ fromJSON(steps.meta.outputs.tags) }}
           EOF
           IMAGE=$REGISTRY/$IMAGE_NAME:$APP_VERSION
           IMAGE=ghcr.io/eventum/eventum:docker-publish-v2
