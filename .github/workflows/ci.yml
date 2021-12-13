@@ -162,6 +162,13 @@ jobs:
         run: |
           ln eventum-*.tar.xz docker
 
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and export to Docker
         uses: docker/build-push-action@v2
         with:
