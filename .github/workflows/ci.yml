@@ -90,11 +90,8 @@ jobs:
           APP_VERSION: ${{ steps.vars.outputs.version }}
         run: |
           ls -l out*
-          cat <<EOF
-          ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
-          EOF
-          IMAGE=$REGISTRY/$IMAGE_NAME:$APP_VERSION
-          IMAGE=ghcr.io/eventum/eventum:docker-publish-v2
+          file out*
+          IMAGE=$REGISTRY/${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           docker history --human=false $IMAGE
           docker save $IMAGE -o eventum-docker-$APP_VERSION.tar
 
