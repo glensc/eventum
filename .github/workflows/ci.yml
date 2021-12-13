@@ -87,7 +87,6 @@ jobs:
         env:
           APP_VERSION: ${{ steps.vars.outputs.version }}
         run: |
-          echo 1
           cat <<EOF
           ${{ fromJSON(steps.meta.outputs.json).tags }}
           EOF
