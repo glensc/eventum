@@ -82,11 +82,15 @@ jobs:
             BUILDTYPE=local
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: |
+            type=local,dest=out1
+            type=docker,dest=out2
 
       - name: Export docker image
         env:
           APP_VERSION: ${{ steps.vars.outputs.version }}
         run: |
+          ls -l out*
           cat <<EOF
           ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           EOF
