@@ -6,6 +6,7 @@ on:
       - "docs/**"
     branches:
       - master
+      - docker-publish-v2
     tags:
       - snapshot
       - v*
