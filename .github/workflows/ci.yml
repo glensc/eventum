@@ -174,9 +174,10 @@ jobs:
 
       - name: Export docker image
         env:
-          IMAGE_TAG: ${{ env.TEST_IMAGE }}
+          JSON: ${{ fromJSON(steps.meta.outputs.json) }}
           APP_VERSION: ${{ steps.vars.outputs.version }}
         run: |
+          echo $JSON
           docker history --human=false $IMAGE_TAG
           docker save $IMAGE_TAG -o eventum-docker-$APP_VERSION.tar
 
