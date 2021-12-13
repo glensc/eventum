@@ -85,8 +85,6 @@ jobs:
             type=docker,dest=eventum-docker-${{ steps.vars.outputs.version }}.tar
 
       - name: Export docker image
-        env:
-          APP_VERSION: ${{ steps.vars.outputs.version }}
         run: |
           set -x
           ls -l out*
