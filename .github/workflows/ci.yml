@@ -87,8 +87,8 @@ jobs:
       - name: Export docker image
         run: |
           set -x
-          ls -l out*
-          file out*
+          ls -l eventum-docker*
+          file eventum-docker*
           IMAGE=$REGISTRY/${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           docker history --human=false $IMAGE
 
