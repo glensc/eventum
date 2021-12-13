@@ -13,7 +13,8 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: ghcr.io/eventum/eventum
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   test:
@@ -178,6 +179,8 @@ jobs:
           APP_VERSION: ${{ steps.vars.outputs.version }}
         run: |
           echo $JSON
+          set -x
+          IMAGE=$REGISTRY/$IMAGE_NAME:$APP_VERSION
           docker history --human=false $IMAGE_TAG
           docker save $IMAGE_TAG -o eventum-docker-$APP_VERSION.tar
 
