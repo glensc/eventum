@@ -182,11 +182,11 @@ jobs:
 
       - name: Export docker image
         env:
-          JSON: ${{ fromJSON(steps.meta.outputs.json) }}
           APP_VERSION: ${{ steps.vars.outputs.version }}
         run: |
-          echo $JSON
-          set -x
+          cat <<EOF
+          ${{ fromJSON(steps.meta.outputs.json) }}
+          EOF
           IMAGE=$REGISTRY/$IMAGE_NAME:$APP_VERSION
           docker history --human=false $IMAGE_TAG
           docker save $IMAGE_TAG -o eventum-docker-$APP_VERSION.tar
