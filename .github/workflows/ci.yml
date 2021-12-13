@@ -20,7 +20,6 @@ jobs:
   release:
     name: Build release
     runs-on: ubuntu-20.04
-    needs: test
     steps:
       - name: Checkout eventum/eventum code
         uses: actions/checkout@v2
