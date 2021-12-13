@@ -84,14 +84,6 @@ jobs:
           outputs: |
             type=docker,dest=eventum-docker-${{ steps.vars.outputs.version }}.tar
 
-      - name: Export docker image
-        run: |
-          set -x
-          ls -l eventum-docker*
-          file eventum-docker*
-          IMAGE=$REGISTRY/${{ fromJSON(steps.meta.outputs.json).tags[0] }}
-          docker history --human=false $IMAGE
-
       - uses: actions/upload-artifact@v2
         with:
           name: docker-${{ steps.vars.outputs.version }}
