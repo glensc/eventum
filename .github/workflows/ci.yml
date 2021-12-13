@@ -95,7 +95,10 @@ jobs:
         env:
           BUILD_IMAGE: ghcr.io/eventum/eventum:release-image-v2
         run: |
-          docker run -v $(pwd):/app $BUILD_IMAGE bin/releng/dist.sh
+          APP_VERSION=$(git describe --tags --match=v*)
+          docker build . -f bin/releng/Dockerfile --build-arg=BUILD_IMAGE=$BUILD_IMAGE --build-arg=APP_VERSION=${APP_VERSION#v} --target=out -o out
+          mv out/eventum-*.tar .
+          xz -9e eventum-*.tar
 
       # https://github.com/actions/upload-artifact
       - uses: actions/upload-artifact@v2
