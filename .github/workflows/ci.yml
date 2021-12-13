@@ -91,7 +91,7 @@ jobs:
           cat <<EOF
           ${{ fromJSON(steps.meta.outputs.json).tags }}
           EOF
-          echo 2§
+          echo 2
           cat <<EOF
           ${{ fromJSON(steps.meta.outputs.tags) }}
           EOF
