@@ -88,6 +88,7 @@ jobs:
         env:
           APP_VERSION: ${{ steps.vars.outputs.version }}
         run: |
+          set -x
           ls -l out*
           file out*
           IMAGE=$REGISTRY/${{ fromJSON(steps.meta.outputs.json).tags[0] }}
