@@ -11,6 +11,9 @@ on:
       - v*
   pull_request:
 
+env:
+  TEST_IMAGE: eventum
+
 jobs:
   test:
     name: PHP ${{ matrix.php }}
@@ -136,30 +139,45 @@ jobs:
           # 'warn' or 'ignore' are also available, defaults to `warn`
           if-no-files-found: error
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/eventum/eventum
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/0.') }}
+
       - name: Checkout eventum/docker code
         uses: actions/checkout@v2
         with:
          repository: eventum/docker
          path: docker
 
-      - name: Build docker image
-        env:
-          DOCKER_BUILDKIT: "1"
-          IMAGE_TAG: eventum/eventum:latest
-          CACHE_TAG: eventum/eventum:latest
-          APP_VERSION: ${{ steps.vars.outputs.version }}
-        working-directory: docker
+      - name: Prepare tarball for Docker build
         run: |
-          mv ../eventum-*.tar.xz .
-          docker version
-          docker build \
-            --build-arg=BUILDKIT_INLINE_CACHE=1 \
-            --build-arg=BUILDTYPE=local \
-            --tag=$IMAGE_TAG \
-            --cache-from=$CACHE_TAG \
-            .
+          ln eventum-*.tar.xz docker
+
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v2
+        with:
+          context: docker
+          load: true
+          build-args: |
+            APP_VERSION=${{ steps.vars.outputs.version }}
+            BUILDTYPE=local
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Export docker image
+        env:
+          IMAGE_TAG: ${{ env.TEST_IMAGE }}
+          APP_VERSION: ${{ steps.vars.outputs.version }}
+        run: |
           docker history --human=false $IMAGE_TAG
-          docker save $IMAGE_TAG -o ../eventum-docker-$APP_VERSION.tar
+          docker save $IMAGE_TAG -o eventum-docker-$APP_VERSION.tar
 
       - uses: actions/upload-artifact@v2
         with:
