@@ -136,7 +136,7 @@ jobs:
       # https://github.com/actions/upload-artifact
       - uses: actions/upload-artifact@v2
         with:
-          name: eventum-${{ steps.vars.outputs.version }}
+          name: eventum
           path: eventum-*.tar.xz
           # 'warn' or 'ignore' are also available, defaults to `warn`
           if-no-files-found: error
@@ -176,7 +176,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: docker-${{ steps.vars.outputs.version }}
+          name: docker
           path: eventum-docker-*.tar
           if-no-files-found: error
 
@@ -191,7 +191,7 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: build-release
+          name: eventum
 
       - name: Generate Release notes
         run: bin/releng/gh-changelog.sh
