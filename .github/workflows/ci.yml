@@ -209,7 +209,7 @@ jobs:
 
   # https://github.com/fastify/github-action-merge-dependabot
   automerge:
-    needs: release
+    needs: build-release
     runs-on: ubuntu-20.04
 
     permissions:
