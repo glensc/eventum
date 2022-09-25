@@ -201,6 +201,8 @@ jobs:
           artifacts: eventum-*.tar.xz
           replacesArtifacts: false
           bodyFile: RELEASE_NOTES.md
+          tag: snapshot
+          commit: gh-release
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           prerelease: true
